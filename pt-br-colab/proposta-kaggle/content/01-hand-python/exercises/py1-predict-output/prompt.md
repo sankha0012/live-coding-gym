@@ -1,0 +1,1 @@
+Read each snippet and choose what it prints, without running it. These are the small traps that break code written quickly under a clock, and interviewers like to ask about them during the explanation.

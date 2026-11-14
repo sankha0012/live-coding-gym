@@ -1,0 +1,83 @@
+- q: "a = [1, 2]; b = a; b.append(3); print(a)"
+  options:
+    - "[1, 2]"
+    - "[1, 2, 3]"
+    - "NameError"
+  answer: 1
+  why: "b = a copies the reference, not the list. Use a[:] or list(a) for a shallow copy."
+- q: "def add(x, acc=[]): acc.append(x); return acc. Then add(1); print(add(2))"
+  options:
+    - "[2]"
+    - "[1, 2]"
+    - "[1]"
+  answer: 1
+  why: "Default values are created once, when the def runs, so the same list is reused. Use acc=None and create the list inside."
+- q: "print(-7 // 2)"
+  options:
+    - "-3"
+    - "-3.5"
+    - "-4"
+  answer: 2
+  why: "// rounds toward minus infinity, not toward zero. int(-7 / 2) gives -3."
+- q: "print(round(2.5), round(3.5))"
+  options:
+    - "3 4"
+    - "2 4"
+    - "2 3"
+  answer: 1
+  why: "Python rounds halves to the nearest even number (banker's rounding)."
+- q: "print(0.1 + 0.2 == 0.3)"
+  options:
+    - "True"
+    - "False"
+  answer: 1
+  why: "Binary floats cannot store 0.1 exactly. Compare with math.isclose."
+- q: "print(False and 1 / 0)"
+  options:
+    - "False"
+    - "ZeroDivisionError"
+    - "0"
+  answer: 0
+  why: "and stops at the first falsy operand, so 1 / 0 never runs. The same short-circuit makes `x is not None and x > 0` safe."
+- q: "s = 'data'; s[0] = 'D'"
+  options:
+    - "s becomes 'Data'"
+    - "TypeError"
+    - "A new string is created and s is unchanged"
+  answer: 1
+  why: "Strings are immutable. Build a new one: 'D' + s[1:]."
+- q: "xs = [10, 20, 30, 40]; print(xs[-1], xs[1:-1])"
+  options:
+    - "40 [20, 30]"
+    - "40 [20, 30, 40]"
+    - "10 [20, 30]"
+  answer: 0
+  why: "Negative indexes count from the end, and the stop of a slice is excluded."
+- q: "print(sorted(['b', 'A', 'a', 'B']))"
+  options:
+    - "['a', 'A', 'b', 'B']"
+    - "['A', 'B', 'a', 'b']"
+    - "['A', 'a', 'B', 'b']"
+  answer: 1
+  why: "Strings sort by code point, and capitals come first. Use key=str.lower for a human order."
+- q: "grid = [[0] * 2] * 2; grid[0][0] = 1; print(grid)"
+  options:
+    - "[[1, 0], [0, 0]]"
+    - "[[1, 0], [1, 0]]"
+    - "[[1, 1], [0, 0]]"
+  answer: 1
+  why: "The outer * repeats a reference to the same inner list. Build rows with [[0] * 2 for _ in range(2)]."
+- q: "print(bool('False'), bool(0.0))"
+  options:
+    - "False False"
+    - "True False"
+    - "True True"
+  answer: 1
+  why: "Any non-empty string is truthy, even 'False'. Parse text flags explicitly."
+- q: "d = {'a': 1}; print(d.get('b'), d.get('b', 0))"
+  options:
+    - "KeyError"
+    - "None 0"
+    - "0 0"
+  answer: 1
+  why: "get returns None or the default you pass, while d['b'] would raise KeyError."
