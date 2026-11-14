@@ -1,0 +1,27 @@
+# Append these to content/01-hand-python/cards.yaml
+- id: kg-public-methods
+  front: List the public methods of an object
+  back: |
+    [m for m in dir(x) if not m.startswith("_")]
+- id: kg-help-on-method
+  front: Read the docs of str.split from the editor
+  back: |
+    help(str.split)
+- id: kg-signature
+  front: See the parameters and defaults of a function in one line
+  back: |
+    import inspect
+    inspect.signature(sorted)
+- id: kg-instance-attrs
+  front: See the attributes an instance holds
+  back: |
+    vars(obj)
+- id: kg-float-compare
+  front: Compare two floats safely
+  back: |
+    import math
+    math.isclose(a, b, rel_tol=1e-9)
+- id: kg-grid-no-aliasing
+  front: Build a 3 x 4 grid of zeros without shared rows
+  back: |
+    [[0] * 4 for _ in range(3)]
