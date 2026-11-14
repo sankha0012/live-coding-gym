@@ -18,12 +18,12 @@ These are required, not optional. The goal is to spend as few tokens as possible
 
 ## Keeping the graph current
 
-If a graph exists (`graphify-out/graph.json`), it must never go stale.
+The graph exists at `graphify-out/graph.json` (built 2026-11-14) and must never go stale. SQL files are not yet in it (missing `tree_sitter_sql`; optional: `uv pip install "graphifyy[sql]"`).
 
-- After any task that adds, removes, renames or substantially changes files, run `graphify . --update` (incremental: it re-extracts only changed files) before the commit, and include `graphify-out/` in that commit.
-- If a `graphify . --watch` process is running, it keeps code files current, but still run `--update` after editing docs, specs or content.
+- After any task that adds, removes, renames or substantially changes files, run `graphify update .` (re-extracts changed code files, no LLM needed) before the commit, and include `graphify-out/` in that commit. For docs, specs or content changes, run `/graphify . --update` in the assistant instead.
+- If `graphify watch .` is running, it keeps code files current, but still run the update after editing docs, specs or content.
 - Never hand-edit files in `graphify-out/`.
-- If the graph is missing, build it once with `graphify .` after the first code lands (not before: an empty project has nothing to map).
+- If the graph is missing, build it once with `graphify update .` after the first code lands (not before: an empty project has nothing to map).
 
 ## Token habits
 

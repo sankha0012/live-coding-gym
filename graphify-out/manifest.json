@@ -1,0 +1,356 @@
+{
+  "content/01-hand-python/exercises/count-words/gaps.py": {
+    "mtime": 1794641697.584451,
+    "seen": 1794642503.467726,
+    "ast_hash": "96a613c9a4f047e32bb9d427fbc7ba45",
+    "semantic_hash": ""
+  },
+  "content/01-hand-python/exercises/count-words/solution.py": {
+    "mtime": 1794641697.5835094,
+    "seen": 1794642503.4677289,
+    "ast_hash": "a30bcdbf4bad41dff1cc3a6b68130a8f",
+    "semantic_hash": ""
+  },
+  "content/01-hand-python/exercises/count-words/starter.py": {
+    "mtime": 1794641697.5846858,
+    "seen": 1794642503.4677298,
+    "ast_hash": "e3abbdd4d9323a9bea328cc6c7f73c28",
+    "semantic_hash": ""
+  },
+  "content/01-hand-python/exercises/count-words/tests/test_hidden.py": {
+    "mtime": 1794641697.5839813,
+    "seen": 1794642503.467731,
+    "ast_hash": "b8fe09ed9f1e63754d3657a475a54e01",
+    "semantic_hash": ""
+  },
+  "gym/__init__.py": {
+    "mtime": 1794641461.43149,
+    "seen": 1794642503.467731,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "gym/app.py": {
+    "mtime": 1794641681.550392,
+    "seen": 1794642503.467732,
+    "ast_hash": "a5b1f72664e1b7b6c0cd8875c2851cb9",
+    "semantic_hash": ""
+  },
+  "gym/cards.py": {
+    "mtime": 1794641542.4770393,
+    "seen": 1794642503.467733,
+    "ast_hash": "58d16c9a8cfc12e4b5a58f2a18b080be",
+    "semantic_hash": ""
+  },
+  "gym/check_content.py": {
+    "mtime": 1794641697.5792077,
+    "seen": 1794642503.467733,
+    "ast_hash": "2e4cacf63a898e6d65b26bc2b0bdb38d",
+    "semantic_hash": ""
+  },
+  "gym/config.py": {
+    "mtime": 1794641489.052516,
+    "seen": 1794642503.467734,
+    "ast_hash": "9a88cd4cb5b5dbea6d65cdd9dc7399d2",
+    "semantic_hash": ""
+  },
+  "gym/content.py": {
+    "mtime": 1794641489.0545254,
+    "seen": 1794642503.467734,
+    "ast_hash": "7dbd971361f5efe71b18bf5350dcd6cb",
+    "semantic_hash": ""
+  },
+  "gym/db.py": {
+    "mtime": 1794641542.4729784,
+    "seen": 1794642503.467735,
+    "ast_hash": "d48097bfcff011503afcb13d54202ba5",
+    "semantic_hash": ""
+  },
+  "gym/gates.py": {
+    "mtime": 1794641642.934188,
+    "seen": 1794642503.467735,
+    "ast_hash": "0f254d6cdcbf919ebd113217a91443eb",
+    "semantic_hash": ""
+  },
+  "gym/mock.py": {
+    "mtime": 1794641542.4807496,
+    "seen": 1794642503.467736,
+    "ast_hash": "0658244d4926c7c99b91dbe015bd687f",
+    "semantic_hash": ""
+  },
+  "gym/reviewer.py": {
+    "mtime": 1794642290.3994944,
+    "seen": 1794642503.467736,
+    "ast_hash": "485f3c287590760052118cbec96a2c5f",
+    "semantic_hash": ""
+  },
+  "gym/runner.py": {
+    "mtime": 1794641506.770575,
+    "seen": 1794642503.4677372,
+    "ast_hash": "7495aa90549c33a46a48fa5f68374eff",
+    "semantic_hash": ""
+  },
+  "pyproject.toml": {
+    "mtime": 1794641461.4633102,
+    "seen": 1794642503.4677372,
+    "ast_hash": "7ae3056c6fa6b66f90ddb4c3124d632a",
+    "semantic_hash": ""
+  },
+  "tests/__init__.py": {
+    "mtime": 1794641461.4315574,
+    "seen": 1794642503.4677382,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "tests/conftest.py": {
+    "mtime": 1794641542.4689162,
+    "seen": 1794642503.4677382,
+    "ast_hash": "37bf174ebc9587aea739f6adffb7d3e5",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/exercises/count-words/gaps.py": {
+    "mtime": 1794641461.4473827,
+    "seen": 1794642503.4677389,
+    "ast_hash": "96a613c9a4f047e32bb9d427fbc7ba45",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/exercises/count-words/solution.py": {
+    "mtime": 1794641461.445608,
+    "seen": 1794642503.4677389,
+    "ast_hash": "a30bcdbf4bad41dff1cc3a6b68130a8f",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/exercises/count-words/starter.py": {
+    "mtime": 1794641461.443729,
+    "seen": 1794642503.4677398,
+    "ast_hash": "e3abbdd4d9323a9bea328cc6c7f73c28",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/exercises/count-words/tests/test_hidden.py": {
+    "mtime": 1794641461.4491763,
+    "seen": 1794642503.467741,
+    "ast_hash": "b8fe09ed9f1e63754d3657a475a54e01",
+    "semantic_hash": ""
+  },
+  "tests/test_app.py": {
+    "mtime": 1794641681.5483928,
+    "seen": 1794642503.467741,
+    "ast_hash": "02211fdc4ae2f21c107768a20e8361d2",
+    "semantic_hash": ""
+  },
+  "tests/test_cards.py": {
+    "mtime": 1794641542.4747527,
+    "seen": 1794642503.467742,
+    "ast_hash": "52005bd4598446d04337b57ef516328b",
+    "semantic_hash": ""
+  },
+  "tests/test_check_content.py": {
+    "mtime": 1794641697.5772552,
+    "seen": 1794642503.467742,
+    "ast_hash": "222343d387b032c321e7d5b677b73f70",
+    "semantic_hash": ""
+  },
+  "tests/test_content.py": {
+    "mtime": 1794641472.49134,
+    "seen": 1794642503.467743,
+    "ast_hash": "a7acdc9e64de79eb57157fe903a92bef",
+    "semantic_hash": ""
+  },
+  "tests/test_db.py": {
+    "mtime": 1794641542.4710395,
+    "seen": 1794642503.467743,
+    "ast_hash": "bf73f2cae71b60abaebe11c973e9f8ef",
+    "semantic_hash": ""
+  },
+  "tests/test_gates.py": {
+    "mtime": 1794641642.9320638,
+    "seen": 1794642503.467744,
+    "ast_hash": "f8043f234e8047f21e95659b7dc9609c",
+    "semantic_hash": ""
+  },
+  "tests/test_mock.py": {
+    "mtime": 1794641542.4789693,
+    "seen": 1794642503.467744,
+    "ast_hash": "71758b947d9a3fb850aed9986a14863c",
+    "semantic_hash": ""
+  },
+  "tests/test_reviewer.py": {
+    "mtime": 1794641572.138581,
+    "seen": 1794642503.467745,
+    "ast_hash": "ceedec8dbebf6ad3caa460eb2e8c46be",
+    "semantic_hash": ""
+  },
+  "tests/test_runner_python.py": {
+    "mtime": 1794641506.7663937,
+    "seen": 1794642503.467745,
+    "ast_hash": "2247ceb4cbe1afd46f551ca251a567a1",
+    "semantic_hash": ""
+  },
+  "tests/test_runner_sql.py": {
+    "mtime": 1794641506.7683382,
+    "seen": 1794642503.467746,
+    "ast_hash": "0be06a86edb4e1c01dec2700d9518f8e",
+    "semantic_hash": ""
+  },
+  "web/app.js": {
+    "mtime": 1794642290.4513729,
+    "seen": 1794642503.467746,
+    "ast_hash": "c0ddd2fa06afa0a1ee9df644f3014cdf",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1794641448.9838812,
+    "seen": 1794642503.467747,
+    "ast_hash": "7bc392aba4d5570b531c137cfa39cead",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1794641697.5889094,
+    "seen": 1794642503.467747,
+    "ast_hash": "11e9714217b8280a6db83d66e4a20ee2",
+    "semantic_hash": ""
+  },
+  "content/01-hand-python/cards.yaml": {
+    "mtime": 1794641697.5823972,
+    "seen": 1794642503.4677482,
+    "ast_hash": "26e8a32b4826f236ce2debd698804608",
+    "semantic_hash": ""
+  },
+  "content/01-hand-python/exercises/count-words/exercise.yaml": {
+    "mtime": 1794641697.5848987,
+    "seen": 1794642503.4677482,
+    "ast_hash": "93dd28996c9f794612b7913481349289",
+    "semantic_hash": ""
+  },
+  "content/01-hand-python/exercises/count-words/prompt.md": {
+    "mtime": 1794641697.5842245,
+    "seen": 1794642503.467749,
+    "ast_hash": "cca143f4faec069e5cbc902db547f7cc",
+    "semantic_hash": ""
+  },
+  "content/01-hand-python/exercises/explain-count-words/exercise.yaml": {
+    "mtime": 1794641697.5831056,
+    "seen": 1794642503.467749,
+    "ast_hash": "2e5734c60cc82ff11a4858a02b573f34",
+    "semantic_hash": ""
+  },
+  "content/01-hand-python/exercises/explain-count-words/prompt.md": {
+    "mtime": 1794641697.582894,
+    "seen": 1794642503.4677498,
+    "ast_hash": "898bdf1c05deb30363749c22b6d08869",
+    "semantic_hash": ""
+  },
+  "content/01-hand-python/lessons/01-counting.md": {
+    "mtime": 1794641697.5852768,
+    "seen": 1794642503.4677498,
+    "ast_hash": "26d7a14038cdeaca5af49e1d2969ffb6",
+    "semantic_hash": ""
+  },
+  "content/01-hand-python/step.yaml": {
+    "mtime": 1794641697.5821774,
+    "seen": 1794642503.467751,
+    "ast_hash": "b658fa5139e5c1062548091ae73a16c6",
+    "semantic_hash": ""
+  },
+  "content/03-hand-sql/exercises/top-customers/exercise.yaml": {
+    "mtime": 1794641697.586813,
+    "seen": 1794642503.467751,
+    "ast_hash": "c165de16096398e86e0535a59bc0bbba",
+    "semantic_hash": ""
+  },
+  "content/03-hand-sql/exercises/top-customers/prompt.md": {
+    "mtime": 1794641697.5862331,
+    "seen": 1794642503.467752,
+    "ast_hash": "68124df71bf359640f6071f00fbf04e0",
+    "semantic_hash": ""
+  },
+  "content/03-hand-sql/step.yaml": {
+    "mtime": 1794641697.5856194,
+    "seen": 1794642503.467753,
+    "ast_hash": "fd945408efb0682af7769da624b66f54",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-11-14-live-coding-gym-app.md": {
+    "mtime": 1794640325.2959585,
+    "seen": 1794642503.467753,
+    "ast_hash": "aa321ba0c529d289162eb1f0714e77c5",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-11-14-live-coding-gym-design.md": {
+    "mtime": 1794639523.5101244,
+    "seen": 1794642503.467754,
+    "ast_hash": "7a495ed357790b7592520fde34b2a727",
+    "semantic_hash": ""
+  },
+  "live-coding-gym.html": {
+    "mtime": 1794637771.32559,
+    "seen": 1794642503.467754,
+    "ast_hash": "d54b63e8db964d1536ad5377de37cd0a",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/cards.yaml": {
+    "mtime": 1794641461.4383128,
+    "seen": 1794642503.467755,
+    "ast_hash": "26e8a32b4826f236ce2debd698804608",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/exercises/count-words/exercise.yaml": {
+    "mtime": 1794641461.4401774,
+    "seen": 1794642503.467755,
+    "ast_hash": "93dd28996c9f794612b7913481349289",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/exercises/count-words/prompt.md": {
+    "mtime": 1794641461.442019,
+    "seen": 1794642503.467756,
+    "ast_hash": "cca143f4faec069e5cbc902db547f7cc",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/exercises/explain-count-words/exercise.yaml": {
+    "mtime": 1794641461.4509437,
+    "seen": 1794642503.467756,
+    "ast_hash": "2e5734c60cc82ff11a4858a02b573f34",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/exercises/explain-count-words/prompt.md": {
+    "mtime": 1794641461.452702,
+    "seen": 1794642503.467757,
+    "ast_hash": "898bdf1c05deb30363749c22b6d08869",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/lessons/01-counting.md": {
+    "mtime": 1794641461.4364302,
+    "seen": 1794642503.467757,
+    "ast_hash": "26d7a14038cdeaca5af49e1d2969ffb6",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/01-hand-python/step.yaml": {
+    "mtime": 1794641461.434381,
+    "seen": 1794642503.4677582,
+    "ast_hash": "b658fa5139e5c1062548091ae73a16c6",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/03-hand-sql/exercises/top-customers/exercise.yaml": {
+    "mtime": 1794641461.4564254,
+    "seen": 1794642503.4677582,
+    "ast_hash": "c165de16096398e86e0535a59bc0bbba",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/03-hand-sql/exercises/top-customers/prompt.md": {
+    "mtime": 1794641461.4579642,
+    "seen": 1794642503.4677591,
+    "ast_hash": "68124df71bf359640f6071f00fbf04e0",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/content/03-hand-sql/step.yaml": {
+    "mtime": 1794641461.454659,
+    "seen": 1794642503.4677591,
+    "ast_hash": "fd945408efb0682af7769da624b66f54",
+    "semantic_hash": ""
+  },
+  "web/index.html": {
+    "mtime": 1794641738.1460056,
+    "seen": 1794642503.46776,
+    "ast_hash": "39943cffd0ce32e03937b92163a209ab",
+    "semantic_hash": ""
+  }
+}

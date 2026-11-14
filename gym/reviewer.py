@@ -55,7 +55,7 @@ FALLBACK_QUESTIONS = [
 
 
 def call_gemini(prompt, timeout=60):
-    model = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+    model = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
     body = json.dumps({
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"responseMimeType": "application/json"},

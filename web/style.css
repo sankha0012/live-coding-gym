@@ -1,0 +1,16 @@
+body { font: 15px/1.5 system-ui, sans-serif; margin: 0; color: #1c1c1c; background: #fafafa; }
+nav { background: #1c1c1c; padding: 10px 24px; }
+nav a { color: #fff; margin-right: 20px; text-decoration: none; }
+main { max-width: 960px; margin: 24px auto; padding: 0 24px; }
+h1 { font-size: 22px; } h2 { font-size: 17px; margin-top: 28px; }
+.row { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid #e3e3e3; }
+.row .grow { flex: 1; }
+.locked { opacity: 0.5; }
+.ok { color: #1a7f37; } .bad { color: #c62828; } .muted { color: #777; }
+button, select { font: inherit; padding: 6px 12px; cursor: pointer; }
+.CodeMirror { border: 1px solid #ccc; height: 320px; font-size: 14px; }
+pre { background: #f0f0f0; padding: 12px; overflow: auto; white-space: pre-wrap; }
+textarea { width: 100%; min-height: 110px; font: inherit; box-sizing: border-box; }
+.timer { font-variant-numeric: tabular-nums; font-weight: 600; }
+.review { border-left: 4px solid #888; padding: 4px 14px; margin: 14px 0; background: #fff; }
+.bar { display: flex; gap: 10px; align-items: center; margin: 12px 0; }
