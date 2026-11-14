@@ -619,7 +619,7 @@ git add -A && git commit -m "feat: quiz and test-writing exercises, hint and say
 
 **Interfaces:**
 - Consumes: Task 1 fields, Task 2 runners.
-- Produces: `check(content_dir) -> list[str]` now also reports: duplicate exercise ids across steps, duplicate card ids across steps, a `wrong/` solution that passes the tests, a `tests` exercise whose reference test file does not catch every bug or whose starter already passes, a missing `say.md` on any non-quiz exercise, a missing `hint.md` on python, sql and tests exercises.
+- Produces: `check(content_dir) -> list[str]` now also reports: duplicate exercise ids across steps, duplicate card ids across steps, a `wrong/` solution that passes the tests, a `tests` exercise whose reference test file do not catch every bug or whose starter already passes, a missing `say.md` on any non-quiz exercise, a missing `hint.md` on python, sql and tests exercises.
 
 - [ ] **Step 1: Add the fixture files, then write the failing tests**
 
@@ -663,7 +663,7 @@ def test_tests_kind_checks(tmp_path):
         (ex / name).write_text(text)
     assert check(tmp_path / "c") == []
     (ex / "solution.py").write_text("from solution import f\n\ndef test_f():\n    assert f() in (1, 2)\n")
-    assert any("does not catch every bug" in p for p in check(tmp_path / "c"))
+    assert any("do not catch every bug" in p for p in check(tmp_path / "c"))
 ```
 
 - [ ] **Step 2: Run test to verify it fails**

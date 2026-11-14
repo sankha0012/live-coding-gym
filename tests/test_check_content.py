@@ -22,3 +22,43 @@ def test_starter_that_already_passes_is_reported(tmp_path):
     shutil.copy(ex / "solution.py", ex / "starter.py")
     problems = check(tmp_path / "c")
     assert len(problems) == 1 and "starter already passes" in problems[0]
+
+
+def test_duplicate_exercise_id_is_reported(tmp_path):
+    shutil.copytree(FIXTURES, tmp_path / "c")
+    shutil.copytree(tmp_path / "c" / "01-hand-python" / "exercises" / "count-words",
+                    tmp_path / "c" / "03-hand-sql" / "exercises" / "count-words")
+    assert any("duplicate exercise id" in p for p in check(tmp_path / "c"))
+
+
+def test_wrong_solution_that_passes_is_reported(tmp_path):
+    shutil.copytree(FIXTURES, tmp_path / "c")
+    ex = tmp_path / "c" / "01-hand-python" / "exercises" / "count-words"
+    shutil.copy(ex / "solution.py", ex / "wrong" / "actually_right.py")
+    problems = check(tmp_path / "c")
+    assert len(problems) == 1 and "wrong solution actually_right passes" in problems[0]
+
+
+def test_missing_say_and_hint_are_reported(tmp_path):
+    shutil.copytree(FIXTURES, tmp_path / "c")
+    ex = tmp_path / "c" / "01-hand-python" / "exercises" / "count-words"
+    (ex / "say.md").unlink()
+    (ex / "hint.md").unlink()
+    problems = check(tmp_path / "c")
+    assert sorted(p.split(": ", 1)[1] for p in problems) == ["missing hint.md", "missing say.md"]
+
+
+def test_tests_kind_checks(tmp_path):
+    step = tmp_path / "c" / "01-s"
+    ex = step / "exercises" / "t1"
+    ex.mkdir(parents=True)
+    (step / "step.yaml").write_text("title: S\norder: 1\n")
+    files = {"exercise.yaml": "title: T\nkind: tests\n", "prompt.md": "p", "hint.md": "h", "say.md": "s",
+             "starter.py": "from solution import f\n",
+             "solution.py": "from solution import f\n\ndef test_f():\n    assert f() == 1\n",
+             "impl_good.py": "def f(): return 1\n", "impl_bad_1.py": "def f(): return 2\n"}
+    for name, text in files.items():
+        (ex / name).write_text(text)
+    assert check(tmp_path / "c") == []
+    (ex / "solution.py").write_text("from solution import f\n\ndef test_f():\n    assert f() in (1, 2)\n")
+    assert any("do not catch every bug" in p for p in check(tmp_path / "c"))

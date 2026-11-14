@@ -33,7 +33,7 @@
       "label": "Step",
       "file_type": "code",
       "source_file": "gym/content.py",
-      "source_location": "L31",
+      "source_location": "L40",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -554,6 +554,18 @@
       "norm_label": "test_readiness_needs_three_mocks_and_uses_last_three()"
     },
     {
+      "label": "check()",
+      "file_type": "code",
+      "source_file": "gym/check_content.py",
+      "source_location": "L8",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_check_content_check",
+      "community": 1,
+      "community_name": "check_sql",
+      "norm_label": "check()"
+    },
+    {
       "label": "check_sql()",
       "file_type": "code",
       "source_file": "gym/runner.py",
@@ -624,6 +636,42 @@
       "community": 1,
       "community_name": "check_sql",
       "norm_label": "_table()"
+    },
+    {
+      "label": "test_sample_content_is_clean()",
+      "file_type": "code",
+      "source_file": "tests/test_check_content.py",
+      "source_location": "L7",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_check_content_test_sample_content_is_clean",
+      "community": 1,
+      "community_name": "check_sql",
+      "norm_label": "test_sample_content_is_clean()"
+    },
+    {
+      "label": "test_starter_that_already_passes_is_reported()",
+      "file_type": "code",
+      "source_file": "tests/test_check_content.py",
+      "source_location": "L19",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_check_content_test_starter_that_already_passes_is_reported",
+      "community": 1,
+      "community_name": "check_sql",
+      "norm_label": "test_starter_that_already_passes_is_reported()"
+    },
+    {
+      "label": "test_wrong_reference_solution_is_reported()",
+      "file_type": "code",
+      "source_file": "tests/test_check_content.py",
+      "source_location": "L11",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_check_content_test_wrong_reference_solution_is_reported",
+      "community": 1,
+      "community_name": "check_sql",
+      "norm_label": "test_wrong_reference_solution_is_reported()"
     },
     {
       "label": "test_free_run_captures_output()",
@@ -926,22 +974,22 @@
       "norm_label": "count_words()"
     },
     {
-      "label": "check()",
+      "label": "_existing()",
       "file_type": "code",
-      "source_file": "gym/check_content.py",
-      "source_location": "L8",
+      "source_file": "gym/content.py",
+      "source_location": "L55",
       "_callable": true,
       "_origin": "ast",
-      "id": "gym_check_content_check",
+      "id": "gym_content_existing",
       "community": 2,
       "community_name": "load_content",
-      "norm_label": "check()"
+      "norm_label": "_existing()"
     },
     {
       "label": "load_content()",
       "file_type": "code",
       "source_file": "gym/content.py",
-      "source_location": "L77",
+      "source_location": "L110",
       "_callable": true,
       "_origin": "ast",
       "id": "gym_content_load_content",
@@ -953,7 +1001,7 @@
       "label": "load_exercise()",
       "file_type": "code",
       "source_file": "gym/content.py",
-      "source_location": "L46",
+      "source_location": "L61",
       "_callable": true,
       "_origin": "ast",
       "id": "gym_content_load_exercise",
@@ -965,7 +1013,7 @@
       "label": "_read()",
       "file_type": "code",
       "source_file": "gym/content.py",
-      "source_location": "L42",
+      "source_location": "L51",
       "_callable": true,
       "_origin": "ast",
       "id": "gym_content_read",
@@ -1010,40 +1058,88 @@
       "norm_label": "steps()"
     },
     {
-      "label": "test_sample_content_is_clean()",
+      "label": "build()",
       "file_type": "code",
-      "source_file": "tests/test_check_content.py",
-      "source_location": "L7",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L6",
       "_callable": true,
       "_origin": "ast",
-      "id": "tests_test_check_content_test_sample_content_is_clean",
+      "id": "tests_test_content_extras_build",
       "community": 2,
       "community_name": "load_content",
-      "norm_label": "test_sample_content_is_clean()"
+      "norm_label": "build()"
     },
     {
-      "label": "test_starter_that_already_passes_is_reported()",
+      "label": "load_one()",
       "file_type": "code",
-      "source_file": "tests/test_check_content.py",
-      "source_location": "L19",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L21",
       "_callable": true,
       "_origin": "ast",
-      "id": "tests_test_check_content_test_starter_that_already_passes_is_reported",
+      "id": "tests_test_content_extras_load_one",
       "community": 2,
       "community_name": "load_content",
-      "norm_label": "test_starter_that_already_passes_is_reported()"
+      "norm_label": "load_one()"
     },
     {
-      "label": "test_wrong_reference_solution_is_reported()",
+      "label": "test_extras_and_wrong_solutions()",
       "file_type": "code",
-      "source_file": "tests/test_check_content.py",
-      "source_location": "L11",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L29",
       "_callable": true,
       "_origin": "ast",
-      "id": "tests_test_check_content_test_wrong_reference_solution_is_reported",
+      "id": "tests_test_content_extras_test_extras_and_wrong_solutions",
       "community": 2,
       "community_name": "load_content",
-      "norm_label": "test_wrong_reference_solution_is_reported()"
+      "norm_label": "test_extras_and_wrong_solutions()"
+    },
+    {
+      "label": "test_files_are_resolved_and_must_exist()",
+      "file_type": "code",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L38",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_content_extras_test_files_are_resolved_and_must_exist",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "test_files_are_resolved_and_must_exist()"
+    },
+    {
+      "label": "test_quiz_loads_and_rejects_bad_answer_index()",
+      "file_type": "code",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L57",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_content_extras_test_quiz_loads_and_rejects_bad_answer_index",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "test_quiz_loads_and_rejects_bad_answer_index()"
+    },
+    {
+      "label": "test_sql_seed_file()",
+      "file_type": "code",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L49",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_content_extras_test_sql_seed_file",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "test_sql_seed_file()"
+    },
+    {
+      "label": "test_tests_kind_needs_good_and_bad_implementations()",
+      "file_type": "code",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L67",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_content_extras_test_tests_kind_needs_good_and_bad_implementations",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "test_tests_kind_needs_good_and_bad_implementations()"
     },
     {
       "label": "test_broken_exercise_is_reported_and_skipped()",
@@ -1882,6 +1978,17 @@
       "norm_label": "test_gates.py"
     },
     {
+      "label": "check_content.py",
+      "file_type": "code",
+      "source_file": "gym/check_content.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "gym_check_content",
+      "community": 1,
+      "community_name": "check_sql",
+      "norm_label": "check_content.py"
+    },
+    {
       "label": "runner.py",
       "file_type": "code",
       "source_file": "gym/runner.py",
@@ -1891,6 +1998,17 @@
       "community": 1,
       "community_name": "check_sql",
       "norm_label": "runner.py"
+    },
+    {
+      "label": "test_check_content.py",
+      "file_type": "code",
+      "source_file": "tests/test_check_content.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_check_content",
+      "community": 1,
+      "community_name": "check_sql",
+      "norm_label": "test_check_content.py"
     },
     {
       "label": "test_runner_python.py",
@@ -2201,17 +2319,6 @@
       "norm_label": "counting with a dict"
     },
     {
-      "label": "check_content.py",
-      "file_type": "code",
-      "source_file": "gym/check_content.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "gym_check_content",
-      "community": 2,
-      "community_name": "load_content",
-      "norm_label": "check_content.py"
-    },
-    {
       "label": "content.py",
       "file_type": "code",
       "source_file": "gym/content.py",
@@ -2245,17 +2352,6 @@
       "norm_label": "fixture"
     },
     {
-      "label": "test_check_content.py",
-      "file_type": "code",
-      "source_file": "tests/test_check_content.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_test_check_content",
-      "community": 2,
-      "community_name": "load_content",
-      "norm_label": "test_check_content.py"
-    },
-    {
       "label": "test_content.py",
       "file_type": "code",
       "source_file": "tests/test_content.py",
@@ -2265,6 +2361,28 @@
       "community": 2,
       "community_name": "load_content",
       "norm_label": "test_content.py"
+    },
+    {
+      "label": "test_content_extras.py",
+      "file_type": "code",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_content_extras",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "test_content_extras.py"
+    },
+    {
+      "label": "One step with one exercise 'e1'. files maps path-under-exercise -> text.",
+      "file_type": "rationale",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "tests_test_content_extras_rationale_7",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "one step with one exercise 'e1'. files maps path-under-exercise -> text."
     },
     {
       "label": "content/01-hand-python/exercises/count-words/prompt.md",
@@ -3309,19 +3427,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "gym/content.py",
-      "source_location": "L100",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "gym_content_load_content",
-      "target": "gym_content_load_exercise",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "gym/content.py",
-      "source_location": "L85",
+      "source_location": "L118",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_content_load_content",
@@ -3333,7 +3439,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "gym/content.py",
-      "source_location": "L91",
+      "source_location": "L124",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_content_load_content",
@@ -3345,7 +3451,19 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "gym/content.py",
-      "source_location": "L51",
+      "source_location": "L133",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "gym_content_load_content",
+      "target": "gym_content_load_exercise",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "gym/content.py",
+      "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_content_load_exercise",
@@ -3357,11 +3475,23 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "gym/content.py",
-      "source_location": "L67",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_content_load_exercise",
       "target": "gym_content_read",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "gym/content.py",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "gym_content_load_exercise",
+      "target": "gym_content_existing",
       "confidence_score": 1.0
     },
     {
@@ -3902,6 +4032,138 @@
       "_origin": "ast",
       "source": "tests_test_check_content_test_wrong_reference_solution_is_reported",
       "target": "gym_check_content_check",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_load_one",
+      "target": "gym_content_load_content",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_test_extras_and_wrong_solutions",
+      "target": "tests_test_content_extras_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_test_extras_and_wrong_solutions",
+      "target": "tests_test_content_extras_load_one",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_test_files_are_resolved_and_must_exist",
+      "target": "tests_test_content_extras_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_test_files_are_resolved_and_must_exist",
+      "target": "tests_test_content_extras_load_one",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_test_quiz_loads_and_rejects_bad_answer_index",
+      "target": "tests_test_content_extras_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_test_quiz_loads_and_rejects_bad_answer_index",
+      "target": "tests_test_content_extras_load_one",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_test_sql_seed_file",
+      "target": "tests_test_content_extras_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_test_sql_seed_file",
+      "target": "tests_test_content_extras_load_one",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L70",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_test_tests_kind_needs_good_and_bad_implementations",
+      "target": "tests_test_content_extras_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L71",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_test_tests_kind_needs_good_and_bad_implementations",
+      "target": "tests_test_content_extras_load_one",
       "confidence_score": 1.0
     },
     {
@@ -5252,6 +5514,18 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras",
+      "target": "gym_content_load_content",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "tests/test_runner_python.py",
       "source_location": "L1",
       "weight": 1.0,
@@ -5461,6 +5735,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_content",
+      "target": "gym_content",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras",
       "target": "gym_content",
       "confidence_score": 1.0
     },
@@ -6645,7 +6931,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "gym/content.py",
-      "source_location": "L31",
+      "source_location": "L110",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "gym_content",
+      "target": "gym_content_load_content",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "gym/content.py",
+      "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_content",
@@ -6656,7 +6953,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "gym/content.py",
-      "source_location": "L42",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_content",
@@ -6667,22 +6964,22 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "gym/content.py",
-      "source_location": "L46",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_content",
-      "target": "gym_content_load_exercise",
+      "target": "gym_content_existing",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "gym/content.py",
-      "source_location": "L77",
+      "source_location": "L61",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_content",
-      "target": "gym_content_load_content",
+      "target": "gym_content_load_exercise",
       "confidence_score": 1.0
     },
     {
@@ -7524,6 +7821,83 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras",
+      "target": "tests_test_content_extras_load_one",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras",
+      "target": "tests_test_content_extras_test_extras_and_wrong_solutions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras",
+      "target": "tests_test_content_extras_test_files_are_resolved_and_must_exist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L49",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras",
+      "target": "tests_test_content_extras_test_sql_seed_file",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras",
+      "target": "tests_test_content_extras_test_quiz_loads_and_rejects_bad_answer_index",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras",
+      "target": "tests_test_content_extras_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras",
+      "target": "tests_test_content_extras_test_tests_kind_needs_good_and_bad_implementations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "tests/test_db.py",
       "source_location": "L17",
       "weight": 1.0,
@@ -8270,6 +8644,17 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_content_extras.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_content_extras_rationale_7",
+      "target": "tests_test_content_extras_build",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "indirect_call",
       "context": "argument",
       "confidence": "INFERRED",
@@ -8331,5 +8716,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "ed90dd54966955c2add9ebf2a269854c8c352026"
+  "built_at_commit": "fb797b631db341c2c849199c77b804a98fc50113"
 }
