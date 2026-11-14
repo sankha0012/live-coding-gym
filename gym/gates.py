@@ -3,6 +3,8 @@ import json
 from . import db
 from .reviewer import REVIEW_KIND
 
+TESTED = ("python", "sql", "quiz", "tests")
+
 
 def _review_ok(conn, ex, min_score):
     row = db.latest_review(conn, ex.id, REVIEW_KIND[ex.kind])
@@ -13,7 +15,7 @@ def _review_ok(conn, ex, min_score):
 
 
 def exercise_status(conn, ex, step):
-    coded = ex.kind in ("python", "sql")
+    coded = ex.kind in TESTED
     rows = db.passed_attempts(conn, ex.id) if coded else []
     status = {"tests": None, "timed": None, "review": None}
     if coded:

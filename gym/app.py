@@ -9,7 +9,9 @@ from pydantic import BaseModel
 from . import cards, config, db, gates, mock, reviewer, runner
 from .content import load_content
 
-CODED = ("python", "sql")
+CODED = ("python", "sql", "tests")
+MODES = {"python": ["retype", "gaps", "blank", "timed"], "sql": ["retype", "gaps", "blank", "timed"],
+         "tests": ["blank", "timed"]}
 
 
 class RunBody(BaseModel):
@@ -26,6 +28,11 @@ class ReviewBody(BaseModel):
     exercise_id: str
     attempt_id: int | None = None
     text: str = ""
+
+
+class QuizBody(BaseModel):
+    exercise_id: str
+    answers: list[int]
 
 
 class CardBody(BaseModel):
@@ -74,18 +81,26 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
                 "verdict": row["verdict"], "feedback": row["feedback"]}
 
     def payload(ex, mode="blank"):
-        coded = ex.kind in CODED
-        modes = (["retype"] + (["gaps"] if ex.gaps else []) + ["blank", "timed"]) if coded else []
+        st = status_of(ex)
+        revealed = st["tests"] is True or st["review"] is True
+        rk = reviewer.REVIEW_KIND.get(ex.kind)
+        modes = [m for m in MODES.get(ex.kind, []) if m != "gaps" or ex.gaps]
         code = {"retype": "", "gaps": ex.gaps}.get(mode, ex.starter)
+        schema = "\n".join(l for l in ex.seed.splitlines() if not l.startswith("INSERT"))
         return {"id": ex.id, "title": ex.title, "kind": ex.kind, "prompt": ex.prompt,
                 "time_limit_s": ex.time_limit_s, "modes": modes, "mode": mode, "code": code,
-                "solution": ex.solution if mode == "retype" else "", "schema": ex.seed,
-                "status": status_of(ex),
-                "review": review_dict(db.latest_review(conn, ex.id, reviewer.REVIEW_KIND[ex.kind]))}
+                "solution": ex.solution if mode == "retype" else "", "schema": schema,
+                "hint": ex.hint, "say": ex.say if revealed else "",
+                "model_prompt": ex.model_prompt if revealed else "",
+                "quiz": [{"q": q["q"], "options": q["options"]} for q in ex.quiz],
+                "pass_ratio": ex.pass_ratio, "status": st,
+                "review": review_dict(db.latest_review(conn, ex.id, rk)) if rk else None}
 
     def grade(ex, code):
         if ex.kind == "python":
-            return runner.run_python_tests(code, ex.dir / "tests")
+            return runner.run_python_tests(code, ex.dir / "tests", files=ex.files)
+        if ex.kind == "tests":
+            return runner.run_test_writing(code, ex.impl_good, ex.impls_bad)
         return runner.check_sql(ex.seed, code, ex.solution, ex.ordered)
 
     def do_review(exercise_id, kind, rubric, material, attempt_id=None):
@@ -115,6 +130,8 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
     @app.post("/api/run")
     def run(body: RunBody):
         ex = get_ex(body.exercise_id)
+        if ex.kind == "tests":
+            return asdict(grade(ex, body.code))
         if ex.kind == "sql":
             return asdict(runner.run_sql_free(ex.seed, body.code))
         return asdict(runner.run_python_free(body.code))
@@ -132,22 +149,41 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
     @app.post("/api/review")
     def review(body: ReviewBody):
         ex = get_ex(body.exercise_id)
+        kind = reviewer.REVIEW_KIND.get(ex.kind)
+        if kind is None:
+            raise HTTPException(400, "this exercise has no review")
         if ex.kind in CODED:
             attempt = need(db.get_attempt(conn, body.attempt_id), "attempt")
             material = {"task": ex.prompt, "code": attempt["code"],
                         "candidate explanation": body.text, "reference solution": ex.solution}
         else:
             material = {"task": ex.prompt, "answer": body.text}
-        return do_review(ex.id, reviewer.REVIEW_KIND[ex.kind], ex.rubric, material, body.attempt_id)
+        return do_review(ex.id, kind, ex.rubric, material, body.attempt_id)
 
     @app.post("/api/reviews/{review_id}/retry")
     def retry(review_id: int):
         row = need(db.get_review(conn, review_id), "review")
         ex = exercises.get(row["exercise_id"])
-        rubric = ex.rubric if ex and reviewer.REVIEW_KIND[ex.kind] == row["kind"] else None
+        rubric = ex.rubric if ex and reviewer.REVIEW_KIND.get(ex.kind) == row["kind"] else None
         result = reviewer.review(row["kind"], rubric, json.loads(row["material_json"]), call)
         db.update_review(conn, review_id, result)
         return {"review_id": review_id, **result}
+
+    @app.post("/api/quiz")
+    def quiz(body: QuizBody):
+        ex = get_ex(body.exercise_id)
+        if ex.kind != "quiz":
+            raise HTTPException(400, "this exercise is not a quiz")
+        if len(body.answers) != len(ex.quiz):
+            raise HTTPException(400, "answer every question")
+        results = [{"correct": a == q["answer"], "answer": q["answer"], "why": q.get("why", "")}
+                   for q, a in zip(ex.quiz, body.answers)]
+        correct = sum(r["correct"] for r in results)
+        passed = correct / len(ex.quiz) >= ex.pass_ratio
+        attempt_id = db.record_attempt(conn, ex.id, "blank", json.dumps(body.answers), passed,
+                                       0, f"{correct}/{len(ex.quiz)}")
+        return {"passed": passed, "correct": correct, "total": len(ex.quiz), "results": results,
+                "attempt_id": attempt_id, "status": status_of(ex)}
 
     @app.get("/api/cards/due")
     def cards_due():

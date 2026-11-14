@@ -4,7 +4,8 @@ import urllib.request
 
 API = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
-REVIEW_KIND = {"python": "code", "sql": "code", "explain": "explain", "prompt": "prompt", "open": "open"}
+REVIEW_KIND = {"python": "code", "sql": "code", "tests": "code", "explain": "explain",
+               "prompt": "prompt", "open": "open"}
 
 DEFAULT_RUBRICS = {
     "code": [
