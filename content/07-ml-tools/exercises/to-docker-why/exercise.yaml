@@ -1,0 +1,8 @@
+title: "Explain: why containerise a model?"
+kind: open
+required: true
+rubric:
+  - "Accurate: a container packages the code, the Python version, the libraries and the model file into one image that runs the same on any machine with a container runtime."
+  - "Names the problem it solves: works-on-my-machine differences in library versions and system packages between development and production."
+  - "Gives a concrete example, such as a model trained with one scikit-learn version that loads wrongly or fails under another version."
+  - "Is honest about limits: a container does not make the model correct, it still needs versioned images, and it is not a full deployment or scaling system alone."

@@ -1,0 +1,7 @@
+title: Data quality - null rate per column
+kind: sql
+required: true
+time_limit_s: 480
+ordered: true
+mock: true
+seed_file: ../../../_shared/delivery.sql

@@ -1,0 +1,8 @@
+title: "Explain: how do you monitor a model in production?"
+kind: open
+required: true
+rubric:
+  - Covers more than one layer - service health such as latency and errors, data quality and input drift, and model quality or output drift.
+  - Explains the problem, which is that models fail silently, so the code can run without errors while predictions get worse.
+  - Gives a concrete example, such as comparing a feature's live distribution with the training one using PSI, or tracking accuracy once labels arrive.
+  - Is honest about limits, such as labels arriving late, drift not always hurting quality, and alerts needing thresholds and an owner to avoid noise.

@@ -1,0 +1,4 @@
+title: Test batch_split
+kind: tests
+time_limit_s: 900
+required: true

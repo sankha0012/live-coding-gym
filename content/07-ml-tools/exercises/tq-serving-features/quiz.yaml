@@ -1,0 +1,88 @@
+- q: A model scores every customer once each night and writes the results to a table. Which serving style is this?
+  options:
+  - Batch scoring
+  - Online serving
+  - Streaming inference with per-event latency limits
+  - Shadow deployment
+  answer: 0
+  why: Scoring a whole set on a schedule and storing the results is batch prediction.
+- q: A fraud check must answer within 100 ms while a customer pays. Which style fits best?
+  options:
+  - A nightly batch job
+  - A weekly retraining job
+  - An online service with a low-latency endpoint
+  - A notebook run by an analyst
+  answer: 2
+  why: A decision needed during a live request needs an online endpoint with a latency budget.
+- q: What is the main advantage of batch scoring over online serving?
+  options:
+  - Predictions are always fresher
+  - It is simpler and cheaper, with no latency limit per request
+  - It needs no features at all
+  - It removes the need for monitoring
+  answer: 1
+  why: Batch jobs can use big hardware on a schedule and have no per-request latency pressure, but results can be stale.
+- q: Why is a FastAPI service often used to serve a model online?
+  options:
+  - It trains the model faster
+  - It stores features for you
+  - It exposes the model as an HTTP endpoint with typed request validation
+  - It replaces the need for a container
+  answer: 2
+  why: FastAPI wraps the predict call in an HTTP route and validates inputs with typed schemas.
+- q: Where should a serving app load the model file?
+  options:
+  - Once at startup, then reuse it for every request
+  - On every request, so it is always fresh
+  - Inside the prediction loop for each row
+  - Only after the first error
+  answer: 0
+  why: Loading a model per request adds large latency; load once and reuse.
+- q: What is training-serving skew?
+  options:
+  - The model trains slower than it serves
+  - Features are computed differently in training than in serving
+  - The training set is larger than the test set
+  - Two servers return different latencies
+  answer: 1
+  why: If the same feature is built by different code paths, the model sees inputs in production that it never saw in training.
+- q: Which practice best reduces training-serving skew?
+  options:
+  - Retrain the model more often
+  - Use a bigger model
+  - Log fewer features
+  - Share one feature definition between training and serving
+  answer: 3
+  why: One definition used in both places removes the chance of two versions of the same feature.
+- q: What does a feature store mainly provide?
+  options:
+  - A central place to define, store and serve features for both training and serving
+  - A replacement for the model registry
+  - A faster optimiser for gradient descent
+  - A tool that labels data automatically
+  answer: 0
+  why: It holds consistent feature definitions with an offline store for training and an online store for low-latency lookup.
+- q: In a feature store, what is the online store used for?
+  options:
+  - Storing the full history for training
+  - Low-latency lookup of the latest feature values at request time
+  - Storing model weights
+  - Running the nightly batch job
+  answer: 1
+  why: The online store holds the latest values per entity so a request can read them in milliseconds.
+- q: What is point-in-time correctness when building a training set from a feature store?
+  options:
+  - Using the newest feature value for every row
+  - Sorting rows by their id
+  - Joining each row with the feature values known at that row's event time, not later
+  - Dropping rows with missing values
+  answer: 2
+  why: Using later values leaks the future into training and inflates offline scores.
+- q: A model works offline but gives worse results in production, and one feature is null much more often there. What is the first suspicion?
+  options:
+  - The learning rate was too high
+  - The test set was too small
+  - The model needs more trees
+  - A mismatch between the training and serving feature pipelines
+  answer: 3
+  why: A feature that behaves differently in production points to skew in how it is computed or fetched.

@@ -1,0 +1,9 @@
+import pandas as pd
+
+
+def coupon_effect(orders: pd.DataFrame) -> tuple[float, float]:
+    d = orders[orders["status"] == "delivered"].copy()
+    d["subtotal"] = d["subtotal"].fillna(0)
+    d["has_coupon"] = d["coupon_code"].notna()
+    means = d.groupby("has_coupon")["subtotal"].mean()
+    return round(float(means[True]), 2), round(float(means[False]), 2)

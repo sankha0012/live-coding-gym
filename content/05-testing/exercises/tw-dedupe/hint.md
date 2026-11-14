@@ -1,0 +1,1 @@
+Pick inputs where the right answer differs from the easy wrong ones: an order that is not sorted, duplicates that are not next to each other, and a check that the original list is unchanged afterwards.

@@ -1,0 +1,96 @@
+- q: Why should a StandardScaler be fitted on the training data only?
+  options:
+  - Fitting on the test data is slower
+  - The scaler cannot handle more than one dataset
+  - Test statistics would leak into training and make the score look better than it is
+  - Scaled test data always gives a lower score
+  answer: 2
+  why: The test set must stand in for unseen data, so nothing learned from it may shape the preprocessing.
+- q: What is the main benefit of putting the scaler and the model in one Pipeline and passing it to cross_val_score?
+  options:
+  - The preprocessing is refitted on the training part of each fold, so no fold leaks into another
+  - The model trains faster on every fold
+  - The pipeline picks the best model automatically
+  - Cross-validation then needs no random_state
+  answer: 0
+  why: The pipeline keeps every fitted step inside the fold, which is what stops leakage.
+- q: On new data at prediction time, which call is correct for a fitted scaler?
+  options:
+  - scaler.fit_transform(new_data)
+  - scaler.fit(new_data)
+  - scaler.transform(new_data)
+  - scaler.partial_fit(new_data)
+  answer: 2
+  why: transform reuses the statistics learned on the training data, while fitting again would change them.
+- q: What does a ColumnTransformer do?
+  options:
+  - It splits the data into train and test sets
+  - It applies different preprocessing to different columns and joins the results
+  - It removes columns that are not useful
+  - It converts a DataFrame into a list of rows
+  answer: 1
+  why: It is used to scale numeric columns and one-hot encode categorical columns in one step.
+- q: A fraud dataset has 1 percent positives. Which cross-validation setup is the safest default?
+  options:
+  - KFold with shuffle and no stratification
+  - A single split with the first 80 percent of rows for training
+  - Leave-one-out on all rows
+  - StratifiedKFold, so each fold keeps the class ratio
+  answer: 3
+  why: Without stratification a fold can contain almost no positives and the score becomes noisy or undefined.
+- q: What does cross_val_score(model, X, y, cv=5) return?
+  options:
+  - One score per fold, five numbers in total
+  - A model trained on all the data
+  - The average of the five scores only
+  - The predictions for the test set
+  answer: 0
+  why: It returns an array with one score per fold, and you report their mean and spread.
+- q: You fill missing values with df["age"].fillna(df["age"].mean()) on the full dataset before splitting. What is the problem?
+  options:
+  - fillna cannot be used on numeric columns
+  - The mean uses rows that end up in the test set, which is a small leak
+  - The mean is always wrong when values are missing
+  - It changes the column type to string
+  answer: 1
+  why: The fix is a SimpleImputer inside the pipeline, fitted on training rows only.
+- q: What does OneHotEncoder(handle_unknown="ignore") do at prediction time?
+  options:
+  - It adds the new category to the encoder
+  - It drops the row with the new category
+  - It raises an error so the problem is visible
+  - It encodes an unseen category as all zeros instead of failing
+  answer: 3
+  why: Production data can contain categories never seen in training, and this setting keeps the pipeline from crashing.
+- q: Why save the whole fitted Pipeline with joblib instead of only the model?
+  options:
+  - Pipelines are smaller on disk
+  - The preprocessing is saved with the model, so serving applies exactly the same steps
+  - joblib cannot save a model without a pipeline
+  - It makes loading faster
+  answer: 1
+  why: Saving only the model forces you to rebuild the preprocessing by hand, which is where mismatches appear.
+- q: You load a pickled or joblib model that was saved with another scikit-learn version. What is the safe expectation?
+  options:
+  - It always loads and behaves the same
+  - It loads, but only the predictions change slightly
+  - It may fail or behave differently, so store the library versions with the model
+  - It is converted to the new version automatically
+  answer: 2
+  why: These files are not a stable format across versions, so record the versions and load in a matching environment.
+- q: Rows are a time series, such as daily demand. Which split respects how the model will be used?
+  options:
+  - A random shuffle split
+  - Train on earlier dates and test on later dates, for example with TimeSeriesSplit
+  - Train on the latest dates and test on the earliest
+  - Put each week in both train and test
+  answer: 1
+  why: A shuffled split lets the model see the future, which gives scores that production will never match.
+- q: In GridSearchCV over a Pipeline with a step named "clf", how do you name the C parameter of that step?
+  options:
+  - C
+  - clf.C
+  - clf:C
+  - clf__C
+  answer: 3
+  why: Parameters of a pipeline step use the step name, a double underscore and the parameter name.

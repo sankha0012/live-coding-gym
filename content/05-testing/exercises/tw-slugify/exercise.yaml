@@ -1,0 +1,4 @@
+title: Test slugify
+kind: tests
+time_limit_s: 600
+required: true

@@ -1,0 +1,96 @@
+- q: A delivery_minutes column is null for all cancelled orders. You call df["delivery_minutes"].mean(). What does it describe?
+  options:
+  - Only the orders that have a delivery time, because nulls are skipped
+  - All orders, with cancelled ones counted as zero minutes
+  - All orders, with nulls replaced by the median
+  - Nothing, pandas raises an error when nulls are present
+  answer: 0
+  why: mean() skips NaN, so it describes only the delivered orders, and you should say how many rows that is.
+- q: You left-merge orders (1,000 rows) with a restaurants table and get 1,040 rows. What is the most likely cause?
+  options:
+  - The left join adds one row for every order without a restaurant
+  - The order_id column was converted to float
+  - Some restaurant_id values are duplicated in the restaurants table
+  - pandas merges always add a few rows for safety
+  answer: 2
+  why: Duplicate keys on the right side match one order several times, which also inflates any sum.
+- q: Which merge argument makes pandas raise an error when the right table has duplicate keys?
+  options:
+  - how="strict"
+  - indicator=True
+  - sort=True
+  - validate="many_to_one"
+  answer: 3
+  why: validate checks the key uniqueness you expect and raises MergeError when it does not hold.
+- q: You fit a StandardScaler on the full dataset and then split into train and test. What is wrong?
+  options:
+  - Nothing, scaling is a fixed transformation
+  - The scaler should be fitted on the test set only
+  - The test rows influenced the mean and std, which is a small leak
+  - StandardScaler cannot be fitted before splitting for technical reasons
+  answer: 2
+  why: Fit learns numbers from data, so it must see the training rows only and then transform the test rows.
+- q: Daily order data is used to predict next-day demand. Which validation is the most honest?
+  options:
+  - A random 80/20 split of the rows
+  - Train on earlier dates and test on later dates
+  - Train on later dates and test on earlier dates
+  - Five-fold cross-validation with shuffling
+  answer: 1
+  why: Production always predicts the future from the past, so the test set must come after the training set.
+- q: A model predicting late delivery gets an AUC of 0.99. What should you suspect first?
+  options:
+  - The model is simply very good
+  - The test set is too large
+  - The class balance is too even
+  - A feature that is only known after delivery, such as actual_minutes
+  answer: 3
+  why: A near-perfect score is a classic sign of a leaked feature that would not exist at prediction time.
+- q: What does an AUC of 0.5 mean?
+  options:
+  - The model ranks a random positive above a random negative about half the time
+  - The model is right on 50 percent of the predictions at threshold 0.5
+  - Half of the features are useless
+  - The classes are perfectly balanced
+  answer: 0
+  why: AUC is the probability that a random positive gets a higher score than a random negative, and 0.5 equals chance.
+- q: Why does AUC stay the same if you apply a monotone increasing transform to the scores, such as a square root of positive scores?
+  options:
+  - Because AUC is computed after rounding the scores
+  - Because AUC depends only on the ranking of the scores
+  - Because the transform keeps the scores between 0 and 1
+  - Because AUC needs calibrated probabilities
+  answer: 1
+  why: AUC only compares which score is higher, and an increasing transform keeps every order unchanged.
+- q: An A/B test has 5,000 users per arm and conversion rates of 10.0 and 10.6 percent. What is the right first step before saying B wins?
+  options:
+  - Ship B, since the rate is higher
+  - Take the average of the two rates and compare it to 10 percent
+  - Check whether the difference is bigger than noise, for example with a two-proportion z-test
+  - Run the test again with a smaller sample
+  answer: 2
+  why: A small difference with these sample sizes can easily be chance, so you test it before concluding.
+- q: Which statement about a 95 percent bootstrap confidence interval for a mean is correct?
+  options:
+  - It contains 95 percent of the individual values
+  - It is built from the 2.5th and 97.5th percentiles of means of resamples drawn with replacement
+  - It is built by resampling without replacement
+  - It is always symmetric around the sample mean
+  answer: 1
+  why: You resample the data with replacement many times, compute the mean each time, and take the percentiles of those means.
+- q: What does the Kolmogorov-Smirnov (KS) statistic between two samples measure?
+  options:
+  - The difference between their means divided by the pooled std
+  - The share of values that appear in both samples
+  - The correlation between the sorted values
+  - The largest gap between their two empirical cumulative distributions
+  answer: 3
+  why: KS is the maximum vertical distance between the two ECDFs, so it is used to compare score or feature distributions.
+- q: You run the same A/B comparison on 20 different metrics and one has p = 0.04. What is the main risk?
+  options:
+  - With many tests, some will look significant by chance, so you should correct or pre-register one main metric
+  - The p-value is invalid because it is below 0.05
+  - The sample size is too large
+  - Metrics must always be tested in pairs
+  answer: 0
+  why: With 20 tests at the 5 percent level, about one false positive is expected even when nothing changed.

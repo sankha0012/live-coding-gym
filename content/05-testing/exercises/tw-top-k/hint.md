@@ -1,0 +1,1 @@
+Think of four kinds of cases: the normal order, equal scores (use names that are NOT in alphabetical order), the sizes of k (0, negative, bigger than the list), and what happens to the input list afterwards.

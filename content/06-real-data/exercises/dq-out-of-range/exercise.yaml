@@ -1,0 +1,6 @@
+title: Data quality - values out of range
+kind: sql
+required: true
+time_limit_s: 720
+ordered: true
+seed_file: ../../../_shared/delivery.sql

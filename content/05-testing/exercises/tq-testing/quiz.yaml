@@ -1,0 +1,88 @@
+- q: Which file and function names does pytest collect by default?
+  options:
+  - check_*.py files with check_* functions
+  - Any function with an assert in it
+  - test_*.py files with test_* functions
+  - Files ending in _tests.py only
+  answer: 2
+  why: Pytest collects test_*.py files and test_* functions, and silently ignores other names.
+- q: How should you compare 0.1 + 0.2 with 0.3 in a test?
+  options:
+  - With == after rounding the code under test
+  - With pytest.approx
+  - With is
+  - With assert not (a - b)
+  answer: 1
+  why: Floats are inexact in binary, so approx allows a tiny tolerance where == can fail.
+- q: A test says assert slugify("a b") with no comparison. What happens?
+  options:
+  - It always passes for a non-empty string, so it checks nothing
+  - It fails because there is no expected value
+  - Pytest raises a syntax error
+  - It passes only if the string equals "a b"
+  answer: 0
+  why: A non-empty string is truthy, so the assert cannot fail and the test is useless.
+- q: What does pytest.mark.parametrize give you?
+  options:
+  - One shared setup object for all tests
+  - A faster run through multiprocessing
+  - Automatic edge cases found by pytest
+  - One test body run once per row, reported as separate tests
+  answer: 3
+  why: Each row runs as its own test, so a failure names the input that broke.
+- q: Why does each test normally get a fresh fixture value?
+  options:
+  - So one test cannot change the data another test sees
+  - Because fixtures are cached for speed
+  - Because fixtures cannot return lists
+  - So tests run in a fixed order
+  answer: 0
+  why: The default fixture scope is per test, which keeps tests independent.
+- q: "What is wrong with with pytest.raises(Exception): withdraw(10, 50)?"
+  options:
+  - It cannot catch ValueError
+  - It also passes when the code fails for an unrelated reason, like a NameError
+  - It makes the function run twice
+  - Nothing, it is the recommended form
+  answer: 1
+  why: Name the exact type and use match so only the intended error passes.
+- q: A retry function sleeps between attempts. How do you test it quickly and exactly?
+  options:
+  - Use short real delays like 0.01 seconds
+  - Run it in a thread with a timeout
+  - Pass in a fake sleep that records the waits and assert on them
+  - Skip the test, because time cannot be tested
+  answer: 2
+  why: A fake sleep is instant and lets you assert the exact backoff sequence.
+- q: "The code under test did from time import sleep, and you patch time.sleep with monkeypatch. What happens?"
+  options:
+  - The patch works because both names are the same object
+  - Python raises an error at patch time
+  - monkeypatch patches every imported copy
+  - The module still uses its own name for sleep, so the test may sleep for real
+  answer: 3
+  why: Patch the name where it is looked up, here the module that imported it.
+- q: Which set of tests is the best first choice for a function that splits a list into batches?
+  options:
+  - Many different normal lists of similar length
+  - Normal case, empty list, last short batch, and size zero raising an error
+  - Only the largest input you can think of
+  - One test that calls the function ten times
+  answer: 1
+  why: One test per behaviour, edge and failure path covers more bugs than many similar normal cases.
+- q: Which test is the most fragile?
+  options:
+  - One that checks the output for a given input
+  - One that checks a ValueError is raised for bad input
+  - One that checks which private helper function was called
+  - One that checks the input list is unchanged
+  answer: 2
+  why: It tests how the code works inside, so a harmless refactor breaks it.
+- q: How can you check that your tests are enough for a small function?
+  options:
+  - Count that there are at least twenty tests
+  - Reach 100 percent line coverage and stop
+  - Copy the function logic into the test to compare
+  - Imagine small mistakes, like an off-by-one, and confirm a test would fail for each
+  answer: 3
+  why: Coverage shows lines that ran, not lines that were checked, so test against likely mistakes.

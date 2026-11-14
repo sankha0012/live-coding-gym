@@ -1,0 +1,9 @@
+def validate_email(s):
+    if " " in s or s.count("@") != 1:
+        return False
+    local, domain = s.split("@")
+    if not local or "." not in domain:
+        return False
+    if domain.startswith("."):
+        return False
+    return True

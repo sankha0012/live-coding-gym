@@ -1,0 +1,1 @@
+Check the happy path with single and combined units, then spend most tests on the failure path: list the different kinds of bad text and make sure each one raises. pytest.mark.parametrize keeps that short.

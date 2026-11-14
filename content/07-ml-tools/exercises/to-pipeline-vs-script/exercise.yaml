@@ -1,0 +1,8 @@
+title: "Explain: why a Pipeline, not a loose script?"
+kind: open
+required: true
+rubric:
+  - "Accurate: a Pipeline chains preprocessing and the model, fits the steps only on training data, and applies the same steps at predict time."
+  - "Names the problem it solves: data leakage and training-serving mismatch from loose scripts that fit scalers or imputers by hand."
+  - "Gives a concrete example, such as an imputer and scaler fitted inside each cross-validation fold, or one saved object used in production."
+  - "Is honest about limits: a Pipeline does not fix bad data or bad features, and it does not give you tracking or deployment."

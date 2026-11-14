@@ -1,0 +1,8 @@
+title: GMV by city
+kind: python
+time_limit_s: 900
+required: true
+mock: true
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv

@@ -1,0 +1,8 @@
+title: Keep the latest row per key
+kind: python
+time_limit_s: 720
+required: true
+mock: true
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv

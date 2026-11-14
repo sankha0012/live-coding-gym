@@ -1,0 +1,1 @@
+Test the happy path with a number you can check by hand, then each edge in the spec on its own: window equal to the length, window too big, window below 1, and the input list afterwards. Use unsorted input so a function that reorders it shows up.

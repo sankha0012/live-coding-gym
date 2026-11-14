@@ -1,0 +1,1 @@
+Build a fake function that fails N times then succeeds, and count its calls. Pass a list's append as sleep and assert on the list. Check calls, sleeps and the final outcome, including the all-fail case.

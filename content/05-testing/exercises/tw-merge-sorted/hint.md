@@ -1,0 +1,1 @@
+Equal keys are the hard part: give the two items labels that are NOT in alphabetical order so you can see which one came first. Also test a list that runs out before the other, in both directions, and check both inputs afterwards.

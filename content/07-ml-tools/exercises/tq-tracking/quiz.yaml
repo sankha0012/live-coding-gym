@@ -1,0 +1,80 @@
+- q: What does an experiment tracker such as MLflow record for each run?
+  options:
+  - Only the final model file
+  - Parameters, metrics and artifacts, so runs can be compared and reproduced
+  - The GPU temperature
+  - The weather at the data centre
+  answer: 1
+  why: Tracking exists so that you can say which parameters and data produced which metric.
+- q: In MLflow terms, what is the difference between a parameter and a metric?
+  options:
+  - A parameter is a result, a metric is an input
+  - Parameters are numbers and metrics are text
+  - A parameter is an input such as a learning rate, a metric is a result such as AUC
+  - There is no difference, they are two names for the same thing
+  answer: 2
+  why: Parameters describe how the run was set up and metrics describe how it performed.
+- q: What is an artifact in a tracked run?
+  options:
+  - A bug in the training code
+  - A copy of the tracking server
+  - The name of the experiment
+  - A file produced by the run, such as the model, a plot or a feature list
+  answer: 3
+  why: Artifacts are stored with the run so the output can be found later.
+- q: Which extra items make a run reproducible, beyond the parameters?
+  options:
+  - The time of day it ran
+  - The name of the person who ran it
+  - The code version, the data version and the random seed
+  - The size of the laptop screen
+  answer: 2
+  why: Without the code commit, the data version and the seed you cannot rerun the same experiment.
+- q: Two runs have the same parameters but different metrics. What is the most likely cause?
+  options:
+  - Unseeded randomness or a changed dataset
+  - The tracker is broken
+  - The metrics were logged in a different language
+  - Runs on different days are always different
+  answer: 0
+  why: Same code, data and seed should give the same result, so something uncontrolled changed.
+- q: What does a model registry add on top of experiment tracking?
+  options:
+  - Faster training
+  - Automatic hyperparameter search
+  - A way to log metrics every step
+  - Named, versioned models with a lifecycle, so serving can ask for a specific version
+  answer: 3
+  why: Tracking stores runs, and the registry manages which model version is staged or in production.
+- q: Why does a registered model version keep a link to the run that produced it?
+  options:
+  - So you can trace the metrics, parameters and data behind a model that is serving
+  - So the run cannot be deleted
+  - So the model trains again automatically
+  - So the model file is compressed
+  answer: 0
+  why: This lineage answers "where did this model come from" during an incident or an audit.
+- q: Before promoting a new model version to production, what is the sensible minimum?
+  options:
+  - Promote it if it was trained last, because newer is better
+  - Delete the old version to save space
+  - Compare it with the current production model on the same holdout data and keep the old version for rollback
+  - Promote it if training did not crash
+  answer: 2
+  why: A comparison on identical data shows whether it is really better, and the old version makes rollback a quick change.
+- q: You log a metric inside the training loop with a step number. What does that give you?
+  options:
+  - A curve over steps, such as loss per epoch, that you can plot and compare
+  - A smaller model file
+  - A faster training loop
+  - Automatic early stopping
+  answer: 0
+  why: Logging with a step records the history, not just the last value.
+- q: Why is a tracker better than a spreadsheet kept by hand?
+  options:
+  - Spreadsheets cannot store numbers
+  - A tracker makes the model more accurate
+  - Logging is automatic and tied to code, data and artifacts, so records are not forgotten or mistyped
+  - Trackers need no setup
+  answer: 2
+  why: Manual notes drift from what really ran, while automatic logging stays attached to the run.

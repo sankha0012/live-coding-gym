@@ -1,0 +1,88 @@
+- q: What is an embedding?
+  options:
+  - A dense vector of numbers that represents the meaning of a text or item
+  - A compressed copy of a file
+  - A list of keywords from a document
+  - A label assigned by a classifier
+  answer: 0
+  why: Embedding models map text to vectors so that similar meanings are close together.
+- q: Which measure is commonly used to compare two embeddings?
+  options:
+  - Edit distance
+  - Cosine similarity
+  - Word count
+  - Gini impurity
+  answer: 1
+  why: Cosine similarity compares the direction of two vectors and is the usual choice for text embeddings.
+- q: What does a vector database mainly do?
+  options:
+  - Trains embedding models
+  - Replaces the language model
+  - Stores vectors and finds the nearest ones to a query vector quickly
+  - Cleans text before embedding
+  answer: 2
+  why: Its job is storage plus fast approximate nearest-neighbour search over vectors.
+- q: Why do vector stores often use approximate nearest neighbour search?
+  options:
+  - Exact search gives wrong answers
+  - It is cheaper to write
+  - It needs no index
+  - It trades a little recall for much lower latency on large collections
+  answer: 3
+  why: Approximate indexes avoid comparing the query to every vector, so they are fast at scale, with a small loss of recall.
+- q: What does RAG (retrieval-augmented generation) do?
+  options:
+  - Retrieves relevant documents and gives them to the model as context for its answer
+  - Fine-tunes the model on every question
+  - Removes the need for a prompt
+  - Generates the embeddings from the answer
+  answer: 0
+  why: RAG grounds the answer in retrieved text instead of relying only on what the model memorised.
+- q: What is the main reason to choose RAG over fine-tuning to add company knowledge?
+  options:
+  - Fine-tuning cannot change any behaviour
+  - Knowledge can be updated by changing documents, with no retraining
+  - RAG never makes mistakes
+  - RAG needs no retrieval step
+  answer: 1
+  why: Updating an index is cheap and the sources can be cited; retraining is slow and hides the source.
+- q: Why are documents split into chunks before embedding?
+  options:
+  - Models cannot read more than one word
+  - Chunks remove the need for a vector store
+  - Whole-document vectors blur many topics, and the context window is limited
+  - It makes the embeddings deterministic
+  answer: 2
+  why: Smaller focused chunks give more precise matches and fit in the prompt.
+- q: What problem does chunk overlap solve?
+  options:
+  - It makes search slower on purpose
+  - It lowers the cost of embedding
+  - It removes duplicate documents
+  - It keeps a sentence or idea that sits on a chunk boundary from being cut off from its context
+  answer: 3
+  why: Shared text between neighbouring chunks keeps ideas that cross a boundary retrievable.
+- q: The retrieved chunks do not contain the answer, yet the model answers confidently. Which fix helps most?
+  options:
+  - Instruct the model to answer only from the context and say it does not know otherwise
+  - Increase the temperature
+  - Shorten the question
+  - Remove the context
+  answer: 0
+  why: A grounding instruction reduces made-up answers when retrieval comes back empty.
+- q: Which pair of metrics evaluates the retrieval step of a RAG system on its own?
+  options:
+  - BLEU and perplexity
+  - Recall at k and mean reciprocal rank
+  - Latency and cost per token
+  - Training loss and AUC
+  answer: 1
+  why: These measure whether the right chunks appear, and how high, in the top results for a labelled set of questions.
+- q: Why evaluate a RAG system with a fixed set of test questions with expected sources?
+  options:
+  - So the model can train on them
+  - So the prompt never changes
+  - So that changes to chunking, prompts or models can be compared against the same yardstick
+  - So no human review is ever needed
+  answer: 2
+  why: A stable test set turns each change into a measurable before and after.

@@ -1,0 +1,96 @@
+- q: The distribution of an input feature in production moves away from the training distribution, but the link between features and label is unchanged. What is this called?
+  options:
+  - Concept drift
+  - Overfitting
+  - Label leakage
+  - Covariate drift (data drift)
+  answer: 3
+  why: A change in the input distribution alone is covariate or data drift.
+- q: Fraud patterns change so the same inputs now mean a different label. What is this?
+  options:
+  - Data drift
+  - A schema change
+  - Concept drift
+  - Class imbalance
+  answer: 2
+  why: When the relation between inputs and target changes, that is concept drift.
+- q: Ground-truth labels arrive weeks late. Which signal can you monitor right away?
+  options:
+  - Input feature distributions and the prediction distribution
+  - Accuracy on the live data
+  - Test-set F1
+  - Training loss
+  answer: 0
+  why: Accuracy needs labels; input and output distributions can be compared with a reference at once.
+- q: Which statistic compares a numeric feature's live sample against a reference sample to detect drift?
+  options:
+  - The mean squared error
+  - The ROC curve
+  - The confusion matrix
+  - The Kolmogorov-Smirnov test
+  answer: 3
+  why: The two-sample KS test measures the distance between two empirical distributions.
+- q: What does a Population Stability Index (PSI) measure?
+  options:
+  - The size of the training set
+  - The latency of the service
+  - How much a binned distribution has shifted between two samples
+  - The importance of each feature
+  answer: 2
+  why: PSI sums a term per bin to summarise how much the distribution moved from the reference.
+- q: Which metrics are typical for the health of a model service, as opposed to model quality?
+  options:
+  - Latency, error rate and throughput
+  - Precision and recall
+  - Feature importance and AUC
+  - Calibration and log loss
+  answer: 0
+  why: Service health is about latency, errors and traffic; quality metrics need labels or proxies.
+- q: Prometheus is usually used in an ML system to do what?
+  options:
+  - Train the model
+  - Version the dataset
+  - Explain predictions
+  - Collect and store time-series metrics and drive alerts from them
+  answer: 3
+  why: Prometheus scrapes numeric metrics over time and alert rules fire on them.
+- q: An alert fires every few minutes on small, harmless metric wiggles. What is the best fix?
+  options:
+  - Remove monitoring
+  - Alert on a sustained threshold over a window and tune it to real impact
+  - Alert on every single data point
+  - Send alerts to a channel nobody reads
+  answer: 1
+  why: Windowed thresholds tied to impact cut noise so that real alerts stay trusted.
+- q: What should a CI pipeline for an ML project run on every pull request?
+  options:
+  - A full production retraining on all data
+  - Only a code formatter
+  - Nothing until release day
+  - Unit tests, data and schema checks, and a quick deterministic training smoke test
+  answer: 3
+  why: Fast automated checks catch broken code and data assumptions before merge.
+- q: What is a sensible gate before promoting a new model to production?
+  options:
+  - Promote it if the code compiles
+  - Promote it if the training loss is low
+  - Promote it if it was trained last
+  - Compare it against the current model on a fixed evaluation set and require it to be no worse
+  answer: 3
+  why: A fixed comparison against the current model guards against regressions that training loss cannot show.
+- q: A new model is run on live traffic, its outputs are logged, but users still get the old model's answers. What is this?
+  options:
+  - A canary release
+  - Shadow deployment
+  - A rollback
+  - A hotfix
+  answer: 1
+  why: Shadow mode compares the new model on real requests without affecting users.
+- q: Why keep the previous model version available after a deploy?
+  options:
+  - To make the build slower
+  - To double the training data
+  - To allow a fast rollback if the new model misbehaves
+  - To avoid writing tests
+  answer: 2
+  why: A registered earlier version lets you revert in minutes instead of retraining.

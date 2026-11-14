@@ -1,0 +1,8 @@
+title: "Explain: batch or online inference?"
+kind: open
+required: true
+rubric:
+  - Defines both correctly - batch scores many records on a schedule and stores the results, online scores one request at the moment it arrives, usually behind an API.
+  - Names the deciding factor, which is how fresh the input must be and how fast the answer is needed, with cost and complexity as the trade-off.
+  - Gives a concrete example for each, such as nightly restaurant recommendations versus a fraud check at payment time.
+  - Is honest about limits, such as stale batch results, latency budgets and training-serving skew in online serving.
