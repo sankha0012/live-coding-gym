@@ -26,5 +26,6 @@
   "24": "fixtures/content/01-hand-python/exercises/count-words/prompt.md",
   "25": "fixtures/content/01-hand-python/exercises/explain-count-words/prompt.md",
   "26": "fixtures/content/03-hand-sql/exercises/top-customers/prompt.md",
-  "27": "tests/__init__.py"
+  "27": "tests/__init__.py",
+  "28": "Authoring protocol (applies to Tasks 8 to 19)"
 }
