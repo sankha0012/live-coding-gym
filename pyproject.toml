@@ -1,0 +1,13 @@
+[project]
+name = "live-coding-gym"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["fastapi", "uvicorn", "pyyaml", "pytest", "pandas", "numpy", "scikit-learn"]
+
+[dependency-groups]
+dev = ["httpx"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+norecursedirs = ["fixtures"]
