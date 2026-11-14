@@ -1,0 +1,1 @@
+Try every observed x as the threshold, both directions, and keep the pair with the most correct training rows. Add one threshold below the smallest x so the stump can predict a single class. Skip the rows with a missing x while fitting, but count all labels for the fallback.
