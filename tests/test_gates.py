@@ -76,3 +76,21 @@ def test_step_with_no_required_exercises_never_passes(conn, steps):
     step = steps[1]
     step.exercises[0].required = False
     assert gates.step_status(conn, step)["passed"] is False
+
+
+def test_step_passes_at_the_pass_ratio(conn, steps):
+    step = steps[0]
+    step.pass_ratio = 0.5
+    code_ex, explain_ex = step.exercises
+    db.record_attempt(conn, code_ex.id, "timed", "c", True, 100, "")
+    db.save_review(conn, code_ex.id, "code", {}, good())
+    st = gates.step_status(conn, step)
+    assert st["done"] == 1 and st["total"] == 2 and st["passed"] is True
+    step.pass_ratio = 1.0
+    assert gates.step_status(conn, step)["passed"] is False
+
+
+def test_journey_reports_needed_count(conn, steps):
+    steps[0].pass_ratio = 0.7
+    j = gates.journey(conn, steps)[0]
+    assert j["needed"] == 2 and j["pass_ratio"] == 0.7  # ceil(0.7 * 2)

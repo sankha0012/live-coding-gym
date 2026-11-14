@@ -32,6 +32,7 @@ class Exercise:
     wrong: dict = field(default_factory=dict)
     quiz: list = field(default_factory=list)
     pass_ratio: float = 0.8
+    order: int = 50
     impl_good: str = ""
     impls_bad: dict = field(default_factory=dict)
 
@@ -41,7 +42,8 @@ class Step:
     id: str
     title: str
     order: int
-    min_score: int = 4
+    min_score: int = 3
+    pass_ratio: float = 0.7
     timed_required: bool = False
     lessons: list = field(default_factory=list)
     exercises: list = field(default_factory=list)
@@ -80,6 +82,7 @@ def load_exercise(d, step_id):
         say=_read(d / "say.md"),
         model_prompt=_read(d / "model_prompt.md"),
         pass_ratio=meta.get("pass_ratio", 0.8),
+        order=meta.get("order", 50),
         files=[_existing((d / f).resolve()) for f in meta.get("files", [])],
     )
     ext = EXT.get(kind)
@@ -119,7 +122,8 @@ def load_content(content_dir):
             id=sd.name,
             title=meta["title"],
             order=meta["order"],
-            min_score=gate.get("min_score", 4),
+            min_score=gate.get("min_score", 3),
+            pass_ratio=gate.get("pass_ratio", 0.7),
             timed_required=gate.get("timed_required", False),
             cards=yaml.safe_load(_read(sd / "cards.yaml")) or [],
         )
@@ -133,6 +137,7 @@ def load_content(content_dir):
                 step.exercises.append(load_exercise(ed, sd.name))
             except Exception as e:  # one broken exercise must not stop the app
                 errors.append(f"{ed}: {e}")
+        step.exercises.sort(key=lambda e: (e.order, e.id))
         steps.append(step)
     steps.sort(key=lambda s: s.order)
     return steps, errors

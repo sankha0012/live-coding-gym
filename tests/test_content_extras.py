@@ -73,3 +73,16 @@ def test_tests_kind_needs_good_and_bad_implementations(tmp_path):
     (tmp_path / "01-s" / "exercises" / "e1" / "impl_bad_1.py").unlink()
     ex, errors = load_one(tmp_path)
     assert ex is None and "impl_bad" in errors[0]
+
+
+def test_exercises_sort_by_order_then_id(tmp_path):
+    step = tmp_path / "01-s"
+    (step / "exercises").mkdir(parents=True)
+    (step / "step.yaml").write_text("title: S\norder: 1\n")
+    for name, order in (("a-late", 60), ("b-first", 10), ("c-default", None)):
+        d = step / "exercises" / name
+        d.mkdir()
+        (d / "exercise.yaml").write_text(f"title: {name}\nkind: open\n" + (f"order: {order}\n" if order else ""))
+        (d / "prompt.md").write_text("p")
+    steps, _ = load_content(tmp_path)
+    assert [e.id for e in steps[0].exercises] == ["b-first", "c-default", "a-late"]

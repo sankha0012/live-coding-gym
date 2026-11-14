@@ -134,3 +134,11 @@ def test_mock_round(client):
     assert j["mocks"][0]["total"] == done["score"]["total"]
     assert client.post("/api/mock/999/submit", json={
         "python_code": "", "sql_code": "", "prompt_text": "", "duration_s": 0}).status_code == 404
+
+
+def test_journey_next_up_points_to_first_unfinished_exercise(client):
+    j = client.get("/api/journey").json()
+    assert j["next"]["exercise_id"] == "count-words" and j["next"]["step_id"] == "01-hand-python"
+    post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION, "mode": "timed", "duration_s": 60})
+    post(client, "/api/review", {"exercise_id": "count-words", "attempt_id": 1, "text": "x"})
+    assert client.get("/api/journey").json()["next"]["exercise_id"] == "explain-count-words"

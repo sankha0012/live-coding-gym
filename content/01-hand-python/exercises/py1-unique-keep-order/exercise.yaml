@@ -2,3 +2,4 @@ title: Unique, keep order
 kind: python
 time_limit_s: 420
 required: true
+order: 4

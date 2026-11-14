@@ -2,3 +2,4 @@ title: Running sum
 kind: python
 time_limit_s: 360
 required: true
+order: 5

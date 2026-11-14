@@ -14,3 +14,13 @@ textarea { width: 100%; min-height: 110px; font: inherit; box-sizing: border-box
 .timer { font-variant-numeric: tabular-nums; font-weight: 600; }
 .review { border-left: 4px solid #888; padding: 4px 14px; margin: 14px 0; background: #fff; }
 .bar { display: flex; gap: 10px; align-items: center; margin: 12px 0; }
+
+.tip { position: relative; cursor: help; }
+.tip:hover::after { content: attr(data-tip); position: absolute; left: 0; top: 100%; margin-top: 6px; z-index: 10; width: max-content; max-width: 280px; background: #1c1c1c; color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 13px; font-weight: normal; line-height: 1.4; white-space: normal; }
+.badge { background: #e8e8e8; border-radius: 10px; padding: 1px 9px; font-size: 12px; font-weight: normal; vertical-align: middle; }
+.chip { margin-right: 8px; font-size: 13px; }
+.chip.todo { color: #777; }
+.progress { position: relative; width: 140px; height: 8px; background: #e3e3e3; border-radius: 4px; }
+.progress .fill { height: 100%; background: #1a7f37; border-radius: 4px; }
+.progress .needed { position: absolute; top: -3px; width: 2px; height: 14px; background: #1c1c1c; }
+a.button, button.primary { background: #1c1c1c; color: #fff; padding: 8px 16px; border-radius: 4px; text-decoration: none; border: 0; }

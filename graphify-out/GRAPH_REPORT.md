@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-14)
 
 ## Corpus Check
-- 1800 files · ~267,051 words
+- 1800 files · ~268,220 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4352 nodes · 4148 edges · 1545 communities (1413 shown, 132 thin omitted)
+- 4361 nodes · 4173 edges · 1545 communities (1414 shown, 131 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 95 edges (avg confidence: 0.67)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `23151c00`
+- Built from commit: `88420db0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -323,7 +323,7 @@
 - tw-parse-duration/solution.py
 - CI/CD for ML
 - make_delivery_data.py
-- test_content.py
+- check_content.py
 - CircuitBreaker
 - catches_oserror.py
 - constant_delay.py
@@ -390,21 +390,21 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `fn()` - 29 edges
-2. `load_content()` - 18 edges
-3. `BoundedQueue` - 14 edges
-4. `Authoring protocol (applies to Tasks 8 to 19)` - 14 edges
-5. `parse_config()` - 13 edges
-6. `TokenBucket` - 13 edges
-7. `check()` - 13 edges
-8. `h()` - 13 edges
-9. `exView()` - 13 edges
+2. `load_content()` - 19 edges
+3. `exView()` - 16 edges
+4. `BoundedQueue` - 14 edges
+5. `h()` - 14 edges
+6. `Authoring protocol (applies to Tasks 8 to 19)` - 14 edges
+7. `parse_config()` - 13 edges
+8. `TokenBucket` - 13 edges
+9. `check()` - 13 edges
 10. `LRUCache` - 12 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `test_pending_review_can_be_retried()` --indirect_call--> `flaky()`  [INFERRED]
   tests/test_app.py → content/04-robust-code/exercises/rb-retry-classify/tests/test_hidden.py
-- `test_broken_exercise_is_reported_and_skipped()` --calls--> `load_content()`  [EXTRACTED]
-  tests/test_content.py → gym/content.py
+- `test_exercises_sort_by_order_then_id()` --calls--> `load_content()`  [EXTRACTED]
+  tests/test_content_extras.py → gym/content.py
 - `build_rows()` --calls--> `pick()`  [INFERRED]
   tools/make_delivery_data.py → gym/mock.py
 - `test_migrate_writes_a_checkable_journey()` --calls--> `migrate()`  [INFERRED]
@@ -415,31 +415,31 @@
 ## Import Cycles
 - None detected.
 
-## Communities (1545 total, 132 thin omitted)
+## Communities (1545 total, 131 thin omitted)
 
 ### Community 0 - "db.py"
-Cohesion: 0.16
-Nodes (19): create_mock(), finished_mocks(), get_attempt(), get_mock(), get_review(), _insert(), latest_review(), passed_attempts() (+11 more)
+Cohesion: 0.15
+Nodes (20): create_mock(), finished_mocks(), get_attempt(), get_mock(), get_review(), _insert(), latest_review(), passed_attempts() (+12 more)
 
 ### Community 1 - "runner.py"
 Cohesion: 0.31
 Nodes (12): check_sql(), _query(), run_sql_free(), RunResult, _table(), test_duplicates_are_not_collapsed(), test_free_run_shows_rows(), test_nulls_compare_equal() (+4 more)
 
 ### Community 2 - "load_content"
-Cohesion: 0.20
-Nodes (14): check_exercise(), Exercise, _existing(), load_content(), load_exercise(), _read(), Step, connect() (+6 more)
+Cohesion: 0.17
+Nodes (12): Exercise, _existing(), load_content(), load_exercise(), _read(), Step, connect(), conn() (+4 more)
 
 ### Community 3 - "prod-debug/tests/test_hidden.py"
 Cohesion: 0.47
 Nodes (10): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_check_5(), test_check_6() (+2 more)
 
 ### Community 4 - "app.js"
-Cohesion: 0.31
-Nodes (20): api(), cardsView(), editor(), extrasPanel(), exView(), fmt(), h(), journeyView() (+12 more)
+Cohesion: 0.24
+Nodes (25): api(), cardsView(), CHIP_INFO, editor(), extrasPanel(), exView(), fmt(), h() (+17 more)
 
 ### Community 5 - "test_app.py"
-Cohesion: 0.19
-Nodes (11): client(), fake_gemini(), post(), fixture, test_cards_and_unlock(), test_failed_submission_is_recorded_but_not_passed(), test_full_step_flow_passes_gate_and_unlocks_next(), test_mock_round() (+3 more)
+Cohesion: 0.18
+Nodes (12): client(), fake_gemini(), post(), fixture, test_cards_and_unlock(), test_failed_submission_is_recorded_but_not_passed(), test_full_step_flow_passes_gate_and_unlocks_next(), test_journey_next_up_points_to_first_unfinished_exercise() (+4 more)
 
 ### Community 6 - "File Structure"
 Cohesion: 0.12
@@ -1046,8 +1046,8 @@ Cohesion: 0.22
 Nodes (8): Complexity cheatsheet, Python structures, Say it like this, SQL, The problem it solves, The smallest runnable example, The three traps people hit, Useful rules of thumb
 
 ### Community 821 - "test_content_extras.py"
-Cohesion: 0.50
-Nodes (8): build(), load_one(), One step with one exercise 'e1'. files maps path-under-exercise -> text., test_extras_and_wrong_solutions(), test_files_are_resolved_and_must_exist(), test_quiz_loads_and_rejects_bad_answer_index(), test_sql_seed_file(), test_tests_kind_needs_good_and_bad_implementations()
+Cohesion: 0.42
+Nodes (9): build(), load_one(), One step with one exercise 'e1'. files maps path-under-exercise -> text., test_exercises_sort_by_order_then_id(), test_extras_and_wrong_solutions(), test_files_are_resolved_and_must_exist(), test_quiz_loads_and_rejects_bad_answer_index(), test_sql_seed_file() (+1 more)
 
 ### Community 822 - "Determinism"
 Cohesion: 0.25
@@ -1131,7 +1131,7 @@ Nodes (3): daily_counts(), datetime, Count events per local calendar day in the 
 
 ### Community 1212 - "test_gates.py"
 Cohesion: 0.25
-Nodes (16): record_attempt(), save_review(), exercise_status(), journey(), _review_ok(), step_status(), good(), test_fresh_journey_only_first_step_unlocked() (+8 more)
+Nodes (17): record_attempt(), save_review(), exercise_status(), journey(), _review_ok(), step_status(), good(), test_fresh_journey_only_first_step_unlocked() (+9 more)
 
 ### Community 1213 - "iqr_outliers"
 Cohesion: 0.36
@@ -1313,6 +1313,10 @@ Nodes (6): A minimal real example, CI/CD for ML, The problem it solves, Three li
 Cohesion: 0.43
 Nodes (5): test_dataset_shape_and_determinism(), build_rows(), generate(), Generate the shared food-delivery dataset used by SQL and pandas exercises.…, sql_value()
 
+### Community 1268 - "check_content.py"
+Cohesion: 0.53
+Nodes (3): check_exercise(), main(), Check only some content while authoring. uv run python -m tools.check_ids ex-…
+
 ### Community 1270 - "catches_oserror.py"
 Cohesion: 0.50
 Nodes (3): call_with_retry(), Exception, TransientError
@@ -1378,9 +1382,9 @@ Cohesion: 0.50
 Nodes (3): DataFrame, Series, rolling_7d_orders()
 
 ## Knowledge Gaps
-- **435 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+430 more)
+- **438 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+433 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **132 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **131 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -1396,6 +1400,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 18 inferred relationships involving `____` (e.g. with `apply_n_times()` and `.withdraw()`) actually correct?**
   _`____` has 18 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Version`, `Version`, `Version` to the rest of the system?**
-  _435 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _438 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `File Structure` be split into smaller, more focused modules?**
   _Cohesion score 0.125 - nodes in this community are weakly interconnected._

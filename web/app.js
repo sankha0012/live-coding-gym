@@ -46,14 +46,45 @@ function startTimer(el, limit) {
   return elapsed;
 }
 
+// tip(el, text): hover tooltip (also read by screen readers).
+function tip(el, text) { el.setAttribute("data-tip", text); el.setAttribute("title", text); el.classList.add("tip"); return el; }
+
+const KIND_INFO = {
+  python: ["Python", "Write a function in Python. Hidden tests check it, like Coderbyte."],
+  sql: ["SQL", "Write a SQL query. Its result is compared with a reference result."],
+  tests: ["Write tests", "Write pytest tests. They must pass on the correct code and fail on every buggy version."],
+  quiz: ["Quiz", "Multiple choice, graded instantly. Wrong answers come with an explanation."],
+  open: ["Open question", "Answer in your own words. An AI interviewer scores it against a rubric."],
+  prompt: ["Prompt", "Write the prompt you would give an AI assistant. An AI interviewer scores the prompt."],
+  explain: ["Explain code", "Explain the code as you would to the interviewer. An AI interviewer scores it."],
+};
+const MODE_INFO = {
+  retype: "Study the solution, then hide it and type it from memory.",
+  gaps: "Fill in the blanks (____) of a half-written solution.",
+  blank: "Start from the bare function. This counts toward passing the step.",
+  timed: "Same as blank, against the clock. Needed for steps 1 to 3.",
+};
+
+function kindBadge(kind) {
+  const [label, info] = KIND_INFO[kind] || [kind, ""];
+  return tip(h("span", { class: "badge" }, label), info);
+}
+
 function mark(value) {
   if (value === null) return null;
   return h("span", { class: value ? "ok" : "bad" }, value ? "✓" : "✗");
 }
 
+const CHIP_INFO = {
+  tests: "Hidden tests: passed once in blank or timed mode.",
+  timed: "Passed within the time limit (in timed mode).",
+  review: "AI review: every criterion at or above the step's minimum score.",
+};
+
 function statusLine(st) {
-  const part = (label, v) => (v === null ? null : h("span", {}, label, " ", mark(v), "  "));
-  return h("span", {}, part("tests", st.tests), part("timed", st.timed), part("review", st.review));
+  const chip = (key, label) => (st[key] === null ? null
+    : tip(h("span", { class: "chip " + (st[key] ? "done" : "todo") }, label, " ", mark(st[key])), CHIP_INFO[key]));
+  return h("span", {}, chip("tests", "tests"), chip("timed", "timed"), chip("review", "AI review"));
 }
 
 function reviewBox(rev, onRetry) {
@@ -106,40 +137,63 @@ function results(out, r) {
 
 async function journeyView() {
   const j = await api("/journey");
-  main.append(h("h1", {}, "Your journey"));
+  main.append(h("h1", {}, "Your journey"),
+    h("p", { class: "muted" }, "Work from the top. Each step opens when you finish most of the previous one. Stuck or short on time? You can unlock any step yourself."));
   if (j.errors.length) main.append(h("pre", { class: "bad" }, "Broken content:\n" + j.errors.join("\n")));
+  main.append(j.next
+    ? h("div", { class: "bar" }, tip(h("a", { class: "button", href: `#/ex/${j.next.exercise_id}` }, "Continue: " + j.next.title),
+        "Jumps to the next unfinished exercise, in " + j.next.step_title))
+    : h("p", {}, "Every step is done. Run a mock round to test yourself."));
   main.append(h("p", {},
-    j.readiness === null ? "Readiness: finish three mock rounds to get an estimate."
-      : `Readiness estimate: ${j.readiness}/100 (average of your last three mock rounds).`,
-    `  Cards due today: ${j.due_cards}.`));
+    tip(h("span", {}, j.readiness === null ? "Readiness: not yet measured" : `Readiness: ${j.readiness}/100`),
+      "Average score of your last three mock rounds. It is an estimate, not a promise."),
+    "   ", h("a", { href: "#/cards" }, `Flashcards due today: ${j.due_cards}`)));
   for (const s of j.steps) {
-    const row = h("div", { class: "row" + (s.unlocked ? "" : " locked") },
-      h("span", { class: "grow" }, s.unlocked
-        ? h("a", { href: `#/step/${s.id}` }, `${s.order}. ${s.title}`) : `${s.order}. ${s.title}`),
-      h("span", { class: s.passed ? "ok" : "muted" }, s.passed ? "passed" : `${s.done}/${s.total}`));
+    const pct = s.total ? Math.round(100 * s.done / s.total) : 0;
+    const need = s.total ? Math.round(100 * s.needed / s.total) : 0;
+    const bar = tip(h("div", { class: "progress" }, h("div", { class: "fill", style: `width:${pct}%` }),
+      h("div", { class: "needed", style: `left:${need}%` })),
+      s.total ? `${s.done} of ${s.total} done. The marker shows the ${s.needed} needed to pass.` : "No exercises here. This step is measured by mock rounds.");
+    const label = s.passed ? tip(h("span", { class: "ok" }, "passed ✓"), "You finished enough of this step.")
+      : s.total ? h("span", { class: "muted" }, `${s.done}/${s.total} (need ${s.needed})`) : h("span", { class: "muted" }, "mock rounds");
+    const title = s.unlocked ? h("a", { href: `#/step/${s.id}` }, `${s.order}. ${s.title}`)
+      : tip(h("span", {}, `🔒 ${s.order}. ${s.title}`), "Opens when you finish the step above, or unlock it yourself.");
+    const row = h("div", { class: "row" + (s.unlocked ? "" : " locked") }, h("span", { class: "grow" }, title), bar, label);
     if (!s.unlocked) {
-      row.append(h("button", { onclick: async () => { await api("/unlock", { step_id: s.id }); route(); } },
-        "Unlock anyway"));
+      row.append(tip(h("button", { onclick: async () => { await api("/unlock", { step_id: s.id }); route(); } }, "Unlock"),
+        "Open this step now without finishing the previous one."));
     }
     main.append(row);
   }
   if (j.mocks.length) {
-    main.append(h("h2", {}, "Mock history"));
+    main.append(h("h2", {}, "Mock round history"));
     for (const m of j.mocks) main.append(h("div", { class: "row" }, `${m.started_at}  score ${m.total}/100`));
   }
 }
 
 async function stepView(id) {
   const s = await api(`/step/${id}`);
-  main.append(h("h1", {}, s.title));
+  const g = s.gate;
+  main.append(h("p", {}, h("a", { href: "#/" }, "← Journey")), h("h1", {}, s.title));
+  if (g.total) {
+    main.append(h("p", { class: "muted" },
+      `Pass this step by finishing ${g.needed} of its ${g.total} required exercises (${g.done} done). ` +
+      "Hover a badge or tick for what it means."));
+  }
+  if (s.lessons.length) main.append(h("h2", {}, "Read first"));
   for (const lesson of s.lessons) {
     main.append(h("details", {}, h("summary", {}, lesson.title), md(lesson.body)));
+  }
+  if (!s.exercises.length) {
+    main.append(h("p", {}, "This step has no exercises. Practise with ", h("a", { href: "#/mock" }, "mock rounds"), "; your last three scores give the readiness estimate."));
+    return;
   }
   main.append(h("h2", {}, "Exercises"));
   for (const ex of s.exercises) {
     main.append(h("div", { class: "row" },
       h("a", { class: "grow", href: `#/ex/${ex.id}` }, ex.title),
-      h("span", { class: "muted" }, ex.kind + (ex.required ? "" : " (optional)")),
+      kindBadge(ex.kind),
+      ex.required ? null : tip(h("span", { class: "badge" }, "optional"), "Does not count toward passing the step."),
       statusLine(ex.status)));
   }
 }
@@ -147,8 +201,10 @@ async function stepView(id) {
 async function exView(id, mode = "blank") {
   const ex = await api(`/exercise/${id}?mode=${mode}`);
   const coded = ex.modes.length > 0;
-  if (ex.kind === "quiz") { main.append(h("h1", {}, ex.title), md(ex.prompt)); return quizView(ex); }
-  main.append(h("h1", {}, ex.title), md(ex.prompt));
+  const back = h("p", {}, h("a", { href: `#/step/${ex.step_id}` }, "← Back to the step"));
+  main.append(back, h("h1", {}, ex.title, " ", kindBadge(ex.kind)));
+  if (ex.kind === "quiz") { main.append(md(ex.prompt)); return quizView(ex); }
+  main.append(md(ex.prompt));
   if (ex.schema) main.append(h("details", {}, h("summary", {}, "Tables"), h("pre", {}, ex.schema)));
 
   const reviewSlot = h("div");
@@ -162,17 +218,17 @@ async function exView(id, mode = "blank") {
     if (rev && rev.status === "done") refreshExtras();
   };
   const text = h("textarea", { placeholder: coded
-    ? "Explain your code as you would to the interviewer (sent with the review)." : "Your answer" });
+    ? "Optional: explain your code as you would to the interviewer. It is sent with the AI review." : "Type your answer here, then press the button below." });
 
   if (!coded) {
-    main.append(text, h("div", { class: "bar" }, h("button", { onclick: async (e) => {
+    main.append(text, h("div", { class: "bar" }, tip(h("button", { onclick: async (e) => {
       e.target.disabled = true;
       e.target.textContent = "Reviewing, please wait...";
       try { showReview(await api("/review", { exercise_id: id, text: text.value })); }
       catch (err) { reviewSlot.replaceChildren(h("pre", { class: "bad" }, String(err))); }
       e.target.textContent = "Submit for review";
       e.target.disabled = false;
-    } }, "Submit for review")), reviewSlot, extras);
+    } }, "Submit for review"), "An AI interviewer scores your answer 1 to 5 on each criterion and gives feedback. Takes a few seconds.")), reviewSlot, extras);
     showReview(ex.review);
     return;
   }
@@ -181,16 +237,21 @@ async function exView(id, mode = "blank") {
     ex.modes.map((m) => h("option", m === mode ? { value: m, selected: "" } : { value: m }, m)));
   const clock = h("span", { class: "timer" });
   const statusEl = h("span", {}, statusLine(ex.status));
-  main.append(h("div", { class: "bar" }, "Mode ", picker, clock, statusEl));
+  const modeHelp = h("span", { class: "muted" }, MODE_INFO[mode] || "");
+  main.append(h("div", { class: "bar" }, tip(h("span", {}, "Mode"), "How you want to practise this exercise. Switching mode keeps your progress."),
+      picker, tip(clock, "Elapsed time" + (mode === "timed" ? ` / limit (${fmt(ex.time_limit_s)})` : ". No limit in this mode."))),
+    h("div", { class: "bar" }, modeHelp), h("div", { class: "bar" }, h("span", { class: "muted" }, "Progress (hover a tick):"), statusEl));
 
   const holder = h("div");
   const out = h("pre");
-  const reviewBtn = h("button", { disabled: "" }, "Get AI review of last passing submission");
+  const reviewBtn = tip(h("button", { disabled: "" }, "Get AI review of my passing code"),
+    "An AI interviewer reviews your last passing submission. Pass the tests first.");
   let cm = null, elapsed = () => 0, lastPassed = null;
 
   const begin = () => {
     holder.replaceChildren();
     cm = editor(holder, ex.kind, ex.code);
+    setTimeout(() => cm.refresh(), 0); // an editor built before it is on the page draws blank until refreshed
     elapsed = startTimer(clock, mode === "timed" ? ex.time_limit_s : 0);
   };
   if (mode === "retype") {
@@ -208,21 +269,22 @@ async function exView(id, mode = "blank") {
     reviewBtn.disabled = false;
   });
   main.append(holder, h("div", { class: "bar" },
-    h("button", { onclick: async () => cm && results(out, await api("/run", { exercise_id: id, code: cm.getValue() })) },
-      "Run"),
-    h("button", { onclick: async () => {
+    tip(h("button", { onclick: async () => cm && results(out, await api("/run", { exercise_id: id, code: cm.getValue() })) },
+      "Run"), "Try your code. Nothing is recorded."),
+    tip(h("button", { class: "primary", onclick: async () => {
       if (!cm) return;
       const r = await api("/submit", { exercise_id: id, code: cm.getValue(), mode, duration_s: elapsed() });
       results(out, r);
       statusEl.replaceChildren(statusLine(r.status));
       if (r.passed) { lastPassed = r.attempt_id; reviewBtn.disabled = false; refreshExtras(); }
-    } }, "Submit")), out, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
+    } }, "Submit"), "Run the hidden tests and record the attempt. A pass counts toward the step.")), h("h2", {}, "Results"), out, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
   showReview(ex.review);
 }
 
 async function cardsView() {
   const due = await api("/cards/due");
-  main.append(h("h1", {}, "Warm-up cards"));
+  main.append(h("h1", {}, "Warm-up cards"),
+    h("p", { class: "muted" }, "Read the task, type the answer from memory, then press Flip to check. Cards you miss come back today; cards you get right come back after 1, 2, 4, 8, then 16 days."));
   if (!due.length) { main.append(h("p", {}, "Nothing due. Come back tomorrow.")); return; }
   const card = due[0];
   const back = h("pre", { hidden: "" }, card.back);
@@ -238,7 +300,7 @@ async function cardsView() {
 
 async function mockView() {
   main.append(h("h1", {}, "Mock round"),
-    h("p", {}, "One Python task, one SQL task, the prompt you would give an AI assistant, then follow-up questions. 45 minutes."));
+    h("p", {}, "One Python task, one SQL task, the prompt you would give an AI assistant, then three follow-up questions from an AI interviewer. 45 minutes. The clock starts when you press Start. Score out of 100: hidden tests 50%, AI review 40%, finishing in time 10%."));
   main.append(h("button", { onclick: async () => {
     const m = await api("/mock/start", {});
     main.replaceChildren();

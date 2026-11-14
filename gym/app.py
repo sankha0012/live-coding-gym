@@ -1,4 +1,5 @@
 import json
+import math
 from dataclasses import asdict
 from datetime import date
 
@@ -87,7 +88,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
         modes = [m for m in MODES.get(ex.kind, []) if m != "gaps" or ex.gaps]
         code = {"retype": "", "gaps": ex.gaps}.get(mode, ex.starter)
         schema = "\n".join(l for l in ex.seed.splitlines() if not l.startswith("INSERT"))
-        return {"id": ex.id, "title": ex.title, "kind": ex.kind, "prompt": ex.prompt,
+        return {"id": ex.id, "step_id": ex.step_id, "title": ex.title, "kind": ex.kind, "prompt": ex.prompt,
                 "time_limit_s": ex.time_limit_s, "modes": modes, "mode": mode, "code": code,
                 "solution": ex.solution if mode == "retype" else "", "schema": schema,
                 "hint": ex.hint, "say": ex.say if revealed else "",
@@ -108,18 +109,31 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
         review_id = db.save_review(conn, exercise_id, kind, material, result, attempt_id)
         return {"review_id": review_id, **result}
 
+    def next_up(rows):
+        """First required exercise not yet done, in the first unlocked step that has not passed."""
+        for s, row in zip(steps, rows):
+            if row["unlocked"] and not row["passed"]:
+                st = gates.step_status(conn, s)
+                for ex in s.exercises:
+                    if ex.required and not st["exercises"][ex.id]["done"]:
+                        return {"step_id": s.id, "step_title": s.title, "exercise_id": ex.id, "title": ex.title}
+        return None
+
     @app.get("/api/journey")
     def journey():
         mocks = [{"id": r["id"], "started_at": r["started_at"],
                   "total": json.loads(r["score_json"])["total"]} for r in db.finished_mocks(conn)]
-        return {"steps": gates.journey(conn, steps), "readiness": mock.readiness(conn), "mocks": mocks,
+        rows = gates.journey(conn, steps)
+        return {"steps": rows, "next": next_up(rows), "readiness": mock.readiness(conn), "mocks": mocks,
                 "due_cards": len(cards.due(conn, all_cards, date.today())), "errors": errors}
 
     @app.get("/api/step/{step_id}")
     def step(step_id: str):
         s = need(step_by_id.get(step_id), "step")
         st = gates.step_status(conn, s)
-        return {"id": s.id, "title": s.title, "lessons": s.lessons,
+        gate = {"min_score": s.min_score, "pass_ratio": s.pass_ratio, "timed_required": s.timed_required,
+                "total": st["total"], "done": st["done"], "needed": math.ceil(s.pass_ratio * st["total"])}
+        return {"id": s.id, "title": s.title, "lessons": s.lessons, "gate": gate,
                 "exercises": [{"id": ex.id, "title": ex.title, "kind": ex.kind, "required": ex.required,
                                "status": st["exercises"][ex.id]} for ex in s.exercises]}
 
