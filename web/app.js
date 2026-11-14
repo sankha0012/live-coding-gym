@@ -71,6 +71,33 @@ function reviewBox(rev, onRetry) {
   return box;
 }
 
+function extrasPanel(ex) {
+  const wrap = h("div");
+  if (ex.hint) wrap.append(h("details", {}, h("summary", {}, "Hint"), md(ex.hint)));
+  if (ex.say) wrap.append(h("details", {}, h("summary", {}, "How to say it out loud"), md(ex.say)));
+  if (ex.model_prompt) wrap.append(h("details", {}, h("summary", {}, "A good prompt for an AI assistant"), md(ex.model_prompt)));
+  return wrap;
+}
+
+function quizView(ex) {
+  const picks = ex.quiz.map(() => null);
+  const note = h("div");
+  const boxes = ex.quiz.map((q, i) => h("div", { class: "review" },
+    h("p", {}, h("strong", {}, `${i + 1}. ${q.q}`)),
+    q.options.map((o, j) => h("label", { style: "display:block" },
+      h("input", { type: "radio", name: `q${i}`, onchange: () => { picks[i] = j; } }), " " + o))));
+  main.append(...boxes, h("div", { class: "bar" },
+    h("button", { onclick: async () => {
+      if (picks.includes(null)) { note.replaceChildren(h("p", { class: "bad" }, "Answer every question.")); return; }
+      const r = await api("/quiz", { exercise_id: ex.id, answers: picks });
+      r.results.forEach((res, i) => boxes[i].append(h("p", { class: res.correct ? "ok" : "bad" },
+        (res.correct ? "✓ " : `✗ right answer: ${ex.quiz[i].options[res.answer]}. `) + res.why)));
+      note.replaceChildren(h("p", {}, `${r.correct}/${r.total}. ` +
+        (r.passed ? "Passed." : "Not yet: read the explanations, then try again."),
+        h("button", { onclick: route }, "Try again")));
+    } }, "Submit answers")), note);
+}
+
 function results(out, r) {
   out.textContent = "";
   for (const t of r.tests) out.append(`${t.passed ? "PASS" : "FAIL"}  ${t.name}\n`);
@@ -120,13 +147,20 @@ async function stepView(id) {
 async function exView(id, mode = "blank") {
   const ex = await api(`/exercise/${id}?mode=${mode}`);
   const coded = ex.modes.length > 0;
+  if (ex.kind === "quiz") { main.append(h("h1", {}, ex.title), md(ex.prompt)); return quizView(ex); }
   main.append(h("h1", {}, ex.title), md(ex.prompt));
   if (ex.schema) main.append(h("details", {}, h("summary", {}, "Tables"), h("pre", {}, ex.schema)));
 
   const reviewSlot = h("div");
-  const showReview = (rev) => reviewSlot.replaceChildren(reviewBox(rev, async () => {
-    showReview(await api(`/reviews/${rev.review_id}/retry`, {}));
-  }) || "");
+  const extras = h("div");
+  const refreshExtras = async () => extras.replaceChildren(extrasPanel(await api(`/exercise/${id}?mode=${mode}`)));
+  refreshExtras();
+  const showReview = (rev) => {
+    reviewSlot.replaceChildren(reviewBox(rev, async () => {
+      showReview(await api(`/reviews/${rev.review_id}/retry`, {}));
+    }) || "");
+    if (rev && rev.status === "done") refreshExtras();
+  };
   const text = h("textarea", { placeholder: coded
     ? "Explain your code as you would to the interviewer (sent with the review)." : "Your answer" });
 
@@ -138,7 +172,7 @@ async function exView(id, mode = "blank") {
       catch (err) { reviewSlot.replaceChildren(h("pre", { class: "bad" }, String(err))); }
       e.target.textContent = "Submit for review";
       e.target.disabled = false;
-    } }, "Submit for review")), reviewSlot);
+    } }, "Submit for review")), reviewSlot, extras);
     showReview(ex.review);
     return;
   }
@@ -181,8 +215,8 @@ async function exView(id, mode = "blank") {
       const r = await api("/submit", { exercise_id: id, code: cm.getValue(), mode, duration_s: elapsed() });
       results(out, r);
       statusEl.replaceChildren(statusLine(r.status));
-      if (r.passed) { lastPassed = r.attempt_id; reviewBtn.disabled = false; }
-    } }, "Submit")), out, text, h("div", { class: "bar" }, reviewBtn), reviewSlot);
+      if (r.passed) { lastPassed = r.attempt_id; reviewBtn.disabled = false; refreshExtras(); }
+    } }, "Submit")), out, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
   showReview(ex.review);
 }
 

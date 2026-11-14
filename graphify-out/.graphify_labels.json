@@ -28,7 +28,7 @@
   "26": "fixtures/content/03-hand-sql/exercises/top-customers/prompt.md",
   "27": "tests/__init__.py",
   "28": "Authoring protocol (applies to Tasks 8 to 19)",
-  "29": "check_content.py",
+  "29": "test_content_extras.py",
   "30": "content/01-hand-python/exercises/count-words/wrong/forgets_lowercase.py",
   "31": "fixtures/content/01-hand-python/exercises/count-words/wrong/forgets_lowercase.py",
   "32": "content/01-hand-python/exercises/count-words/hint.md",

@@ -1,22 +1,22 @@
 # Graph Report - live-coding-gym  (2026-11-14)
 
 ## Corpus Check
-- 53 files · ~51,554 words
+- 67 files · ~53,465 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 284 nodes · 471 edges · 29 communities (26 shown, 3 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.5)
+- 327 nodes · 528 edges · 42 communities (39 shown, 3 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fb797b63`
+- Built from commit: `8c4628c6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - db.py
-- check_sql
+- runner.py
 - load_content
 - app.py
 - app.js
@@ -33,43 +33,44 @@
 - fixtures/content/01-hand-python/lessons/01-counting.md
 - live-coding-gym
 - Authoring protocol (applies to Tasks 8 to 19)
+- check_content.py
 
 ## God Nodes (most connected - your core abstractions)
 1. `load_content()` - 14 edges
 2. `Authoring protocol (applies to Tasks 8 to 19)` - 14 edges
-3. `check_sql()` - 12 edges
-4. `File Structure` - 12 edges
-5. `h()` - 11 edges
-6. `exView()` - 11 edges
-7. `run_python_tests()` - 10 edges
-8. `Live Coding Gym: design spec` - 10 edges
-9. `exercise_status()` - 9 edges
-10. `review()` - 9 edges
+3. `run_python_tests()` - 13 edges
+4. `check_sql()` - 12 edges
+5. `run_test_writing()` - 12 edges
+6. `File Structure` - 12 edges
+7. `check()` - 11 edges
+8. `h()` - 11 edges
+9. `exView()` - 11 edges
+10. `create_app()` - 10 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `test_box_is_capped_at_five()` --calls--> `record()`  [EXTRACTED]
   tests/test_cards.py → gym/cards.py
 - `test_correct_answers_climb_boxes()` --calls--> `record()`  [EXTRACTED]
   tests/test_cards.py → gym/cards.py
+- `test_duplicate_exercise_id_is_reported()` --calls--> `check()`  [EXTRACTED]
+  tests/test_check_content.py → gym/check_content.py
+- `test_missing_say_and_hint_are_reported()` --calls--> `check()`  [EXTRACTED]
+  tests/test_check_content.py → gym/check_content.py
 - `test_sample_content_is_clean()` --calls--> `check()`  [EXTRACTED]
-  tests/test_check_content.py → gym/check_content.py
-- `test_starter_that_already_passes_is_reported()` --calls--> `check()`  [EXTRACTED]
-  tests/test_check_content.py → gym/check_content.py
-- `test_wrong_reference_solution_is_reported()` --calls--> `check()`  [EXTRACTED]
   tests/test_check_content.py → gym/check_content.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (29 total, 3 thin omitted)
+## Communities (42 total, 3 thin omitted)
 
 ### Community 0 - "db.py"
 Cohesion: 0.11
 Nodes (35): create_mock(), finished_mocks(), get_attempt(), get_mock(), get_review(), _insert(), latest_review(), passed_attempts() (+27 more)
 
-### Community 1 - "check_sql"
-Cohesion: 0.14
-Nodes (26): check(), check_sql(), _query(), Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free(), run_python_tests(), run_sql_free() (+18 more)
+### Community 1 - "runner.py"
+Cohesion: 0.10
+Nodes (35): check_sql(), _pytest(), _query(), Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., Run pytest on test_candidate.py in a temp dir holding `files` (name -> text)., Run hidden pytest tests against a submission saved as solution.py., Grade a learner's test file: it must pass on `good` and fail on every `bads`… (+27 more)
 
 ### Community 2 - "load_content"
 Cohesion: 0.14
@@ -77,15 +78,15 @@ Nodes (19): Exercise, _existing(), load_content(), load_exercise(), _read(), Ste
 
 ### Community 3 - "app.py"
 Cohesion: 0.14
-Nodes (17): BaseModel, CardBody, main(), MockAnswers, MockSubmit, ReviewBody, RunBody, SubmitBody (+9 more)
+Nodes (18): BaseModel, CardBody, main(), MockAnswers, MockSubmit, QuizBody, ReviewBody, RunBody (+10 more)
 
 ### Community 4 - "app.js"
 Cohesion: 0.33
 Nodes (18): api(), cardsView(), editor(), exView(), fmt(), h(), journeyView(), main (+10 more)
 
 ### Community 5 - "test_app.py"
-Cohesion: 0.19
-Nodes (12): create_app(), client(), fake_gemini(), post(), fixture, test_cards_and_unlock(), test_failed_submission_is_recorded_but_not_passed(), test_full_step_flow_passes_gate_and_unlocks_next() (+4 more)
+Cohesion: 0.12
+Nodes (16): create_app(), client(), fake_gemini(), client(), fake_gemini(), fixture, test_sql_schema_hides_insert_lines(), post() (+8 more)
 
 ### Community 6 - "File Structure"
 Cohesion: 0.12
@@ -123,6 +124,10 @@ Nodes (4): count_words(), test_basic(), test_empty(), test_mixed_case()
 Cohesion: 0.06
 Nodes (30): Authoring protocol (applies to Tasks 8 to 19), File Structure, Global Constraints, Journey (fixed folder names and gates), Live Coding Gym Content Implementation Plan, Part 1: App extensions, Part 2: Shared dataset and migration, Part 3: Authoring (+22 more)
 
+### Community 29 - "check_content.py"
+Cohesion: 0.35
+Nodes (9): check(), check_exercise(), test_duplicate_exercise_id_is_reported(), test_missing_say_and_hint_are_reported(), test_sample_content_is_clean(), test_starter_that_already_passes_is_reported(), test_tests_kind_checks(), test_wrong_reference_solution_is_reported() (+1 more)
+
 ## Knowledge Gaps
 - **60 isolated node(s):** `live-coding-gym`, `main`, `Mandatory workflow tools`, `Keeping the graph current`, `Token habits` (+55 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -131,17 +136,17 @@ Nodes (30): Authoring protocol (applies to Tasks 8 to 19), File Structure, Globa
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `load_content()` connect `load_content` to `check_sql`, `app.py`, `test_app.py`?**
-  _High betweenness centrality (0.052) - this node is a cross-community bridge._
+- **Why does `load_content()` connect `load_content` to `check_content.py`, `app.py`, `test_app.py`?**
+  _High betweenness centrality (0.053) - this node is a cross-community bridge._
+- **Why does `create_app()` connect `test_app.py` to `load_content`, `app.py`?**
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
+- **Why does `run_test_writing()` connect `runner.py` to `check_content.py`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **What connects `live-coding-gym`, `main`, `Mandatory workflow tools` to the rest of the system?**
   _60 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `db.py` be split into smaller, more focused modules?**
   _Cohesion score 0.11470985155195682 - nodes in this community are weakly interconnected._
-- **Should `check_sql` be split into smaller, more focused modules?**
-  _Cohesion score 0.13548387096774195 - nodes in this community are weakly interconnected._
+- **Should `runner.py` be split into smaller, more focused modules?**
+  _Cohesion score 0.10256410256410256 - nodes in this community are weakly interconnected._
 - **Should `load_content` be split into smaller, more focused modules?**
   _Cohesion score 0.1396011396011396 - nodes in this community are weakly interconnected._
-- **Should `app.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._
-- **Should `File Structure` be split into smaller, more focused modules?**
-  _Cohesion score 0.125 - nodes in this community are weakly interconnected._

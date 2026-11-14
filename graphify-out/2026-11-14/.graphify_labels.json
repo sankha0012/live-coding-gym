@@ -1,6 +1,6 @@
 {
   "0": "db.py",
-  "1": "check_sql",
+  "1": "runner.py",
   "2": "load_content",
   "3": "app.py",
   "4": "app.js",
@@ -27,5 +27,18 @@
   "25": "fixtures/content/01-hand-python/exercises/explain-count-words/prompt.md",
   "26": "fixtures/content/03-hand-sql/exercises/top-customers/prompt.md",
   "27": "tests/__init__.py",
-  "28": "Authoring protocol (applies to Tasks 8 to 19)"
+  "28": "Authoring protocol (applies to Tasks 8 to 19)",
+  "29": "check_content.py",
+  "30": "content/01-hand-python/exercises/count-words/wrong/forgets_lowercase.py",
+  "31": "fixtures/content/01-hand-python/exercises/count-words/wrong/forgets_lowercase.py",
+  "32": "content/01-hand-python/exercises/count-words/hint.md",
+  "33": "content/01-hand-python/exercises/count-words/say.md",
+  "34": "content/01-hand-python/exercises/explain-count-words/say.md",
+  "35": "content/03-hand-sql/exercises/top-customers/hint.md",
+  "36": "content/03-hand-sql/exercises/top-customers/say.md",
+  "37": "fixtures/content/01-hand-python/exercises/count-words/hint.md",
+  "38": "fixtures/content/01-hand-python/exercises/count-words/say.md",
+  "39": "fixtures/content/01-hand-python/exercises/explain-count-words/say.md",
+  "40": "fixtures/content/03-hand-sql/exercises/top-customers/hint.md",
+  "41": "fixtures/content/03-hand-sql/exercises/top-customers/say.md"
 }
