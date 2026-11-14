@@ -3,8 +3,8 @@ from pathlib import Path
 
 import yaml
 
-KINDS = {"python", "sql", "open", "prompt", "explain"}
-EXT = {"python": "py", "sql": "sql"}
+KINDS = {"python", "sql", "open", "prompt", "explain", "quiz", "tests"}
+EXT = {"python": "py", "sql": "sql", "tests": "py"}
 
 
 @dataclass
@@ -25,6 +25,15 @@ class Exercise:
     mock: bool = False
     ordered: bool = False
     rubric: list = field(default_factory=list)
+    hint: str = ""
+    say: str = ""
+    model_prompt: str = ""
+    files: list = field(default_factory=list)
+    wrong: dict = field(default_factory=dict)
+    quiz: list = field(default_factory=list)
+    pass_ratio: float = 0.8
+    impl_good: str = ""
+    impls_bad: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -41,6 +50,12 @@ class Step:
 
 def _read(path):
     return path.read_text() if path.exists() else ""
+
+
+def _existing(path):
+    if not path.exists():
+        raise ValueError(f"file not found: {path}")
+    return path
 
 
 def load_exercise(d, step_id):
@@ -61,16 +76,34 @@ def load_exercise(d, step_id):
         mock=meta.get("mock", False),
         ordered=meta.get("ordered", False),
         rubric=meta.get("rubric") or [],
+        hint=_read(d / "hint.md"),
+        say=_read(d / "say.md"),
+        model_prompt=_read(d / "model_prompt.md"),
+        pass_ratio=meta.get("pass_ratio", 0.8),
+        files=[_existing((d / f).resolve()) for f in meta.get("files", [])],
     )
     ext = EXT.get(kind)
     if ext:
         ex.starter = _read(d / f"starter.{ext}")
         ex.solution = (d / f"solution.{ext}").read_text()
         ex.gaps = _read(d / f"gaps.{ext}")
-    if kind == "python" and not (d / "tests" / "test_hidden.py").exists():
-        raise ValueError("missing tests/test_hidden.py")
+    if kind == "python":
+        if not (d / "tests" / "test_hidden.py").exists():
+            raise ValueError("missing tests/test_hidden.py")
+        ex.wrong = {p.stem: p.read_text() for p in sorted((d / "wrong").glob("*.py"))}
     if kind == "sql":
-        ex.seed = (d / "seed.sql").read_text()
+        seed = d / meta["seed_file"] if "seed_file" in meta else d / "seed.sql"
+        ex.seed = _existing(seed.resolve()).read_text()
+    if kind == "tests":
+        ex.impl_good = (d / "impl_good.py").read_text()
+        ex.impls_bad = {p.stem: p.read_text() for p in sorted(d.glob("impl_bad_*.py"))}
+        if not ex.impls_bad:
+            raise ValueError("a tests exercise needs at least one impl_bad_*.py")
+    if kind == "quiz":
+        ex.quiz = yaml.safe_load((d / "quiz.yaml").read_text())
+        for i, q in enumerate(ex.quiz, 1):
+            if not 0 <= q["answer"] < len(q["options"]):
+                raise ValueError(f"quiz question {i}: answer out of range")
     return ex
 
 

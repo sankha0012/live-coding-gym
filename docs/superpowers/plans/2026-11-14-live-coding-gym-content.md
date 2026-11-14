@@ -97,7 +97,7 @@ def build(tmp_path, kind, files, meta=""):
     """One step with one exercise 'e1'. files maps path-under-exercise -> text."""
     step = tmp_path / "01-s"
     ex = step / "exercises" / "e1"
-    ex.mkdir(parents=True)
+    ex.mkdir(parents=True, exist_ok=True)
     (step / "step.yaml").write_text("title: S\norder: 1\n")
     (ex / "exercise.yaml").write_text(f"title: E\nkind: {kind}\n{meta}")
     (ex / "prompt.md").write_text("p")

@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-14)
 
 ## Corpus Check
-- 52 files · ~51,072 words
+- 53 files · ~51,554 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 274 nodes · 448 edges · 29 communities (26 shown, 3 thin omitted)
+- 284 nodes · 471 edges · 29 communities (26 shown, 3 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ed90dd54`
+- Built from commit: `fb797b63`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -35,8 +35,8 @@
 - Authoring protocol (applies to Tasks 8 to 19)
 
 ## God Nodes (most connected - your core abstractions)
-1. `Authoring protocol (applies to Tasks 8 to 19)` - 14 edges
-2. `load_content()` - 12 edges
+1. `load_content()` - 14 edges
+2. `Authoring protocol (applies to Tasks 8 to 19)` - 14 edges
 3. `check_sql()` - 12 edges
 4. `File Structure` - 12 edges
 5. `h()` - 11 edges
@@ -68,12 +68,12 @@ Cohesion: 0.11
 Nodes (35): create_mock(), finished_mocks(), get_attempt(), get_mock(), get_review(), _insert(), latest_review(), passed_attempts() (+27 more)
 
 ### Community 1 - "check_sql"
-Cohesion: 0.16
-Nodes (22): check_sql(), _query(), Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free(), run_python_tests(), run_sql_free(), RunResult (+14 more)
+Cohesion: 0.14
+Nodes (26): check(), check_sql(), _query(), Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free(), run_python_tests(), run_sql_free() (+18 more)
 
 ### Community 2 - "load_content"
-Cohesion: 0.15
-Nodes (14): check(), Exercise, load_content(), load_exercise(), _read(), Step, connect(), conn() (+6 more)
+Cohesion: 0.14
+Nodes (19): Exercise, _existing(), load_content(), load_exercise(), _read(), Step, connect(), conn() (+11 more)
 
 ### Community 3 - "app.py"
 Cohesion: 0.14
@@ -131,17 +131,17 @@ Nodes (30): Authoring protocol (applies to Tasks 8 to 19), File Structure, Globa
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `load_content()` connect `load_content` to `app.py`, `test_app.py`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
-- **Why does `run_python_tests()` connect `check_sql` to `load_content`?**
-  _High betweenness centrality (0.010) - this node is a cross-community bridge._
+- **Why does `load_content()` connect `load_content` to `check_sql`, `app.py`, `test_app.py`?**
+  _High betweenness centrality (0.052) - this node is a cross-community bridge._
 - **What connects `live-coding-gym`, `main`, `Mandatory workflow tools` to the rest of the system?**
   _60 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `db.py` be split into smaller, more focused modules?**
   _Cohesion score 0.11470985155195682 - nodes in this community are weakly interconnected._
+- **Should `check_sql` be split into smaller, more focused modules?**
+  _Cohesion score 0.13548387096774195 - nodes in this community are weakly interconnected._
+- **Should `load_content` be split into smaller, more focused modules?**
+  _Cohesion score 0.1396011396011396 - nodes in this community are weakly interconnected._
 - **Should `app.py` be split into smaller, more focused modules?**
   _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._
 - **Should `File Structure` be split into smaller, more focused modules?**
   _Cohesion score 0.125 - nodes in this community are weakly interconnected._
-- **Should `Authoring protocol (applies to Tasks 8 to 19)` be split into smaller, more focused modules?**
-  _Cohesion score 0.06451612903225806 - nodes in this community are weakly interconnected._

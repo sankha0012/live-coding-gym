@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-14)
 
 ## Corpus Check
-- 51 files · ~39,626 words
+- 52 files · ~51,072 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 243 nodes · 418 edges · 28 communities (25 shown, 3 thin omitted)
+- 274 nodes · 448 edges · 29 communities (26 shown, 3 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3320bc0a`
+- Built from commit: `ed90dd54`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -32,18 +32,19 @@
 - content/01-hand-python/lessons/01-counting.md
 - fixtures/content/01-hand-python/lessons/01-counting.md
 - live-coding-gym
+- Authoring protocol (applies to Tasks 8 to 19)
 
 ## God Nodes (most connected - your core abstractions)
-1. `load_content()` - 12 edges
-2. `check_sql()` - 12 edges
-3. `File Structure` - 12 edges
-4. `h()` - 11 edges
-5. `exView()` - 11 edges
-6. `run_python_tests()` - 10 edges
-7. `Live Coding Gym: design spec` - 10 edges
-8. `exercise_status()` - 9 edges
-9. `review()` - 9 edges
-10. `mockView()` - 9 edges
+1. `Authoring protocol (applies to Tasks 8 to 19)` - 14 edges
+2. `load_content()` - 12 edges
+3. `check_sql()` - 12 edges
+4. `File Structure` - 12 edges
+5. `h()` - 11 edges
+6. `exView()` - 11 edges
+7. `run_python_tests()` - 10 edges
+8. `Live Coding Gym: design spec` - 10 edges
+9. `exercise_status()` - 9 edges
+10. `review()` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `test_box_is_capped_at_five()` --calls--> `record()`  [EXTRACTED]
@@ -60,7 +61,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (28 total, 3 thin omitted)
+## Communities (29 total, 3 thin omitted)
 
 ### Community 0 - "db.py"
 Cohesion: 0.11
@@ -118,8 +119,12 @@ Nodes (5): Adding content, Live Coding Gym, Run, Setup, Tests
 Cohesion: 0.53
 Nodes (4): count_words(), test_basic(), test_empty(), test_mixed_case()
 
+### Community 28 - "Authoring protocol (applies to Tasks 8 to 19)"
+Cohesion: 0.06
+Nodes (30): Authoring protocol (applies to Tasks 8 to 19), File Structure, Global Constraints, Journey (fixed folder names and gates), Live Coding Gym Content Implementation Plan, Part 1: App extensions, Part 2: Shared dataset and migration, Part 3: Authoring (+22 more)
+
 ## Knowledge Gaps
-- **35 isolated node(s):** `live-coding-gym`, `main`, `Mandatory workflow tools`, `Keeping the graph current`, `Token habits` (+30 more)
+- **60 isolated node(s):** `live-coding-gym`, `main`, `Mandatory workflow tools`, `Keeping the graph current`, `Token habits` (+55 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -127,14 +132,16 @@ Nodes (4): count_words(), test_basic(), test_empty(), test_mixed_case()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `load_content()` connect `load_content` to `app.py`, `test_app.py`?**
-  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **Why does `run_python_tests()` connect `check_sql` to `load_content`?**
-  _High betweenness centrality (0.013) - this node is a cross-community bridge._
+  _High betweenness centrality (0.010) - this node is a cross-community bridge._
 - **What connects `live-coding-gym`, `main`, `Mandatory workflow tools` to the rest of the system?**
-  _35 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _60 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `db.py` be split into smaller, more focused modules?**
   _Cohesion score 0.11470985155195682 - nodes in this community are weakly interconnected._
 - **Should `app.py` be split into smaller, more focused modules?**
   _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._
 - **Should `File Structure` be split into smaller, more focused modules?**
   _Cohesion score 0.125 - nodes in this community are weakly interconnected._
+- **Should `Authoring protocol (applies to Tasks 8 to 19)` be split into smaller, more focused modules?**
+  _Cohesion score 0.06451612903225806 - nodes in this community are weakly interconnected._

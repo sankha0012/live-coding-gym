@@ -1,0 +1,75 @@
+import pytest
+
+from gym.content import load_content
+
+
+def build(tmp_path, kind, files, meta=""):
+    """One step with one exercise 'e1'. files maps path-under-exercise -> text."""
+    step = tmp_path / "01-s"
+    ex = step / "exercises" / "e1"
+    ex.mkdir(parents=True, exist_ok=True)
+    (step / "step.yaml").write_text("title: S\norder: 1\n")
+    (ex / "exercise.yaml").write_text(f"title: E\nkind: {kind}\n{meta}")
+    (ex / "prompt.md").write_text("p")
+    for name, text in files.items():
+        path = ex / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+    return tmp_path
+
+
+def load_one(tmp_path):
+    steps, errors = load_content(tmp_path)
+    return (steps[0].exercises[0] if steps[0].exercises else None), errors
+
+
+PY = {"solution.py": "x = 1\n", "tests/test_hidden.py": "def test_a():\n    pass\n"}
+
+
+def test_extras_and_wrong_solutions(tmp_path):
+    build(tmp_path, "python", {**PY, "hint.md": "H", "say.md": "S", "model_prompt.md": "M",
+                               "wrong/off_by_one.py": "x = 2\n"})
+    ex, errors = load_one(tmp_path)
+    assert errors == []
+    assert (ex.hint, ex.say, ex.model_prompt) == ("H", "S", "M")
+    assert ex.wrong == {"off_by_one": "x = 2\n"}
+
+
+def test_files_are_resolved_and_must_exist(tmp_path):
+    (tmp_path / "_shared").mkdir()
+    (tmp_path / "_shared" / "data.csv").write_text("a\n1\n")
+    build(tmp_path, "python", PY, meta="files:\n  - ../../../_shared/data.csv\n")
+    ex, errors = load_one(tmp_path)
+    assert errors == [] and [p.name for p in ex.files] == ["data.csv"]
+    build(tmp_path, "python", PY, meta="files:\n  - ../../../_shared/missing.csv\n")
+    ex, errors = load_one(tmp_path)
+    assert ex is None and "missing.csv" in errors[0]
+
+
+def test_sql_seed_file(tmp_path):
+    (tmp_path / "_shared").mkdir()
+    (tmp_path / "_shared" / "s.sql").write_text("CREATE TABLE t (x);\n")
+    build(tmp_path, "sql", {"solution.sql": "SELECT 1;"}, meta="seed_file: ../../../_shared/s.sql\n")
+    ex, errors = load_one(tmp_path)
+    assert errors == [] and "CREATE TABLE t" in ex.seed
+
+
+def test_quiz_loads_and_rejects_bad_answer_index(tmp_path):
+    good = "- q: Which?\n  options: [a, b]\n  answer: 1\n  why: because\n"
+    build(tmp_path, "quiz", {"quiz.yaml": good}, meta="pass_ratio: 1.0\n")
+    ex, errors = load_one(tmp_path)
+    assert errors == [] and ex.pass_ratio == 1.0 and ex.quiz[0]["answer"] == 1
+    build(tmp_path, "quiz", {"quiz.yaml": good.replace("answer: 1", "answer: 5")})
+    ex, errors = load_one(tmp_path)
+    assert ex is None and "answer out of range" in errors[0]
+
+
+def test_tests_kind_needs_good_and_bad_implementations(tmp_path):
+    files = {"starter.py": "from solution import f\n", "solution.py": "from solution import f\n",
+             "impl_good.py": "def f(): return 1\n", "impl_bad_1.py": "def f(): return 2\n"}
+    build(tmp_path, "tests", files)
+    ex, errors = load_one(tmp_path)
+    assert errors == [] and ex.impl_good.startswith("def f") and list(ex.impls_bad) == ["impl_bad_1"]
+    (tmp_path / "01-s" / "exercises" / "e1" / "impl_bad_1.py").unlink()
+    ex, errors = load_one(tmp_path)
+    assert ex is None and "impl_bad" in errors[0]
