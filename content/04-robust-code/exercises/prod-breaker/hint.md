@@ -1,0 +1,1 @@
+Three states: closed (opened_at is None), open (cooldown not over: return fallback), half-open (cooldown over: try once). On failure: if it was half-open or failures >= max_failures, set opened_at = clock().

@@ -1,0 +1,1 @@
+SELECT MAX(subtotal) AS second FROM orders WHERE subtotal < (SELECT MAX(subtotal) FROM orders);

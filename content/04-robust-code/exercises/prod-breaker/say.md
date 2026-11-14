@@ -1,0 +1,1 @@
+When a feature store or model server is down, retries make it worse. The breaker fails fast to a safe default, and the injected clock makes it testable and deterministic. I'd emit a metric on every state change.

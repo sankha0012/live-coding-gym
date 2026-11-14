@@ -1,0 +1,5 @@
+title: Validate a feature row
+kind: python
+required: true
+mock: true
+time_limit_s: 1080

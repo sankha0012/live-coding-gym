@@ -1,0 +1,5 @@
+title: Circuit breaker around a model call
+kind: python
+required: true
+mock: true
+time_limit_s: 1350

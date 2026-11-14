@@ -1,0 +1,5 @@
+title: Peak in 60 minutes
+kind: python
+required: true
+mock: true
+time_limit_s: 1440

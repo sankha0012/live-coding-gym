@@ -1,0 +1,1 @@
+This is brute force, O(n·d). With pre-normalized vectors cosine is just a dot product, and at scale you'd use an approximate index (FAISS, pgvector, a vector DB) and maybe a reranker on the top results.

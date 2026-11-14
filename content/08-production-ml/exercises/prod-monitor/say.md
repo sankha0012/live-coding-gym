@@ -1,0 +1,1 @@
+Most model incidents are data incidents: a feed starts sending nulls or a unit changes. Cheap checks like this on every batch catch them in minutes. The standard-error threshold avoids false alarms on small batches; for full distributions I'd use PSI.

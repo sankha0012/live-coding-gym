@@ -1,0 +1,5 @@
+title: 'Bug hunt: a flaky pipeline'
+kind: python
+required: true
+mock: true
+time_limit_s: 1080

@@ -1,0 +1,5 @@
+title: Alert on a broken input feed
+kind: python
+required: true
+mock: false
+time_limit_s: 900

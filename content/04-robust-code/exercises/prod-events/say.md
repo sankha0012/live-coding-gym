@@ -1,0 +1,1 @@
+Streams deliver at least once, so processing must be idempotent: replaying the same events gives the same state. The tie-break makes it deterministic regardless of arrival order. In production the seen-set would be a TTL store, not memory.

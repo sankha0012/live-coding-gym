@@ -1,0 +1,1 @@
+Four bugs: set order made the ranking unstable, the sort was ascending with no tie rule, normalize mutated the caller's data and divided by zero on a constant batch, and mean_score crashed on None. Mutating inputs is the nastiest: it silently changes features used later, for example in logging or training data.

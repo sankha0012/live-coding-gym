@@ -1076,7 +1076,7 @@ def test_migrate_writes_a_checkable_journey(tmp_path):
     assert by_id["py-city"].time_limit_s == 720 and by_id["py-city"].mock is True      # 6 min * 60 * 2
     assert by_id["cb-fact"].time_limit_s == 360 and by_id["cb-fact"].mock is False     # 4 * 60 * 1.5
     assert by_id["sql-cancel"].ordered is True and "ORDER BY" in by_id["sql-cancel"].solution
-    assert by_id["py-city"].say == "It is a sum." and by_id["py-city"].hint == "Use sum."
+    assert by_id["py-city"].say.strip() == "It is a sum." and by_id["py-city"].hint.strip() == "Use sum."
     py_step = next(s for s in steps if s.id == "01-hand-python")
     assert py_step.lessons[0]["title"] == "Python core" and "<p>Hello</p>" in py_step.lessons[0]["body"]
     assert py_step.cards[0]["id"] == "python-count"
@@ -1222,7 +1222,7 @@ def migrate(old, out, only_missing=True):
     for folder, title, order, min_score, timed in STEPS:
         meta = {"title": title, "order": order, "gate": {"min_score": min_score, "timed_required": timed}}
         write(out / folder / "step.yaml", yaml.safe_dump(meta, sort_keys=False), only_missing)
-    mock_ids = {i for m in old["MOCKS"] for i in m["drills"]}
+    mock_ids = {i for m in old["MOCKS"] for i in (m.get("drills") or [])}
     manual = []
     for d in old["DRILLS"]:
         step = DRILL_STEP.get(d["id"])

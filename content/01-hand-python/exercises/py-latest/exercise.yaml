@@ -1,0 +1,5 @@
+title: Latest status
+kind: python
+required: true
+mock: false
+time_limit_s: 960

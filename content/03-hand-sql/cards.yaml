@@ -1,0 +1,25 @@
+- id: sql-a-rate-with-case
+  front: SQL · a rate with CASE
+  back: AVG(CASE WHEN status = 'cancelled' THEN 1.0 ELSE 0 END)
+- id: sql-filter-groups
+  front: SQL · filter groups
+  back: GROUP BY restaurant_id HAVING COUNT(*) >= 100
+- id: sql-top-n-per-group
+  front: SQL · top N per group
+  back: ROW_NUMBER() OVER (PARTITION BY city ORDER BY revenue DESC) AS rn  -- then
+    WHERE rn <= N outside
+- id: sql-previous-month-s-value
+  front: SQL · previous month's value
+  back: LAG(orders) OVER (ORDER BY month)
+- id: sql-running-total-per-customer
+  front: SQL · running total per customer
+  back: SUM(gmv) OVER (PARTITION BY customer_id ORDER BY created_at)
+- id: sql-replace-null
+  front: SQL · replace NULL
+  back: COALESCE(coupon_code, 'none')
+- id: sql-rows-in-a-but-not-in-b
+  front: SQL · rows in A but not in B
+  back: LEFT JOIN b ON a.id = b.id WHERE b.id IS NULL
+- id: sql-month-bucket-postgres-sqlite
+  front: SQL · month bucket (Postgres / SQLite)
+  back: DATE_TRUNC('month', ts)  /  strftime('%Y-%m', ts)

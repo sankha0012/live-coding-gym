@@ -1,2 +1,5 @@
 title: Hand-coding SQL
 order: 3
+gate:
+  min_score: 4
+  timed_required: true

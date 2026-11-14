@@ -1,0 +1,5 @@
+title: Precision, recall, F1
+kind: python
+required: true
+mock: false
+time_limit_s: 540

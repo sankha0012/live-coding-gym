@@ -1,0 +1,7 @@
+title: Second highest order value
+kind: sql
+required: true
+mock: false
+time_limit_s: 600
+ordered: true
+seed_file: ../../../_shared/delivery.sql

@@ -1,0 +1,1 @@
+Splitting by user, not by row, prevents the same customer leaking into train and test. Python's hash() is salted per process, so it isn't reproducible; md5 is. The same trick routes a stable 5% of users to a canary model version.

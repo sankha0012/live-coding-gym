@@ -1,0 +1,5 @@
+title: Batch predictions that don't fall over
+kind: python
+required: true
+mock: true
+time_limit_s: 900

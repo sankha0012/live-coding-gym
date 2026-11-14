@@ -1,0 +1,5 @@
+title: Most frequent word
+kind: python
+required: true
+mock: false
+time_limit_s: 540

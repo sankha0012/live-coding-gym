@@ -1,0 +1,1 @@
+I never let bad input crash the service or reach the model silently: I repair what I can, and every repair is recorded so we can count it and alert on it. Sorting the issues keeps the output deterministic, which makes it testable.

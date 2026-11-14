@@ -1,0 +1,1 @@
+Passing sleep in makes it testable without waiting. In production: add jitter, retry only transient errors (timeouts, 429, 5xx), cap total time, and make tool calls idempotent so a retry can't double-charge a customer.

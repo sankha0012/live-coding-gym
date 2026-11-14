@@ -1,0 +1,55 @@
+- id: pandas-read-a-csv-with-a-date-column
+  front: pandas · read a CSV with a date column
+  back: pd.read_csv("orders.csv", parse_dates=["created_at"])
+- id: pandas-first-look-at-a-table
+  front: pandas · first look at a table
+  back: df.shape; df.head(); df.dtypes; df.isna().sum()
+- id: pandas-filter-two-conditions
+  front: pandas · filter two conditions
+  back: df[(df["x"] > 10) & (df["city"] == "SP")]
+- id: pandas-values-in-a-list
+  front: pandas · values in a list
+  back: df[df["city"].isin(["SP", "RJ"])]
+- id: pandas-sum-per-group-sorted
+  front: pandas · sum per group, sorted
+  back: df.groupby("city")["gmv"].sum().sort_values(ascending=False)
+- id: pandas-several-named-aggregates
+  front: pandas · several named aggregates
+  back: df.groupby("city").agg(n=("order_id", "count"), rate=("late", "mean"))
+- id: pandas-rate-of-a-condition-per-group
+  front: pandas · rate of a condition per group
+  back: (df["status"] == "cancelled").groupby(df["cuisine"]).mean()
+- id: pandas-left-join
+  front: pandas · left join
+  back: a.merge(b, on="restaurant_id", how="left")
+- id: pandas-top-3-per-group
+  front: pandas · top 3 per group
+  back: g.sort_values("gmv", ascending=False).groupby("city").head(3)
+- id: pandas-weekly-totals
+  front: pandas · weekly totals
+  back: df.set_index("created_at")["gmv"].resample("W").sum()
+- id: pandas-previous-value-per-customer-lag
+  front: pandas · previous value per customer (LAG)
+  back: df.groupby("customer_id")["created_at"].shift(1)
+- id: pandas-order-number-per-customer
+  front: pandas · order number per customer
+  back: df.groupby("customer_id").cumcount() + 1
+- id: pandas-fill-nulls-drop-rows-with-nulls
+  front: pandas · fill nulls / drop rows with nulls
+  back: df["x"].fillna(0); df.dropna(subset=["x"])
+- id: pandas-if-else-column
+  front: pandas · if/else column
+  back: np.where(df["gmv"] > 100, "big", "small")
+- id: pandas-deciles
+  front: pandas · deciles
+  back: pd.qcut(df["score"], 10, labels=False)
+- id: pandas-pivot-table
+  front: pandas · pivot table
+  back: pd.pivot_table(df, index="city", columns="cuisine", values="gmv", aggfunc="sum",
+    fill_value=0)
+- id: stats-two-proportion-z
+  front: Stats · two-proportion z
+  back: p = (x1+x2)/(n1+n2); se = (p*(1-p)*(1/n1+1/n2))**0.5; z = (p2-p1)/se
+- id: stats-sample-std
+  front: Stats · sample std
+  back: m = sum(xs)/n; (sum((x-m)**2 for x in xs)/(n-1)) ** 0.5

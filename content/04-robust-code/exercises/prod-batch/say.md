@@ -1,0 +1,1 @@
+The fallback rate is a health metric: if it jumps from 0.1% to 5%, something upstream broke and we should alert, not silently serve defaults. The fallback itself should be a business choice, like the historical average delivery time for that city.

@@ -1,6 +1,51 @@
-- id: dict-count
-  front: Count how often each item appears in `items`, using a plain dict.
-  back: |
-    counts = {}
-    for item in items:
-        counts[item] = counts.get(item, 0) + 1
+- id: python-read-a-number-from-input
+  front: Python · read a number from input()
+  back: n = int(input())
+- id: python-parse-1-5-3-into-numbers
+  front: Python · parse '1,5,3' into numbers
+  back: '[int(x) for x in s.split(",")]'
+- id: python-split-a-b-into-two-parts
+  front: Python · split 'a|b' into two parts
+  back: left, right = s.split("|")
+- id: python-keep-only-letters-and-digits
+  front: Python · keep only letters and digits
+  back: '"".join(ch for ch in w if ch.isalnum())'
+- id: python-two-decimals-as-text
+  front: Python · two decimals as text
+  back: f"{x:.2f}"
+- id: python-parse-json-safely
+  front: Python · parse JSON safely
+  back: "try:\n    data = json.loads(text)\nexcept ValueError:\n    data = None"
+- id: python-cosine-similarity
+  front: Python · cosine similarity
+  back: 'dot = sum(a*b for a, b in zip(u, v))
+
+    cos = dot / (math.sqrt(sum(a*a for a in u)) * math.sqrt(sum(b*b for b in v)))'
+- id: python-retry-loop
+  front: Python · retry loop
+  back: "for attempt in range(n):\n    try: return fn()\n    except Exception:\n \
+    \       if attempt == n - 1: raise\n        sleep(base * 2 ** attempt)"
+- id: python-count-items
+  front: Python · count items
+  back: 'from collections import Counter
+
+    Counter(items).most_common(k)'
+- id: python-sort-by-count-desc-then-name
+  front: Python · sort by count desc, then name
+  back: 'sorted(d.items(), key=lambda kv: (-kv[1], kv[0]))'
+- id: python-group-items-in-lists
+  front: Python · group items in lists
+  back: 'from collections import defaultdict
+
+    g = defaultdict(list); g[key].append(x)'
+- id: python-consecutive-pairs
+  front: Python · consecutive pairs
+  back: 'for a, b in zip(xs, xs[1:]): ...'
+- id: python-safe-default-argument
+  front: Python · safe default argument
+  back: "def f(x, tags=None):\n    if tags is None: tags = []"
+- id: python-distance-between-two-points
+  front: Python · distance between two points
+  back: 'import math
+
+    math.dist((x1, y1), (x2, y2))'

@@ -1,0 +1,7 @@
+title: Late rate by cuisine
+kind: sql
+required: true
+mock: false
+time_limit_s: 960
+ordered: true
+seed_file: ../../../_shared/delivery.sql

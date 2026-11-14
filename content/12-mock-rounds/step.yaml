@@ -1,0 +1,5 @@
+title: Mock rounds and readiness
+order: 12
+gate:
+  min_score: 4
+  timed_required: false

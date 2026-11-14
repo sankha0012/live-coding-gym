@@ -1,0 +1,5 @@
+title: GMV by city
+kind: python
+required: true
+mock: false
+time_limit_s: 720

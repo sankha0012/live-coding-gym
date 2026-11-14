@@ -1,0 +1,5 @@
+title: Real data behaviour and statistics
+order: 6
+gate:
+  min_score: 4
+  timed_required: false

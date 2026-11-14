@@ -1,0 +1,5 @@
+title: Chunk text with overlap
+kind: python
+required: true
+mock: true
+time_limit_s: 720

@@ -1,0 +1,5 @@
+title: Average order value per customer
+kind: python
+required: true
+mock: false
+time_limit_s: 960
