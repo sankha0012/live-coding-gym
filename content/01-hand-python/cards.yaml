@@ -1,0 +1,6 @@
+- id: dict-count
+  front: Count how often each item appears in `items`, using a plain dict.
+  back: |
+    counts = {}
+    for item in items:
+        counts[item] = counts.get(item, 0) + 1
