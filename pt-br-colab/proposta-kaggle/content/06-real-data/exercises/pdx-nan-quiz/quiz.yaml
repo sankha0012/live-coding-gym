@@ -1,0 +1,70 @@
+- q: "What happens with df[df.total > 100 and df.status == 'delivered']?"
+  options:
+    - "It filters correctly"
+    - "ValueError: the truth value of a Series is ambiguous"
+    - "It returns an empty DataFrame"
+  answer: 1
+  why: "Python's and needs a single boolean. Use & between Series."
+- q: "Why is df[df.total > 100 & df.status == 'delivered'] wrong?"
+  options:
+    - "& binds tighter than > and ==, so the expression is grouped wrongly"
+    - "& does not work on strings"
+    - "It is correct"
+  answer: 0
+  why: "Wrap each comparison in parentheses: (df.total > 100) & (df.status == 'delivered')."
+- q: "What does np.nan == np.nan return?"
+  options:
+    - "True"
+    - "False"
+    - "np.nan"
+  answer: 1
+  why: "NaN is not equal to anything, including itself. Use isna() or np.isnan()."
+- q: "How do you select rows where coupon is missing, whether stored as None or NaN?"
+  options:
+    - "df[df.coupon == None]"
+    - "df[df.coupon == np.nan]"
+    - "df[df.coupon.isna()]"
+  answer: 2
+  why: "isna() treats None and NaN as missing. The == versions are always False for NaN."
+- q: "s = pd.Series([150.0, np.nan, 50.0]). How many rows satisfy (s > 100) | (s <= 100)?"
+  options:
+    - "3"
+    - "2"
+    - "1"
+  answer: 1
+  why: "Every comparison with NaN is False, so the NaN row is in neither half."
+- q: "What is pd.Series([1, None, 3]).dtype?"
+  options:
+    - "int64"
+    - "object"
+    - "float64"
+  answer: 2
+  why: "The None becomes NaN, which is a float, so the integers become 1.0 and 3.0. Use dtype='Int64' to keep integers."
+- q: "s = pd.Series([2.0, np.nan, 4.0]). What do s.mean() and s.count() return?"
+  options:
+    - "3.0 and 2"
+    - "2.0 and 3"
+    - "nan and 3"
+  answer: 0
+  why: "Aggregates skip NaN by default, and count() counts only non-missing values, while len(s) is 3."
+- q: "What does np.array([1, 2]) == np.array([1, 3]) return?"
+  options:
+    - "False"
+    - "array([ True, False])"
+    - "True"
+  answer: 1
+  why: "NumPy overloads == element by element. Use np.array_equal for one answer."
+- q: "On pandas 3, what does df[df.total > 100]['flag'] = 1 do to df?"
+  options:
+    - "Adds the flag column to the matching rows of df"
+    - "Nothing: chained assignment writes to a temporary copy, and pandas warns"
+    - "Raises KeyError"
+  answer: 1
+  why: "With copy-on-write the filtered frame is always a copy. Write df.loc[df.total > 100, 'flag'] = 1."
+- q: "Given mask = s > 0 on a numeric Series s, what does mask.sum() return?"
+  options:
+    - "The sum of the positive values"
+    - "The number of positive values"
+    - "True if any value is positive"
+  answer: 1
+  why: "True counts as 1 and False as 0, so summing a boolean mask counts rows. mask.mean() gives the share."
