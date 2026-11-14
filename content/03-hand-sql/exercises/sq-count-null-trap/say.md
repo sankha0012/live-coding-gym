@@ -1,0 +1,1 @@
+COUNT(*) counts rows, COUNT(column) counts non-NULL values, so the two differ when a column has NULLs. Here cancelled orders have a NULL actual_minutes, so with_actual is 0 for them. One pass with GROUP BY, so O(n). The trap is using COUNT(col) as a row count and silently losing the NULL rows.

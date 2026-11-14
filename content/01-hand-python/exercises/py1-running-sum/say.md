@@ -1,0 +1,1 @@
+I keep a running total. For each number I add it to the total and append the total to the output. That is one pass, O(n) time. I build a new list, so the input is not changed. The standard library has itertools.accumulate that does the same thing.

@@ -1,0 +1,6 @@
+title: Dominant restaurants in a city
+kind: sql
+required: true
+time_limit_s: 900
+ordered: true
+seed_file: ../../../_shared/delivery.sql

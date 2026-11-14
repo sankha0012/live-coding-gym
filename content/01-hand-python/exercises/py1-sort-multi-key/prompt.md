@@ -1,0 +1,1 @@
+Write `rank(records)` where each record is a dict with `name` (str) and `score` (int). Return a new list sorted by `score` from high to low. Records with the same score are ordered by `name` from A to Z. Do not change the input list. An empty list returns an empty list.

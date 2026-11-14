@@ -1,0 +1,1 @@
+Write `running_sum(nums: list) -> list` that returns a list where item `i` is the sum of `nums[0]` to `nums[i]`. `[1, 2, 3, 4]` becomes `[1, 3, 6, 10]`. An empty list returns an empty list. Numbers can be negative or floats.

@@ -1,0 +1,5 @@
+title: Stack class
+kind: python
+time_limit_s: 420
+required: true
+mock: true

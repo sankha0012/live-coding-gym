@@ -1,0 +1,1 @@
+I group by cuisine and use SUM over a CASE expression, one per status, so both counts come from one scan. The CASE returns 1 or 0, so the sum is a conditional count. It is O(n). Using ELSE 0 matters: without it a cuisine with no match would get NULL instead of 0.

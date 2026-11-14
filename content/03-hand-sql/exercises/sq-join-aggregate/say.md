@@ -1,0 +1,1 @@
+I join orders to restaurants to get the cuisine, filter to delivered orders, then GROUP BY cuisine with COUNT and SUM. I round the sum to 2 decimals and sort by revenue with cuisine as the tie-breaker. It is one pass plus a small sort. The status filter goes in WHERE, before grouping, because it removes rows rather than groups.

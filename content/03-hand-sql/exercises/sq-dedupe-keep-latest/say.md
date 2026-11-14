@@ -1,0 +1,1 @@
+I rank the orders inside each customer and restaurant pair, newest first, with order_id as the tie-break, then keep rank 1 in an outer query, because I cannot filter a window function directly. It sorts per partition, so O(n log n). The tie-break makes the result deterministic. GROUP BY with MAX would drop the other columns or return ties twice.

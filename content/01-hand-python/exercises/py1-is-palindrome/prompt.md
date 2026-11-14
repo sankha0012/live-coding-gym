@@ -1,0 +1,1 @@
+Write `is_palindrome(s: str) -> bool`. It returns True if `s` reads the same forwards and backwards when you ignore case and ignore every character that is not a letter. `"A man, a plan, a canal: Panama"` is True. `"hello"` is False. An empty string, or a string with no letters, is True.

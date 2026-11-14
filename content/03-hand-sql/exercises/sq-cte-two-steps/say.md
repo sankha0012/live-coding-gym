@@ -1,0 +1,1 @@
+I split the problem in two. The CTE gives one revenue number per restaurant. Then I average those numbers and keep the restaurants above that average. The CTE lets me use the per-restaurant result twice without repeating the aggregation. Cost is one scan of orders plus a tiny pass over the CTE. The edge case is that the average is over restaurants, not over orders.

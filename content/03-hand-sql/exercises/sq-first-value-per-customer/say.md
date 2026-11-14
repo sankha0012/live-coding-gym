@@ -1,0 +1,1 @@
+I partition by customer and order by time, so FIRST_VALUE returns the earliest order's subtotal on every row of that customer. Then the difference is plain arithmetic. I filter out NULL subtotals first, otherwise the first row could be NULL and spoil every row. Cost is one sort per partition.

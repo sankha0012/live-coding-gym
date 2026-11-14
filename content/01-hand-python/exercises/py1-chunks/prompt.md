@@ -1,0 +1,1 @@
+Write `chunks(items: list, n: int) -> list` that splits `items` into a list of consecutive lists of size `n`. The last chunk may be shorter. `chunks([1, 2, 3, 4, 5], 2)` is `[[1, 2], [3, 4], [5]]`. An empty list returns `[]`. If `n <= 0`, raise `ValueError`.

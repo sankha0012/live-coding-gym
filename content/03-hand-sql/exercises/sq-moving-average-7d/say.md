@@ -1,0 +1,1 @@
+I count orders per day, then average over a frame of the current row and the 6 rows before it. I filter the dates in an outer query, because filtering first would cut the history the window needs. This counts rows, not calendar days, so a missing day would stretch the window; I would use a calendar table if gaps mattered. Cost is one group and one sort.

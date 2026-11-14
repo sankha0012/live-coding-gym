@@ -1,0 +1,1 @@
+I split on single spaces so the original spacing survives, fix each word with upper on the first letter and lower on the rest, and join back. It is O(n). Slicing with w[:1] instead of w[0] avoids an IndexError on empty pieces from repeated spaces.

@@ -1,0 +1,1 @@
+I parse both strings with date.fromisoformat, which raises ValueError on invalid input, so I do not catch it. Subtracting two dates gives a timedelta, and I take .days and abs() so the order does not matter. It is O(1). I use date and not datetime because there is no time of day, which avoids time zone surprises.

@@ -1,0 +1,1 @@
+I keep a dict of symbol values and walk the string once. If the current symbol is smaller than the next one, I subtract it, otherwise I add it. That handles IV, IX, CM and the rest without special cases. It is O(n) time and O(1) space. The edge case is the last character, which has no next one, so I check the index first. The empty string gives 0.

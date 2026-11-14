@@ -1,0 +1,1 @@
+Write `rotate(items: list, k: int) -> list` that returns a new list rotated `k` steps to the right. `rotate([1, 2, 3, 4, 5], 2)` is `[4, 5, 1, 2, 3]`. `k` can be larger than the length (wrap around) or negative (rotate left): `rotate([1, 2, 3], -1)` is `[2, 3, 1]`. An empty list returns an empty list. Do not change the input list.

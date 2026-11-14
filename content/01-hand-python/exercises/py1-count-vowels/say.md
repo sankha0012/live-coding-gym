@@ -1,0 +1,1 @@
+I lowercase the string so one set of vowels covers both cases, then count the characters that are in "aeiou". It is O(n) time and O(1) space. Empty input counts zero. Using a set instead of a string would make each check clearly O(1).

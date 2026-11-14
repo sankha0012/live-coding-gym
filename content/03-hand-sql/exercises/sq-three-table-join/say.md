@@ -1,0 +1,1 @@
+Orders is the center table, so I join restaurants on restaurant_id and couriers on courier_id. Then I filter on status, vehicle and cuisine and sort by order_id. Cancelled orders have no courier, so the inner join would drop them anyway, but I keep the status filter to be explicit. The cost is linear in orders because every join is on a primary key.

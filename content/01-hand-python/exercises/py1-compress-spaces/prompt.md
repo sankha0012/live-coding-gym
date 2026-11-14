@@ -1,0 +1,1 @@
+Write `compress_spaces(s: str) -> str` that collapses every run of spaces into one space and removes spaces at the start and end. `"  a   b  "` becomes `"a b"`. An empty string, or a string of only spaces, returns an empty string. Only the space character is treated as a space.

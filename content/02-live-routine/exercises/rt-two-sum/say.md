@@ -1,0 +1,1 @@
+I walk the list once and keep a dict from value to index. For each number x I check if target minus x is already in the dict. If yes, I return that stored index and the current one. If not, I store x. This is O(n) time and O(n) space, instead of O(n squared) for checking all pairs. I check before I store, so the same position is never used twice. If nothing matches I return None.

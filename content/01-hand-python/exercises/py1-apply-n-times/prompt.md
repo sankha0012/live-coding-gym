@@ -1,0 +1,1 @@
+Write `apply_n_times(f, n, x)` that applies the function `f` to `x` exactly `n` times and returns the result. Each call uses the result of the previous call. `apply_n_times(f, 0, x)` returns `x` and never calls `f`. n is never negative.

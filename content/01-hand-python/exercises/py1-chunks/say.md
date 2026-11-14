@@ -1,0 +1,1 @@
+First I reject n of zero or less with ValueError, because a step of zero makes range raise a confusing error and a negative step silently returns nothing. Then I step through the indexes in jumps of n and slice n items each time. Slices past the end just stop, so the last chunk is short without extra code. It is O(len) time and builds new lists, so the input is not changed.

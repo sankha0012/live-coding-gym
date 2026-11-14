@@ -1,0 +1,1 @@
+I loop n times and replace x with f(x) each round, then return x. With n equal to zero the loop body never runs, so the input comes back untouched. It is O(n) calls of f and O(1) extra space. The key detail is feeding each result into the next call, not the original input.

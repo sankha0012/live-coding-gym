@@ -1,0 +1,1 @@
+I filter to delivered orders, sort by subtotal descending with order_id as the tie breaker, and cut with LIMIT 23. The tie breaker makes the result deterministic. Sorting is O(n log n), although many engines can do a top-N faster with a heap. Rows 23 and 24 have the same subtotal, so without the second sort key the engine could return either one.

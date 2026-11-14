@@ -1,0 +1,1 @@
+A plain split on commas breaks on quoted fields, so I use csv.reader. It accepts any iterable of lines, so I pass a one-item list and take the first row. An empty line yields no rows, so I return an empty list. It is O(n) in the length of the line. For a whole file I would pass the file object instead.

@@ -1,0 +1,1 @@
+I store counts in a dict on self, created in __init__ so each instance has its own. add uses get with a default of 0. most_common sorts the items by negative count, then by item, and slices the first n. That is O(m log m) for m distinct items. Ties are the edge case, so the item in the sort key makes the order deterministic.

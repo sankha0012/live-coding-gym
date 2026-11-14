@@ -1,0 +1,1 @@
+Write `common_keys(dicts: list) -> list` that returns the sorted list of keys that are present in every dict of `dicts`. `[{"a": 1, "b": 2}, {"b": 3, "c": 4}]` returns `["b"]`. An empty list of dicts returns an empty list. A single dict returns all its keys, sorted. Keys are strings.

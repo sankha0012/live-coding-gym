@@ -1,0 +1,5 @@
+title: First non-repeating character
+kind: python
+required: true
+mock: true
+time_limit_s: 600

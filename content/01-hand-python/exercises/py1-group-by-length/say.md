@@ -1,0 +1,1 @@
+I walk through the words once. For each word, setdefault gives me the list for its length and I append the word. Appending keeps the input order and duplicates. It is O(n) time and space. An empty string is a valid word with length 0, so it needs no special case.

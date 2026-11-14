@@ -1,0 +1,1 @@
+Write `title_case(s: str) -> str` without using `str.title()`. Make the first letter of each word upper case and the rest lower case. Words are separated by spaces, and the spaces are kept as they are. `"hELLO wORLD"` becomes `"Hello World"`. An empty string returns an empty string.

@@ -1,0 +1,2 @@
+def compose(*fns):
+    pass

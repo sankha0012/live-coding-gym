@@ -1,0 +1,1 @@
+I join to restaurants for city and cuisine, filter to delivered orders and group by both columns, so each city and cuisine pair is one row. It is O(n). Pairs with no delivered orders simply have no rows, which matches the prompt. The ORDER BY on both columns makes the output deterministic.

@@ -1,0 +1,1 @@
+I join orders to restaurants for the city, keep delivered orders where actual time is above the promise, group by city and count. Cancelled orders have NULL actual minutes and would never pass the test anyway, but the status filter states the intent. It is O(n). I sort by count descending with the city as tie-breaker so ties are stable.

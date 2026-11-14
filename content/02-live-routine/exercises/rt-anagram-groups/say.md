@@ -1,0 +1,1 @@
+I use the sorted letters of each word as a dict key, because anagrams share the same key. I append each word to its key's list, so input order is kept. At the end I sort the groups by their first word. With n words of length k this costs O(n k log k) for the key sorting, plus the final sort. A counting key would make the key step O(k). Empty input gives an empty list.

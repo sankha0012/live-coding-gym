@@ -1,0 +1,7 @@
+title: Running revenue total
+kind: sql
+time_limit_s: 900
+required: true
+mock: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql

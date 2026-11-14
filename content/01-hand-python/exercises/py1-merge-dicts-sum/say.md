@@ -1,0 +1,1 @@
+I keep one result dict and walk every dict in the list. For each key I add the value to out.get(key, 0), so a new key starts from zero. It is O(total keys) time. I build a new dict, so the inputs are never changed. The trap is dict.update, which overwrites instead of adding.

@@ -1,0 +1,1 @@
+I do two passes. The first pass counts every character with a Counter. The second pass walks the string in order and returns the first index whose count is 1. It is O(n) time and O(k) space. If nothing qualifies, or the string is empty, I return -1.

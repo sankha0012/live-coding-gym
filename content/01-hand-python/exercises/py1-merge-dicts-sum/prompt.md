@@ -1,0 +1,1 @@
+Write `merge_dicts_sum(dicts: list) -> dict` that merges a list of dicts with number values into one dict. When a key appears in several dicts, its values are added. `[{"a": 1, "b": 2}, {"b": 3, "c": 4}]` returns `{"a": 1, "b": 5, "c": 4}`. Do not change the input dicts. An empty list returns an empty dict.

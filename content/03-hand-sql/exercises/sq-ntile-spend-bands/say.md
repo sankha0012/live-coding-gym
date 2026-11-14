@@ -1,0 +1,1 @@
+I total spend per customer, then NTILE(4) deals the sorted customers into four near-equal groups. The ORDER BY inside the window needs a tie-break on customer_id, or equal spenders could land in different bands on different runs. When the count does not divide by 4, the first bands get one extra row. Cost is one group and one sort.

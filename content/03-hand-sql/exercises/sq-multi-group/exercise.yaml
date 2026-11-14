@@ -1,0 +1,6 @@
+title: Orders by city and cuisine
+kind: sql
+time_limit_s: 480
+required: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql

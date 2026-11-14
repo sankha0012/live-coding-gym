@@ -1,0 +1,149 @@
+- id: rt-two-pointers
+  front: Routine · two pointers on a sorted list, find a pair with a given sum
+  back: |
+    lo, hi = 0, len(a) - 1
+    while lo < hi:
+        s = a[lo] + a[hi]
+        if s == target:
+            return lo, hi
+        if s < target:
+            lo += 1
+        else:
+            hi -= 1
+    return None
+- id: rt-sliding-window
+  front: Routine · sliding window, longest substring without repeats
+  back: |
+    seen, left, best = {}, 0, 0
+    for right, ch in enumerate(s):
+        if ch in seen and seen[ch] >= left:
+            left = seen[ch] + 1
+        seen[ch] = right
+        best = max(best, right - left + 1)
+    return best
+- id: rt-hash-count
+  front: Routine · count items with a hash map
+  back: |
+    from collections import Counter
+    counts = Counter(items)
+    return counts.most_common(k)
+- id: rt-stack-brackets
+  front: Routine · stack, check balanced brackets
+  back: |
+    pairs = {")": "(", "]": "[", "}": "{"}
+    stack = []
+    for ch in s:
+        if ch in pairs.values():
+            stack.append(ch)
+        elif ch in pairs:
+            if not stack or stack.pop() != pairs[ch]:
+                return False
+    return not stack
+- id: rt-binary-search
+  front: Routine · binary search, first index of target or -1
+  back: |
+    lo, hi = 0, len(a)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if a[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo if lo < len(a) and a[lo] == target else -1
+- id: rt-intervals-merge
+  front: Routine · merge overlapping intervals
+  back: |
+    out = []
+    for start, end in sorted(intervals):
+        if out and start <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], end)
+        else:
+            out.append([start, end])
+    return out
+- id: rt-two-sum-dict
+  front: Routine · two sum in one pass
+  back: |
+    seen = {}
+    for i, n in enumerate(nums):
+        if target - n in seen:
+            return [seen[target - n], i]
+        seen[n] = i
+    return []
+- id: rt-group-anagrams
+  front: Routine · group anagrams
+  back: |
+    from collections import defaultdict
+    groups = defaultdict(list)
+    for w in words:
+        groups["".join(sorted(w))].append(w)
+    return list(groups.values())
+- id: rt-top-k-key
+  front: Routine · top k by count, ties alphabetical
+  back: |
+    return sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[:k]
+- id: rt-complexity-words
+  front: Routine · complexity to say aloud for one loop, a sort, nested loops, dict lookup
+  back: |
+    One loop: O(n).
+    Sort: O(n log n).
+    Nested loops: O(n squared).
+    Dict or set lookup: O(1) on average.
+- id: rt-step-clarify
+  front: Routine step 1 · clarify (2 to 3 min), what do you ask?
+  back: |
+    Restate the task. Ask the five questions: input type and size,
+    empty input, ties and duplicates, output type and order, limits.
+    Write the answers as comments.
+- id: rt-step-example
+  front: Routine step 2 · tiny example (1 min), what do you do?
+  back: |
+    Pick an input of 3 to 5 items. Say the expected answer out loud
+    and solve it by hand. Add one tricky item such as a tie.
+- id: rt-step-plan
+  front: Routine step 3 · plan (2 min), what does it look like?
+  back: |
+    Numbered comments, one per step, before any code:
+    # 1. count words  # 2. sort by count then word  # 3. take k
+    Say the complexity of the plan.
+- id: rt-step-code
+  front: Routine step 4 · code, how do you write it?
+  back: |
+    Small runnable pieces. Run every line or two, print the
+    intermediate value. Talk while typing. Name things clearly.
+- id: rt-step-test
+  front: Routine step 5 · test (30 seconds), what do you run?
+  back: |
+    Say the expected value first. Run the tiny example, then one
+    edge case (empty, one item, tie). Use assert. Say what matched.
+- id: rt-step-improve
+  front: Routine step 6 · improve, what do you say?
+  back: |
+    State time and space complexity, one trade-off, and one thing you
+    would change with more time. Name what you did not test.
+- id: rt-five-questions
+  front: Routine · the five clarifying questions
+  back: |
+    1. Input type and size?  2. Empty or tiny input?
+    3. Ties and duplicates?  4. Output type and order?
+    5. Limits on time, memory, in-place?
+- id: rt-stuck-recovery
+  front: Routine · stuck, what do you do first?
+  back: |
+    Say you are stuck. Solve the tiny example by hand, write the slow
+    correct version, then improve it. Ask for a hint after about 3 minutes.
+- id: rt-first-unique-char
+  front: Routine · first non-repeating character, two passes
+  back: |
+    from collections import Counter
+    counts = Counter(s)
+    for i, ch in enumerate(s):
+        if counts[ch] == 1:
+            return i
+    return -1
+- id: rt-lru-ordereddict
+  front: Routine · LRU cache core with OrderedDict
+  back: |
+    from collections import OrderedDict
+    d = OrderedDict()
+    d.move_to_end(key)          # on get and on put of an existing key
+    d.popitem(last=False)       # evict the least recently used

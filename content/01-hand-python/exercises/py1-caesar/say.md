@@ -1,0 +1,1 @@
+For each letter I find its base, "a" or "A" by case, shift its offset and take modulo 26 so it wraps. Python modulo is never negative, so negative shifts work too. Non-letters are copied as they are. It is O(n) time and space.

@@ -1,0 +1,1 @@
+compose returns an inner function that loops over the functions from last to first, passing the value along. That is right to left, like f(g(x)). It is O(k) calls for k functions. With no functions the loop does nothing, so the input comes back unchanged, which is the identity.

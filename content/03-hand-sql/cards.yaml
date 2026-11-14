@@ -23,3 +23,133 @@
 - id: sql-month-bucket-postgres-sqlite
   front: SQL · month bucket (Postgres / SQLite)
   back: DATE_TRUNC('month', ts)  /  strftime('%Y-%m', ts)
+- id: sq-top-row-per-group
+  front: Latest row per customer (one row each)
+  back: |
+    WITH r AS (
+      SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id
+                 ORDER BY created_at DESC, order_id DESC) AS rn
+      FROM orders)
+    SELECT * FROM r WHERE rn = 1
+- id: sq-rows-with-no-match
+  front: Customers who never ordered (NULL-safe)
+  back: |
+    SELECT c.* FROM customers c
+    WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id)
+- id: sq-left-join-count-zero
+  front: Orders per customer, zero for customers with none
+  back: |
+    SELECT c.customer_id, COUNT(o.order_id) AS n
+    FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id
+    GROUP BY c.customer_id
+- id: sq-count-distinct
+  front: Number of different customers who ordered
+  back: SELECT COUNT(DISTINCT customer_id) FROM orders
+- id: sq-find-duplicates
+  front: Customer and restaurant pairs that have more than one order
+  back: |
+    SELECT customer_id, restaurant_id, COUNT(*)
+    FROM orders GROUP BY customer_id, restaurant_id HAVING COUNT(*) > 1
+- id: sq-above-average
+  front: Rows above the overall average
+  back: SELECT * FROM orders WHERE subtotal > (SELECT AVG(subtotal) FROM orders)
+- id: sq-above-group-average
+  front: Rows above the average of their own group (correlated)
+  back: |
+    SELECT * FROM orders o
+    WHERE subtotal > (SELECT AVG(subtotal) FROM orders i
+                      WHERE i.restaurant_id = o.restaurant_id)
+- id: sq-cte-two-steps
+  front: Aggregate first, then filter on the aggregate with a CTE
+  back: |
+    WITH s AS (SELECT customer_id, SUM(subtotal) AS spend FROM orders GROUP BY 1)
+    SELECT * FROM s WHERE spend > (SELECT AVG(spend) FROM s)
+- id: sq-share-of-total
+  front: Each city's share of all orders
+  back: |
+    SELECT r.city, 1.0 * COUNT(*) / SUM(COUNT(*)) OVER () AS share
+    FROM orders o JOIN restaurants r USING (restaurant_id) GROUP BY r.city
+- id: sq-rank-ties-share
+  front: Rank where ties share a place and leave a gap
+  back: RANK() OVER (ORDER BY spend DESC)
+- id: sq-dense-rank
+  front: Rank where ties share a place and leave no gap
+  back: DENSE_RANK() OVER (ORDER BY spend DESC)
+- id: sq-nth-highest
+  front: Second highest distinct value
+  back: |
+    SELECT spend FROM (
+      SELECT spend, DENSE_RANK() OVER (ORDER BY spend DESC) AS d FROM t)
+    WHERE d = 2 LIMIT 1
+- id: sq-next-row-value
+  front: Value of the next row in time order
+  back: LEAD(created_at) OVER (PARTITION BY customer_id ORDER BY created_at)
+- id: sq-growth-vs-previous
+  front: Month-over-month growth rate
+  back: |
+    1.0 * (n - LAG(n) OVER (ORDER BY month))
+        / LAG(n) OVER (ORDER BY month)
+- id: sq-moving-average
+  front: Average of the current and previous 6 rows
+  back: |
+    AVG(n) OVER (ORDER BY day
+                 ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)
+- id: sq-ntile-bands
+  front: Split customers into 4 equal spend bands
+  back: NTILE(4) OVER (ORDER BY spend DESC)
+- id: sq-first-value
+  front: First order amount per customer on every row
+  back: |
+    FIRST_VALUE(subtotal) OVER (PARTITION BY customer_id
+                                ORDER BY created_at, order_id)
+- id: sq-named-window
+  front: Reuse one window for several functions
+  back: |
+    SELECT LAG(x) OVER w, LEAD(x) OVER w FROM t
+    WINDOW w AS (PARTITION BY k ORDER BY d)
+- id: sq-count-star-vs-col
+  front: Count all rows versus rows where a column has a value
+  back: COUNT(*)  versus  COUNT(subtotal)   -- the second skips NULLs
+- id: sq-is-null
+  front: Rows where a column is missing
+  back: WHERE subtotal IS NULL   -- never = NULL
+- id: sq-null-to-zero-sum
+  front: Sum that returns 0, not NULL, for an empty set
+  back: COALESCE(SUM(subtotal), 0)
+- id: sq-days-between
+  front: Whole days since signup (SQLite)
+  back: CAST(julianday('2026-11-14') - julianday(signup_date) AS INTEGER)
+- id: sq-week-bucket
+  front: Year and week bucket (SQLite)
+  back: strftime('%Y-%W', created_at)
+- id: sq-date-range-half-open
+  front: All of October, no rows lost on the last day
+  back: WHERE created_at >= '2026-10-01' AND created_at < '2026-11-01'
+- id: sq-last-n-days
+  front: Orders in the 7 days before a fixed date (SQLite)
+  back: WHERE created_at >= date('2026-10-31', '-7 days')
+- id: sq-case-buckets
+  front: Label orders small, medium or large by subtotal
+  back: |
+    CASE WHEN subtotal < 30 THEN 'small'
+         WHEN subtotal < 60 THEN 'medium'
+         ELSE 'large' END
+- id: sq-conditional-count
+  front: Count of cancelled orders inside a grouped query
+  back: SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END)
+- id: sq-self-join-pairs
+  front: Pairs of orders by the same customer, each pair once
+  back: |
+    FROM orders a JOIN orders b
+      ON b.customer_id = a.customer_id AND b.order_id > a.order_id
+- id: sq-three-table-join
+  front: Join orders to customers and restaurants
+  back: |
+    FROM orders o
+    JOIN customers c ON c.customer_id = o.customer_id
+    JOIN restaurants r ON r.restaurant_id = o.restaurant_id
+- id: sq-top-n-overall
+  front: Top 3 customers by spend, ties broken by id
+  back: |
+    SELECT customer_id, SUM(subtotal) AS spend FROM orders
+    GROUP BY customer_id ORDER BY spend DESC, customer_id LIMIT 3

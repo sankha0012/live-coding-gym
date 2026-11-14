@@ -1,0 +1,1 @@
+I split on whitespace, which also drops the extra spaces, reverse the list and join it with one space. It is O(n) time and space. An empty string gives an empty list, so it returns "" without a special case.

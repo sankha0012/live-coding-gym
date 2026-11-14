@@ -1,0 +1,1 @@
+I start from customers and LEFT JOIN orders, so customers without orders stay with NULL order columns. Then I keep the Curitiba rows where order_id IS NULL, which are exactly the customers with no order. It is one pass over the join. The trap is to test with = NULL, which never matches, or to put the NULL test in the ON clause.

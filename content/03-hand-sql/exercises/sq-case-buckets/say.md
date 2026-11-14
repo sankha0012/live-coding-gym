@@ -1,0 +1,1 @@
+A CASE expression picks the first matching branch, so I test NULL first, otherwise NULL would fall to ELSE and land in large. I group by the bucket label and count. One scan, O(n). The boundaries are half open, so 42 is medium and 83 is large, and I state that out loud.

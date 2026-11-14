@@ -1,0 +1,3 @@
+SELECT order_id, subtotal
+FROM orders
+WHERE ...

@@ -1,0 +1,1 @@
+Reverse the order of the rows, then transpose with zip(*...). That is the same as a clockwise turn, and I turn each tuple back into a list. It is O(n squared) time and space, because I build a new matrix. An in-place version uses O(1) extra space, but the prompt asks for a new matrix, so this is simpler and cannot corrupt the input.

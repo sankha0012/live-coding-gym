@@ -1,0 +1,1 @@
+Write `pairs(items: list) -> list` that returns a list of tuples with each item and the next one. `[1, 2, 3, 4]` becomes `[(1, 2), (2, 3), (3, 4)]`. A list with fewer than 2 items returns an empty list.

@@ -1,0 +1,5 @@
+title: Two sum
+kind: python
+required: true
+mock: true
+time_limit_s: 720

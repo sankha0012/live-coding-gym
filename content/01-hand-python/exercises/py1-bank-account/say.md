@@ -1,0 +1,1 @@
+I keep the money in a private attribute and expose it through a read-only property, so callers cannot set it by accident. Both methods check the amount first and raise ValueError, and only then change the balance, so a failed call changes nothing. All operations are O(1). The edge cases are a zero or negative amount, and withdrawing exactly the whole balance, which is allowed.

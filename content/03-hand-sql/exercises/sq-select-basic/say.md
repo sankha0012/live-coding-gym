@@ -1,0 +1,1 @@
+I select the two columns and filter the restaurants table with WHERE city equals Belo Horizonte. It is a single scan, so O(n) in the number of restaurants. SQL string comparison is case sensitive in some databases, so I match the spelling exactly.

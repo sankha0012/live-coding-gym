@@ -1,0 +1,1 @@
+I check the cache first. If n is missing I compute fib(n-1) plus fib(n-2), pass the same cache down, and store the result. Each n is computed once, so time is O(n) instead of exponential, and memory is O(n). The trade-off is the mutable default: it is shared on purpose here, but in other code that is a classic trap. Recursion depth is n, fine for 90.

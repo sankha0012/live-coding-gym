@@ -1,0 +1,1 @@
+I loop over the outer list, and for each inner list I loop over its items and collect them. A nested comprehension does it in one line. It is O(n) in the total number of items. It flattens one level only, so deeper lists stay as they are. An empty outer list gives an empty result.

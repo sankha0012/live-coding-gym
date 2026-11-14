@@ -1,0 +1,1 @@
+Write `compose(*fns)` that returns a new function. The new function applies `fns` from right to left: `compose(f, g)(x)` is `f(g(x))`. Each function takes one argument. `compose()` with no functions returns a function that gives back its input unchanged.

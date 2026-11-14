@@ -1,0 +1,1 @@
+Write `unique(items: list) -> list` that returns the items without duplicates, keeping the first time each item appears and the original order. `[3, 1, 3, 2, 1]` becomes `[3, 1, 2]`. An empty list returns an empty list. All items are hashable (numbers or strings).

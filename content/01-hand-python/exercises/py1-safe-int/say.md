@@ -1,0 +1,1 @@
+I wrap the conversion in try and catch both ValueError, for bad text, and TypeError, for None. Floats need their own check, because int(7.5) silently truncates, so I only accept them when is_integer() is true. It is O(1) per call. The trade-off is that I only catch the two errors I expect, so real bugs still show up.

@@ -1,0 +1,1 @@
+I reduce k with modulo the length, so big and negative values wrap correctly. Then I join the last k items with the first n minus k items. That is O(n) time and builds a new list. Trap: an empty list would make the modulo divide by zero, so I handle it first.

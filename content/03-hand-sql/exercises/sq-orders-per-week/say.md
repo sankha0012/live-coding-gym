@@ -1,0 +1,1 @@
+I turn each timestamp into a year-week label with strftime, filter to delivered, and group by that label. It is one scan plus a group, so O(n). Year-week labels sort correctly as text. In Postgres I would use date_trunc('week', created_at) instead, and the week boundary rules differ by dialect.

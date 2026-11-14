@@ -1,0 +1,1 @@
+I wrap a list. Push is append and pop takes from the end, so both are O(1). I check for empty first and raise IndexError on purpose, so a caller cannot mistake None for a stored value. Peek reads the last item without removing it, and __len__ lets len(stack) work.

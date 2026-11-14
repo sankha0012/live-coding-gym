@@ -1,0 +1,1 @@
+I count delivered orders per restaurant in a CTE, then apply RANK and DENSE_RANK over the count, highest first. After a tie RANK skips numbers (1, 1, 3) and DENSE_RANK does not (1, 1, 2). I use RANK when the position matters and DENSE_RANK when I want "the second highest value". Cost is one aggregate plus one sort.

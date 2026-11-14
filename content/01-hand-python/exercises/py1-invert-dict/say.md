@@ -1,0 +1,1 @@
+I loop over the items once and use setdefault to collect the keys for each value in a list. Then I sort each list so the output is deterministic. It is O(n log n) in the worst case, because of the sorting. The trap is `{v: k ...}`, which silently drops keys when values repeat.

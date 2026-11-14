@@ -1,0 +1,1 @@
+I convert both lists to sets, which also removes duplicates. Added is new minus old, removed is old minus new and kept is the intersection. I sort each result, because set order is not guaranteed and the output must be deterministic. Each set operation is O(n), and the sort makes it O(n log n).

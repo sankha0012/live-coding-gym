@@ -1,0 +1,1 @@
+Write a frozen dataclass `Version` with int fields `major`, `minor` and `patch`, in that order. Instances must compare with `<`, `>` and `==` by major first, then minor, then patch. They must not be changeable after creation. Also write `sort_versions(versions)` that returns a new list sorted from oldest to newest. An empty list returns an empty list.

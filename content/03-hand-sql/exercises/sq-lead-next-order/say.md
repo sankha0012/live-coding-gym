@@ -1,0 +1,1 @@
+I filter to the customer and status first, then LEAD looks one row ahead in time order. order_id breaks ties so the order is stable. julianday converts both timestamps to day numbers so I can subtract them. The last row has no next order, so LEAD gives NULL. Cost is one sort of the customer's orders.

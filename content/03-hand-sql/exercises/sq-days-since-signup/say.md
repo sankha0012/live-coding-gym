@@ -1,0 +1,1 @@
+julianday turns a date into a day number, so the difference of two is a day count, and CAST makes it whole. I use a fixed date, not now, so the query gives the same answer on every run, which matters for tests and reproducible reports. It is one scan, O(n). In Postgres this is just date subtraction.

@@ -1,0 +1,1 @@
+I filter orders with three conditions: delivered, subtotal above 140, and a parenthesised OR for coupon or free delivery. Without the parentheses AND would bind first and the result would be wrong. NULL is tested with IS NOT NULL because comparing to NULL with equals never matches. It is one pass over the table, O(n).

@@ -1,0 +1,1 @@
+I return an empty list if there are no dicts. Otherwise I start with the key set of the first dict and intersect it with each following dict. At the end I sort so the output is deterministic. It is O(total keys) plus the sort. The edge case is the empty input, where dicts[0] would raise an IndexError.

@@ -1,0 +1,1 @@
+I count each item in a dict, which keeps first-seen order. Then I sort the distinct items by count, descending. Python's sort is stable, so ties stay in first-appearance order without extra code. It is O(n + d log d) for d distinct items. If k is huge I could use a heap, but the stable sort is simpler and good enough here.

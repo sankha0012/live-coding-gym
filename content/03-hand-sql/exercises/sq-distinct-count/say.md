@@ -1,0 +1,1 @@
+I join orders to restaurants, keep delivered pizza orders, then count distinct customers and all rows in one SELECT. COUNT DISTINCT removes repeat buyers while COUNT star counts every order. The join is O(n) with an index on restaurant_id, and distinct needs a hash or sort on top. The distinct count is always at most the order count.

@@ -1,0 +1,1 @@
+I use sorted with a key that returns a tuple: the negative score first, then the name. Negating the score gives high to low, and the name breaks ties from A to Z. It is O(n log n) and sorted returns a new list, so the input is not changed. Reverse=True would flip the names too, which is the mistake to avoid.

@@ -1,0 +1,1 @@
+I lowercase and split the text, then count each word in a dict. I sort the items with the key (minus count, word), so the highest count comes first and ties go alphabetically. Then I slice the first n. It is O(n log n) for the sort. Counter.most_common is shorter, but it breaks ties by first appearance, so I add my own sort key to be deterministic.

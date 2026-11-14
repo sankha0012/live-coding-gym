@@ -1,0 +1,1 @@
+For each line I split on the first two spaces only, so the message stays in one piece. If I get fewer than three parts, I skip the line. Otherwise I bump the count for the level in a dict, and if the level is ERROR I save the message. It is one pass, O(n) time. The edge case is a malformed line, which would crash a plain unpacking, so I check the length first.

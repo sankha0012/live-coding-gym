@@ -1,0 +1,1 @@
+I walk the list once and keep a set of items I have seen. If an item is new, I add it to the set and to the output list. The set makes each check O(1), so the whole thing is O(n) time and O(n) space. I do not use set() alone because it loses the order. Items must be hashable.

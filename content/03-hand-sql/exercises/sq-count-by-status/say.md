@@ -1,0 +1,1 @@
+I group the orders by status and count the rows in each group. It is one pass over the table, so O(n). I sort by the count, highest first, and add status as a tie-breaker so the order is always the same.

@@ -1,0 +1,1 @@
+I split on dots and require exactly four parts. For each part I check it is all digits, it has no leading zero unless it is the single digit zero, and its value is at most 255. It is O(n) in the length of the string. I avoid relying on int() alone, because it accepts spaces and signs and would let bad input through.

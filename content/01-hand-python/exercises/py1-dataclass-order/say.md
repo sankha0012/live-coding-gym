@@ -1,0 +1,1 @@
+I use dataclass with frozen=True and order=True. Order generates the comparison methods by comparing the fields as a tuple, so declaration order matters: major, minor, patch. Frozen makes instances immutable and hashable. Then sorted works directly, in O(n log n). The trap is comparing as strings or declaring the fields in the wrong order.

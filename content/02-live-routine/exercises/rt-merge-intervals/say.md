@@ -1,0 +1,1 @@
+I sort the intervals by start. Then I walk them once and compare each one with the last merged interval. If its start is at most the last end, they overlap or touch, so I extend the end with max. Otherwise I start a new interval. The max matters when one interval sits inside another. It is O(n log n) for the sort and O(n) for the scan. An empty input returns an empty list.

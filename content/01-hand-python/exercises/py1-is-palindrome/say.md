@@ -1,0 +1,1 @@
+I keep only the letters, lowercase them, and compare the list with its reverse. It is O(n) time and O(n) space. A string with no letters gives an empty list, which equals its reverse, so it is True. A two-pointer version would use O(1) extra space.

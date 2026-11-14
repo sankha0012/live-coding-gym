@@ -1,0 +1,1 @@
+I build the answer in layers. First, revenue per restaurant with its city. Second, a CTE that sums those rows per city. Then I join the two and keep restaurants above 20 percent of the city total. Each CTE has one job, so each can be checked alone. Cost is one scan of orders and two tiny aggregations. A city with one restaurant has a share of 1.0, so it always appears.

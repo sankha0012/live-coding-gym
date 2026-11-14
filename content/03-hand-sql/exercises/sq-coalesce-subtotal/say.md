@@ -1,0 +1,1 @@
+Adding NULL to anything gives NULL, so I replace a missing subtotal with 0 using COALESCE. I find those rows with IS NULL, because = NULL is never true. It is one scan of the table, so O(n). The trade-off is that 0 is a business choice: a missing subtotal is not always a free order.

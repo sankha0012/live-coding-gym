@@ -1,0 +1,1 @@
+I zip the list with itself shifted by one, so each item meets its next neighbour. zip stops at the shorter side, so I do not need an index check and short lists give an empty result. It is O(n) time and O(n) space for the copy. For a huge input I would use itertools.pairwise to avoid the slice copy.

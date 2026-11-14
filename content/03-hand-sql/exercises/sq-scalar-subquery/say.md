@@ -1,0 +1,1 @@
+The inner query computes one number, the average subtotal of delivered orders. The outer query keeps the delivered rows above twice that number. The database can evaluate the inner query once, so the cost is two scans, O(n). The trap is forgetting the status filter inside the subquery, which would let cancelled orders pull the average.

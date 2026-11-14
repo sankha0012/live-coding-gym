@@ -1,0 +1,1 @@
+For each Rio de Janeiro customer, NOT EXISTS checks that no delivered order exists for them. This covers customers with no orders and customers with only cancelled orders. I prefer it over NOT IN because NOT IN returns nothing if the subquery contains a NULL. With an index on orders(customer_id) each check is cheap.

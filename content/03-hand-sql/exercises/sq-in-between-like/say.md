@@ -1,0 +1,1 @@
+I use IN for the two cities, BETWEEN for the date range and LIKE with a trailing percent for the name prefix. BETWEEN includes both ends, and ISO date strings compare correctly as text. A LIKE with a leading wildcard cannot use an index, but a prefix pattern like this one can.

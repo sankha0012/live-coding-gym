@@ -1,0 +1,1 @@
+I join orders to customers on customer_id and to restaurants on restaurant_id, then filter subtotal at 150 or more and sort by order_id. An inner join keeps only orders that have both a customer and a restaurant. Both are matched on primary keys, so it is roughly linear in the number of orders. I put the filter in WHERE because it is on the orders table.

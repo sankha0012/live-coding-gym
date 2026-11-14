@@ -1,0 +1,1 @@
+I filter delivered orders with WHERE, group by restaurant and keep groups with more than 100 rows using HAVING. WHERE works on rows and HAVING works on aggregates, so the count test must be in HAVING. It is O(n). A restaurant with exactly 100 orders is excluded because the rule is strictly more than.

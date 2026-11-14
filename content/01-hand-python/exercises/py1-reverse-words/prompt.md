@@ -1,0 +1,1 @@
+Write `reverse_words(s: str) -> str` that returns the words of `s` in reverse order, separated by single spaces. Extra spaces in the input are ignored. `"the  sky is blue"` becomes `"blue is sky the"`. An empty string returns an empty string.

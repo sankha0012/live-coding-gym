@@ -1,0 +1,1 @@
+Write `flatten(lists: list) -> list` that takes a list of lists and returns one list with all the items in order. Flatten one level only: an item that is itself a list inside an inner list stays as it is. `[[1, 2], [3], []]` becomes `[1, 2, 3]`. `[[1, [2]], [3]]` becomes `[1, [2], 3]`. An empty list returns an empty list.

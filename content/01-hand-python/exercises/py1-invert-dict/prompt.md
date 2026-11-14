@@ -1,0 +1,1 @@
+Write `invert_dict(d: dict) -> dict` that swaps keys and values. Values may repeat, so each value maps to a list of all keys that had it, sorted. `{"a": 1, "b": 2, "c": 1}` becomes `{1: ["a", "c"], 2: ["b"]}`. An empty dict returns an empty dict. Keys are strings.

@@ -1,0 +1,1 @@
+Write `group_by_length(words: list) -> dict` that maps each word length to the list of words with that length. Inside each list, words keep their input order and duplicates are kept. `["hi", "yo", "cat"]` becomes `{2: ["hi", "yo"], 3: ["cat"]}`. An empty list returns an empty dict.

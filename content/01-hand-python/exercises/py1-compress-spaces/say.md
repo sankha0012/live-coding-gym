@@ -1,0 +1,1 @@
+I split on the space character, which gives empty strings for repeated and edge spaces, filter those out and join with one space. It is O(n). I avoid split() with no argument because that would also change tabs and newlines, which the prompt says are not spaces here.

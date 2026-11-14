@@ -1,0 +1,1 @@
+I first group the delivered orders by day, then add a window SUM over the days in order. With ORDER BY and no frame, the default frame runs from the first row to the current one, so each row is the total so far. It is O(n log n) for the sort. I round at the end so floating point noise does not show.
