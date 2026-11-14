@@ -1,0 +1,2180 @@
+<title>Live Coding Gym</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a training console. Sticky top bar with sections; main column with a task panel beside an editor that stacks on phones. */
+:root {
+  --bg: #f3f5f4;
+  --surface: #ffffff;
+  --sunk: #e8ecea;
+  --ink: #17201d;
+  --muted: #5b6863;
+  --line: #d3dad7;
+  --accent: #0f7a63;
+  --accent-ink: #ffffff;
+  --accent-soft: #d8efe8;
+  --amber: #b45f06;
+  --amber-soft: #fbe9d2;
+  --good: #1d7a3a;
+  --good-soft: #dcf1e2;
+  --bad: #b3261e;
+  --bad-soft: #f8dedb;
+  --code-bg: #1b2422;
+  --code-ink: #e3ece8;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111816; --surface: #18211e; --sunk: #0d1311; --ink: #e4ebe8; --muted: #95a39e; --line: #2b3733;
+  --accent: #3fc3a0; --accent-ink: #06231b; --accent-soft: #163a31; --amber: #f0a650; --amber-soft: #3b2a14;
+  --good: #5fd283; --good-soft: #15321f; --bad: #ff8a80; --bad-soft: #3d1b18; --code-bg: #0b100f; --code-ink: #dbe6e1;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #111816; --surface: #18211e; --sunk: #0d1311; --ink: #e4ebe8; --muted: #95a39e; --line: #2b3733;
+  --accent: #3fc3a0; --accent-ink: #06231b; --accent-soft: #163a31; --amber: #f0a650; --amber-soft: #3b2a14;
+  --good: #5fd283; --good-soft: #15321f; --bad: #ff8a80; --bad-soft: #3d1b18; --code-bg: #0b100f; --code-ink: #dbe6e1;
+  color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding-block: 10px; }
+.brand { font-family: var(--display); font-weight: 800; font-size: 20px; letter-spacing: -0.01em; display: flex; align-items: baseline; gap: 8px; }
+.brand small { font-family: var(--mono); font-weight: 400; font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
+nav.tabs a { text-decoration: none; color: var(--muted); font-weight: 500; padding: 6px 12px; border-radius: 6px; font-size: 14px; }
+nav.tabs a:hover { color: var(--ink); background: var(--sunk); }
+nav.tabs a.on { color: var(--accent-ink); background: var(--accent); }
+.engine { font-family: var(--mono); font-size: 11px; color: var(--muted); display: flex; gap: 10px; }
+.engine span::before { content: "●"; margin-right: 4px; color: var(--amber); }
+.engine span.ready::before { color: var(--good); }
+.engine span.fail::before { color: var(--bad); }
+
+main { padding-block: 24px 64px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 22px; font-weight: 800; }
+h3 { font-size: 17px; font-weight: 600; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 68ch; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+
+button, .btn { font: inherit; font-weight: 500; font-size: 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 7px 14px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button.primary:hover { filter: brightness(1.08); }
+button.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+button.ghost:hover { color: var(--ink); background: var(--sunk); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* home */
+.hero { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+.routine { list-style: none; padding: 0; margin: 0; counter-reset: r; display: flex; flex-direction: column; gap: 8px; }
+.routine li { counter-increment: r; display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: baseline; }
+.routine li::before { content: counter(r); font-family: var(--mono); font-size: 12px; color: var(--accent); border: 1px solid var(--accent); border-radius: 50%; width: 22px; height: 22px; display: inline-grid; place-items: center; }
+.routine b { font-weight: 600; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+.paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.path { display: flex; flex-direction: column; gap: 6px; padding: 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); text-decoration: none; color: inherit; }
+.path:hover { border-color: var(--accent); }
+.path .count { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.bar { height: 6px; border-radius: 3px; background: var(--sunk); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+
+/* learn */
+.learn { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; }
+.toc { position: sticky; top: 72px; align-self: start; display: flex; flex-direction: column; gap: 2px; }
+.toc button { text-align: left; border: 0; background: transparent; color: var(--muted); padding: 6px 10px; }
+.toc button.on { color: var(--ink); background: var(--accent-soft); font-weight: 600; }
+.lesson { max-width: 78ch; display: flex; flex-direction: column; gap: 14px; }
+.lesson ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+pre.code.wrap { white-space: pre-wrap; }
+pre.code { margin: 0; background: var(--code-bg); color: var(--code-ink); font-family: var(--mono); font-size: 13px; line-height: 1.55; padding: 14px 16px; border-radius: 8px; overflow-x: auto; white-space: pre; }
+code { font-family: var(--mono); font-size: 0.92em; background: var(--sunk); padding: 1px 5px; border-radius: 4px; }
+pre code { background: none; padding: 0; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 13px; width: 100%; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; }
+td { font-variant-numeric: tabular-nums; }
+.say { border-left: 3px solid var(--amber); background: var(--amber-soft); padding: 10px 14px; border-radius: 0 8px 8px 0; font-style: italic; }
+
+/* drills */
+.drills { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 24px; }
+.dlist { display: flex; flex-direction: column; gap: 14px; align-self: start; position: sticky; top: 72px; max-height: calc(100vh - 100px); overflow-y: auto; padding-right: 4px; }
+.dgroup { display: flex; flex-direction: column; gap: 2px; }
+.dgroup .label { padding: 0 10px 4px; }
+.ditem { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: center; text-align: left; border: 0; background: transparent; padding: 6px 10px; border-radius: 6px; color: var(--ink); font-size: 14px; }
+.ditem:hover { background: var(--sunk); }
+.ditem.on { background: var(--accent-soft); font-weight: 600; }
+.dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--muted); }
+.dot.done { background: var(--good); border-color: var(--good); }
+.work { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 16px; align-items: start; }
+.task { display: flex; flex-direction: column; gap: 12px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--sunk); color: var(--muted); }
+.pill.py { background: var(--accent-soft); color: var(--accent); }
+.pill.sql { background: var(--amber-soft); color: var(--amber); }
+.pill.pd { background: var(--sunk); color: var(--ink); }
+.pt { font-size: 16px; }
+.en { color: var(--muted); font-size: 13px; }
+details { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+details > summary { cursor: pointer; padding: 8px 12px; font-weight: 500; font-size: 14px; }
+details > div { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+.editor { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+textarea.code { width: 100%; min-height: 300px; resize: vertical; background: var(--code-bg); color: var(--code-ink); font-family: var(--mono); font-size: 13.5px; line-height: 1.55; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; tab-size: 4; white-space: pre; overflow-wrap: normal; overflow-x: auto; }
+textarea.code:focus { outline: 2px solid var(--accent); outline-offset: 0; }
+.out { background: var(--sunk); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap; overflow-wrap: anywhere; min-height: 64px; max-height: 340px; overflow: auto; }
+.out .err { color: var(--bad); }
+.out .ok { color: var(--good); }
+.out .muted { color: var(--muted); }
+.out table { font-size: 12px; width: auto; }
+.verdict { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-weight: 600; }
+.verdict.pass { background: var(--good-soft); color: var(--good); }
+.verdict.fail { background: var(--bad-soft); color: var(--bad); }
+.stdinrow { display: flex; flex-direction: column; gap: 4px; }
+input.stdin { font-family: var(--mono); font-size: 13px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); width: 100%; }
+.kbd { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.checklist { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.checklist label { display: flex; gap: 8px; align-items: baseline; cursor: pointer; }
+
+/* mock */
+.mockbar { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; padding: 12px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.timer { font-family: var(--mono); font-size: 28px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--ink); min-width: 5ch; }
+.timer.low { color: var(--amber); }
+.timer.over { color: var(--bad); }
+.steps { display: flex; gap: 6px; flex-wrap: wrap; }
+.steps button { font-size: 12px; padding: 4px 10px; border-radius: 999px; }
+.steps button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.mocks { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.mockcard { display: flex; flex-direction: column; gap: 8px; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.mockcard .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.mockcard .grow { flex: 1; }
+.rubric { display: flex; flex-direction: column; gap: 12px; }
+.rubric .ritem { display: grid; grid-template-columns: minmax(120px, 160px) 1fr; gap: 12px; align-items: start; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button { font-size: 13px; text-align: left; max-width: 240px; }
+.seg button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+/* cards */
+.flash { max-width: 680px; display: flex; flex-direction: column; gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 28px; min-height: 220px; display: flex; flex-direction: column; gap: 14px; justify-content: center; }
+.card .front { font-family: var(--display); font-size: 22px; font-weight: 600; }
+
+.empty { color: var(--muted); padding: 24px; text-align: center; border: 1px dashed var(--line); border-radius: 10px; }
+.note { font-size: 13px; color: var(--muted); }
+
+@media (max-width: 900px) {
+  header.top { position: static; }
+  .hero, .learn, .drills, .work { grid-template-columns: minmax(0, 1fr); }
+  .toc, .dlist { position: static; max-height: none; flex-direction: row; flex-wrap: wrap; }
+  .dlist { flex-direction: column; }
+  .rubric .ritem { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Live Coding Gym <small>AI/ML coding rounds</small></div>
+    <nav class="tabs" id="tabs">
+      <a href="#home" data-v="home">Start</a>
+      <a href="#learn" data-v="learn">Learn</a>
+      <a href="#drills" data-v="drills">Drills</a>
+      <a href="#mock" data-v="mock">Mock interview</a>
+      <a href="#cards" data-v="cards">Recall cards</a>
+      <a href="#progress" data-v="progress">Progress</a>
+    </nav>
+    <div class="engine"><span id="eng-py">Python loading</span><span id="eng-sql">SQL loading</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="v-home" class="stack" hidden></section>
+  <section id="v-learn" hidden></section>
+  <section id="v-drills" hidden></section>
+  <section id="v-mock" class="stack" hidden></section>
+  <section id="v-cards" hidden></section>
+  <section id="v-progress" class="stack" hidden></section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/brython@3.13.2/brython.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/brython@3.13.2/brython_stdlib.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sql.js@1.12.0/dist/sql-asm.js"></script>
+
+<script type="text/python" id="pyrunner">
+import sys, json
+from browser import window
+
+class _Out:
+    def __init__(self, kind):
+        self.kind = kind
+    def write(self, s):
+        window.pyWrite(str(s), self.kind)
+    def flush(self):
+        pass
+
+def _close(a, b):
+    if isinstance(a, bool) or isinstance(b, bool):
+        return a == b
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)):
+        return abs(a - b) <= 1e-6 + 1e-9 * abs(b)
+    if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
+        return len(a) == len(b) and all(_close(x, y) for x, y in zip(a, b))
+    if isinstance(a, dict) and isinstance(b, dict):
+        return set(a.keys()) == set(b.keys()) and all(_close(a[k], b[k]) for k in a)
+    return a == b
+
+def run(code, checks_json, stdin=None):
+    sys.stdout = _Out("out")
+    sys.stderr = _Out("err")
+    ns = {"__name__": "__main__"}
+    if stdin is not None:
+        ns["input"] = lambda prompt="": stdin
+    res = {"ok": True, "error": None, "checks": []}
+    try:
+        exec(code, ns)
+    except BaseException as e:
+        res["ok"] = False
+        try:
+            import traceback
+            tb = traceback.format_exc()
+        except Exception:
+            tb = ""
+        res["error"] = type(e).__name__ + ": " + str(e)
+        res["trace"] = tb
+        return json.dumps(res)
+    for expr, want in json.loads(checks_json):
+        item = {"expr": expr, "want": want}
+        try:
+            got = eval(expr, ns)
+            item["got"] = repr(got)
+            item["pass"] = bool(_close(got, eval(want, ns)))
+        except BaseException as e:
+            item["got"] = type(e).__name__ + ": " + str(e)
+            item["pass"] = False
+        res["checks"].append(item)
+    return json.dumps(res)
+
+def run_io(code, cases_json):
+    import io
+    res = {"ok": True, "error": None, "checks": []}
+    for stdin, want in json.loads(cases_json):
+        buf = io.StringIO()
+        sys.stdout = buf
+        sys.stderr = buf
+        ns = {"__name__": "__main__", "input": (lambda s: (lambda prompt="": s))(stdin)}
+        item = {"expr": "input: " + stdin, "want": want}
+        try:
+            exec(code, ns)
+            got = buf.getvalue().strip()
+            item["got"] = got if got else "(nothing printed)"
+            item["pass"] = got == want
+        except BaseException as e:
+            item["got"] = type(e).__name__ + ": " + str(e)
+            item["pass"] = False
+        res["checks"].append(item)
+    sys.stdout = _Out("out")
+    sys.stderr = _Out("err")
+    return json.dumps(res)
+
+window.pyRun = run
+window.pyRunIO = run_io
+window.pyReady()
+</script>
+
+<script>
+/* ---------------- storage (per-browser convenience only) ---------------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("lcg." + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("lcg." + k, JSON.stringify(v)); } catch (e) {} }
+};
+const state = {
+  solved: store.get("solved", {}),
+  drafts: store.get("drafts", {}),
+  mocks: store.get("mocks", []),
+  cards: store.get("cards", {}),
+  drill: store.get("drill", null),
+  lesson: store.get("lesson", "routine"),
+};
+const save = () => { store.set("solved", state.solved); store.set("drafts", state.drafts); store.set("mocks", state.mocks); store.set("cards", state.cards); store.set("drill", state.drill); store.set("lesson", state.lesson); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const $ = s => document.querySelector(s);
+
+/* ---------------- engines ---------------- */
+const engine = { py: false, pyFail: false, sql: false, db: null };
+let outSink = null;
+window.pyWrite = (s, kind) => { if (outSink) outSink(s, kind); };
+window.pyReady = () => { engine.py = true; const e = $("#eng-py"); e.textContent = "Python ready"; e.className = "ready"; refreshRunButtons(); };
+function startPython() {
+  try { new Function("return 1")(); } catch (e) { markPyFail("Python blocked here"); return; }
+  if (typeof brython !== "function") { markPyFail("Python failed to load"); return; }
+  try { brython({ debug: 0, ids: ["pyrunner"] }); } catch (e) { markPyFail("Python failed to start"); }
+  setTimeout(() => { if (!engine.py) markPyFail("Python failed to start"); }, 20000);
+}
+function markPyFail(msg) { if (engine.py) return; engine.pyFail = true; const e = $("#eng-py"); e.textContent = msg; e.className = "fail"; refreshRunButtons(); }
+
+/* seeded data for SQL drills: a small food-delivery marketplace */
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function buildDB(SQL) {
+  const rnd = mulberry32(2026);
+  const pick = (arr, w) => { if (!w) return arr[Math.floor(rnd() * arr.length)]; let r = rnd(), c = 0; for (let i = 0; i < arr.length; i++) { c += w[i]; if (r < c) return arr[i]; } return arr[arr.length - 1]; };
+  const db = new SQL.Database();
+  db.run(`CREATE TABLE restaurants (restaurant_id INTEGER PRIMARY KEY, name TEXT, city TEXT, cuisine TEXT);
+          CREATE TABLE orders (order_id INTEGER PRIMARY KEY, customer_id INTEGER, restaurant_id INTEGER, courier_id INTEGER,
+            created_at TEXT, subtotal REAL, delivery_fee REAL, coupon_code TEXT, status TEXT, promised_minutes INTEGER, actual_minutes REAL);`);
+  const cities = ["Sao Paulo", "Rio de Janeiro", "Belo Horizonte", "Curitiba"];
+  const cuisines = ["japanese", "pizza", "brazilian", "burger", "healthy", "arabic"];
+  const rs = db.prepare("INSERT INTO restaurants VALUES (?,?,?,?)");
+  const rcity = [];
+  for (let i = 1; i <= 24; i++) { const c = pick(cities, [0.4, 0.25, 0.2, 0.15]); rcity[i] = c; rs.run([i, "Rest " + String(i).padStart(2, "0"), c, cuisines[(i * 7) % 6]]); }
+  rs.free();
+  const os = db.prepare("INSERT INTO orders VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+  const start = Date.UTC(2026, 7, 1);
+  db.run("BEGIN");
+  for (let i = 0; i < 1500; i++) {
+    const t = new Date(start + Math.floor(rnd() * 92 * 24 * 60) * 60000);
+    const ts = t.toISOString().slice(0, 19).replace("T", " ");
+    const rid = 1 + Math.floor(rnd() * rnd() * 24 + rnd() * 6) % 24;
+    const status = rnd() < 0.08 ? "cancelled" : "delivered";
+    const promised = pick([30, 40, 50]);
+    const slow = (rid % 5 === 0) ? 1.25 : 1.0;
+    let actual = status === "delivered" ? Math.round(promised * slow * Math.exp((rnd() + rnd() + rnd() - 1.5) * 0.35) * 10) / 10 : null;
+    let subtotal = Math.round((20 + rnd() * 60 + rnd() * rnd() * 120) * 100) / 100;
+    if (rnd() < 0.01) subtotal = null;
+    const coupon = pick([null, "BEMVINDO10", "FRETEGRATIS", "PIZZA20"], [0.7, 0.1, 0.15, 0.05]);
+    os.run([100001 + i, 1 + Math.floor(rnd() * rnd() * 400), rid, status === "delivered" ? 1 + Math.floor(rnd() * 80) : null, ts, subtotal, pick([0, 4.99, 6.99, 8.99]), coupon, status, promised, actual]);
+  }
+  db.run("COMMIT");
+  os.free();
+  return db;
+}
+function startSQL() {
+  const e = $("#eng-sql");
+  if (typeof initSqlJs !== "function") { e.textContent = "SQL failed to load"; e.className = "fail"; return; }
+  initSqlJs().then(SQL => { engine.db = buildDB(SQL); engine.sql = true; e.textContent = "SQL ready"; e.className = "ready"; refreshRunButtons(); })
+    .catch(() => { e.textContent = "SQL failed to start"; e.className = "fail"; });
+}
+function sqlExec(q) { const r = engine.db.exec(q); if (!r.length) return { columns: [], values: [] }; return r[r.length - 1]; }
+function tableHTML(res, max = 50) {
+  if (!res.columns.length) return '<span class="muted">(no rows)</span>';
+  const rows = res.values.slice(0, max).map(r => "<tr>" + r.map(v => `<td>${v === null ? '<span class="muted">NULL</span>' : esc(typeof v === "number" && !Number.isInteger(v) ? +v.toFixed(4) : v)}</td>`).join("") + "</tr>").join("");
+  return `<div class="tablewrap"><table><thead><tr>${res.columns.map(c => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>` + (res.values.length > max ? `<div class="muted">… ${res.values.length - max} more rows (${res.values.length} total)</div>` : `<div class="muted">${res.values.length} row(s)</div>`);
+}
+function sameCell(a, b) {
+  if (a === null || b === null) return a === b;
+  if (typeof a === "number" && typeof b === "number") return Math.abs(a - b) <= 0.006 + 1e-3 * Math.abs(b);
+  return String(a) === String(b);
+}
+function compareSQL(got, want, ordered) {
+  if (got.columns.length !== want.columns.length) return `Expected ${want.columns.length} column(s) (${want.columns.join(", ")}), got ${got.columns.length}.`;
+  if (got.values.length !== want.values.length) return `Expected ${want.values.length} row(s), got ${got.values.length}.`;
+  let g = got.values, w = want.values;
+  if (!ordered) { const k = r => JSON.stringify(r.map(v => typeof v === "number" ? Math.round(v * 100) / 100 : v)); g = [...g].sort((a, b) => k(a) < k(b) ? -1 : 1); w = [...w].sort((a, b) => k(a) < k(b) ? -1 : 1); }
+  for (let i = 0; i < w.length; i++) for (let j = 0; j < w[i].length; j++) if (!sameCell(g[i][j], w[i][j])) return `Row ${i + 1}, column ${j + 1}: expected ${w[i][j]}, got ${g[i][j]}.` + (ordered ? " Check the ORDER BY too." : "");
+  return null;
+}
+
+/* ---------------- content: drills ---------------- */
+const SCHEMA = `restaurants(restaurant_id, name, city, cuisine)
+orders(order_id, customer_id, restaurant_id, courier_id, created_at 'YYYY-MM-DD HH:MM:SS',
+       subtotal, delivery_fee, coupon_code, status 'delivered'|'cancelled',
+       promised_minutes, actual_minutes)   -- cancelled orders: actual_minutes and courier_id are NULL`;
+
+const DRILLS = [
+  // ---------- Robust ML systems (iFood live coding focus) ----------
+  { id: "prod-validate", track: "prod", title: "Validate a feature row", mins: 12,
+    pt: "Write validate(row, schema). schema maps field → (type, min, max, default), type is 'float' or 'int'. For each schema field: missing, None or NaN → use default, record 'missing:<field>'. Can't convert to the type → default, record 'bad_type:<field>'. Out of range → clip, record 'clipped:<field>'. Fields not in the schema → record 'extra:<field>'. Return (clean_row, sorted list of issues). Don't modify the input.",
+    en: "Garbage in: the first line of defence before a model sees real data.",
+    starter: `import math
+
+def validate(row, schema):
+    clean, issues = {}, []
+    # for each schema field: missing/NaN? convertible? in range?
+    # then: extra fields
+    return clean, sorted(issues)
+`,
+    pre: `SCHEMA = {"distance_km": ("float", 0.0, 50.0, 3.0), "items": ("int", 1, 30, 1), "hour": ("int", 0, 23, 12)}`,
+    checks: [["validate({'distance_km': 2.5, 'items': 3, 'hour': 20}, SCHEMA)", "({'distance_km': 2.5, 'items': 3, 'hour': 20}, [])"],
+             ["validate({'distance_km': 'abc', 'items': 100, 'promo': 1}, SCHEMA)", "({'distance_km': 3.0, 'items': 30, 'hour': 12}, ['bad_type:distance_km', 'clipped:items', 'extra:promo', 'missing:hour'])"],
+             ["validate({'distance_km': float('nan'), 'items': '4', 'hour': -1}, SCHEMA)", "({'distance_km': 3.0, 'items': 4, 'hour': 0}, ['clipped:hour', 'missing:distance_km'])"]],
+    hint: "NaN is the only value not equal to itself: use math.isnan(v) for floats. Convert inside try/except (TypeError, ValueError). Clip with min(max(v, lo), hi).",
+    prompt: `Write a Python 3.11 function validate(row, schema), standard library only.
+- schema maps field -> (type, min, max, default); type is "float" or "int".
+- For each schema field: if missing, None or NaN, use the default and record "missing:<field>".
+  If it can't be converted to the type, use the default and record "bad_type:<field>".
+  If outside [min, max], clip it and record "clipped:<field>".
+- Record "extra:<field>" for fields not in the schema.
+- Don't modify the input dict. Return (clean_row, sorted(issues)) so the output is deterministic.
+Keep it short and readable. Then write 3 asserts: a clean row, a row with every problem, and a NaN value.`,
+    solution: `import math
+
+def validate(row, schema):
+    clean, issues = {}, []
+    for name, (typ, lo, hi, default) in schema.items():
+        v = row.get(name)
+        if v is None or (isinstance(v, float) and math.isnan(v)):
+            clean[name] = default
+            issues.append("missing:" + name)
+            continue
+        try:
+            v = float(v) if typ == "float" else int(v)
+        except (TypeError, ValueError):
+            clean[name] = default
+            issues.append("bad_type:" + name)
+            continue
+        if v < lo or v > hi:
+            v = min(max(v, lo), hi)
+            issues.append("clipped:" + name)
+        clean[name] = v
+    for name in row:
+        if name not in schema:
+            issues.append("extra:" + name)
+    return clean, sorted(issues)
+`, say: "I never let bad input crash the service or reach the model silently: I repair what I can, and every repair is recorded so we can count it and alert on it. Sorting the issues keeps the output deterministic, which makes it testable." },
+
+  { id: "prod-batch", track: "prod", title: "Batch predictions that don't fall over", mins: 10,
+    pt: "Write predict_batch(rows, model, fallback). Call model(row) for each row. If it raises, or returns None, NaN or infinity, use the fallback value with status 'fallback'; otherwise status 'ok'. Return (results, fallback_rate) where results is a list of {'id', 'pred', 'status'} in input order. One bad row must not break the batch.",
+    en: "Partial failure isolation in batch inference.",
+    starter: `import math
+
+def predict_batch(rows, model, fallback):
+    results = []
+    # one row at a time; catch errors; check the output is a usable number
+    return results, 0.0
+`,
+    pre: `def MODEL(row):
+    if row["x"] is None:
+        raise ValueError("missing x")
+    if row["x"] < 0:
+        return float("nan")
+    return 2.0 * row["x"]
+
+ROWS = [{"id": 1, "x": 1.5}, {"id": 2, "x": None}, {"id": 3, "x": -1}, {"id": 4, "x": 0}]`,
+    checks: [["predict_batch(ROWS, MODEL, 10.0)", "([{'id': 1, 'pred': 3.0, 'status': 'ok'}, {'id': 2, 'pred': 10.0, 'status': 'fallback'}, {'id': 3, 'pred': 10.0, 'status': 'fallback'}, {'id': 4, 'pred': 0.0, 'status': 'ok'}], 0.5)"],
+             ["predict_batch([], MODEL, 10.0)", "([], 0.0)"]],
+    hint: "Trap: a prediction of 0.0 is valid, so don't write 'if not pred'. Check 'pred is None or not math.isfinite(pred)' (isfinite is False for NaN and infinity).",
+    prompt: `Write predict_batch(rows, model, fallback) in Python, standard library only.
+- rows is a list of dicts with an "id". Call model(row) for each row.
+- If model raises any Exception, or returns None, NaN or +/-inf, use fallback and status "fallback"; otherwise status "ok".
+- A prediction of 0.0 is valid. Keep input order.
+- Return (results, fallback_rate) where results are dicts {"id", "pred", "status"}; fallback_rate is 0.0 for an empty batch.
+Then write asserts for: a normal row, a row where the model raises, a NaN prediction, a 0.0 prediction, and an empty batch.`,
+    solution: `import math
+
+def predict_batch(rows, model, fallback):
+    results, n_fallback = [], 0
+    for row in rows:
+        try:
+            pred = model(row)
+            ok = pred is not None and math.isfinite(pred)
+        except Exception:
+            ok = False
+        if not ok:
+            pred, n_fallback = fallback, n_fallback + 1
+        results.append({"id": row["id"], "pred": pred, "status": "ok" if ok else "fallback"})
+    rate = n_fallback / len(rows) if rows else 0.0
+    return results, rate
+`, say: "The fallback rate is a health metric: if it jumps from 0.1% to 5%, something upstream broke and we should alert, not silently serve defaults. The fallback itself should be a business choice, like the historical average delivery time for that city." },
+
+  { id: "prod-split", track: "prod", title: "Deterministic train/test split", mins: 8,
+    pt: "Write assign_split(user_id, test_pct=20). Hash str(user_id) with hashlib.md5, turn the hex digest into an int, take it modulo 100. Return 'test' if that bucket is below test_pct, else 'train'. The same user must always land in the same split, on any machine.",
+    en: "Reproducibility without storing a split table.",
+    starter: `import hashlib
+
+def assign_split(user_id, test_pct=20):
+    pass
+`,
+    checks: [["assign_split('user_42')", "'test'"], ["assign_split('user_42', 0)", "'train'"], ["assign_split(42) == assign_split('42')", "True"],
+             ["abs(sum(assign_split('u%d' % i) == 'test' for i in range(2000)) / 2000 - 0.2) < 0.03", "True"]],
+    hint: "bucket = int(hashlib.md5(str(user_id).encode()).hexdigest(), 16) % 100",
+    prompt: `Write assign_split(user_id, test_pct=20) in Python.
+Use hashlib.md5 on str(user_id) (UTF-8), convert the hex digest to an int, take % 100 as the bucket.
+Return "test" if bucket < test_pct else "train".
+Don't use random or Python's built-in hash(), because hash() changes between processes.
+Add asserts: same id gives the same answer twice, test_pct=0 gives "train", and about 20% of 2,000 ids land in "test".`,
+    solution: `import hashlib
+
+def assign_split(user_id, test_pct=20):
+    bucket = int(hashlib.md5(str(user_id).encode()).hexdigest(), 16) % 100
+    return "test" if bucket < test_pct else "train"
+`, say: "Splitting by user, not by row, prevents the same customer leaking into train and test. Python's hash() is salted per process, so it isn't reproducible; md5 is. The same trick routes a stable 5% of users to a canary model version." },
+
+  { id: "prod-breaker", track: "prod", title: "Circuit breaker around a model call", mins: 15,
+    pt: "Complete CircuitBreaker. call(fn, fallback): if the breaker is open and fewer than `cooldown` seconds have passed since it opened, return fallback without calling fn. Otherwise call fn: on success reset the failure count, close the breaker and return the result; on an exception count the failure and return fallback. Open the breaker when failures reach max_failures, or when the single trial call after a cooldown fails. Time comes from clock().",
+    en: "Stop hammering a dependency that's down; recover automatically.",
+    starter: `import time
+
+class CircuitBreaker:
+    def __init__(self, max_failures=3, cooldown=30, clock=None):
+        self.max_failures = max_failures
+        self.cooldown = cooldown
+        self.clock = clock or time.time
+        self.failures = 0
+        self.opened_at = None      # None means closed
+
+    def call(self, fn, fallback):
+        pass
+`,
+    pre: `class Clock:
+    def __init__(self):
+        self.t = 0
+    def __call__(self):
+        return self.t
+
+def _scenario():
+    clk, calls = Clock(), []
+    def bad():
+        calls.append("bad")
+        raise RuntimeError("down")
+    def good():
+        calls.append("good")
+        return "model"
+    cb = CircuitBreaker(max_failures=2, cooldown=30, clock=clk)
+    out = [cb.call(bad, "fb"), cb.call(bad, "fb"), cb.call(good, "fb")]
+    clk.t = 31
+    out.append(cb.call(good, "fb"))
+    out.append(cb.call(bad, "fb"))
+    return out, calls
+
+def _scenario2():
+    clk, n = Clock(), []
+    def bad():
+        n.append(1)
+        raise RuntimeError("down")
+    cb = CircuitBreaker(max_failures=1, cooldown=10, clock=clk)
+    cb.call(bad, 0)
+    clk.t = 11
+    cb.call(bad, 0)
+    clk.t = 15
+    cb.call(bad, 0)
+    return len(n)`,
+    checks: [["_scenario()", "(['fb', 'fb', 'fb', 'model', 'fb'], ['bad', 'bad', 'good', 'bad'])"], ["_scenario2()", "2"]],
+    hint: "Three states: closed (opened_at is None), open (cooldown not over: return fallback), half-open (cooldown over: try once). On failure: if it was half-open or failures >= max_failures, set opened_at = clock().",
+    prompt: `Complete this CircuitBreaker class (Python, standard library only). [paste the skeleton]
+call(fn, fallback):
+- If open and clock() - opened_at < cooldown: return fallback without calling fn.
+- Otherwise call fn. On success: reset failures to 0, close (opened_at = None), return the result.
+- On any Exception: failures += 1 and return fallback. Open (opened_at = clock()) if failures >= max_failures,
+  or if this was the trial call after a cooldown.
+The clock is injected so tests don't sleep. Write a test with a fake clock covering: opening after N failures,
+skipping calls while open, a successful trial after the cooldown, and a failed trial that re-opens it.`,
+    solution: `import time
+
+class CircuitBreaker:
+    def __init__(self, max_failures=3, cooldown=30, clock=None):
+        self.max_failures = max_failures
+        self.cooldown = cooldown
+        self.clock = clock or time.time
+        self.failures = 0
+        self.opened_at = None
+
+    def call(self, fn, fallback):
+        if self.opened_at is not None and self.clock() - self.opened_at < self.cooldown:
+            return fallback                      # open: don't touch the dependency
+        try:
+            result = fn()
+        except Exception:
+            self.failures += 1
+            if self.opened_at is not None or self.failures >= self.max_failures:
+                self.opened_at = self.clock()    # (re)open
+            return fallback
+        self.failures, self.opened_at = 0, None  # success closes it
+        return result
+`, say: "When a feature store or model server is down, retries make it worse. The breaker fails fast to a safe default, and the injected clock makes it testable and deterministic. I'd emit a metric on every state change." },
+
+  { id: "prod-events", track: "prod", title: "Idempotent event processing", mins: 10,
+    pt: "Write apply_events(events). Each event has event_id, order_id, ts and status. Events can be duplicated (same event_id) and arrive out of order. Return ({order_id: status of the latest event}, number of duplicates skipped). If two different events have the same ts, the larger event_id wins.",
+    en: "Feature store updates from a stream that delivers at-least-once.",
+    starter: `def apply_events(events):
+    pass
+`,
+    pre: `EV = [
+    {"event_id": "e1", "order_id": 7, "ts": 10, "status": "created"},
+    {"event_id": "e3", "order_id": 7, "ts": 30, "status": "delivered"},
+    {"event_id": "e2", "order_id": 7, "ts": 20, "status": "picked_up"},
+    {"event_id": "e3", "order_id": 7, "ts": 30, "status": "delivered"},
+    {"event_id": "e5", "order_id": 8, "ts": 5, "status": "created"},
+    {"event_id": "e4", "order_id": 8, "ts": 5, "status": "cancelled"},
+]`,
+    checks: [["apply_events(EV)", "({7: 'delivered', 8: 'created'}, 1)"], ["apply_events([])", "({}, 0)"], ["apply_events(list(reversed(EV)))", "({7: 'delivered', 8: 'created'}, 1)"]],
+    hint: "A set of seen event_ids for duplicates. For each order keep (ts, event_id, status) and replace it when (ts, event_id) is larger: tuples compare element by element.",
+    prompt: `Write apply_events(events) in Python. Each event is a dict with event_id, order_id, ts, status.
+Events may be duplicated (same event_id) and arrive in any order.
+Return (state, duplicates) where state maps order_id -> status of the event with the largest (ts, event_id),
+and duplicates counts skipped repeats. The result must be the same whatever the input order.
+Add asserts: a duplicated event, out-of-order events, a timestamp tie, and the reversed input giving the same result.`,
+    solution: `def apply_events(events):
+    seen, best, dupes = set(), {}, 0
+    for e in events:
+        if e["event_id"] in seen:
+            dupes += 1
+            continue
+        seen.add(e["event_id"])
+        key = (e["ts"], e["event_id"])
+        cur = best.get(e["order_id"])
+        if cur is None or key > cur[0]:
+            best[e["order_id"]] = (key, e["status"])
+    return {oid: status for oid, (_, status) in best.items()}, dupes
+`, say: "Streams deliver at least once, so processing must be idempotent: replaying the same events gives the same state. The tie-break makes it deterministic regardless of arrival order. In production the seen-set would be a TTL store, not memory." },
+
+  { id: "prod-monitor", track: "prod", title: "Alert on a broken input feed", mins: 10,
+    pt: "Write check_batch(values, ref_mean, ref_std, max_null_rate=0.05, z=3.0). Return a sorted list of alerts. Empty batch → ['empty']. 'null_rate' if the share of None/NaN exceeds max_null_rate. 'mean_shift' if the mean of the valid values differs from ref_mean by more than z · ref_std / √n_valid. If there are no valid values, you can't check the mean.",
+    en: "Catch upstream data breakage before the model's output degrades.",
+    starter: `import math
+
+def check_batch(values, ref_mean, ref_std, max_null_rate=0.05, z=3.0):
+    pass
+`,
+    checks: [["check_batch([10, 11, 9, 10], 10, 2)", "[]"], ["check_batch([10, None, 11, None], 10, 2)", "['null_rate']"], ["check_batch([20] * 25, 10, 2)", "['mean_shift']"],
+             ["check_batch([], 10, 2)", "['empty']"], ["check_batch([None, float('nan')], 10, 2)", "['null_rate']"], ["check_batch([20] * 10 + [None] * 5, 10, 2)", "['mean_shift', 'null_rate']"]],
+    hint: "valid = [v for v in values if v is not None and not math.isnan(v)]. The mean-shift threshold shrinks with more data: z * ref_std / math.sqrt(len(valid)).",
+    prompt: `Write check_batch(values, ref_mean, ref_std, max_null_rate=0.05, z=3.0) in Python, standard library only.
+- Empty list -> ["empty"].
+- Treat None and NaN as missing. Add "null_rate" if the missing share > max_null_rate.
+- If there are valid values, add "mean_shift" if abs(mean - ref_mean) > z * ref_std / sqrt(n_valid).
+- Return the alerts sorted.
+Add asserts for: a healthy batch, many nulls, a shifted mean, an empty batch, all-NaN, and both alerts at once.`,
+    solution: `import math
+
+def check_batch(values, ref_mean, ref_std, max_null_rate=0.05, z=3.0):
+    if not values:
+        return ["empty"]
+    valid = [v for v in values if v is not None and not math.isnan(v)]
+    alerts = []
+    if 1 - len(valid) / len(values) > max_null_rate:
+        alerts.append("null_rate")
+    if valid:
+        mean = sum(valid) / len(valid)
+        if abs(mean - ref_mean) > z * ref_std / math.sqrt(len(valid)):
+            alerts.append("mean_shift")
+    return sorted(alerts)
+`, say: "Most model incidents are data incidents: a feed starts sending nulls or a unit changes. Cheap checks like this on every batch catch them in minutes. The standard-error threshold avoids false alarms on small batches; for full distributions I'd use PSI." },
+
+  { id: "prod-debug", track: "prod", title: "Bug hunt: a flaky pipeline", mins: 12,
+    pt: "A colleague's pipeline gives different answers between runs and sometimes crashes. Fix the three functions so they match their docstrings. Keep the changes small and explain each bug.",
+    en: "Non-determinism, mutated inputs, division by zero, None handling.",
+    starter: `def top_features(weights, k=2):
+    """The k feature names with the largest absolute weight; ties broken by name."""
+    names = list(set(weights))
+    names.sort(key=lambda n: abs(weights[n]))
+    return names[:k]
+
+
+def normalize(batch):
+    """Scale 'amount' to [0, 1] within the batch. Must NOT modify the input.
+    If all amounts are equal, every scaled value is 0.0. Empty batch -> []."""
+    lo = min(r["amount"] for r in batch)
+    hi = max(r["amount"] for r in batch)
+    for r in batch:
+        r["amount"] = (r["amount"] - lo) / (hi - lo)
+    return batch
+
+
+def mean_score(scores):
+    """Average of the scores, ignoring None. Empty or all-None -> None."""
+    return sum(scores) / len(scores)
+`,
+    checks: [["top_features({'b': -3, 'a': 3, 'c': 1})", "['a', 'b']"], ["(lambda b: (normalize(b), b)[1])([{'amount': 5}, {'amount': 10}])", "[{'amount': 5}, {'amount': 10}]"],
+             ["normalize([{'amount': 5}, {'amount': 10}])", "[{'amount': 0.0}, {'amount': 1.0}]"], ["normalize([{'amount': 7}, {'amount': 7}])", "[{'amount': 0.0}, {'amount': 0.0}]"],
+             ["normalize([])", "[]"], ["mean_score([1, None, 3])", "2.0"], ["mean_score([None])", "None"], ["mean_score([])", "None"]],
+    hint: "Set order isn't guaranteed: sort with a full key (-abs(weight), name). Build new dicts instead of editing r. Guard hi == lo and empty lists. Filter out None before averaging.",
+    prompt: `Here are three functions with docstrings [paste]. Without rewriting them from scratch, list each place where the code
+doesn't match its docstring or could be non-deterministic, then give the minimal fix for each.
+Keep the function signatures. Then give asserts that fail on the old code and pass on the fixed code.`,
+    solution: `def top_features(weights, k=2):
+    return sorted(weights, key=lambda n: (-abs(weights[n]), n))[:k]
+
+
+def normalize(batch):
+    if not batch:
+        return []
+    lo = min(r["amount"] for r in batch)
+    hi = max(r["amount"] for r in batch)
+    span = hi - lo
+    return [{**r, "amount": (r["amount"] - lo) / span if span else 0.0} for r in batch]
+
+
+def mean_score(scores):
+    vals = [s for s in scores if s is not None]
+    return sum(vals) / len(vals) if vals else None
+`, say: "Four bugs: set order made the ranking unstable, the sort was ascending with no tie rule, normalize mutated the caller's data and divided by zero on a constant batch, and mean_score crashed on None. Mutating inputs is the nastiest: it silently changes features used later, for example in logging or training data." },
+
+  // ---------- Coderbyte-style (stdin -> function -> print) ----------
+  { id: "cb-fact", track: "cb", title: "Factorial (the warm-up)", mins: 4,
+    pt: "Have FirstFactorial(num) return the factorial of num. The input arrives through input() as text. 4 → 24, 8 → 40320. num is between 1 and 18.",
+    en: "Exactly the shape of your Coderbyte warm-up.",
+    starter: `def FirstFactorial(num):
+
+  # code goes here
+  return num
+
+# keep this function call here
+print(FirstFactorial(input()))
+`,
+    io: [["4", "24"], ["8", "40320"], ["1", "1"]],
+    hint: "input() returns the string '4', not the number 4. Convert with int(num) before multiplying.",
+    solution: `def FirstFactorial(num):
+    n = int(num)          # input() gives a string
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+
+print(FirstFactorial(input()))
+`, say: "First thing I check is the input type: input() gives a string, so I convert it. A loop is O(n); recursion also works but adds call overhead and a depth limit." },
+
+  { id: "cb-longest", track: "cb", title: "Longest word", mins: 6,
+    pt: "Return the longest word in the sentence. Ignore punctuation (keep only letters and digits). If two words tie, return the first one.",
+    en: "String cleaning + a running best.",
+    starter: `def LongestWord(sen):
+  # code goes here
+  return sen
+
+print(LongestWord(input()))
+`,
+    io: [["fun&!! time", "time"], ["I love dogs", "love"], ["a bb ccc dd", "ccc"], ["hi!!!!!! yo", "hi"]],
+    hint: "Split on spaces; for each word keep only characters where ch.isalnum(); update the best only when strictly longer (that keeps the first on ties).",
+    solution: `def LongestWord(sen):
+    best = ""
+    for word in sen.split():
+        clean = "".join(ch for ch in word if ch.isalnum())
+        if len(clean) > len(best):   # strictly longer keeps the first on ties
+            best = clean
+    return best
+
+print(LongestWord(input()))
+`, say: "Strictly greater keeps the first word on ties, which is what the spec asks. One pass, O(total characters)." },
+
+  { id: "cb-rle", track: "cb", title: "Run-length encoding", mins: 7,
+    pt: "Compress a string by writing each run of the same character as count + character. 'aabbcde' → '2a2b1c1d1e'.",
+    en: "Loop with state: current character and its count.",
+    starter: `def RunLength(s):
+  # code goes here
+  return s
+
+print(RunLength(input()))
+`,
+    io: [["aabbcde", "2a2b1c1d1e"], ["wwwggopp", "3w2g1o2p"], ["z", "1z"]],
+    hint: "Track the current character and a counter. When the character changes, write count + char and reset. Don't forget the last run after the loop.",
+    solution: `def RunLength(s):
+    out = []
+    count = 1
+    for i in range(1, len(s) + 1):
+        if i < len(s) and s[i] == s[i - 1]:
+            count += 1
+        else:
+            out.append(str(count) + s[i - 1])
+            count = 1
+    return "".join(out)
+
+print(RunLength(input()))
+`, say: "The classic bug is forgetting to flush the last run; looping to len(s) handles it. I build a list and join once, so it's O(n)." },
+
+  { id: "cb-brackets", track: "cb", title: "Balanced brackets", mins: 8,
+    pt: "The string may contain (), [] and {} mixed with other characters. Return the string 'true' if every bracket is closed in the right order, otherwise 'false'.",
+    en: "A stack.",
+    starter: `def Brackets(s):
+  # code goes here
+  return s
+
+print(Brackets(input()))
+`,
+    io: [["(hello [world])", "true"], ["(]", "false"], ["((", "false"], ["no brackets", "true"], ["{[()()]}", "true"]],
+    hint: "Push opening brackets on a list. On a closing bracket, the top of the list must be its partner; pop it. At the end the list must be empty.",
+    solution: `def Brackets(s):
+    pairs = {")": "(", "]": "[", "}": "{"}
+    stack = []
+    for ch in s:
+        if ch in "([{":
+            stack.append(ch)
+        elif ch in pairs:
+            if not stack or stack.pop() != pairs[ch]:
+                return "false"
+    return "true" if not stack else "false"
+
+print(Brackets(input()))
+`, say: "A stack, O(n) time and space. Same idea validates nested JSON or tool-call arguments." },
+
+  { id: "cb-sumkeys", track: "cb", title: "Sum by key", mins: 7,
+    pt: "Input like 'a:1,b:2,a:3'. Add up the numbers per key and return 'key:total' pairs joined by commas, keys in alphabetical order. 'a:1,b:2,a:3' → 'a:4,b:2'.",
+    en: "Parse text, group in a dict, format back.",
+    starter: `def SumByKey(s):
+  # code goes here
+  return s
+
+print(SumByKey(input()))
+`,
+    io: [["a:1,b:2,a:3", "a:4,b:2"], ["x:5", "x:5"], ["b:1,a:1,b:-1", "a:1,b:0"]],
+    hint: "s.split(',') gives 'a:1' pieces; piece.split(':') gives key and value; int(value). Use d[k] = d.get(k, 0) + v, then sorted(d).",
+    solution: `def SumByKey(s):
+    totals = {}
+    for piece in s.split(","):
+        key, value = piece.split(":")
+        totals[key] = totals.get(key, 0) + int(value)
+    return ",".join(f"{k}:{totals[k]}" for k in sorted(totals))
+
+print(SumByKey(input()))
+`, say: "It's a GROUP BY on text. I'd ask whether values can be decimals or keys can repeat with spaces." },
+
+  { id: "cb-pairsum", track: "cb", title: "Pair with a target sum", mins: 8,
+    pt: "Input like '1,5,3,7|8': numbers, then a target after '|'. Return 'true' if two different positions add up to the target, else 'false'.",
+    en: "Set of seen values, one pass.",
+    starter: `def PairSum(s):
+  # code goes here
+  return s
+
+print(PairSum(input()))
+`,
+    io: [["1,5,3,7|8", "true"], ["1,2|5", "false"], ["4,4|8", "true"], ["4|8", "false"]],
+    hint: "Split on '|' first. Then for each number x, check if target - x is already in a set of numbers seen so far; then add x.",
+    solution: `def PairSum(s):
+    nums_text, target_text = s.split("|")
+    nums = [int(x) for x in nums_text.split(",")]
+    target = int(target_text)
+    seen = set()
+    for x in nums:
+        if target - x in seen:
+            return "true"
+        seen.add(x)
+    return "false"
+
+print(PairSum(input()))
+`, say: "The brute force is O(n²) over all pairs; the set makes it O(n). Checking before adding handles '4,4|8' and '4|8' correctly." },
+
+  { id: "cb-movavg", track: "cb", title: "Moving average", mins: 8,
+    pt: "Input like '3 1 2 3 4 5': the first number is the window k, the rest are values. Return the averages of every window of k consecutive values, 2 decimals, joined by commas. If there are fewer than k values, return 'none'.",
+    en: "Sliding window.",
+    starter: `def MovingAverage(s):
+  # code goes here
+  return s
+
+print(MovingAverage(input()))
+`,
+    io: [["3 1 2 3 4 5", "2.00,3.00,4.00"], ["2 10 20", "15.00"], ["5 1 2", "none"]],
+    hint: "parts = s.split(); k = int(parts[0]); values = [float(x) for x in parts[1:]]. Format with f'{v:.2f}'.",
+    solution: `def MovingAverage(s):
+    parts = s.split()
+    k = int(parts[0])
+    xs = [float(x) for x in parts[1:]]
+    if len(xs) < k:
+        return "none"
+    window = sum(xs[:k])
+    out = [window / k]
+    for i in range(k, len(xs)):
+        window += xs[i] - xs[i - k]     # slide: add new, drop old
+        out.append(window / k)
+    return ",".join(f"{v:.2f}" for v in out)
+
+print(MovingAverage(input()))
+`, say: "Recomputing each window is O(n·k); keeping a running sum makes it O(n). Same trick as a rolling feature in a streaming pipeline." },
+
+  { id: "cb-wordfreq", track: "cb", title: "Most frequent word", mins: 6,
+    pt: "Return the most frequent word, case-insensitive, ignoring punctuation. On a tie, return the alphabetically first. Output in lowercase.",
+    en: "Normalize, count, pick with a key.",
+    starter: `def TopWord(sen):
+  # code goes here
+  return sen
+
+print(TopWord(input()))
+`,
+    io: [["The cat and the hat.", "the"], ["b a b a", "a"], ["Hello", "hello"]],
+    hint: "Lowercase, keep letters and spaces, split, count with Counter or a dict, then min(counts, key=lambda w: (-counts[w], w)).",
+    solution: `from collections import Counter
+
+def TopWord(sen):
+    clean = "".join(ch.lower() if ch.isalnum() or ch == " " else " " for ch in sen)
+    counts = Counter(clean.split())
+    return min(counts, key=lambda w: (-counts[w], w))
+
+print(TopWord(input()))
+`, say: "Normalizing first matters more than the counting. min with a (-count, word) key handles the tie rule in one line." },
+
+  // ---------- AI/ML engineering ----------
+  { id: "ai-topk", track: "ai", title: "Top-k retrieval", mins: 10,
+    pt: "Write top_k(query, docs, k). query is a vector (list of numbers); docs maps id → vector. Return the ids of the k most similar docs by cosine similarity, highest first, ties by id. Skip docs whose vector is all zeros.",
+    en: "The core of RAG retrieval, without libraries.",
+    starter: `import math
+
+def top_k(query, docs, k):
+    # 1. cosine(a, b) = dot(a, b) / (|a| * |b|)
+    # 2. score every doc, skip zero vectors
+    # 3. sort by (-score, id), take k
+    pass
+`,
+    checks: [["top_k([1, 0], {'a': [1, 0], 'b': [0, 1], 'c': [1, 1]}, 2)", "['a', 'c']"], ["top_k([1, 1], {'x': [0, 0], 'y': [2, 2]}, 5)", "['y']"], ["top_k([0, 1], {}, 3)", "[]"]],
+    hint: "dot = sum(x * y for x, y in zip(a, b)); norm = math.sqrt(sum(x * x for x in a)). Build a list of (score, id), then sorted(..., key=lambda t: (-t[0], t[1])).",
+    solution: `import math
+
+def top_k(query, docs, k):
+    def norm(v):
+        return math.sqrt(sum(x * x for x in v))
+    qn = norm(query)
+    scored = []
+    for doc_id, vec in docs.items():
+        dn = norm(vec)
+        if dn == 0 or qn == 0:
+            continue
+        cos = sum(x * y for x, y in zip(query, vec)) / (qn * dn)
+        scored.append((cos, doc_id))
+    scored.sort(key=lambda t: (-t[0], t[1]))
+    return [doc_id for _, doc_id in scored[:k]]
+`, say: "This is brute force, O(n·d). With pre-normalized vectors cosine is just a dot product, and at scale you'd use an approximate index (FAISS, pgvector, a vector DB) and maybe a reranker on the top results." },
+
+  { id: "ai-chunk", track: "ai", title: "Chunk text with overlap", mins: 8,
+    pt: "Write chunk_words(text, size, overlap): split text into chunks of at most `size` words, where consecutive chunks share `overlap` words. Stop once a chunk reaches the end. Empty text gives [].",
+    en: "How documents are prepared for embedding.",
+    starter: `def chunk_words(text, size, overlap):
+    pass
+`,
+    checks: [["chunk_words('a b c d e', 2, 1)", "['a b', 'b c', 'c d', 'd e']"], ["chunk_words('a b c d e', 3, 1)", "['a b c', 'c d e']"], ["chunk_words('', 3, 1)", "[]"], ["chunk_words('a b', 5, 2)", "['a b']"]],
+    hint: "words = text.split(); step = size - overlap; for start in range(0, len(words), step): take words[start:start + size]; break when start + size >= len(words).",
+    solution: `def chunk_words(text, size, overlap):
+    words = text.split()
+    if not words:
+        return []
+    step = size - overlap            # must be > 0
+    chunks = []
+    for start in range(0, len(words), step):
+        chunks.append(" ".join(words[start:start + size]))
+        if start + size >= len(words):
+            break
+    return chunks
+`, say: "Overlap keeps context that straddles a boundary. In practice I'd chunk by tokens or by document structure (headings, paragraphs), and tune size against retrieval quality and embedding cost." },
+
+  { id: "ai-json", track: "ai", title: "Parse JSON from an LLM reply", mins: 8,
+    pt: "Write extract_json(text): the model replied with prose and maybe ```json fences around one JSON object. Return it as a dict. If there's no valid object, return None.",
+    en: "Output parsing for structured LLM responses.",
+    starter: `import json
+
+def extract_json(text):
+    pass
+`,
+    checks: [["extract_json('Sure! ```json\\n{\"intent\": \"refund\", \"confidence\": 0.9}\\n``` Hope it helps')", "{'intent': 'refund', 'confidence': 0.9}"], ["extract_json('no json here')", "None"], ["extract_json('{\"a\": 1')", "None"], ["extract_json('Result: {\"a\": {\"b\": 2}}')", "{'a': {'b': 2}}"]],
+    hint: "Find the first '{' and the last '}' with text.find and text.rfind. Try json.loads on that slice inside try/except; return None on failure.",
+    solution: `import json
+
+def extract_json(text):
+    start, end = text.find("{"), text.rfind("}")
+    if start == -1 or end <= start:
+        return None
+    try:
+        return json.loads(text[start:end + 1])
+    except ValueError:
+        return None
+`, say: "In production I'd prefer the provider's structured output or tool-calling mode, validate against a schema (Pydantic), and on failure retry once with the error message before falling back." },
+
+  { id: "ai-retry", track: "ai", title: "Retry with backoff", mins: 8,
+    pt: "Write call_with_retry(fn, max_tries=3, base=1.0, sleep=None). Call fn(); if it raises, wait base * 2**attempt seconds (attempt = 0, 1, ...) using sleep(seconds) and try again. After max_tries failures, re-raise the last error. Don't sleep after the final failure.",
+    en: "Calling a flaky model API or tool.",
+    starter: `import time
+
+def call_with_retry(fn, max_tries=3, base=1.0, sleep=None):
+    if sleep is None:
+        sleep = time.sleep
+    pass
+`,
+    pre: `class Flaky:
+    def __init__(self, fails):
+        self.fails, self.calls = fails, 0
+    def __call__(self):
+        self.calls += 1
+        if self.calls <= self.fails:
+            raise RuntimeError("timeout")
+        return "ok"
+
+def _run(fails, tries):
+    waits = []
+    f = Flaky(fails)
+    try:
+        r = call_with_retry(f, max_tries=tries, base=1.0, sleep=waits.append)
+    except RuntimeError:
+        r = "raised"
+    return r, f.calls, waits`,
+    checks: [["_run(2, 3)", "('ok', 3, [1.0, 2.0])"], ["_run(3, 3)", "('raised', 3, [1.0, 2.0])"], ["_run(0, 3)", "('ok', 1, [])"]],
+    hint: "for attempt in range(max_tries): try: return fn() except Exception: if attempt == max_tries - 1: raise; sleep(base * 2 ** attempt)",
+    solution: `import time
+
+def call_with_retry(fn, max_tries=3, base=1.0, sleep=None):
+    if sleep is None:
+        sleep = time.sleep
+    for attempt in range(max_tries):
+        try:
+            return fn()
+        except Exception:
+            if attempt == max_tries - 1:
+                raise
+            sleep(base * 2 ** attempt)
+`, say: "Passing sleep in makes it testable without waiting. In production: add jitter, retry only transient errors (timeouts, 429, 5xx), cap total time, and make tool calls idempotent so a retry can't double-charge a customer." },
+
+  { id: "ai-eval", track: "ai", title: "A tiny eval harness", mins: 8,
+    pt: "Write score(preds, golds, cats): compare each prediction with its gold answer after stripping spaces and lowercasing. Return {'overall': accuracy, <category>: accuracy, ...}. With no examples, return {'overall': 0.0}.",
+    en: "Measuring an LLM feature before and after a prompt change.",
+    starter: `def score(preds, golds, cats):
+    pass
+`,
+    checks: [["score(['Yes', 'no ', ' maybe'], ['yes', 'No', 'no'], ['a', 'a', 'b'])", "{'overall': 2 / 3, 'a': 1.0, 'b': 0.0}"], ["score([], [], [])", "{'overall': 0.0}"]],
+    hint: "norm = lambda s: s.strip().lower(). Keep two dicts (hits and totals) per category, plus overall counters.",
+    solution: `def score(preds, golds, cats):
+    norm = lambda s: s.strip().lower()
+    hits, totals = {}, {}
+    for p, g, c in zip(preds, golds, cats):
+        ok = norm(p) == norm(g)
+        hits[c] = hits.get(c, 0) + ok
+        totals[c] = totals.get(c, 0) + 1
+    n = sum(totals.values())
+    out = {"overall": (sum(hits.values()) / n) if n else 0.0}
+    for c in totals:
+        out[c] = hits[c] / totals[c]
+    return out
+`, say: "Per-category scores catch regressions that the average hides. For open-ended answers I'd add an LLM-as-judge calibrated against human labels, and run this suite on every prompt or model change." },
+
+  { id: "ai-prf", track: "ai", title: "Precision, recall, F1", mins: 6,
+    pt: "Write prf(y, p, t): y are 0/1 labels, p are scores, predict 1 when p >= t. Return (precision, recall, f1). Any division by zero gives 0.0.",
+    en: "Threshold choice for an imbalanced classifier.",
+    starter: `def prf(y, p, t):
+    pass
+`,
+    checks: [["prf([1, 0, 1, 0], [0.9, 0.8, 0.4, 0.1], 0.5)", "(0.5, 0.5, 0.5)"], ["prf([0, 0], [0.1, 0.2], 0.5)", "(0.0, 0.0, 0.0)"], ["prf([1, 1, 0], [0.9, 0.7, 0.2], 0.5)", "(1.0, 1.0, 1.0)"]],
+    hint: "Count tp, fp, fn in one loop. precision = tp / (tp + fp), recall = tp / (tp + fn), f1 = 2PR / (P + R), each guarded against zero.",
+    solution: `def prf(y, p, t):
+    tp = fp = fn = 0
+    for yi, pi in zip(y, p):
+        pred = 1 if pi >= t else 0
+        tp += pred == 1 and yi == 1
+        fp += pred == 1 and yi == 0
+        fn += pred == 0 and yi == 1
+    prec = tp / (tp + fp) if tp + fp else 0.0
+    rec = tp / (tp + fn) if tp + fn else 0.0
+    f1 = 2 * prec * rec / (prec + rec) if prec + rec else 0.0
+    return prec, rec, f1
+`, say: "The threshold is a business decision: in fraud or credit, the cost of a false negative vs a false positive sets it, not F1." },
+
+  { id: "ai-trim", track: "ai", title: "Fit chat history in a budget", mins: 10,
+    pt: "Write trim_history(messages, budget). messages is a list of (role, text); a message costs one token per word. Always keep the first message if its role is 'system'. Then keep the most recent messages, going backwards, and stop at the first one that doesn't fit. Return them in the original order.",
+    en: "Context window management for a chat agent.",
+    starter: `def trim_history(messages, budget):
+    pass
+`,
+    pre: `MSGS = [("system", "be brief"), ("user", "hi there"), ("assistant", "hello how can I help"), ("user", "refund my order please")]`,
+    checks: [["trim_history(MSGS, 6)", "[('system', 'be brief'), ('user', 'refund my order please')]"], ["trim_history(MSGS, 11)", "[('system', 'be brief'), ('assistant', 'hello how can I help'), ('user', 'refund my order please')]"], ["trim_history(MSGS, 3)", "[('system', 'be brief')]"]],
+    hint: "Handle the system message first and count its cost. Then loop over reversed(rest), break when it doesn't fit, and reverse what you kept.",
+    solution: `def trim_history(messages, budget):
+    cost = lambda m: len(m[1].split())
+    head, rest, used = [], messages, 0
+    if messages and messages[0][0] == "system":
+        head, rest, used = [messages[0]], messages[1:], cost(messages[0])
+    tail = []
+    for m in reversed(rest):
+        if used + cost(m) > budget:
+            break
+        tail.append(m)
+        used += cost(m)
+    return head + tail[::-1]
+`, say: "Real systems count tokens with the model's tokenizer and often summarise the dropped turns instead of discarding them." },
+
+  { id: "ai-psi", track: "ai", title: "Drift check with PSI", mins: 7,
+    pt: "Write psi(expected, actual): both are lists of bin proportions. PSI = Σ (a − e) · ln(a / e). Replace zero proportions with 0.0001 first.",
+    en: "Monitoring a production model's inputs.",
+    starter: `import math
+
+def psi(expected, actual):
+    pass
+`,
+    checks: [["round(psi([0.5, 0.5], [0.5, 0.5]), 4)", "0.0"], ["round(psi([0.25, 0.25, 0.5], [0.2, 0.3, 0.5]), 4)", "0.0203"], ["psi([0.5, 0.5], [1.0, 0.0]) > 0.25", "True"]],
+    hint: "Loop with zip; e = max(e, 1e-4), a = max(a, 1e-4); total += (a - e) * math.log(a / e).",
+    solution: `import math
+
+def psi(expected, actual):
+    total = 0.0
+    for e, a in zip(expected, actual):
+        e, a = max(e, 1e-4), max(a, 1e-4)
+        total += (a - e) * math.log(a / e)
+    return total
+`, say: "Rule of thumb: below 0.1 stable, 0.1 to 0.25 watch, above 0.25 investigate. At MoneyLion I monitored feature drift and stability this way, alongside performance by cohort once labels arrived." },
+
+  // ---------- Python ----------
+  { id: "py-topk", track: "py", title: "Top-k dishes", mins: 8,
+    pt: "Given a list of orders (each order is a list of dish names), return the k most ordered dishes. Break ties alphabetically.",
+    en: "Most frequent dishes, ties broken alphabetically.",
+    starter: `def top_k_dishes(orders, k):
+    # 1. count each dish
+    # 2. sort by count desc, then name
+    # 3. take the first k
+    pass
+`,
+    checks: [["top_k_dishes([['pizza','coca'],['pizza'],['sushi','coca'],['acai']], 2)", "['coca', 'pizza']"], ["top_k_dishes([], 3)", "[]"], ["top_k_dishes([['b'],['a']], 5)", "['a', 'b']"]],
+    hint: "Counter(...) counts for you. sorted(items, key=lambda kv: (-kv[1], kv[0])) sorts by count desc, then name.",
+    solution: `from collections import Counter
+
+def top_k_dishes(orders, k):
+    counts = Counter()
+    for items in orders:
+        counts.update(items)
+    ranked = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
+    return [dish for dish, _ in ranked[:k]]
+`, say: "One pass to count, O(n), plus sorting the distinct dishes, O(m log m)." },
+
+  { id: "py-session", track: "py", title: "App sessions", mins: 10,
+    pt: "Timestamps (minutes, maybe unsorted) of one user's app events. A new session starts when the gap to the previous event is > 30. Return the list of sessions.",
+    en: "Group events into sessions with a 30-minute gap rule.",
+    starter: `def sessionize(timestamps, gap=30):
+    pass
+`,
+    checks: [["sessionize([0, 10, 45, 50, 200])", "[[0, 10], [45, 50], [200]]"], ["sessionize([50, 0, 10])", "[[0, 10], [50]]"], ["sessionize([])", "[]"], ["sessionize([0, 30, 60])", "[[0, 30, 60]]"]],
+    hint: "Sort first. Then loop and compare each timestamp with the last element of the current session (sessions[-1][-1]).",
+    solution: `def sessionize(timestamps, gap=30):
+    if not timestamps:
+        return []
+    ts = sorted(timestamps)
+    sessions = [[ts[0]]]
+    for t in ts[1:]:
+        if t - sessions[-1][-1] > gap:
+            sessions.append([t])
+        else:
+            sessions[-1].append(t)
+    return sessions
+`, say: "Sort and scan: O(n log n). A gap of exactly 30 continues the session, because the rule is strictly greater." },
+
+  { id: "py-merge", track: "py", title: "Merge courier shifts", mins: 10,
+    pt: "Shifts as [start, end] in hours. Merge the overlapping ones and return the merged list, sorted.",
+    en: "Merge overlapping intervals.",
+    starter: `def merge_shifts(shifts):
+    pass
+`,
+    checks: [["merge_shifts([[9, 12], [11, 14], [16, 18]])", "[[9, 14], [16, 18]]"], ["merge_shifts([[1, 5], [2, 3]])", "[[1, 5]]"], ["merge_shifts([[5, 6], [1, 2]])", "[[1, 2], [5, 6]]"], ["merge_shifts([])", "[]"]],
+    hint: "Sort by start. If the next start <= current end, extend the end with max(); otherwise start a new interval.",
+    solution: `def merge_shifts(shifts):
+    merged = []
+    for s, e in sorted(shifts):
+        if merged and s <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], e)
+        else:
+            merged.append([s, e])
+    return merged
+`, say: "O(n log n) for the sort. I use max for the end because one shift can sit inside another." },
+
+  { id: "py-assign", track: "py", title: "Nearest courier", mins: 12,
+    pt: "Orders (order_id, x, y) arrive in order. Couriers are {id: (x, y)}. Each order gets the nearest free courier (each courier takes one order). No free courier: None. Distance tie: smaller id.",
+    en: "Greedy nearest-courier assignment.",
+    starter: `import math
+
+def assign(orders, couriers):
+    pass
+`,
+    checks: [["assign([(1, 0, 0), (2, 0, 0)], {'A': (1, 1), 'B': (5, 5)})", "{1: 'A', 2: 'B'}"], ["assign([(1, 0, 0)], {})", "{1: None}"], ["assign([(1, 0, 0)], {'B': (1, 0), 'A': (0, 1)})", "{1: 'A'}"]],
+    hint: "Keep a dict of free couriers. min(free, key=lambda c: (math.dist(...), c)) then delete the chosen one.",
+    solution: `import math
+
+def assign(orders, couriers):
+    free = dict(couriers)
+    result = {}
+    for oid, ox, oy in orders:
+        if not free:
+            result[oid] = None
+            continue
+        best = min(free, key=lambda c: (math.dist((ox, oy), free[c]), c))
+        result[oid] = best
+        del free[best]
+    return result
+`, say: "Greedy is O(n*m) and not globally optimal. The optimum is the Hungarian algorithm; in production I'd batch orders every few seconds." },
+
+  { id: "py-avg", track: "py", title: "Average order value per customer", mins: 8,
+    pt: "Rows are (customer_id, value or None). Average per customer ignoring None; a customer with only None gets None.",
+    en: "Average per key, ignoring missing values.",
+    starter: `def avg_by_customer(rows):
+    pass
+`,
+    checks: [["avg_by_customer([(1, 10), (1, None), (1, 20), (2, None)])", "{1: 15.0, 2: None}"], ["avg_by_customer([])", "{}"]],
+    hint: "Two dicts: total and count. Remember every customer you saw, even if all values were None.",
+    solution: `from collections import defaultdict
+
+def avg_by_customer(rows):
+    total, count = defaultdict(float), defaultdict(int)
+    seen = set()
+    for cid, v in rows:
+        seen.add(cid)
+        if v is not None:
+            total[cid] += v
+            count[cid] += 1
+    return {cid: (total[cid] / count[cid] if count[cid] else None) for cid in seen}
+`, say: "The denominator counts only valid values; that's the classic mistake with nulls." },
+
+  { id: "py-second", track: "py", title: "Second highest value", mins: 5,
+    pt: "Return the second highest distinct value in a list, or None if there isn't one.",
+    en: "Second highest distinct value.",
+    starter: `def second_highest(values):
+    pass
+`,
+    checks: [["second_highest([5, 1, 5, 3])", "3"], ["second_highest([7, 7])", "None"], ["second_highest([])", "None"]],
+    hint: "set() removes duplicates; sorted(..., reverse=True)[1] if there are at least 2.",
+    solution: `def second_highest(values):
+    distinct = sorted(set(values), reverse=True)
+    return distinct[1] if len(distinct) >= 2 else None
+`, say: "It can be O(n) by tracking the top two, but the set version is easier to read." },
+
+  { id: "py-latest", track: "py", title: "Latest status", mins: 8,
+    pt: "Events (order_id, timestamp, status), not sorted. Return {order_id: status of the most recent event}.",
+    en: "Latest status per order.",
+    starter: `def latest_status(events):
+    pass
+`,
+    checks: [["latest_status([(1, 5, 'delivered'), (1, 2, 'created'), (2, 1, 'created')])", "{1: 'delivered', 2: 'created'}"], ["latest_status([])", "{}"]],
+    hint: "Keep best[order_id] = (timestamp, status) and replace when the new timestamp is larger.",
+    solution: `def latest_status(events):
+    best = {}
+    for oid, ts, status in events:
+        if oid not in best or ts > best[oid][0]:
+            best[oid] = (ts, status)
+    return {oid: s for oid, (ts, s) in best.items()}
+`, say: "One pass, O(n), no sorting." },
+
+  { id: "py-window", track: "py", title: "Peak in 60 minutes", mins: 12,
+    pt: "Order timestamps in minutes. What is the largest number of orders in any 60-minute window (t to t+59)?",
+    en: "Sliding window maximum count.",
+    starter: `def max_in_window(ts, w=60):
+    pass
+`,
+    checks: [["max_in_window([0, 10, 59, 60, 61, 200])", "4"], ["max_in_window([])", "0"], ["max_in_window([5])", "1"]],
+    hint: "Sort. Two pointers: move left while ts[right] - ts[left] >= w; answer is max(right - left + 1).",
+    solution: `def max_in_window(ts, w=60):
+    ts = sorted(ts)
+    best, left = 0, 0
+    for right in range(len(ts)):
+        while ts[right] - ts[left] >= w:
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+`, say: "Two pointers: each index enters and leaves once, so O(n) after sorting." },
+
+  { id: "py-newret", track: "py", title: "New or returning", mins: 6,
+    pt: "A list of customer_ids in order of purchase. Return a list with 'new' or 'returning' for each order.",
+    en: "Seen-before with a set.",
+    starter: `def new_or_returning(customers):
+    pass
+`,
+    checks: [["new_or_returning([3, 1, 3, 2, 1])", "['new', 'new', 'returning', 'new', 'returning']"], ["new_or_returning([])", "[]"]],
+    hint: "A set of customers already seen; membership test is O(1).",
+    solution: `def new_or_returning(customers):
+    seen, out = set(), []
+    for c in customers:
+        out.append("returning" if c in seen else "new")
+        seen.add(c)
+    return out
+`, say: "A set gives O(1) lookups, so the whole thing is O(n)." },
+
+  { id: "py-city", track: "py", title: "GMV by city", mins: 6,
+    pt: "Orders are dicts with 'city', 'status', 'subtotal' (may be None) and 'fee'. Return {city: GMV} for delivered orders only, GMV = subtotal + fee, None counts as 0, rounded to 2 decimals.",
+    en: "Group-by in plain Python.",
+    starter: `ORDERS = [
+    {"city": "SP", "status": "delivered", "subtotal": 50.0, "fee": 5.0},
+    {"city": "SP", "status": "cancelled", "subtotal": 30.0, "fee": 5.0},
+    {"city": "RJ", "status": "delivered", "subtotal": None, "fee": 7.5},
+    {"city": "RJ", "status": "delivered", "subtotal": 20.0, "fee": 0.0},
+]
+
+def gmv_by_city(orders):
+    pass
+
+print(gmv_by_city(ORDERS))
+`,
+    pre: `ORDERS = [
+    {"city": "SP", "status": "delivered", "subtotal": 50.0, "fee": 5.0},
+    {"city": "SP", "status": "cancelled", "subtotal": 30.0, "fee": 5.0},
+    {"city": "RJ", "status": "delivered", "subtotal": None, "fee": 7.5},
+    {"city": "RJ", "status": "delivered", "subtotal": 20.0, "fee": 0.0},
+]
+`,
+    checks: [["gmv_by_city(ORDERS)", "{'SP': 55.0, 'RJ': 27.5}"], ["gmv_by_city([])", "{}"]],
+    hint: "d[city] = d.get(city, 0) + (o['subtotal'] or 0) + o['fee'] for delivered orders.",
+    solution: `def gmv_by_city(orders):
+    out = {}
+    for o in orders:
+        if o["status"] != "delivered":
+            continue
+        out[o["city"]] = out.get(o["city"], 0) + (o["subtotal"] or 0) + o["fee"]
+    return {c: round(v, 2) for c, v in out.items()}
+`, say: "It's a GROUP BY by hand. I'd confirm with the interviewer whether the fee belongs in GMV." },
+
+  // ---------- Debug ----------
+  { id: "dbg-avg", track: "dbg", title: "Bug: average delivery time", mins: 8,
+    pt: "A colleague's function should return the average time of DELIVERED orders (None if there are none). The tests fail. Fix it with the smallest safe change and explain each bug.",
+    en: "Debug someone else's code.",
+    starter: `def average_delivery_minutes(orders):
+    """Average actual_minutes over delivered orders. Return None if there are none."""
+    total = 0
+    for o in orders:
+        total += o["actual_minutes"] or 0
+    return total / len(orders)
+
+O = [
+    {"status": "delivered", "actual_minutes": 25},
+    {"status": "delivered", "actual_minutes": 35},
+    {"status": "cancelled", "actual_minutes": None},
+]
+print(average_delivery_minutes(O))
+`,
+    pre: `O = [
+    {"status": "delivered", "actual_minutes": 25},
+    {"status": "delivered", "actual_minutes": 35},
+    {"status": "cancelled", "actual_minutes": None},
+]`,
+    checks: [["average_delivery_minutes(O)", "30.0"], ["average_delivery_minutes([])", "None"], ["average_delivery_minutes([O[2]])", "None"]],
+    hint: "Three problems: no status filter, None counted as 0 in the denominator, division by zero on an empty list.",
+    solution: `def average_delivery_minutes(orders):
+    d = [o["actual_minutes"] for o in orders
+         if o["status"] == "delivered" and o["actual_minutes"] is not None]
+    if not d:
+        return None
+    return sum(d) / len(d)
+`, say: "Before changing anything, I run the tests and read the docstring. Three bugs: no delivered filter, None becomes 0 and stays in the denominator, and division by zero." },
+
+  { id: "dbg-late", track: "dbg", title: "Bug: late rate", mins: 6,
+    pt: "Late = actual_minutes STRICTLY greater than promised_minutes, delivered orders only. With no delivered orders, return 0.0. Fix it.",
+    en: "Off-by-one comparison + empty case.",
+    starter: `def late_rate(orders):
+    d = [o for o in orders if o["status"] == "delivered"]
+    late = [o for o in d if o["actual_minutes"] >= o["promised_minutes"]]
+    return len(late) / len(d)
+
+O = [
+    {"status": "delivered", "promised_minutes": 30, "actual_minutes": 30},
+    {"status": "delivered", "promised_minutes": 30, "actual_minutes": 45},
+    {"status": "cancelled", "promised_minutes": 40, "actual_minutes": None},
+]
+print(late_rate(O))
+`,
+    pre: `O = [
+    {"status": "delivered", "promised_minutes": 30, "actual_minutes": 30},
+    {"status": "delivered", "promised_minutes": 30, "actual_minutes": 45},
+    {"status": "cancelled", "promised_minutes": 40, "actual_minutes": None},
+]`,
+    checks: [["late_rate(O)", "0.5"], ["late_rate([O[2]])", "0.0"]],
+    hint: ">= should be >, and guard the empty list before dividing.",
+    solution: `def late_rate(orders):
+    d = [o for o in orders if o["status"] == "delivered"]
+    if not d:
+        return 0.0
+    late = [o for o in d if o["actual_minutes"] > o["promised_minutes"]]
+    return len(late) / len(d)
+`, say: "An order delivered exactly on time is not late; the spec says strictly greater." },
+
+  { id: "dbg-tags", track: "dbg", title: "Bug: shared tags", mins: 6,
+    pt: "Each order should have its own tag list, but one order's tags show up on another. Fix it. Then fix top_restaurants: most orders first, ties by smaller id.",
+    en: "Mutable default argument + wrong sort.",
+    starter: `def add_tag(order, tag, tags=[]):
+    tags.append(tag)
+    order["tags"] = tags
+    return tags
+
+def top_restaurants(counts, n=3):
+    """counts: {restaurant_id: delivered_orders}"""
+    return sorted(counts, key=lambda r: counts[r])[:n]
+
+a, b = {"id": 1}, {"id": 2}
+add_tag(a, "vip")
+print(add_tag(b, "new"))
+`,
+    checks: [["(lambda: (add_tag({}, 'x'), add_tag({}, 'y'))[1])()", "['y']"], ["top_restaurants({10: 2, 20: 2, 30: 1}, 2)", "[10, 20]"]],
+    hint: "Default lists are created once and shared between calls: use tags=None. For the sort: key=lambda r: (-counts[r], r).",
+    solution: `def add_tag(order, tag, tags=None):
+    if tags is None:
+        tags = []
+    tags.append(tag)
+    order["tags"] = tags
+    return tags
+
+def top_restaurants(counts, n=3):
+    return sorted(counts, key=lambda r: (-counts[r], r))[:n]
+`, say: "A mutable default is created once, when the function is defined, and reused across calls." },
+
+  // ---------- Stats by hand ----------
+  { id: "st-meanstd", track: "st", title: "Mean and standard deviation", mins: 5,
+    pt: "No libraries: return (mean, sample standard deviation) of a list with at least 2 values.",
+    en: "Sample standard deviation uses n − 1.",
+    starter: `def mean_std(xs):
+    pass
+`,
+    checks: [["tuple(round(v, 4) for v in mean_std([2, 4, 4, 4, 5, 5, 7, 9]))", "(5.0, 2.1381)"]],
+    hint: "var = sum((x - m) ** 2) / (n - 1); std = var ** 0.5",
+    solution: `def mean_std(xs):
+    n = len(xs)
+    m = sum(xs) / n
+    var = sum((x - m) ** 2 for x in xs) / (n - 1)
+    return m, var ** 0.5
+`, say: "I use n - 1 because it's the sample variance, which is unbiased." },
+
+  { id: "st-auc", track: "st", title: "AUC by hand", mins: 10,
+    pt: "y (0/1) and score. AUC = probability that a random positive scores higher than a random negative; a tie counts 1/2.",
+    en: "AUC as a pairwise probability (Mann–Whitney).",
+    starter: `def auc(y, s):
+    pass
+`,
+    checks: [["auc([0, 0, 1, 1], [0.1, 0.2, 0.8, 0.9])", "1.0"], ["auc([0, 1], [0.5, 0.5])", "0.5"], ["round(auc([0, 1, 0, 1, 1], [0.3, 0.6, 0.7, 0.8, 0.2]), 4)", "0.5"]],
+    hint: "Split scores into positives and negatives, loop over all pairs, count wins + 0.5 * ties, divide by n_pos * n_neg.",
+    solution: `def auc(y, s):
+    pos = [si for yi, si in zip(y, s) if yi == 1]
+    neg = [si for yi, si in zip(y, s) if yi == 0]
+    wins = 0.0
+    for p in pos:
+        for n in neg:
+            wins += 1.0 if p > n else 0.5 if p == n else 0.0
+    return wins / (len(pos) * len(neg))
+`, say: "This version is O(n_pos * n_neg). Using ranks (Mann-Whitney U) gives O(n log n). And AUC doesn't change under monotone transforms of the score." },
+
+  { id: "st-z", track: "st", title: "Coupon A/B test", mins: 8,
+    pt: "Coupon A converted x1 out of n1, coupon B x2 out of n2. Return the z statistic of the two-proportion test (B - A) with pooled variance.",
+    en: "Two-proportion z-test.",
+    starter: `import math
+
+def two_prop_z(x1, n1, x2, n2):
+    pass
+`,
+    checks: [["round(two_prop_z(120, 1000, 150, 1000), 3)", "1.963"], ["two_prop_z(50, 500, 50, 500)", "0.0"]],
+    hint: "p = (x1 + x2) / (n1 + n2); se = sqrt(p(1−p)(1/n1 + 1/n2)); z = (p2 − p1) / se",
+    solution: `import math
+
+def two_prop_z(x1, n1, x2, n2):
+    p1, p2 = x1 / n1, x2 / n2
+    p = (x1 + x2) / (n1 + n2)
+    se = math.sqrt(p * (1 - p) * (1 / n1 + 1 / n2))
+    return (p2 - p1) / se
+`, say: "z of about 1.96 means p of about 0.05 two-sided: borderline. I'd talk about effect size, power, and not stopping the test early." },
+
+  { id: "st-ks", track: "st", title: "KS of a credit model", mins: 10,
+    pt: "y (1 = defaulted) and score. KS = the largest gap between the cumulative score distributions of goods and bads, evaluated at each score value.",
+    en: "Kolmogorov–Smirnov statistic.",
+    starter: `def ks(y, s):
+    pass
+`,
+    checks: [["ks([0, 0, 1, 1], [0.1, 0.2, 0.8, 0.9])", "1.0"], ["round(ks([0, 1, 0, 1], [0.1, 0.2, 0.3, 0.4]), 4)", "0.5"]],
+    hint: "For each threshold t in sorted(set(s)): share of goods with score <= t minus share of bads with score <= t; take the max absolute value.",
+    solution: `def ks(y, s):
+    goods = [si for yi, si in zip(y, s) if yi == 0]
+    bads = [si for yi, si in zip(y, s) if yi == 1]
+    best = 0.0
+    for t in sorted(set(s)):
+        cg = sum(g <= t for g in goods) / len(goods)
+        cb = sum(b <= t for b in bads) / len(bads)
+        best = max(best, abs(cg - cb))
+    return best
+`, say: "This is O(n^2); with sorted lists and bisect it becomes O(n log n)." },
+
+  { id: "st-boot", track: "st", title: "Bootstrap of the mean delivery time", mins: 10,
+    pt: "Return (low, high), the 95% percentile bootstrap interval for the mean, using B resamples and random.seed(seed).",
+    en: "Percentile bootstrap CI.",
+    starter: `import random
+
+def bootstrap_ci(xs, B=1000, seed=0):
+    pass
+`,
+    checks: [["(lambda r: r[0] <= 3 <= r[1] and r[0] < r[1])(bootstrap_ci([1, 2, 3, 4, 5], 500, 0))", "True"], ["(lambda r: 30 < r[0] < r[1] < 50)(bootstrap_ci([35, 38, 41, 44, 39, 42, 37, 40], 500, 1))", "True"]],
+    hint: "random.choices(xs, k=len(xs)) samples with replacement. Sort the B means; take the values at positions 2.5% and 97.5%.",
+    solution: `import random
+
+def bootstrap_ci(xs, B=1000, seed=0):
+    random.seed(seed)
+    n = len(xs)
+    means = sorted(sum(random.choices(xs, k=n)) / n for _ in range(B))
+    return means[int(0.025 * B)], means[int(0.975 * B) - 1]
+`, say: "Resample with replacement; the bootstrap doesn't assume normality, but it does assume independent samples." },
+
+  // ---------- SQL ----------
+  { id: "sql-cancel", track: "sql", title: "Cancellations by city", mins: 6, ordered: true,
+    pt: "For each city: number of orders and cancellation rate (a fraction 0-1). Sort by number of orders, descending.",
+    en: "Conditional aggregation.",
+    starter: `SELECT r.city,
+       COUNT(*) AS orders
+       -- cancellation rate?
+FROM orders o
+JOIN restaurants r ON r.restaurant_id = o.restaurant_id
+GROUP BY r.city;
+`,
+    ref: `SELECT r.city, COUNT(*) AS orders, AVG(CASE WHEN o.status = 'cancelled' THEN 1.0 ELSE 0 END) AS cancel_rate
+FROM orders o JOIN restaurants r ON r.restaurant_id = o.restaurant_id GROUP BY r.city ORDER BY orders DESC;`,
+    hint: "AVG(CASE WHEN status = 'cancelled' THEN 1.0 ELSE 0 END) gives the rate directly.",
+    say: "The mean of a 0/1 indicator is the rate. I use 1.0 to avoid integer division in some databases." },
+
+  { id: "sql-slow", track: "sql", title: "Slow restaurants", mins: 6, ordered: true,
+    pt: "Restaurants with at least 40 delivered orders and an average actual time above 42 minutes. Show restaurant_id, n and avg_min, slowest first.",
+    en: "WHERE vs HAVING.",
+    starter: `SELECT restaurant_id, COUNT(*) AS n, AVG(actual_minutes) AS avg_min
+FROM orders
+`,
+    ref: `SELECT restaurant_id, COUNT(*) AS n, AVG(actual_minutes) AS avg_min FROM orders WHERE status = 'delivered'
+GROUP BY restaurant_id HAVING COUNT(*) >= 40 AND AVG(actual_minutes) > 42 ORDER BY avg_min DESC;`,
+    hint: "WHERE filters rows before grouping (status); HAVING filters groups after (count, average).",
+    say: "WHERE filters rows before grouping; HAVING filters groups after." },
+
+  { id: "sql-top2", track: "sql", title: "Top 2 per city", mins: 10, ordered: true,
+    pt: "The 2 restaurants with the highest revenue (sum of subtotal of delivered orders) in each city. Columns: city, restaurant_id, revenue, rn. Sort by city and rn.",
+    en: "ROW_NUMBER over a partition.",
+    starter: `WITH rev AS (
+  -- revenue per city and restaurant
+)
+SELECT ...
+`,
+    ref: `WITH rev AS (SELECT r.city, o.restaurant_id, SUM(o.subtotal) AS revenue FROM orders o JOIN restaurants r ON r.restaurant_id = o.restaurant_id
+WHERE o.status = 'delivered' GROUP BY r.city, o.restaurant_id)
+SELECT * FROM (SELECT rev.*, ROW_NUMBER() OVER (PARTITION BY city ORDER BY revenue DESC) AS rn FROM rev) WHERE rn <= 2 ORDER BY city, rn;`,
+    hint: "CTE for revenue, then ROW_NUMBER() OVER (PARTITION BY city ORDER BY revenue DESC) AS rn in a subquery, then WHERE rn <= 2 outside.",
+    say: "I can't filter on a window function in the same SELECT, hence the subquery. With ties I'd use RANK and state the rule." },
+
+  { id: "sql-second", track: "sql", title: "Second highest order value", mins: 5, ordered: true,
+    pt: "What is the second highest distinct subtotal across all orders? One row, one column.",
+    en: "Classic: second highest value.",
+    starter: `SELECT ...
+`,
+    ref: `SELECT MAX(subtotal) AS second FROM orders WHERE subtotal < (SELECT MAX(subtotal) FROM orders);`,
+    hint: "MAX of values below the MAX, or DENSE_RANK() = 2.",
+    say: "MAX below the MAX is simple; DENSE_RANK generalises to the nth value." },
+
+  { id: "sql-mom", track: "sql", title: "Month-over-month growth", mins: 8, ordered: true,
+    pt: "Delivered orders per month (format 'YYYY-MM') and the difference from the previous month. Columns: month, orders, diff. Sort by month.",
+    en: "LAG window function.",
+    starter: `WITH m AS (
+  SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS orders
+  FROM orders
+  WHERE status = 'delivered'
+  GROUP BY month
+)
+SELECT ...
+`,
+    ref: `WITH m AS (SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS orders FROM orders WHERE status = 'delivered' GROUP BY month)
+SELECT month, orders, orders - LAG(orders) OVER (ORDER BY month) AS diff FROM m ORDER BY month;`,
+    hint: "orders - LAG(orders) OVER (ORDER BY month). The first month has NULL, which is correct.",
+    say: "In Postgres or Databricks I'd use DATE_TRUNC('month', created_at); this is SQLite, so strftime." },
+
+  { id: "sql-coupon", track: "sql", title: "Coupon share", mins: 6, ordered: true,
+    pt: "For each coupon (no coupon = 'none'): number of orders and percentage of all orders (0-100). Sort by number of orders, descending.",
+    en: "COALESCE + share of total.",
+    starter: `SELECT COALESCE(coupon_code, 'none') AS coupon, COUNT(*) AS n
+FROM orders
+GROUP BY coupon;
+`,
+    ref: `SELECT COALESCE(coupon_code, 'none') AS coupon, COUNT(*) AS n, 100.0 * COUNT(*) / (SELECT COUNT(*) FROM orders) AS pct
+FROM orders GROUP BY coupon ORDER BY n DESC;`,
+    hint: "100.0 * COUNT(*) / (SELECT COUNT(*) FROM orders), or SUM(COUNT(*)) OVER () as the denominator.",
+    say: "NULL isn't equal to anything, not even NULL, so COALESCE before grouping." },
+
+  { id: "sql-loyal", track: "sql", title: "Loyal customers", mins: 5, ordered: true,
+    pt: "How many customers have 3 or more delivered orders? One row, one column.",
+    en: "Aggregate of an aggregate.",
+    starter: `SELECT ...
+`,
+    ref: `SELECT COUNT(*) AS loyal FROM (SELECT customer_id FROM orders WHERE status = 'delivered' GROUP BY customer_id HAVING COUNT(*) >= 3);`,
+    hint: "Inner query: customers with HAVING COUNT(*) >= 3. Outer: COUNT(*).",
+    say: "Group by customer first, then count the groups." },
+
+  { id: "sql-second-order", track: "sql", title: "Days to the 2nd order", mins: 10, ordered: true,
+    pt: "Among customers with at least 2 delivered orders, what is the average number of days between the 1st and 2nd order? One row, one column.",
+    en: "ROW_NUMBER + self join.",
+    starter: `WITH ranked AS (
+  SELECT customer_id, created_at,
+         ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at) AS n
+  FROM orders
+  WHERE status = 'delivered'
+)
+SELECT ...
+`,
+    ref: `WITH ranked AS (SELECT customer_id, created_at, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at) AS n FROM orders WHERE status = 'delivered')
+SELECT AVG(julianday(b.created_at) - julianday(a.created_at)) AS avg_days FROM ranked a JOIN ranked b ON a.customer_id = b.customer_id AND a.n = 1 AND b.n = 2;`,
+    hint: "Join ranked to itself: a.n = 1, b.n = 2, same customer. julianday(b) − julianday(a) gives days in SQLite.",
+    say: "The INNER JOIN already drops customers with one order; a LEFT JOIN would keep them with NULL." },
+
+  { id: "sql-late", track: "sql", title: "Late rate by cuisine", mins: 8, ordered: true,
+    pt: "For each cuisine: late rate of delivered orders (late = actual_minutes > promised_minutes). Columns: cuisine, late_rate. Sort from highest to lowest.",
+    en: "JOIN + conditional rate.",
+    starter: `SELECT ...
+`,
+    ref: `SELECT r.cuisine, AVG(CASE WHEN o.actual_minutes > o.promised_minutes THEN 1.0 ELSE 0 END) AS late_rate
+FROM orders o JOIN restaurants r ON r.restaurant_id = o.restaurant_id WHERE o.status = 'delivered' GROUP BY r.cuisine ORDER BY late_rate DESC;`,
+    hint: "Filter delivered first, then AVG(CASE WHEN actual > promised THEN 1.0 ELSE 0 END).",
+    say: "Cancelled orders have no actual time; without the filter, CASE counts them as not late and the rate drops." },
+
+  { id: "sql-churn", track: "sql", title: "Customers who disappeared", mins: 8, ordered: true,
+    pt: "How many customers ordered in August 2026 but not at all in October 2026? One row, one column.",
+    en: "In A but not in B.",
+    starter: `SELECT ...
+`,
+    ref: `SELECT COUNT(DISTINCT customer_id) AS churned FROM orders WHERE strftime('%Y-%m', created_at) = '2026-08'
+AND customer_id NOT IN (SELECT customer_id FROM orders WHERE strftime('%Y-%m', created_at) = '2026-10');`,
+    hint: "COUNT(DISTINCT ...) of August customers WHERE customer_id NOT IN (October customers). LEFT JOIN ... IS NULL also works.",
+    say: "Careful: NOT IN with a NULL in the subquery returns nothing; customer_id is never NULL here, but I'd check." },
+
+  // ---------- pandas (self-check) ----------
+  { id: "pd-gmv", track: "pd", title: "GMV by city", mins: 6,
+    pt: "orders has subtotal (with nulls), delivery_fee, status; restaurants has restaurant_id and city. GMV of delivered orders by city, largest first.",
+    en: "Filter → new column → merge → groupby.",
+    keys: ["Filtered status == 'delivered' first", "Handled nulls in subtotal (fillna(0)) and said so", "merge with how='left' on restaurant_id", "groupby('city')['gmv'].sum().sort_values(ascending=False)"],
+    solution: `d = orders[orders["status"] == "delivered"].copy()
+d["gmv"] = d["subtotal"].fillna(0) + d["delivery_fee"]
+d = d.merge(restaurants[["restaurant_id", "city"]], on="restaurant_id", how="left")
+d.groupby("city")["gmv"].sum().sort_values(ascending=False)`,
+    say: "I'd confirm first whether GMV includes the fee, and check the row count before and after the merge." },
+
+  { id: "pd-agg", track: "pd", title: "City dashboard", mins: 8,
+    pt: "One table by city with: number of delivered orders, late rate, and average minutes late among the late orders.",
+    en: "Named aggregation with .agg().",
+    keys: ["Created the column late = actual > promised", "Created minutes_late with clip(lower=0)", "Used .agg(name=(column, function))", "Averaged only the late orders (lambda or filter)"],
+    solution: `d["late"] = d["actual_minutes"] > d["promised_minutes"]
+d["minutes_late"] = (d["actual_minutes"] - d["promised_minutes"]).clip(lower=0)
+d.groupby("city").agg(
+    orders=("order_id", "count"),
+    late_rate=("late", "mean"),
+    avg_late=("minutes_late", lambda s: s[s > 0].mean()),
+)`,
+    say: "Two separate questions: how often it's late, and how late when it is." },
+
+  { id: "pd-gap", track: "pd", title: "Time between orders", mins: 8,
+    pt: "For each order, how many days since the same customer's previous order?",
+    en: "sort + groupby().shift().",
+    keys: ["Sorted by customer_id and created_at", "groupby('customer_id')['created_at'].shift(1)", "Difference in days with .dt.days or / pd.Timedelta(days=1)", "First order is NaN and said so"],
+    solution: `o = orders.sort_values(["customer_id", "created_at"])
+o["prev"] = o.groupby("customer_id")["created_at"].shift(1)
+o["gap_days"] = (o["created_at"] - o["prev"]).dt.total_seconds() / 86400`,
+    say: "shift is SQL's LAG; each customer's first order is NaN, which is correct." },
+
+  { id: "pd-coupon", track: "pd", title: "Do coupons raise order value?", mins: 8,
+    pt: "Do orders with a coupon have a higher average value? Compute and interpret.",
+    en: "The causal trap.",
+    keys: ["notna() to create has_coupon", "groupby(has_coupon)['subtotal'].agg(['count','mean','median'])", "Said it is observational: coupons are targeted (selection bias)", "Proposed an A/B test or controlling for customer tenure"],
+    solution: `d["has_coupon"] = d["coupon_code"].notna()
+d.groupby("has_coupon")["subtotal"].agg(["count", "mean", "median"])
+# Interpretation: correlation, not a causal effect. Coupons like BEMVINDO10 go to new customers.`,
+    say: "To measure the coupon's effect I'd need a randomised experiment." },
+];
+const TRACKS = { prod: "Robust ML systems", cb: "Coderbyte-style", ai: "AI/ML engineering", py: "Python functions", dbg: "Debug someone's code", st: "Stats by hand", sql: "SQL", pd: "pandas (self-check)" };
+const runnable = d => d.track !== "pd";
+
+/* ---------------- content: lessons ---------------- */
+const LESSONS = [
+  { id: "routine", title: "0 · The routine", html: `
+<p class="lede">This is what interviewers score. Say each step out loud; it turns slow syntax into a visible method.</p>
+<ol class="routine">
+<li><span><b>Clarify (2–3 min).</b> Restate the task. Ask about definitions and edge cases: “Does revenue include the fee? Do cancelled orders count? What about nulls?”</span></li>
+<li><span><b>Tiny example (1 min).</b> “With 3 orders like this, the answer should be…”</span></li>
+<li><span><b>Plan as comments (2 min).</b> <code># 1. filter delivered  # 2. join  # 3. group</code></span></li>
+<li><span><b>Code in small runnable steps.</b> Run every line or two; print <code>.head()</code> and <code>.shape</code>.</span></li>
+<li><span><b>Test.</b> The tiny example plus one edge case: empty input, nulls, ties.</span></li>
+<li><span><b>Improve and interpret.</b> Complexity, trade-offs, and what the number means for the business.</span></li>
+</ol>
+<div class="say">“I don't remember the exact method name; the idea is to group by city and sum. I'll write it like this and check.”</div>
+<p>Stuck on logic: go back to the tiny example and do it by hand. After about 3 minutes of silence, ask for a hint. Taking a hint well is scored.</p>` },
+  { id: "coderbyte", title: "1 · The Coderbyte format", html: `
+<p class="lede">What your iFood warm-up showed, and how not to lose the first five minutes.</p>
+<pre class="code">def FirstFactorial(num):     # num arrives as TEXT: "4", not 4
+    n = int(num)               # convert first
+    ...
+    return result
+
+# keep this function call here
+print(FirstFactorial(input()))</pre>
+<ul>
+<li><b>input() is always a string.</b> Convert: <code>int(s)</code>, <code>float(s)</code>, <code>s.split(",")</code>, <code>[int(x) for x in s.split()]</code>.</li>
+<li><b>Return what's asked, in the format asked.</b> If they want the text <code>true</code>, return <code>"true"</code>, not <code>True</code>.</li>
+<li><b>Run Code</b> uses the input box; <b>Run Test Cases</b> may include hidden cases. Try edge cases yourself first: empty, one item, ties, negatives.</li>
+<li><b>Playback:</b> they can replay your session afterwards with tab switches and copy-pastes timestamped. Say "I'll check the docs" before switching tabs.</li>
+<li><b>iFood's rules (from the recruiter):</b> Coderbyte's built-in AI is off, but you may use another assistant (Claude, ChatGPT) in another window. You must explain the code afterwards, and <b>the interviewer evaluates the prompts you write</b>. Documentation is provided inside the exercise. Python is fine. Because tab switches are recorded, say "switching to my assistant" each time.</li>
+<li><b>Focus:</b> software engineering for ML systems in production: robust, deterministic, reliable code that copes with real data and common model failures. Practise the "Robust ML systems" drills and lesson 1b.</li>
+<li><b>Python 3.11</b> with numpy, pandas, scikit-learn, torch, transformers, sentence-transformers, langchain and mlflow installed, so you can import them if the task allows.</li>
+<li>The invite says they'll talk about <b>your decisions and approach</b> while you code. The routine in lesson 0 is how you do that.</li>
+</ul>
+<p>Practise: the "Coderbyte-style" drills use exactly this shape, with an input box like the real editor.</p>` },
+  { id: "robust", title: "1b · Robust ML systems", html: `
+<p class="lede">What the iFood round tests: code around a model that stays correct when data is messy and dependencies fail. Before saying "done", walk this list out loud.</p>
+<div class="tablewrap"><table><thead><tr><th>Concern</th><th>What to do in code</th><th>Drill</th></tr></thead><tbody>
+<tr><td>Bad input</td><td>Validate schema, types, ranges; treat None and NaN as missing; repair with defaults and record every repair</td><td>Validate a feature row</td></tr>
+<tr><td>Model errors</td><td>try/except per row, check outputs with math.isfinite, fallback values, track the fallback rate</td><td>Batch predictions</td></tr>
+<tr><td>Dependency down</td><td>Timeouts, retries with backoff for transient errors only, circuit breaker, safe default</td><td>Circuit breaker · Retry with backoff</td></tr>
+<tr><td>Determinism</td><td>No random without a seed, no reliance on set order, full sort keys with tie-breaks, md5 not hash(), inject the clock</td><td>Deterministic split · Bug hunt</td></tr>
+<tr><td>Duplicates and order</td><td>Idempotent processing: dedupe by id, last-write-wins by (timestamp, id)</td><td>Idempotent events</td></tr>
+<tr><td>Silent failure</td><td>Count and alert: null rate, fallback rate, mean shift, PSI</td><td>Alert on a broken feed · PSI</td></tr>
+<tr><td>Side effects</td><td>Don't mutate inputs; return new objects; pure functions are easy to test</td><td>Bug hunt</td></tr>
+<tr><td>Proof</td><td>Small asserts for the happy path and each edge case, written before you say done</td><td>Every drill</td></tr>
+</tbody></table></div>
+<div class="say">Before I call this done, let me check: what happens with a missing value, a NaN, an empty batch, the model throwing, the same event twice, and two runs in a row?</div>` },
+  { id: "python", title: "2 · Python core", html: `
+<p class="lede">Twelve moves cover almost every “write a function” task. Practise them in the Python drills.</p>
+<pre class="code">xs = [3, 1, 2]; xs.append(5); xs[-1]; xs[1:3]; len(xs)
+d = {"a": 1}; d["b"] = 2; d.get("z", 0); "a" in d
+for k, v in d.items(): ...
+s = set(xs); 3 in s                         # O(1) membership
+
+evens = [x for x in xs if x % 2 == 0]       # filter + map
+sorted(pairs, key=lambda p: (-p[1], p[0]))  # count desc, then name
+
+from collections import Counter, defaultdict
+Counter(["a", "b", "a"]).most_common(2)     # [('a', 2), ('b', 1)]
+groups = defaultdict(list); groups[key].append(item)
+
+for i, x in enumerate(xs): ...
+for a, b in zip(xs, xs[1:]): ...            # consecutive pairs
+best = min(couriers, key=lambda c: dist(c, order))
+
+def f(x, tags=None):                        # never tags=[]
+    if not x: return None                   # guard the edge case
+assert f([1, 2]) == 3                       # quick test</pre>` },
+  { id: "pandas", title: "3 · pandas", html: `
+<p class="lede">About 25 moves. The pandas drills here are self-check (the browser can't run pandas), so type them from memory, then compare.</p>
+<pre class="code">df = pd.read_csv("orders.csv", parse_dates=["created_at"])
+df.shape; df.head(); df.dtypes; df.isna().sum(); df["status"].value_counts()   # LOOK FIRST
+
+df[df["status"] == "delivered"]
+df[(df["x"] > 10) &amp; (df["city"].isin(["SP", "RJ"]))]       # parentheses!
+df["gmv"] = df["subtotal"].fillna(0) + df["delivery_fee"]
+df["late"] = df["actual_minutes"] &gt; df["promised_minutes"]  # bool.mean() = rate
+
+df.groupby("city")["gmv"].sum().sort_values(ascending=False)
+df.groupby("city").agg(orders=("order_id", "count"), late_rate=("late", "mean"))
+df.merge(rest, on="restaurant_id", how="left")             # check len before/after
+
+g.sort_values("gmv", ascending=False).groupby("city").head(3)   # top N per group
+df.set_index("created_at")["gmv"].resample("W").sum().pct_change()
+df.groupby("customer_id")["created_at"].shift(1)                 # = LAG
+df.groupby("customer_id").cumcount() + 1                          # = ROW_NUMBER
+pd.pivot_table(df, index="city", columns="cuisine", values="gmv", aggfunc="sum")
+pd.qcut(df["score"], 10, labels=False)                            # deciles</pre>
+<div class="tablewrap"><table><thead><tr><th>SQL</th><th>pandas</th></tr></thead><tbody>
+<tr><td>WHERE</td><td><code>df[cond]</code></td></tr><tr><td>GROUP BY + agg</td><td><code>groupby().agg()</code></td></tr>
+<tr><td>HAVING</td><td>filter after groupby</td></tr><tr><td>JOIN</td><td><code>merge</code></td></tr>
+<tr><td>ROW_NUMBER</td><td><code>groupby().cumcount() + 1</code> or <code>rank</code></td></tr><tr><td>LAG</td><td><code>groupby().shift(1)</code></td></tr>
+<tr><td>CASE WHEN</td><td><code>np.where</code></td></tr></tbody></table></div>` },
+  { id: "sql", title: "4 · SQL", html: `
+<p class="lede">Fifteen moves. The SQL drills run for real against a small delivery database in your browser.</p>
+<pre class="code">SELECT city, COUNT(*) AS n, AVG(x) AS avg_x
+FROM orders o
+JOIN restaurants r ON r.restaurant_id = o.restaurant_id
+WHERE o.status = 'delivered'        -- rows, before grouping
+GROUP BY city
+HAVING COUNT(*) &gt;= 100              -- groups, after grouping
+ORDER BY n DESC LIMIT 10;
+
+AVG(CASE WHEN status = 'cancelled' THEN 1.0 ELSE 0 END)     -- a rate
+WITH rev AS (...) SELECT ... FROM rev                        -- name your steps
+ROW_NUMBER() OVER (PARTITION BY city ORDER BY revenue DESC)  -- top N per group
+LAG(orders) OVER (ORDER BY month)                            -- previous row
+SUM(gmv) OVER (PARTITION BY customer_id ORDER BY created_at) -- running total
+COALESCE(coupon_code, 'none');  WHERE x IS NULL              -- never = NULL
+WHERE id NOT IN (SELECT ...)  /  LEFT JOIN b ... WHERE b.id IS NULL</pre>
+<p>Dates depend on the dialect, so say which one you assume: <code>DATE_TRUNC('month', ts)</code> in Postgres, Databricks and Snowflake; <code>strftime('%Y-%m', ts)</code> in SQLite.</p>` },
+  { id: "patterns", title: "5 · Algorithm patterns", html: `
+<p class="lede">No dynamic programming needed for a data round. These six cover the “algorithm live coding” type.</p>
+<div class="tablewrap"><table><thead><tr><th>Pattern</th><th>You'll recognise it when you hear</th><th>Core idea</th></tr></thead><tbody>
+<tr><td>Hash map counting</td><td>most frequent, duplicates, group by</td><td>Counter / dict in one pass, O(n)</td></tr>
+<tr><td>Sort then scan</td><td>intervals, sessions, consecutive</td><td>sort by time, loop with the previous value</td></tr>
+<tr><td>Greedy</td><td>assign, nearest, schedule</td><td>best local choice, then say if it's optimal</td></tr>
+<tr><td>Two pointers / window</td><td>within k minutes</td><td>move left and right indexes</td></tr>
+<tr><td>Set membership</td><td>seen before, in A not B</td><td>set, O(1) lookup</td></tr>
+<tr><td>Accumulate per key</td><td>average per customer</td><td>two dicts: total and count</td></tr></tbody></table></div>
+<p>Say the complexity every time: one loop O(n), sort O(n log n), nested loops O(n²), dict or set lookup O(1).</p>` },
+  { id: "traps", title: "6 · Data traps", html: `
+<p class="lede">Interviewers plant these on purpose. Calling one out earns points.</p>
+<ul><li>Nulls in money columns, and denominators that still count them.</li><li>Cancelled orders with no delivery time.</li><li>Joins that duplicate rows: check the row count before and after.</li><li>Partial first or last week or month, which creates fake growth.</li><li>Division by zero for empty groups.</li><li>Ties in rankings: decide the rule and say it.</li><li>Dates stored as text and timezones.</li><li>Correlation vs causation: coupon users spend more, but coupons are targeted.</li><li>Tiny samples: a restaurant with 3 orders and a 100% late rate.</li></ul>` },
+  { id: "stats", title: "7 · Stats by hand", html: `
+<p class="lede">Your strongest area. The drills here make you type it.</p>
+<pre class="code">pos, neg = s[y == 1], s[y == 0]                  # AUC, O(n_pos·n_neg)
+auc = ((pos[:, None] &gt; neg).sum() + 0.5 * (pos[:, None] == neg).sum()) / (len(pos) * len(neg))
+
+p = (x1 + x2) / (n1 + n2)                         # two-proportion z
+se = (p * (1 - p) * (1/n1 + 1/n2)) ** 0.5; z = (p2 - p1) / se
+
+means = [rng.choice(x, len(x)).mean() for _ in range(2000)]
+np.percentile(means, [2.5, 97.5])                 # bootstrap CI
+
+idx = rng.permutation(len(X)); cut = int(0.8 * len(X))  # split; for time data split by date</pre>
+<p>Have these answers ready: why AUC ignores monotone transforms; precision and recall at a 12% default rate; monitoring in production (PSI, drift, stability by cohort); bagging vs boosting; leakage.</p>` },
+  { id: "ai", title: "8 · Prompting while they watch", html: `
+<p class="lede">At iFood you may use your own AI assistant, and the interviewer grades your prompts. A good prompt is a spec: it shows you understood the problem before the AI wrote anything.</p>
+<h3>The five-part prompt</h3>
+<ol class="routine">
+<li><span><b>Context.</b> What the code is for and the shape of the inputs and outputs.</span></li>
+<li><span><b>Exact behaviour.</b> The signature and a rule for every edge case: missing, NaN, empty, ties, errors.</span></li>
+<li><span><b>Constraints.</b> Python 3.11, standard library only (or which libraries), deterministic, don't mutate inputs, keep it short.</span></li>
+<li><span><b>Tests.</b> "Then write asserts for: …" listing the cases you care about.</span></li>
+<li><span><b>Scope.</b> One function at a time. Never "build the whole thing".</span></li>
+</ol>
+<h3>Weak vs strong</h3>
+<pre class="code wrap">Weak:   write a function to clean the input data for the model
+
+Strong: Write validate(row, schema) in Python 3.11, standard library only. schema maps field -> (type, min, max, default).
+        Missing/None/NaN -> default and record "missing:&lt;field&gt;"; unconvertible -> default and "bad_type:&lt;field&gt;";
+        out of range -> clip and "clipped:&lt;field&gt;". Don't modify the input. Return (clean_row, sorted(issues)).
+        Then write 3 asserts: a clean row, a row with every problem, and a NaN.</pre>
+<h3>After the answer comes back</h3>
+<ol class="routine">
+<li><span><b>Read it aloud before pasting.</b> Say what each block does.</span></li>
+<li><span><b>Run the tests.</b> Add one edge case the AI didn't think of.</span></li>
+<li><span><b>When it's wrong, say why and re-prompt with the failing case</b> ("this fails when the prediction is 0.0 because of 'if not pred'; fix only that"). Catching an AI bug is the best signal you can give.</span></li>
+<li><span><b>Simplify.</b> Delete anything you can't explain. You'll be asked to explain every line.</span></li>
+</ol>
+<p>Every "Robust ML systems" drill has an example prompt. Write yours first, then compare.</p>` },
+  { id: "senior", title: "9 · Senior talking points", html: `
+<p class="lede">The second half of the hour is conversation. Your angle: you own the what and the why, and you work closely with engineers on the how.</p>
+<div class="tablewrap"><table><thead><tr><th>They ask</th><th>Hit these points</th><th>Your story</th></tr></thead><tbody>
+<tr><td>How would this run in production at 80M orders a month?</td><td>Batch vs online; latency budget; vectorise or precompute; caching; what breaks first; cost per request</td><td>Panini8 platform choices</td></tr>
+<tr><td>How do you monitor a model?</td><td>Input drift (PSI), prediction drift, performance by cohort once labels arrive, alert thresholds, retraining triggers, owners</td><td>MoneyLion: drift, feature stability and degradation monitoring on Metaflow, AWS, Snowflake</td></tr>
+<tr><td>How do you evaluate an LLM feature?</td><td>Golden set by category, task metrics, LLM-as-judge calibrated on human labels, online metrics (resolution rate, CSAT), regression suite on every prompt change</td><td>Panini8 customer-service tool: response time, usage with and without AI, ratings</td></tr>
+<tr><td>Agents that use tools and handle errors?</td><td>Schema-validated tool calls, timeouts, retries with backoff for transient errors only, idempotency, fallbacks, guardrails, human handoff, tracing</td><td>AI-assisted exam: hint-only assistant, guardrails on what it may reveal</td></tr>
+<tr><td>How do you control cost?</td><td>Route easy requests to small models, caching, batching, prompt length, self-hosted open models vs API, GPU spot for batch jobs</td><td>Migration from third-party LLM APIs to open-source models</td></tr>
+<tr><td>How do you validate a model before launch?</td><td>Out-of-time validation for non-stationary data, leakage checks, business metrics, champion/challenger, staged rollout</td><td>MoneyLion audit pipeline and productionisation template for tree models</td></tr>
+<tr><td>How do you lead without authority?</td><td>Demos, weekly reports, a viable path, small wins, clear owners</td><td>Panini8 adoption; training other teams at MoneyLion</td></tr>
+</tbody></table></div>
+<div class="say">I'm strongest at deciding what to build and how to measure it, and I'm hands-on enough to prototype and to review what engineers build.</div>` },
+  { id: "phrases", title: "10 · Thinking-aloud phrases", html: `
+<p class="lede">Lines that keep the interviewer with you while you think.</p>
+<div class="stack">
+<div class="say">Let me check I understood the problem: …</div>
+<div class="say">Before coding, I'll write the steps as comments.</div>
+<div class="say">I'll test with a small example first.</div>
+<div class="say">Here's an edge case: what if the list is empty, or the value is null?</div>
+<div class="say">The complexity is O(n log n) because of the sort.</div>
+<div class="say">This is correlation, not necessarily causation, because the coupons are targeted.</div>
+<div class="say">If I had more time, I would…</div>
+<div class="say">For the business, this means that…</div></div>` },
+];
+
+/* ---------------- content: recall cards ---------------- */
+const CARDS = [
+  ["pandas · read a CSV with a date column", `pd.read_csv("orders.csv", parse_dates=["created_at"])`],
+  ["pandas · first look at a table", `df.shape; df.head(); df.dtypes; df.isna().sum()`],
+  ["pandas · filter two conditions", `df[(df["x"] > 10) & (df["city"] == "SP")]`],
+  ["pandas · values in a list", `df[df["city"].isin(["SP", "RJ"])]`],
+  ["pandas · sum per group, sorted", `df.groupby("city")["gmv"].sum().sort_values(ascending=False)`],
+  ["pandas · several named aggregates", `df.groupby("city").agg(n=("order_id", "count"), rate=("late", "mean"))`],
+  ["pandas · rate of a condition per group", `(df["status"] == "cancelled").groupby(df["cuisine"]).mean()`],
+  ["pandas · left join", `a.merge(b, on="restaurant_id", how="left")`],
+  ["pandas · top 3 per group", `g.sort_values("gmv", ascending=False).groupby("city").head(3)`],
+  ["pandas · weekly totals", `df.set_index("created_at")["gmv"].resample("W").sum()`],
+  ["pandas · previous value per customer (LAG)", `df.groupby("customer_id")["created_at"].shift(1)`],
+  ["pandas · order number per customer", `df.groupby("customer_id").cumcount() + 1`],
+  ["pandas · fill nulls / drop rows with nulls", `df["x"].fillna(0); df.dropna(subset=["x"])`],
+  ["pandas · if/else column", `np.where(df["gmv"] > 100, "big", "small")`],
+  ["pandas · deciles", `pd.qcut(df["score"], 10, labels=False)`],
+  ["pandas · pivot table", `pd.pivot_table(df, index="city", columns="cuisine", values="gmv", aggfunc="sum", fill_value=0)`],
+  ["SQL · a rate with CASE", `AVG(CASE WHEN status = 'cancelled' THEN 1.0 ELSE 0 END)`],
+  ["SQL · filter groups", `GROUP BY restaurant_id HAVING COUNT(*) >= 100`],
+  ["SQL · top N per group", `ROW_NUMBER() OVER (PARTITION BY city ORDER BY revenue DESC) AS rn  -- then WHERE rn <= N outside`],
+  ["SQL · previous month's value", `LAG(orders) OVER (ORDER BY month)`],
+  ["SQL · running total per customer", `SUM(gmv) OVER (PARTITION BY customer_id ORDER BY created_at)`],
+  ["SQL · replace NULL", `COALESCE(coupon_code, 'none')`],
+  ["SQL · rows in A but not in B", `LEFT JOIN b ON a.id = b.id WHERE b.id IS NULL`],
+  ["SQL · month bucket (Postgres / SQLite)", `DATE_TRUNC('month', ts)  /  strftime('%Y-%m', ts)`],
+  ["Python · read a number from input()", `n = int(input())`],
+  ["Python · parse '1,5,3' into numbers", `[int(x) for x in s.split(",")]`],
+  ["Python · split 'a|b' into two parts", `left, right = s.split("|")`],
+  ["Python · keep only letters and digits", `"".join(ch for ch in w if ch.isalnum())`],
+  ["Python · two decimals as text", `f"{x:.2f}"`],
+  ["Python · parse JSON safely", `try:\n    data = json.loads(text)\nexcept ValueError:\n    data = None`],
+  ["Python · cosine similarity", `dot = sum(a*b for a, b in zip(u, v))\ncos = dot / (math.sqrt(sum(a*a for a in u)) * math.sqrt(sum(b*b for b in v)))`],
+  ["Python · retry loop", `for attempt in range(n):\n    try: return fn()\n    except Exception:\n        if attempt == n - 1: raise\n        sleep(base * 2 ** attempt)`],
+  ["Python · count items", `from collections import Counter\nCounter(items).most_common(k)`],
+  ["Python · sort by count desc, then name", `sorted(d.items(), key=lambda kv: (-kv[1], kv[0]))`],
+  ["Python · group items in lists", `from collections import defaultdict\ng = defaultdict(list); g[key].append(x)`],
+  ["Python · consecutive pairs", `for a, b in zip(xs, xs[1:]): ...`],
+  ["Python · safe default argument", `def f(x, tags=None):\n    if tags is None: tags = []`],
+  ["Python · distance between two points", `import math\nmath.dist((x1, y1), (x2, y2))`],
+  ["Stats · two-proportion z", `p = (x1+x2)/(n1+n2); se = (p*(1-p)*(1/n1+1/n2))**0.5; z = (p2-p1)/se`],
+  ["Stats · sample std", `m = sum(xs)/n; (sum((x-m)**2 for x in xs)/(n-1)) ** 0.5`],
+];
+
+/* ---------------- content: mocks ---------------- */
+const MOCKS = [
+  { id: "ifood", title: "iFood round: ML systems", mins: 40, blurb: "Matches the recruiter's description: robust, deterministic code around a model with messy data and failures. Use your AI assistant in another window and write real prompts. Leave 20 minutes of a real hour for explaining your code.", drills: ["prod-validate", "prod-batch", "prod-breaker", "prod-debug"] },
+  { id: "coderbyte", title: "Coderbyte warm-up set", mins: 30, blurb: "Classic Coderbyte-shaped functions: input as text, parse, print.", drills: ["cb-longest", "cb-pairsum", "cb-brackets", "cb-movavg"] },
+  { id: "aieng", title: "AI engineering round", mins: 50, blurb: "Five building blocks of an LLM feature: chunking, retrieval, output parsing, retries and evals.", drills: ["ai-chunk", "ai-topk", "ai-json", "ai-retry", "ai-eval"] },
+  { id: "algo", title: "Plain Python round", mins: 45, blurb: "Algorithm live coding: five small functions, no libraries.", drills: ["py-topk", "py-session", "py-merge", "py-assign", "py-window"] },
+  { id: "sql", title: "SQL round", mins: 45, blurb: "Six queries, from GROUP BY to window functions.", drills: ["sql-slow", "sql-top2", "sql-mom", "sql-coupon", "sql-second-order", "sql-churn"] },
+  { id: "stats", title: "Stats by hand", mins: 45, blurb: "ML live coding: metrics and tests without libraries. Your strongest round.", drills: ["st-meanstd", "st-auc", "st-ks", "st-z", "st-boot"] },
+  { id: "debug", title: "Debug round", mins: 30, blurb: "Someone else's code with failing tests. Do it once without AI, then once with AI.", drills: ["dbg-avg", "dbg-late", "dbg-tags"] },
+  { id: "surprise", title: "Surprise mix", mins: 45, blurb: "Four random tasks across Python, SQL and stats. Good for the last days.", drills: null },
+];
+const RUBRIC = [
+  ["Clarifying", ["Started typing right away", "Asked one question", "Restated the problem and asked about definitions and edge cases"]],
+  ["Plan", ["No plan", "Plan only in my head", "Wrote the steps as comments first"]],
+  ["Code", ["Didn't run", "Ran with help", "Ran, readable names, small steps"]],
+  ["Testing", ["None", "Ran once at the end", "Tiny example and an edge case before saying done"]],
+  ["Communication", ["Silent for over a minute", "Mostly narrating", "Narrated, gave complexity, trade-offs and business meaning"]],
+];
+const STEPS = ["Clarify", "Example", "Plan", "Code", "Test", "Improve"];
+
+/* ---------------- routing ---------------- */
+const VIEWS = ["home", "learn", "drills", "mock", "cards", "progress"];
+function route() {
+  let v = (location.hash || "#home").slice(1);
+  if (!VIEWS.includes(v)) v = "home";
+  VIEWS.forEach(x => { $("#v-" + x).hidden = x !== v; });
+  document.querySelectorAll("#tabs a").forEach(a => a.classList.toggle("on", a.dataset.v === v));
+  ({ home: renderHome, learn: renderLearn, drills: renderDrills, mock: renderMock, cards: renderCards, progress: renderProgress })[v]();
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+function go(v) { if (location.hash === "#" + v) route(); else location.hash = v; }
+
+/* ---------------- home ---------------- */
+function renderHome() {
+  const counts = Object.keys(TRACKS).map(t => { const all = DRILLS.filter(d => d.track === t); return [t, all.length, all.filter(d => state.solved[d.id]).length]; });
+  const done = Object.keys(state.solved).length;
+  $("#v-home").innerHTML = `
+  <div class="hero">
+    <div class="stack">
+      <span class="label">AI/ML coding rounds · not LeetCode</span>
+      <h1>Train the six-step routine until the blank editor stops being scary.</h1>
+      <p class="lede">Coding rounds for AI/ML roles, tuned to the iFood brief: robust, deterministic code around models in production, with your own AI assistant and graded prompts. Plus Coderbyte-style functions, AI building blocks, SQL and stats. Python and SQL run here in your browser and check your answer. pandas questions are typed from memory and compared with a model answer.</p>
+      <div class="row"><button class="primary" id="h-start">${done ? "Continue drills" : "Start the first drill"}</button><button id="h-mock">Run a timed mock</button><button class="ghost" id="h-learn">Read the routine</button></div>
+      <p class="note">${done} of ${DRILLS.length} drills done. Progress is saved in this browser only.</p>
+    </div>
+    <div class="panel stack">
+      <h3>The routine they score</h3>
+      <ol class="routine">${["Clarify the problem and definitions", "Work a tiny example by hand", "Write the plan as comments", "Code in small steps, run often", "Test the example and an edge case", "Complexity, trade-offs, business meaning"].map(s => `<li><span>${s}</span></li>`).join("")}</ol>
+    </div>
+  </div>
+  <h2>Practice tracks</h2>
+  <div class="paths">${counts.map(([t, n, k]) => `<a class="path" href="#drills" data-track="${t}"><h3>${TRACKS[t]}</h3><span class="count">${k} / ${n} done</span><div class="bar"><i style="width:${n ? 100 * k / n : 0}%"></i></div></a>`).join("")}</div>
+  <h2>7-day plan</h2>
+  <div class="tablewrap panel"><table><thead><tr><th>Day</th><th>Learn</th><th>Practise</th></tr></thead><tbody>
+  <tr><td>1</td><td>0 Routine · 1 Coderbyte format · 1b Robust ML systems</td><td>Robust ML drills 1–3 · the real Coderbyte warm-up link</td></tr>
+  <tr><td>2</td><td>8 Prompting while they watch</td><td>Robust ML drills 4–7, writing your own prompt first each time</td></tr>
+  <tr><td>3</td><td>9 Senior talking points</td><td>Mock: iFood round (ML systems), then explain your code out loud for 15 minutes</td></tr>
+  <tr><td>4</td><td>2 Python core · 5 Patterns</td><td>Coderbyte-style drills · AI/ML drills 1–4</td></tr>
+  <tr><td>5</td><td>7 Stats by hand</td><td>AI/ML drills 5–8 · Debug drills</td></tr>
+  <tr><td>6</td><td>6 Data traps</td><td>Mock: AI engineering round</td></tr>
+  <tr><td>7</td><td>10 Phrases</td><td>Mock: iFood round again, a week later, without peeking</td></tr></tbody></table></div>`;
+  $("#h-start").onclick = () => { const next = DRILLS.find(d => !state.solved[d.id]) || DRILLS[0]; state.drill = next.id; save(); go("drills"); };
+  $("#h-mock").onclick = () => go("mock");
+  $("#h-learn").onclick = () => { state.lesson = "routine"; save(); go("learn"); };
+  document.querySelectorAll(".path").forEach(a => a.onclick = () => { const d = DRILLS.find(x => x.track === a.dataset.track && !state.solved[x.id]) || DRILLS.find(x => x.track === a.dataset.track); state.drill = d.id; save(); });
+}
+
+/* ---------------- learn ---------------- */
+function renderLearn() {
+  const cur = LESSONS.find(l => l.id === state.lesson) || LESSONS[0];
+  $("#v-learn").innerHTML = `<div class="learn"><nav class="toc">${LESSONS.map(l => `<button data-l="${l.id}" class="${l.id === cur.id ? "on" : ""}">${l.title}</button>`).join("")}</nav>
+  <article class="lesson"><h1>${cur.title.replace(/^\d+b? · /, "")}</h1>${cur.html}
+  <div class="row"><button class="primary" id="l-next">${LESSONS.indexOf(cur) < LESSONS.length - 1 ? "Next lesson" : "Go to drills"}</button></div></article></div>`;
+  document.querySelectorAll(".toc button").forEach(b => b.onclick = () => { state.lesson = b.dataset.l; save(); renderLearn(); window.scrollTo(0, 0); });
+  $("#l-next").onclick = () => { const i = LESSONS.indexOf(cur); if (i < LESSONS.length - 1) { state.lesson = LESSONS[i + 1].id; save(); renderLearn(); window.scrollTo(0, 0); } else go("drills"); };
+}
+
+/* ---------------- shared task + editor widget ---------------- */
+function refreshRunButtons() {
+  document.querySelectorAll("[data-run]").forEach(b => {
+    const d = DRILLS.find(x => x.id === b.dataset.run);
+    if (!d) return;
+    const ready = d.track === "sql" ? engine.sql : engine.py;
+    b.disabled = !ready;
+  });
+  document.querySelectorAll("[data-engine-note]").forEach(n => {
+    const d = DRILLS.find(x => x.id === n.dataset.engineNote);
+    const ready = d.track === "sql" ? engine.sql : engine.py;
+    const failed = d.track === "sql" ? $("#eng-sql").className === "fail" : engine.pyFail;
+    n.hidden = ready;
+    n.textContent = failed ? "The code runner couldn't start in this browser. You can still write your answer and compare it with the model answer." : "Loading the code runner…";
+  });
+}
+function taskHTML(d, opts = {}) {
+  const pillCls = { prod: "py", cb: "py", ai: "py", py: "py", dbg: "py", st: "py", sql: "sql", pd: "pd" }[d.track];
+  return `<div class="task">
+    <div class="row"><span class="pill ${pillCls}">${TRACKS[d.track]}</span><span class="pill">~${d.mins} min</span>${state.solved[d.id] ? '<span class="pill py">done</span>' : ""}</div>
+    <h2>${esc(d.title)}</h2>
+    <p class="pt">${esc(d.pt)}</p>
+    <p class="en">${esc(d.en)}</p>
+    ${d.track === "sql" ? `<details${opts.schemaOpen ? " open" : ""}><summary>Tables</summary><div><pre class="code">${esc(SCHEMA)}</pre><div class="row"><button data-peek="orders">Preview orders</button><button data-peek="restaurants">Preview restaurants</button></div></div></details>` : ""}
+    ${d.track === "pd" ? `<details open><summary>What a good answer covers</summary><div><ul class="checklist">${d.keys.map((k, i) => `<li><label><input type="checkbox" id="k-${d.id}-${i}"> ${esc(k)}</label></li>`).join("")}</ul></div></details>` : ""}
+    ${d.hint ? `<details><summary>Hint</summary><div><p>${esc(d.hint)}</p></div></details>` : ""}
+    ${d.prompt ? `<details><summary>Example prompt for your AI assistant</summary><div><pre class="code wrap">${esc(d.prompt)}</pre><p class="note">They will read your prompt. Write yours first, then compare: did you state the inputs, every edge case, the constraints and the tests?</p></div></details>` : ""}
+    <details id="sol-${d.id}"><summary>Model answer</summary><div><pre class="code">${esc(d.solution || d.ref)}</pre>${d.say ? `<div class="say">${esc(d.say)}</div>` : ""}</div></details>
+  </div>`;
+}
+function editorHTML(d) {
+  const draft = state.drafts[d.id] ?? (d.starter || "# Write your pandas answer here, from memory.\n# Then open 'Model answer' and compare.\n\n");
+  const isPd = d.track === "pd";
+  return `<div class="editor">
+    <textarea class="code" id="ed" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code editor">${esc(draft)}</textarea>
+    <div class="row">
+      ${isPd ? `<button class="primary" id="b-compare">Compare with model answer</button><button id="b-selfok">Mark as done</button>` :
+      `<button class="primary" id="b-check" data-run="${d.id}">Run and check</button>${d.track === "sql" ? "" : `<button id="b-run" data-run="${d.id}">Run only</button>`}`}
+      <button class="ghost" id="b-reset">Reset</button>
+      <span class="kbd">${isPd ? "" : "Ctrl/⌘ + Enter runs and checks · Tab indents"}</span>
+    </div>
+    ${d.io ? `<label class="stdinrow" for="stdin"><span class="label">Input (what input() returns)</span><input id="stdin" class="stdin" spellcheck="false" autocomplete="off" value="${esc(state.drafts[d.id + ":stdin"] ?? d.io[0][0])}"></label>` : ""}
+    ${isPd ? "" : `<p class="note" data-engine-note="${d.id}" hidden></p>`}
+    <div class="out" id="out" aria-live="polite"><span class="muted">${isPd ? "pandas can't run in the browser. Type it, compare, and tick what you covered." : "Output appears here."}</span></div>
+  </div>`;
+}
+function wireEditor(d, onSolved) {
+  const ed = $("#ed"), out = $("#out");
+  ed.addEventListener("input", () => { state.drafts[d.id] = ed.value; save(); });
+  ed.addEventListener("keydown", e => {
+    if (e.key === "Tab") { e.preventDefault(); const s = ed.selectionStart, en = ed.selectionEnd; ed.value = ed.value.slice(0, s) + "    " + ed.value.slice(en); ed.selectionStart = ed.selectionEnd = s + 4; state.drafts[d.id] = ed.value; save(); }
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); const b = $("#b-check"); if (b && !b.disabled) b.click(); }
+  });
+  $("#b-reset").onclick = () => { delete state.drafts[d.id]; delete state.drafts[d.id + ":stdin"]; save(); ed.value = d.starter || ""; out.innerHTML = '<span class="muted">Reset to the starting code.</span>'; };
+  document.querySelectorAll("[data-peek]").forEach(b => b.onclick = () => { if (!engine.sql) return; out.innerHTML = tableHTML(sqlExec(`SELECT * FROM ${b.dataset.peek} LIMIT 8`)); });
+  const solved = () => { state.solved[d.id] = Date.now(); save(); onSolved && onSolved(); };
+  if (d.track === "pd") {
+    $("#b-compare").onclick = () => { $("#sol-" + d.id).open = true; out.innerHTML = `<span class="muted">Compare line by line. Different syntax is fine if the logic matches. Tick the points you covered, then mark it done.</span>`; };
+    $("#b-selfok").onclick = () => { solved(); out.innerHTML = '<div class="verdict pass">Marked as done</div>'; };
+    return;
+  }
+  if (d.track === "sql") {
+    $("#b-check").onclick = () => {
+      let got;
+      try { got = sqlExec(ed.value); } catch (e) { out.innerHTML = `<div class="err">SQL error: ${esc(e.message)}</div><span class="muted">Read the message: it usually names the column or keyword it didn't expect.</span>`; return; }
+      const want = sqlExec(d.ref);
+      const diff = compareSQL(got, want, d.ordered);
+      out.innerHTML = (diff ? `<div class="verdict fail">Not yet. ${esc(diff)}</div>` : `<div class="verdict pass">Correct. Same result as the reference query.</div>`) + tableHTML(got, 20);
+      if (!diff) solved();
+    };
+    return;
+  }
+  const run = withChecks => {
+    if (!engine.py) return;
+    out.innerHTML = "";
+    const buf = [];
+    outSink = (s, kind) => buf.push(kind === "err" ? `<span class="err">${esc(s)}</span>` : esc(s));
+    let res;
+    try {
+      if (d.io && withChecks) res = JSON.parse(window.pyRunIO(ed.value, JSON.stringify(d.io)));
+      else res = JSON.parse(window.pyRun(withChecks && d.pre ? ed.value + "\n\n" + d.pre : ed.value, JSON.stringify(withChecks ? d.checks : []), d.io ? $("#stdin").value : null));
+    }
+    catch (e) { res = { ok: false, error: String(e && e.message || e), checks: [] }; }
+    outSink = null;
+    let html = buf.length ? `<div>${buf.join("")}</div>` : "";
+    if (!res.ok) { html = `<div class="err">${esc(res.error)}</div>` + html + `<span class="muted">Read the last line of the error first: it names what went wrong.</span>`; out.innerHTML = html; return; }
+    if (withChecks) {
+      const pass = res.checks.filter(c => c.pass).length, all = res.checks.length;
+      const rows = res.checks.map(c => `<div class="${c.pass ? "ok" : "err"}">${c.pass ? "✓" : "✗"} ${esc(c.expr)}${c.pass ? "" : `\n    expected ${esc(c.want)}\n    got      ${esc(c.got)}`}</div>`).join("");
+      html = (pass === all ? `<div class="verdict pass">All ${all} checks pass</div>` : `<div class="verdict fail">${pass} of ${all} checks pass</div>`) + rows + (html ? `<div class="muted">printed output:</div>` + html : "");
+      if (pass === all) solved();
+    } else if (!html) html = '<span class="muted">Ran without errors. Nothing was printed.</span>';
+    out.innerHTML = html;
+  };
+  if (d.io) $("#stdin").addEventListener("input", e => { state.drafts[d.id + ":stdin"] = e.target.value; save(); });
+  $("#b-check").onclick = () => run(true);
+  $("#b-run").onclick = () => run(false);
+}
+
+/* ---------------- drills view ---------------- */
+function renderDrills() {
+  const d = DRILLS.find(x => x.id === state.drill) || DRILLS[0];
+  state.drill = d.id;
+  const groups = Object.keys(TRACKS).map(t => `<div class="dgroup"><span class="label">${TRACKS[t]}</span>${DRILLS.filter(x => x.track === t).map(x => `<button class="ditem ${x.id === d.id ? "on" : ""}" data-d="${x.id}"><span class="dot ${state.solved[x.id] ? "done" : ""}"></span>${esc(x.title)}</button>`).join("")}</div>`).join("");
+  const idx = DRILLS.indexOf(d);
+  $("#v-drills").innerHTML = `<div class="drills"><aside class="dlist">${groups}</aside>
+    <div class="stack"><div class="work">${taskHTML(d)}${editorHTML(d)}</div>
+    <div class="row"><button class="ghost" id="d-prev" ${idx === 0 ? "disabled" : ""}>Previous</button><button id="d-next" ${idx === DRILLS.length - 1 ? "disabled" : ""}>Next drill</button></div></div></div>`;
+  document.querySelectorAll(".ditem").forEach(b => b.onclick = () => { state.drill = b.dataset.d; save(); renderDrills(); });
+  $("#d-prev").onclick = () => { state.drill = DRILLS[idx - 1].id; save(); renderDrills(); };
+  $("#d-next").onclick = () => { state.drill = DRILLS[idx + 1].id; save(); renderDrills(); };
+  wireEditor(d, () => document.querySelector(`.ditem[data-d="${d.id}"] .dot`)?.classList.add("done"));
+  refreshRunButtons();
+}
+
+/* ---------------- mock view ---------------- */
+let mock = null, timerId = null;
+function renderMock() {
+  if (!mock) {
+    $("#v-mock").innerHTML = `<div class="stack"><span class="label">Timed mock interview</span><h1>Pick a round and start the clock.</h1>
+      <p class="lede">Simulate the real thing: talk out loud, no AI, and only official docs for syntax lookups (say it before you look). Tap the routine steps as you do them. At the end you score yourself.</p></div>
+      <div class="mocks">${MOCKS.map(m => `<div class="mockcard"><h3>${m.title}</h3><span class="meta">${m.mins} min · ${m.drills ? m.drills.length : 4} tasks</span><p class="grow">${m.blurb}</p><button class="primary" data-m="${m.id}">Start</button></div>`).join("")}</div>
+      <p class="note">Want a live interviewer? Say “mock 1” (or any round) in the Claude thread and Claude will run it with you as the interviewer.</p>`;
+    document.querySelectorAll("[data-m]").forEach(b => b.onclick = () => startMock(b.dataset.m));
+    return;
+  }
+  if (mock.finished) return renderRubric();
+  const d = DRILLS.find(x => x.id === mock.drills[mock.i]);
+  $("#v-mock").innerHTML = `<div class="mockbar"><div class="stack" style="gap:2px"><span class="label">${esc(mock.title)} · task ${mock.i + 1} of ${mock.drills.length}</span><div class="timer" id="timer"></div></div>
+    <div class="steps" id="steps">${STEPS.map(s => `<button data-s="${s}" class="${mock.steps[mock.i]?.includes(s) ? "on" : ""}">${s}</button>`).join("")}</div>
+    <div class="row" style="margin-left:auto"><button id="m-next">${mock.i < mock.drills.length - 1 ? "Next task" : "Finish and score"}</button><button class="ghost" id="m-quit">Quit</button></div></div>
+    <div class="work">${taskHTML(d)}${editorHTML(d)}</div>`;
+  document.querySelectorAll("#steps button").forEach(b => b.onclick = () => { const arr = mock.steps[mock.i] = mock.steps[mock.i] || []; const k = arr.indexOf(b.dataset.s); k >= 0 ? arr.splice(k, 1) : arr.push(b.dataset.s); b.classList.toggle("on"); });
+  $("#m-next").onclick = () => { if (mock.i < mock.drills.length - 1) { mock.i++; renderMock(); window.scrollTo(0, 0); } else { mock.finished = true; mock.elapsed = Math.round((Date.now() - mock.start) / 1000); clearInterval(timerId); renderRubric(); } };
+  $("#m-quit").onclick = () => { clearInterval(timerId); mock = null; renderMock(); };
+  // keep the model answer closed unless they open it on purpose; note it
+  document.querySelector(`#sol-${d.id} summary`).textContent = "Model answer (opening it counts as a hint)";
+  wireEditor(d, () => { mock.solved.add(d.id); });
+  refreshRunButtons();
+  tick();
+}
+function startMock(id) {
+  const m = MOCKS.find(x => x.id === id);
+  let drills = m.drills;
+  if (!drills) { const pool = DRILLS.filter(runnable).map(x => x.id); drills = []; while (drills.length < 4) { const p = pool[Math.floor(Math.random() * pool.length)]; if (!drills.includes(p)) drills.push(p); } }
+  mock = { id, title: m.title, mins: m.mins, drills, i: 0, start: Date.now(), steps: {}, solved: new Set(), scores: {}, finished: false };
+  drills.forEach(x => delete state.drafts[x]); save();
+  clearInterval(timerId); timerId = setInterval(tick, 1000);
+  renderMock();
+}
+function tick() {
+  const el = $("#timer"); if (!el || !mock) return;
+  const left = mock.mins * 60 - Math.round((Date.now() - mock.start) / 1000);
+  const a = Math.abs(left), t = `${left < 0 ? "+" : ""}${Math.floor(a / 60)}:${String(a % 60).padStart(2, "0")}`;
+  el.textContent = t; el.className = "timer" + (left < 0 ? " over" : left < 300 ? " low" : "");
+}
+function renderRubric() {
+  const solvedN = mock.drills.filter(x => mock.solved.has(x)).length;
+  const routineN = mock.drills.reduce((s, _, i) => s + (mock.steps[i]?.length || 0), 0);
+  $("#v-mock").innerHTML = `<div class="stack"><span class="label">${esc(mock.title)} · finished</span><h1>Score yourself honestly.</h1>
+    <p class="lede">${solvedN} of ${mock.drills.length} tasks passed the checks, in ${Math.floor(mock.elapsed / 60)} min ${mock.elapsed % 60} s (limit ${mock.mins} min). You marked ${routineN} routine steps out of ${mock.drills.length * 6}.</p></div>
+    <div class="panel rubric">${RUBRIC.map(([name, opts], ri) => `<div class="ritem"><b>${name}</b><div class="seg">${opts.map((o, oi) => `<button data-r="${ri}" data-v="${oi * 2}" class="${mock.scores[ri] === oi * 2 ? "on" : ""}">${oi * 2} · ${o}</button>`).join("")}</div></div>`).join("")}
+    <label class="stack" style="gap:6px" for="m-notes"><b>What did you have to look up, and where did the logic slip?</b><textarea id="m-notes" class="code" style="min-height:90px;font-family:var(--body)"></textarea></label>
+    <div class="row"><button class="primary" id="m-save">Save to progress</button><span class="note" id="m-total"></span></div></div>`;
+  const total = () => { const v = Object.values(mock.scores); $("#m-total").textContent = v.length === 5 ? `Total ${v.reduce((a, b) => a + b, 0)} / 20 · 16+ ready · 12–15 redo in 2 days · under 12 redo the lesson first` : `${v.length} of 5 scored`; };
+  document.querySelectorAll("[data-r]").forEach(b => b.onclick = () => { mock.scores[b.dataset.r] = +b.dataset.v; document.querySelectorAll(`[data-r="${b.dataset.r}"]`).forEach(x => x.classList.toggle("on", x === b)); total(); });
+  total();
+  $("#m-save").onclick = () => {
+    const v = Object.values(mock.scores);
+    state.mocks.unshift({ at: Date.now(), title: mock.title, score: v.length === 5 ? v.reduce((a, b) => a + b, 0) : null, passed: solvedN, of: mock.drills.length, secs: mock.elapsed, notes: $("#m-notes").value });
+    save(); mock = null; go("progress");
+  };
+}
+
+/* ---------------- cards view ---------------- */
+let cardIdx = null, cardShown = false;
+function nextCard() {
+  const due = CARDS.map((c, i) => i).sort((a, b) => (state.cards[a]?.box || 0) - (state.cards[b]?.box || 0) || (state.cards[a]?.at || 0) - (state.cards[b]?.at || 0));
+  const low = due.filter(i => (state.cards[i]?.box || 0) === (state.cards[due[0]]?.box || 0));
+  cardIdx = low[Math.floor(Math.random() * low.length)]; cardShown = false;
+}
+function renderCards() {
+  if (cardIdx === null) nextCard();
+  const [front, back] = CARDS[cardIdx];
+  const known = CARDS.filter((_, i) => (state.cards[i]?.box || 0) >= 2).length;
+  $("#v-cards").innerHTML = `<div class="flash"><span class="label">Recall cards · ${known} of ${CARDS.length} solid</span>
+    <h1>Say it, type it, then flip.</h1><p class="lede">The goal isn't perfect syntax. It's having a first version ready in your head so you start typing instead of freezing.</p>
+    <div class="card"><div class="label">${esc(front.split(" · ")[0])}</div><div class="front">${esc(front.split(" · ").slice(1).join(" · "))}</div>
+    ${cardShown ? `<pre class="code">${esc(back)}</pre>` : `<textarea class="code" id="c-try" style="min-height:70px" placeholder="Type your version (optional)" aria-label="Your version"></textarea>`}</div>
+    <div class="row">${cardShown ? `<button id="c-again">Again</button><button class="primary" id="c-good">I knew it</button>` : `<button class="primary" id="c-flip">Show answer</button>`}<button class="ghost" id="c-skip">Skip</button></div></div>`;
+  if (cardShown) {
+    const mark = up => { const c = state.cards[cardIdx] || { box: 0 }; c.box = up ? Math.min(4, (c.box || 0) + 1) : 0; c.at = Date.now(); state.cards[cardIdx] = c; save(); nextCard(); renderCards(); };
+    $("#c-again").onclick = () => mark(false); $("#c-good").onclick = () => mark(true);
+  } else $("#c-flip").onclick = () => { cardShown = true; renderCards(); };
+  $("#c-skip").onclick = () => { nextCard(); renderCards(); };
+}
+
+/* ---------------- progress view ---------------- */
+function renderProgress() {
+  const rows = Object.keys(TRACKS).map(t => { const all = DRILLS.filter(d => d.track === t); const k = all.filter(d => state.solved[d.id]).length; return `<tr><td>${TRACKS[t]}</td><td>${k} / ${all.length}</td><td style="width:40%"><div class="bar"><i style="width:${100 * k / all.length}%"></i></div></td></tr>`; }).join("");
+  const mocks = state.mocks.length ? `<div class="tablewrap panel"><table><thead><tr><th>Date</th><th>Round</th><th>Score</th><th>Tasks passed</th><th>Time</th><th>Notes</th></tr></thead><tbody>${state.mocks.map(m => `<tr><td>${new Date(m.at).toLocaleDateString("en-GB")}</td><td>${esc(m.title)}</td><td>${m.score == null ? "–" : m.score + " / 20"}</td><td>${m.passed} / ${m.of}</td><td>${Math.round(m.secs / 60)} min</td><td>${esc(m.notes || "")}</td></tr>`).join("")}</tbody></table></div>` : `<div class="empty">No mocks yet. Your scores and notes appear here after you finish one.</div>`;
+  $("#v-progress").innerHTML = `<span class="label">Progress · saved in this browser</span><h1>Where you are</h1>
+    <div class="tablewrap panel"><table><thead><tr><th>Track</th><th>Done</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    <h2>Mock history</h2>${mocks}
+    <div class="row"><button class="ghost" id="p-reset">Clear all progress</button><span class="note" id="p-confirm"></span></div>`;
+  $("#p-reset").onclick = function () {
+    if (this.dataset.armed) { state.solved = {}; state.drafts = {}; state.mocks = []; state.cards = {}; save(); renderProgress(); }
+    else { this.dataset.armed = "1"; this.textContent = "Click again to clear everything"; }
+  };
+}
+
+/* ---------------- boot ---------------- */
+route();
+startSQL();
+if (document.readyState === "complete") startPython(); else window.addEventListener("load", startPython);
+</script>
