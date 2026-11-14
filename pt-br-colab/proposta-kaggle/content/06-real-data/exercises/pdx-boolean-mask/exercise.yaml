@@ -1,0 +1,4 @@
+title: Boolean masks and NaN-safe comparison
+kind: python
+time_limit_s: 900
+required: false

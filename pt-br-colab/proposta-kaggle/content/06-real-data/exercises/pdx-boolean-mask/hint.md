@@ -1,0 +1,1 @@
+Combine conditions with `&` and `|`, and wrap every comparison in parentheses. Test for missing values with `.isna()`, never with `== None` or `== np.nan`. For the second function, `!=` says NaN differs from NaN, so remove the rows where both are missing.
