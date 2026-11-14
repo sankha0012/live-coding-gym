@@ -1,0 +1,9 @@
+title: "Prompt: validate a feature row"
+kind: prompt
+required: true
+rubric:
+  - "States the task, inputs, outputs and constraints precisely"
+  - "Asks for robustness: validation, edge cases, determinism"
+  - "Keeps the candidate in control: small scope, asks for tests or explanation"
+  - "Would convince an observer the candidate understands the problem"
+  - "Defines the schema format and what the error report contains for each bad field"

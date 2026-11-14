@@ -1,0 +1,96 @@
+- q: A model returns NaN for one row. Which check catches it?
+  options:
+    - score < 0 or score > 1
+    - score == float("nan")
+    - math.isfinite(score)
+    - score is None
+  answer: 2
+  why: NaN fails every comparison, so only math.isfinite (or math.isnan) detects it.
+- q: What should code do when it clips a score of 1.3 down to 1.0?
+  options:
+    - Nothing, clipping fixes the problem
+    - Count the clip so a rising rate becomes visible
+    - Raise an exception for every clip
+    - Delete the row from the batch
+  answer: 1
+  why: A silent repair hides a broken model, so every repair needs a counter.
+- q: A fraud model has 99 percent accuracy and 1 percent fraud. What is the best next question?
+  options:
+    - What are its precision and recall on fraud?
+    - Can we raise accuracy to 100 percent?
+    - How many features does it use?
+    - Is the training set large enough?
+  answer: 0
+  why: A model that always says "not fraud" gets 99 percent accuracy while catching nothing.
+- q: A validation score is 0.99 on a hard problem. What is the most likely first suspect?
+  options:
+    - The model is simply excellent
+    - The learning rate is too low
+    - Label leakage from a feature built from the answer
+    - The validation set is too large
+  answer: 2
+  why: A near-perfect score on a hard task usually means a feature contains the label.
+- q: Which pair of checks tells you that the data is stale and not just the model?
+  options:
+    - Model file size and row count
+    - Age of the newest input timestamp and age of the model
+    - Mean score and median score
+    - Number of features and number of rows
+  answer: 1
+  why: Model age and data age are separate clocks, and either can be the one that stopped.
+- q: When should a system fail closed?
+  options:
+    - When a wrong yes is costly, such as approving a payment
+    - When blocking users is costly, such as a restaurant list
+    - Whenever the model is slow
+    - Only during tests
+  answer: 0
+  why: Failing closed refuses the action, which is right when letting a bad case through costs more.
+- q: The model scores 0.9 but only 60 percent of those cases are positive. What is wrong?
+  options:
+    - Class imbalance
+    - Duplicate events
+    - Label leakage
+    - Miscalibration
+  answer: 3
+  why: Calibration means the score matches the real positive rate, and bins reveal when it does not.
+- q: Why can a feed with duplicated events inflate a metric even though the model is fine?
+  options:
+    - Duplicates make the model slower
+    - At-least-once delivery counts the same event twice unless you dedupe by id
+    - Duplicates change the model weights
+    - The database sorts them wrongly
+  answer: 1
+  why: Retries and at-least-once delivery repeat events, so processing must be idempotent.
+- q: Offline results are good but online results are poor, and the model is unchanged. What is a likely cause?
+  options:
+    - The GPU is too hot
+    - Python version differences only
+    - Train-serve skew, where features are built differently in serving
+    - Too many unit tests
+  answer: 2
+  why: Using one shared feature function for training and serving removes this class of bug.
+- q: In a fallback chain, what must the last step satisfy?
+  options:
+    - It must call the model again
+    - It must be the most accurate option
+    - It must write to a database
+    - It must be a constant that cannot raise
+  answer: 3
+  why: If the final link can fail, the chain can still crash.
+- q: A debugging drill fails. What is the best first move?
+  options:
+    - Reproduce it and shrink the input to the smallest failing case
+    - Rewrite the function from scratch
+    - Change the test so it passes
+    - Change three suspicious lines at once
+  answer: 0
+  why: A small reproducible case lets you check one hypothesis at a time.
+- q: Subtracting a naive datetime from a UTC-aware datetime raises TypeError. What is the standard fix?
+  options:
+    - Convert both to strings and compare
+    - Catch the TypeError and return 0
+    - Round both to the nearest hour
+    - Make both timezone-aware in UTC at the edge of the code
+  answer: 3
+  why: Using aware UTC datetimes everywhere removes mixed-timezone bugs.

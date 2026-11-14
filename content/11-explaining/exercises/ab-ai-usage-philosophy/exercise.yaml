@@ -1,0 +1,9 @@
+title: How you use AI assistants and stay accountable
+kind: open
+required: true
+rubric:
+  - Says plainly that the candidate uses AI assistants and does not pretend otherwise.
+  - Explains how they verify the output, with specifics such as reading it, running it, writing tests or checking edge cases.
+  - Shows that they can explain every line they submit and keeps the decisions for themselves.
+  - Names a limit or risk, for example hidden assumptions, invented APIs, or code that passes the happy path only.
+  - Describes how they write prompts, with context, constraints and examples, rather than just asking for the answer.

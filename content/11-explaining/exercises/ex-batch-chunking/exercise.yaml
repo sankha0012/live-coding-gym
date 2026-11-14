@@ -1,0 +1,8 @@
+title: "Explain: batch chunking"
+kind: explain
+required: true
+rubric:
+  - "It says what the code does: scores rows in fixed-size batches and keeps the input order."
+  - "It explains how: islice pulls size items at a time from one iterator, so any iterable works, including a generator."
+  - "It gives complexity: O(n) time, and memory of one batch plus the output list."
+  - "It names a risk or trade-off, such as a bad model output length, a partial failure, or the full result list in memory."

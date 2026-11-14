@@ -1,0 +1,11 @@
+title: Process a stream in chunks
+kind: python
+required: true
+mock: true
+review: true
+time_limit_s: 900
+rubric:
+  - The input is consumed lazily, one chunk at a time, and is never turned into a full list.
+  - A failing batch is retried record by record, so only the bad records are lost and the rest keep their results in input order.
+  - Errors are recorded with the record index and a readable message, and the loop never stops early.
+  - Bad arguments (chunk_size below 1) and an empty input are handled explicitly, and the code is short and easy to read.

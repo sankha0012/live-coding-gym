@@ -1,0 +1,14 @@
+def check_health(checks: list) -> dict:
+    rank = {"ok": 0, "degraded": 1, "down": 2}
+    worst = "ok"
+    reasons = []
+    for name, fn in checks:
+        result = fn()
+        if result not in rank:
+            result = "down"
+            reasons.append(f"{name}: down (invalid result)")
+        elif result != "ok":
+            reasons.append(f"{name}: {result}")
+        if rank[result] > rank[worst]:
+            worst = result
+    return {"status": worst, "reasons": reasons}

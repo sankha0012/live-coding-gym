@@ -1,0 +1,8 @@
+title: "Explain: sticky A/B assignment"
+kind: explain
+required: true
+rubric:
+  - "It says what the code does: gives each user a stable variant by hashing the user and experiment name."
+  - "It explains how: sha256 of experiment:user turns into an integer bucket, and weights are cumulative cut points over the bucket range."
+  - "It gives complexity: O(v) per assignment for v variants, with no stored state."
+  - "It names a risk: changing weights or the experiment name moves users between variants, and a poor key choice can correlate experiments."

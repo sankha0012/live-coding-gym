@@ -1,0 +1,4 @@
+title: Structured log records
+kind: python
+time_limit_s: 600
+required: true

@@ -1,0 +1,9 @@
+title: "Explain: retry with backoff"
+kind: explain
+required: true
+rubric:
+  - States that it retries a function on a transient error with exponentially growing waits, capped, and re-raises after the last attempt.
+  - Explains jitter: a random wait up to the delay so many clients do not retry at the same moment.
+  - Notes that sleep and the random generator are injected so tests are deterministic and fast.
+  - Names a risk: retrying a call that is not idempotent can repeat a side effect, such as a double charge.
+  - Gives cost: at most attempts calls and a bounded total wait.

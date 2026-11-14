@@ -1,0 +1,8 @@
+title: "Explain: time-based train/test split"
+kind: explain
+required: true
+rubric:
+  - "It says what the code does: splits rows by event time so the model trains on the past and is tested on the future."
+  - "It explains how: rows are sorted by timestamp, test is at or after the cutoff, train is before it minus a gap."
+  - "It gives complexity: O(n log n) for the sort, O(n) extra memory."
+  - "It names a risk: labels that resolve after the cutoff leak into training unless the gap covers the label delay, and a fixed gap may be wrong."

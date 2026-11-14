@@ -1,0 +1,5 @@
+title: Model call with deadline and fallback
+kind: python
+mock: true
+time_limit_s: 780
+required: true

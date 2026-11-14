@@ -1,0 +1,3 @@
+A model is calibrated when, among cases it scores near 0.8, about 80% are positive. Write `calibration_bins(probs: list[float], labels: list[int], n_bins: int = 10) -> list[tuple[int, float, float, int]]`.
+
+Split [0, 1] into `n_bins` equal-width bins. A probability `p` goes to bin `floor(p * n_bins)`, except `p == 1.0`, which goes to the last bin (`n_bins - 1`). For each non-empty bin return `(bin_index, mean_predicted, observed_rate, count)` where `mean_predicted` is the mean of the probabilities in the bin and `observed_rate` is the mean of the labels (0 or 1). Return bins in order of bin index and skip empty bins. Empty input returns `[]`. If the lists differ in length, or any probability is outside [0, 1], raise `ValueError`.

@@ -1,0 +1,80 @@
+- id: mf-nan-score
+  front: Failure · NaN or inf score from a model
+  back: |
+    Check math.isfinite(score) first (nan fails every comparison), then fall back and count it.
+- id: mf-out-of-range
+  front: Failure · Probability of 1.3 or -0.2
+  back: |
+    Clip with min(1.0, max(0.0, p)) after the finite check, and count the clips.
+- id: mf-missing-feature
+  front: Failure · Feature is missing or None
+  back: |
+    Use a default plus a missing flag, and track the null rate per feature.
+- id: mf-stale-model
+  front: Failure · Model has not been retrained
+  back: |
+    Compare now - trained_at to a limit, alarm, then fall back to a rule.
+- id: mf-stale-data
+  front: Failure · Feed stopped updating
+  back: |
+    Check the age of the newest timestamp; refuse or fall back when it is too old.
+- id: mf-label-leakage
+  front: Failure · Offline score is suspiciously perfect
+  back: |
+    Look for a feature that almost equals the label and drop it.
+- id: mf-imbalance
+  front: Failure · 99 percent accuracy on 1 percent positives
+  back: |
+    Report precision and recall, never accuracy alone.
+- id: mf-calibration
+  front: Failure · Score 0.9 but only 60 percent are positive
+  back: |
+    Bin scores and compare the mean score to the positive rate per bin.
+- id: mf-drift
+  front: Failure · Input distribution changes slowly
+  back: |
+    Compute PSI or mean shift against a baseline and alarm above a threshold.
+- id: mf-silent-drift
+  front: Failure · Quality drops with no error
+  back: |
+    Alarm on a rolling statistic, not on exceptions.
+- id: mf-duplicates
+  front: Failure · Same event arrives twice
+  back: |
+    Dedupe by event id so processing is idempotent.
+- id: mf-train-serve-skew
+  front: Failure · Good offline, bad online
+  back: |
+    Build features with one shared function for training and serving.
+- id: mf-timezone
+  front: Failure · Off by hours near midnight
+  back: |
+    Use timezone-aware UTC datetimes everywhere; convert only at display.
+- id: mf-off-by-one
+  front: Failure · Window includes one row too many
+  back: |
+    State inclusive or exclusive, then test the exact boundary value.
+- id: mf-partial-batch
+  front: Failure · One bad row kills the batch
+  back: |
+    try/except per row, record the error, keep the rest.
+- id: mf-fallback-chain
+  front: Failure · Model is down
+  back: |
+    Chain model, then rule, then a constant that cannot raise; count each step.
+- id: mf-fail-closed
+  front: Failure · Wrong yes is very expensive
+  back: |
+    Fail closed: refuse the action when the model cannot be trusted.
+- id: mf-fail-open
+  front: Failure · Blocking users is very expensive
+  back: |
+    Fail open: serve a safe default such as a popular ranking.
+- id: mf-counter-repairs
+  front: Failure · Every clip or fallback
+  back: |
+    Increment a counter, or the repair hides the failure.
+- id: mf-debug-routine
+  front: Failure · Failing test, unknown cause
+  back: |
+    Reproduce, shrink, hypothesise, change one thing, rerun everything, add a test.

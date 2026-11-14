@@ -1,0 +1,89 @@
+- q: A nightly churn score is read once each morning by the CRM team. Which serving pattern fits best?
+  options:
+    - Batch job
+    - Online service with autoscaling
+    - Streaming consumer on every event
+  answer: 0
+  why: The answer can be hours old, so a scheduled batch job is cheapest and easiest to retry.
+- q: The prediction depends on the items in the cart right now. Which pattern is needed?
+  options:
+    - Batch job run every hour
+    - Streaming job that writes to a table
+    - Online service called with the request
+    - Weekly batch with a lookup table
+  answer: 2
+  why: The input exists only at request time, so the score must be computed when the request arrives.
+- q: A streaming consumer crashes on one malformed event and stops. What is the best fix?
+  options:
+    - Restart the consumer every minute
+    - Catch the error, send the event to a dead-letter queue and keep going
+    - Drop all events that arrive after the bad one
+  answer: 1
+  why: One poison event should be set aside for inspection without stopping the healthy ones.
+- q: Mean latency is 50 ms, but users complain about slow responses. What should you look at?
+  options:
+    - The minimum latency
+    - The standard deviation of the model score
+    - The p95 and p99 latency
+    - The number of requests per day
+  answer: 2
+  why: The mean hides the slow tail, and percentiles show what the slowest users feel.
+- q: What is data drift?
+  options:
+    - The model weights change during serving
+    - The label arrives late
+    - The distribution of the input features changes compared with training
+  answer: 2
+  why: Data drift is a change in the inputs, and it can be measured without labels.
+- q: A PSI value of 0.4 on an important feature most likely means what?
+  options:
+    - The feature has a large shift worth investigating
+    - The feature is stable
+    - The model accuracy is exactly 40 percent
+    - The feature has 40 percent nulls
+  answer: 0
+  why: By the usual rule of thumb a PSI above 0.25 signals a large shift.
+- q: A drift alert fires, clears and fires again all night because the metric sits near the threshold. What helps most?
+  options:
+    - Lower the threshold
+    - Hysteresis, with a higher level to raise and a lower level to clear
+    - Page more people
+  answer: 1
+  why: Separate raise and clear levels stop the alert from flapping around one number.
+- q: Which strategy sends the new model a copy of live traffic while users never see its output?
+  options:
+    - Canary
+    - Blue-green
+    - Rollback
+    - Shadow
+  answer: 3
+  why: In shadow mode the new model's predictions are only logged and compared, never served.
+- q: Why use hashlib instead of the built-in hash() to assign users to a canary group?
+  options:
+    - hash() of a string changes between Python processes, so users would switch groups
+    - hashlib is faster than hash()
+    - hash() only works on integers
+  answer: 0
+  why: String hashing is randomised per process, so the split would not be stable across restarts or servers.
+- q: What is the main cost of blue-green deployment?
+  options:
+    - Users cannot be switched back
+    - It needs two full environments running
+    - It cannot be used with models
+  answer: 1
+  why: Blue-green keeps a complete second environment ready, so you pay for double capacity.
+- q: A batch job finds a few rows with a negative distance. What is the safest default policy?
+  options:
+    - Replace them silently with zero
+    - Stop the whole job
+    - Quarantine them with a reason, process the rest, and alert if the rate is high
+    - Delete them without a trace
+  answer: 2
+  why: Quarantining keeps good rows flowing and leaves a visible record, so no repair is hidden.
+- q: A producer starts sending an extra optional field, and your consumer fails. What was wrong in the consumer?
+  options:
+    - It was strict about unknown fields instead of only required ones
+    - It did not use a canary
+    - It had no latency alert
+  answer: 0
+  why: A consumer should be strict about the fields it needs and tolerant of harmless extra fields.

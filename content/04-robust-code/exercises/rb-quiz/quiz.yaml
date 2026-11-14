@@ -1,0 +1,96 @@
+- q: Why is hash("user-42") a bad way to assign users to experiment buckets?
+  options:
+  - It is too slow for large user tables
+  - The value of hash() for a string changes between Python processes
+  - It only works for strings shorter than 16 characters
+  - It always returns negative numbers
+  answer: 1
+  why: String hashing is randomised per process, so the same user lands in different buckets after a restart.
+- q: A function samples from a set of ids with random.sample(list(ids), 3) and a seeded generator. Why can two runs still differ?
+  options:
+  - Seeds only work with numpy
+  - random.sample ignores the seed
+  - The order of a set of strings can change between runs, so the list differs
+  - Sets cannot be converted to lists
+  answer: 2
+  why: The seed is fixed but the input order is not, so sort the ids before sampling.
+- q: Which is the most reliable way to get the same random numbers in a function, whatever other code runs?
+  options:
+  - Call random.seed(0) once at the top of the program
+  - Create random.Random(seed) inside the function and use it
+  - Call random.random() twice and discard the first value
+  - Import random after the other modules
+  answer: 1
+  why: A local generator cannot be moved by other code that uses the global one.
+- q: What does it mean for an operation to be idempotent?
+  options:
+  - It runs faster the second time
+  - It never raises an error
+  - It only runs on one thread at a time
+  - Running it twice has the same effect as running it once
+  answer: 3
+  why: Idempotency is what makes a retry or a duplicate message safe.
+- q: A client retries a payment request after a timeout. What prevents a double charge?
+  options:
+  - An idempotency key that the server checks before charging
+  - A longer timeout on the client
+  - Sorting the requests by time
+  - Logging every request
+  answer: 0
+  why: The server uses the same key on each retry to return the first result instead of charging again.
+- q: When should a processor mark an idempotency key as done?
+  options:
+  - After the work succeeds, so a crash does not skip unfinished work
+  - Before the work, so that no other worker starts it
+  - Only at the end of the day in a batch job
+  - Never, because keys expire on their own
+  answer: 0
+  why: If the key is stored first and the job crashes, the retry sees the key and skips work that never happened.
+- q: Which error should a retry loop retry?
+  options:
+  - A ValueError caused by a malformed input row
+  - A ZeroDivisionError in the scoring function
+  - A connection timeout from a downstream service
+  - An HTTP 400 for a bad request body
+  answer: 2
+  why: Only transient errors can succeed on a later attempt; bad input and bugs fail every time.
+- q: Why does a test for retry with backoff take the sleep function as a parameter?
+  options:
+  - Real sleeping makes tests slow and the wait cannot be checked exactly
+  - The time module cannot be imported in tests
+  - Python forbids calling sleep in a loop
+  - Backoff only works with fake timers
+  answer: 0
+  why: A fake sleep runs instantly and records the delays, so the test is fast and deterministic.
+- q: Where should input validation mainly happen?
+  options:
+  - Inside every helper function, repeated each time
+  - Only in the test suite
+  - Once at the boundary, so the rest of the code can trust the data
+  - After the model has produced its output
+  answer: 2
+  why: Validating once at the entry point keeps the core code simple and gives clear errors early.
+- q: A batch of 10,000 records has one malformed record that raises ValueError. What is the best behaviour?
+  options:
+  - Stop the whole batch and raise
+  - Skip the record, keep it in a failed list, and count it
+  - Replace the record with zero and say nothing
+  - Retry the whole batch three times
+  answer: 1
+  why: Isolating the bad record keeps the rest moving, and the failed list and count make the problem visible.
+- q: Why use time.monotonic() for a deadline instead of time.time()?
+  options:
+  - It has more decimal places
+  - It returns the local time zone
+  - It is the only clock that works in a loop
+  - It never goes backwards when the system clock is changed
+  answer: 3
+  why: A system clock adjustment can move time.time() backwards and break the deadline logic.
+- q: Two events for the same entity arrive out of order. Which rule gives a deterministic final state?
+  options:
+  - Keep the event that arrived last
+  - Keep a random one using a seeded generator
+  - Keep the first event and ignore the rest
+  - Keep the event with the highest (timestamp, id), whatever the arrival order
+  answer: 3
+  why: Ordering by event time with an id tie-break gives the same result for any arrival order.

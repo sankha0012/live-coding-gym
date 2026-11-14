@@ -1,0 +1,3 @@
+A feature that almost equals the label is usually leakage: it holds information from after the prediction time. Write `find_leaky_features(features: dict[str, list[float]], labels: list[float], threshold: float = 0.95) -> list[str]` in pure Python, with no numpy.
+
+For each feature compute the Pearson correlation with `labels`. A feature is leaky when the absolute correlation is strictly greater than `threshold`, so a strong negative correlation counts too. A feature with zero variance (all values equal) has correlation 0 and is never leaky. If `labels` is constant, every correlation is 0. Return the leaky names ordered by absolute correlation, highest first, ties by name. If any feature length differs from `len(labels)`, raise `ValueError`. No features returns `[]`.

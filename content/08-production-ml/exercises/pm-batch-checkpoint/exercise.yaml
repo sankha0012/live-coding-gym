@@ -1,0 +1,5 @@
+title: Batch job with checkpoint and resume
+kind: python
+mock: true
+time_limit_s: 900
+required: true

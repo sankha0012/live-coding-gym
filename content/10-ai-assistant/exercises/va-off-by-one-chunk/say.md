@@ -1,0 +1,1 @@
+The bug is an off-by-one in the loop bound. `range(0, len(items) - size, size)` stops too early, so the last chunk is dropped. The fix is to loop up to `len(items)`, because slicing past the end is safe and gives the short last chunk. The habit that finds it: always test the boundary sizes, an empty list, one item, an exact multiple and a remainder. It is O(n) time and space.

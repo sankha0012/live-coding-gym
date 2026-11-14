@@ -1,0 +1,9 @@
+title: "Explain: validate a row"
+kind: explain
+required: true
+rubric:
+  - States that it checks each field for presence, type and range and returns the clean row plus a list of errors instead of raising.
+  - Explains that it reports all errors in one pass and that a batch keeps good rows apart from bad ones.
+  - Gives complexity as linear in fields per row and in rows per batch.
+  - Names a risk: bool is a subclass of int, so True passes as an age; NaN needs its own check because comparisons with NaN are false.
+  - Mentions a fix, such as rejecting bool explicitly.

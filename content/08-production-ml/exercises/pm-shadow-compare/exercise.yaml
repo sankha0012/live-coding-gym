@@ -1,0 +1,4 @@
+title: Compare live and shadow models
+kind: python
+required: true
+time_limit_s: 840

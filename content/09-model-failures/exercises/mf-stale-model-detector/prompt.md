@@ -1,0 +1,3 @@
+A model goes stale in two ways: it is old, or the data it was trained on is old. Write `check_staleness(trained_at, data_end, now, max_model_age_days, max_data_age_days) -> dict`. All three times are `datetime` objects. `now` is passed in, never read from the system clock.
+
+Return a dict with the keys `model_age_days` and `data_age_days` (floats, computed as `(now - time).total_seconds() / 86400`), and `model_stale` and `data_stale` (booleans). A value is stale only when its age is strictly greater than its limit, so an age exactly equal to the limit is fine. If `trained_at` or `data_end` is later than `now`, raise `ValueError`.

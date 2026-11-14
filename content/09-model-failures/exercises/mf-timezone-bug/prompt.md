@@ -1,0 +1,1 @@
+The function in `starter.py` counts events per local day, but the counts are wrong near midnight. Its docstring says what it must do. Find the bug and fix it with the smallest safe change. Do not rewrite the function.

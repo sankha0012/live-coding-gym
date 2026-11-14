@@ -1,0 +1,1 @@
+A model was trained with `train_features`, but in production `serve_features` gives different numbers for the same row, so the model sees inputs it never learned. Both functions are in `starter.py`. Their docstrings say what they must do. `train_features` is correct and must not change. Fix `serve_features` so it matches it, with the smallest safe change.

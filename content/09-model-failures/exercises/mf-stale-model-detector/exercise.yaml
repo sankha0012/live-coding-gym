@@ -1,0 +1,4 @@
+title: Detect a stale model
+kind: python
+required: true
+time_limit_s: 720

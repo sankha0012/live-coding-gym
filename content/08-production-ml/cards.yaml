@@ -1,0 +1,99 @@
+- id: pm-batch-vs-online
+  front: Serving · when do you pick batch over online?
+  back: "When predictions can be hours old. Batch is cheaper, easy to retry and backfill. Pick online only when the input exists at request time."
+- id: pm-streaming-dead-letter
+  front: Streaming · one bad event must not stop the consumer. Snippet?
+  back: |
+    for e in events:
+        try:
+            emit(score(e))
+        except (KeyError, TypeError):
+            dead_letter.append(e)
+- id: pm-train-serve-skew
+  front: Skew · how do you prevent training-serving skew?
+  back: "Use one shared feature function for training and serving, and compare online values with offline values on a sample."
+- id: pm-idempotent-job
+  front: Batch · make a re-run safe (idempotent)
+  back: "Write by key (upsert) or overwrite a dated partition, so running the same job twice gives the same table."
+- id: pm-batch-checkpoint
+  front: Batch · resume after a crash
+  back: |
+    done = load_done_ids()
+    for row in rows:
+        if row["id"] in done:
+            continue
+        process(row)
+        save_done_id(row["id"])
+- id: pm-timeout-fallback
+  front: Online · what to return when the model is slow or raises
+  back: "A fallback value (global average or last known score), plus a counter of how often the fallback fires."
+- id: pm-percentile-nearest-rank
+  front: Latency · nearest-rank percentile of a list
+  back: |
+    import math
+    ordered = sorted(values)
+    rank = max(math.ceil(p / 100 * len(ordered)), 1)
+    return ordered[rank - 1]
+- id: pm-why-percentiles
+  front: Latency · why p95 and p99 instead of the mean?
+  back: "The mean hides the slow tail. One request in a hundred can take seconds while the average looks fine."
+- id: pm-what-to-log
+  front: Monitoring · what to log per prediction
+  back: "Request id, timestamp, model version, features (or a hash), prediction and score, latency, fallback flag. Join the label later by request id."
+- id: pm-data-vs-prediction-drift
+  front: Drift · data drift versus prediction drift
+  back: "Data drift: the inputs changed. Prediction drift: the output distribution changed. Both work without labels. Concept drift needs labels."
+- id: pm-psi
+  front: Drift · PSI formula and rule of thumb
+  back: |
+    sum((live - train) * ln(live / train)) over bins
+    under 0.1 stable, 0.1 to 0.25 look, over 0.25 large shift
+- id: pm-hysteresis
+  front: Alerts · stop an alert from flapping
+  back: "Hysteresis: raise above 0.25, clear only below 0.20. Or require the breach for several windows in a row."
+- id: pm-page-vs-ticket
+  front: Alerts · page or ticket?
+  back: "Page for what hurts users now (errors, p99, missing feed). Ticket for slow things (mild drift, accuracy trend)."
+- id: pm-check-input-first
+  front: Incidents · what to check first when the model looks wrong
+  back: "The input data: null rate, ranges, row counts, units. Most incidents are upstream, not the model."
+- id: pm-shadow
+  front: Deploy · what is shadow mode?
+  back: "New model scores a copy of live traffic, outputs are logged but never shown. Zero user risk; compare outputs and latency."
+- id: pm-canary
+  front: Deploy · what is a canary?
+  back: "Send a small share (about 5 percent) of real traffic to the new model, watch metrics, grow step by step or roll back."
+- id: pm-blue-green
+  front: Deploy · what is blue-green?
+  back: "Two full environments. Test green, flip the router in one step, flip back to roll back. Costs double capacity."
+- id: pm-stable-bucket
+  front: Canary · stable user bucket (not hash())
+  back: |
+    import hashlib
+    h = hashlib.sha256(f"{salt}:{user_id}".encode()).hexdigest()
+    in_canary = int(h, 16) % 100 < 5
+- id: pm-why-not-hash
+  front: Python · why not hash() for bucketing?
+  back: "hash() of a str is randomised per process, so the same user would change group after a restart. Use hashlib."
+- id: pm-rollback-trigger
+  front: Deploy · when do you decide the rollback condition?
+  back: "Before the release, as numbers: for example error rate above 1 percent or p99 above 500 ms for 10 minutes. Automate it if you can."
+- id: pm-shadow-disagreement
+  front: Shadow · disagreement rate between two models
+  back: "sum(abs(a - b) > tol for a, b in zip(old, new)) / len(old)  (guard the empty case)"
+- id: pm-contract-parts
+  front: Contract · what does a data contract cover?
+  back: "Schema and types, ranges and allowed values, nullability, version, and an owner to call."
+- id: pm-bool-is-int
+  front: Python · why reject bool when checking for a number?
+  back: "isinstance(True, int) is True, so a boolean would pass as a number. Check isinstance(x, bool) first."
+- id: pm-violation-policy
+  front: Contract · what to do on a violation
+  back: "Reject in an online API, quarantine bad rows in batch, impute only if harmless (and count it), and alert when the violation rate rises."
+- id: pm-schema-version
+  front: Contract · accept old and new payload versions
+  back: |
+    version = payload.get("schema_version", 1)
+    if version == 1: map v1 fields to the internal shape
+    elif version == 2: map v2 fields to the same shape
+    else: raise ValueError("unsupported schema_version")

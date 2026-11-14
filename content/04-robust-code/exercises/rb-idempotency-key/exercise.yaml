@@ -1,0 +1,5 @@
+title: Process each key once
+kind: python
+time_limit_s: 720
+required: true
+mock: true

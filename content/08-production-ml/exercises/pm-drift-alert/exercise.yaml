@@ -1,0 +1,5 @@
+title: Drift alert with hysteresis
+kind: python
+mock: true
+time_limit_s: 720
+required: true

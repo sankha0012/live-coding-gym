@@ -1,0 +1,1 @@
+The function in `starter.py` builds a rolling-mean feature, but its values are shifted and the first values are wrong. Its docstring says what it must do. Find the bug and fix it with the smallest safe change. Do not rewrite the function.

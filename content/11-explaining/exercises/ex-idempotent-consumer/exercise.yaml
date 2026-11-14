@@ -1,0 +1,8 @@
+title: "Explain: idempotent consumer"
+kind: explain
+required: true
+rubric:
+  - "It says what the code does: applies each event once, skipping ids it has already seen."
+  - "It explains how: a set of seen ids is checked before the handler runs."
+  - "It gives complexity: O(1) per event on average, O(k) memory for k distinct ids."
+  - "It names the risk: a crash between the handler and the seen.add call causes a duplicate on redelivery, and the set is lost on restart."
