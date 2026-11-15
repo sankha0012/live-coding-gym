@@ -19,7 +19,7 @@ It is the last step before the consumer. Training produces a model artifact. The
 
 ## A minimal real example
 
-This is illustrative, not run here. FastAPI and pydantic are not part of this project's dependencies.
+This was run with FastAPI's test client and a small scikit-learn model saved to `model.joblib`. A valid request returned 200 with a prediction. A request with `distance_km: -1` returned 422 with the message "Input should be greater than 0". `/health` returned `{"status": "ok"}`.
 
 ```python
 from fastapi import FastAPI

@@ -8,7 +8,7 @@ tags: [ml tools, dvc, reproducibility]
 - Git stores a small text pointer file. The real data lives in remote storage such as an object store or a shared disk.
 - It sits at the start and the end of the pipeline: datasets in, model files out.
 
-Illustrative, not run here:
+Checked with DVC 3.67 (a remote must be set once with `dvc remote add -d <name> <url>` before `dvc push`):
 
 ```bash
 dvc init

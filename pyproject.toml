@@ -6,6 +6,13 @@ dependencies = ["fastapi", "uvicorn", "pyyaml", "pytest", "pandas", "numpy", "sc
 
 [dependency-groups]
 dev = ["httpx"]
+tools = [
+    "alembic>=1.20.1",
+    "cryptography<45",
+    "mlflow-skinny>=3.18.0",
+    "prometheus-client>=0.26.0",
+    "sqlalchemy>=2.1.8",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

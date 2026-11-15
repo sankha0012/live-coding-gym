@@ -797,7 +797,7 @@
   "795": "find_leaky_features",
   "796": "rolling_mean",
   "797": "daily_counts",
-  "798": "test_app_kinds.py",
+  "798": "create_app",
   "799": "app.py",
   "800": "rb-dataclass-contract/tests/test_hidden.py",
   "801": "IdempotentRunner",
@@ -1369,7 +1369,7 @@
   "1367": "tw-parse-duration/impl_bad_4.py",
   "1368": "tw-parse-duration/impl_good.py",
   "1369": "tw-parse-duration/starter.py",
-  "1370": "retry",
+  "1370": "run_python_tests",
   "1371": "retry",
   "1372": "tw-retry/prompt.md",
   "1373": "tw-retry/starter.py",
@@ -1679,5 +1679,6 @@
   "1677": "test-parametrize.md",
   "1678": "test-pytest-basics.md",
   "1679": "test-raises.md",
-  "1680": "test-what-to-test.md"
+  "1680": "test-what-to-test.md",
+  "1681": "check_health"
 }

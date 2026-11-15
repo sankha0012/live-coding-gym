@@ -49,7 +49,7 @@ print(round(psi(train, shifted), 3))   # much larger
 
 A common rule of thumb: below 0.1 is stable, 0.1 to 0.25 is moderate, above 0.25 is a large shift. It is only a rule of thumb.
 
-Evidently and Prometheus usage is illustrative, not run here. Check the current docs because the Evidently API has changed between versions.
+The Prometheus snippet below was run with the `prometheus_client` package: afterwards the exported metrics show `predictions_total 1.0` and `predict_latency_seconds_count 1.0`. Evidently is not installed here, so its usage is described in words only. Check the current docs because the Evidently API has changed between versions.
 
 ```python
 # Prometheus client: expose metrics from the service

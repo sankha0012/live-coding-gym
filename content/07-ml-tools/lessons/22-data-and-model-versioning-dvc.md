@@ -46,7 +46,7 @@ with tempfile.TemporaryDirectory() as d:
     print(before != after)   # True: the data changed, the hash shows it
 ```
 
-DVC does this for you. The commands below are illustrative, not run here.
+DVC does this for you. These commands were run with DVC 3.67 in a throwaway git repository, using a local folder as the remote in place of the S3 bucket. `dvc add` wrote a pointer file holding the md5 hash and size and added the data file to `data/.gitignore`. After deleting the data file, `dvc pull` restored it.
 
 ```bash
 dvc init

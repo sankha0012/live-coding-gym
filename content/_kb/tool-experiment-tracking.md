@@ -9,7 +9,7 @@ tags: [ml tools, mlflow, model registry]
 - Key terms: run, experiment, params, metrics, artifacts, model registry.
 - The registry gives a model a name, numbered versions and labels such as "production", so rollback is a change of label.
 
-Illustrative, not run here:
+Checked against MLflow 3.18:
 
 ```python
 import mlflow
@@ -28,7 +28,7 @@ with mlflow.start_run():
 
 Metrics can be logged many times, for example per epoch. Artifacts are files the run produced: the model, a plot, a report.
 
-By default MLflow writes to a local folder called `mlruns`. A team points it at a shared tracking server with `mlflow.set_tracking_uri(...)`. The command `mlflow ui` opens a page where you compare runs side by side.
+MLflow 3 stores runs in a local SQLite file, `mlflow.db`, by default; older versions used a folder called `mlruns`. A team points it at a shared tracking server with `mlflow.set_tracking_uri(...)`. The command `mlflow ui` opens a page where you compare runs side by side.
 
 The registry API has changed between major versions, so check the docs for exact signatures.
 

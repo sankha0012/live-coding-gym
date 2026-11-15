@@ -23,7 +23,7 @@ The MLflow words you should know:
 
 ## A minimal real example
 
-Illustrative, not run here. MLflow is not installed in this project, and these are the common calls.
+Checked against MLflow 3.18 (run with a scikit-learn decision tree; it logged `max_depth` and an `auc` metric and saved the model).
 
 ```python
 import mlflow
@@ -35,10 +35,12 @@ with mlflow.start_run():
     mlflow.log_param("max_depth", 6)
     model.fit(X_train, y_train)                    # your scikit-learn model
     mlflow.log_metric("auc", auc)                  # computed on held-out data
-    mlflow.sklearn.log_model(model, "model")       # name of the artifact path; newer versions may rename this argument. Saves the model as an artifact
+    mlflow.sklearn.log_model(model, name="model", serialization_format="cloudpickle")   # saves the model with the run
 ```
 
-By default MLflow writes to a local folder called `mlruns`. In a team you point it at a shared tracking server with `mlflow.set_tracking_uri(...)`. The command `mlflow ui` opens a web page where you compare runs side by side.
+In MLflow 3, `log_model` takes `name=` (the older `artifact_path` argument is deprecated), and for scikit-learn models the default format needs the extra `skops` package, so the example asks for `cloudpickle`. Parameters are stored as strings.
+
+Where runs are stored depends on the version. MLflow 3 writes to a local SQLite file, `mlflow.db`, by default. Older versions wrote to a local folder called `mlruns`, which is now in maintenance mode. In a team you point it at a shared tracking server with `mlflow.set_tracking_uri(...)`. The command `mlflow ui` opens a web page where you compare runs side by side.
 
 To register a model you can pass `registered_model_name="late-delivery"` to `log_model`, or register a logged model afterwards. Check the docs for the exact signature of the version you use, because the registry API has changed between major versions.
 

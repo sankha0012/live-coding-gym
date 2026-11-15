@@ -39,3 +39,7 @@ Reference articles live in `content/_kb/<topic-id>.md` (front matter: title, sum
 ```bash
 uv run python -m tools.check_ids kb
 ```
+
+## Optional tools
+
+MLflow (slim package) and the Prometheus client are an optional dependency group, used only to check the examples in the ML tools lessons. Install them with `uv sync --group tools`. The app does not need them.

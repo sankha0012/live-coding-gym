@@ -10,7 +10,7 @@ tags: [ml tools, serving, fastapi]
 - It is the last step before the consumer.
 - FastAPI is a Python web framework that validates requests with pydantic types and writes API docs for you.
 
-Illustrative, not run here:
+Checked with FastAPI's test client (imports left out; a negative distance returns 422):
 
 ```python
 app = FastAPI()
