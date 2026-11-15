@@ -159,3 +159,14 @@ def test_responses_are_never_cached(client):
 def test_version_endpoint_reports_a_commit(client):
     v = client.get("/api/version").json()
     assert v["version"] and v["path"].endswith("live-coding-gym")
+
+
+def test_progress_reset_clears_everything(client):
+    post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION, "mode": "blank", "duration_s": 5})
+    post(client, "/api/cards/grade", {"card_id": "dict-count", "correct": True})
+    post(client, "/api/unlock", {"step_id": "03-hand-sql"})
+    assert client.get("/api/exercise/count-words").json()["status"]["tests"] is True
+    post(client, "/api/progress/reset")
+    j = client.get("/api/journey").json()
+    assert client.get("/api/exercise/count-words").json()["status"]["tests"] is False
+    assert j["steps"][1]["unlocked"] is False and j["due_cards"] == 1 and j["mocks"] == []

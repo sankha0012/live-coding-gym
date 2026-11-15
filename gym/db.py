@@ -107,6 +107,13 @@ def update_mock(conn, mock_id, state, score=None):
     conn.commit()
 
 
+def reset_progress(conn):
+    """Delete everything the learner has done (attempts, reviews, card schedule, unlocks, mocks)."""
+    for table in ("attempts", "reviews", "cards", "unlocks", "mocks"):
+        conn.execute(f"DELETE FROM {table}")
+    conn.commit()
+
+
 def finished_mocks(conn):
     return conn.execute(
         "SELECT id, started_at, score_json FROM mocks WHERE score_json IS NOT NULL ORDER BY id DESC"

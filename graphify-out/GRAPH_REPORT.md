@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-15)
 
 ## Corpus Check
-- 3048 files · ~417,063 words
+- 3048 files · ~417,323 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 6596 nodes · 6035 edges · 2357 communities (2188 shown, 169 thin omitted)
+- 6599 nodes · 6039 edges · 2351 communities (2189 shown, 162 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 141 edges (avg confidence: 0.68)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `23d9d581`
+- Built from commit: `ea571bc5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -375,7 +375,7 @@
 - time_split
 - build_preprocessor
 - build_model
-- call_with_retry
+- test_content_extras.py
 - tw-bank-withdraw/prompt.md
 - tw-moving-average/prompt.md
 - retry
@@ -383,7 +383,7 @@
 - tw-validate-email/prompt.md
 - timeout_empty_default.py
 - Counter
-- check_health
+- predict_with_fallback
 - Counter
 - Counter
 - tool-docker.md
@@ -522,7 +522,6 @@
 - test-pytest-basics.md
 - test-raises.md
 - test-what-to-test.md
-- check_health
 - Counter
 - Stack
 - Stack
@@ -573,11 +572,6 @@
 - ge_threshold.py
 - lazy_length_check.py
 - sorts_by_signed_correlation.py
-- call_with_retry
-- call_with_retry
-- check_health
-- check_health
-- check_health
 
 ## God Nodes (most connected - your core abstractions)
 1. `fn()` - 48 edges
@@ -594,19 +588,19 @@
 ## Surprising Connections (you probably didn't know these)
 - `test_pending_review_can_be_retried()` --indirect_call--> `flaky()`  [INFERRED]
   tests/test_app.py → content/04-robust-code/exercises/rb-retry-classify/tests/test_hidden.py
+- `test_exercises_sort_by_order_then_id()` --calls--> `load_content()`  [EXTRACTED]
+  tests/test_content_extras.py → gym/content.py
 - `test_migrate_does_not_overwrite_existing_work()` --calls--> `migrate()`  [INFERRED]
   tests/test_migrate.py → tools/migrate_old_gym.py
+- `_mk()` --indirect_call--> `good()`  [INFERRED]
+  content/04-robust-code/exercises/prod-breaker/tests/test_hidden.py → tests/test_gates.py
 - `call_with_retry()` --calls--> `fn()`  [INFERRED]
-  content/04-robust-code/exercises/ai-retry/solution.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
-- `call_with_retry()` --calls--> `fn()`  [INFERRED]
-  content/04-robust-code/exercises/ai-retry/wrong/linear.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
-- `call_with_retry()` --calls--> `fn()`  [INFERRED]
-  content/04-robust-code/exercises/ai-retry/wrong/wraps_error.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
+  content/04-robust-code/exercises/rb-retry-classify/wrong/catches_oserror.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (2357 total, 169 thin omitted)
+## Communities (2351 total, 162 thin omitted)
 
 ### Community 0 - "run_test_writing"
 Cohesion: 0.33
@@ -617,8 +611,8 @@ Cohesion: 0.15
 Nodes (23): check_sql(), _query(), Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free(), run_python_tests(), run_sql_free(), RunResult (+15 more)
 
 ### Community 2 - "load_content"
-Cohesion: 0.13
-Nodes (21): Exercise, _existing(), load_content(), load_exercise(), _read(), Step, connect(), conn() (+13 more)
+Cohesion: 0.18
+Nodes (11): Exercise, _existing(), load_content(), load_exercise(), _read(), Step, connect(), conn() (+3 more)
 
 ### Community 3 - "prod-debug/tests/test_hidden.py"
 Cohesion: 0.33
@@ -629,8 +623,8 @@ Cohesion: 0.18
 Nodes (34): api(), cardsView(), CHIP_INFO, editor(), extrasPanel(), exView(), fmt(), h() (+26 more)
 
 ### Community 5 - "test_app.py"
-Cohesion: 0.15
-Nodes (12): client(), fake_gemini(), post(), fixture, test_cards_and_unlock(), test_failed_submission_is_recorded_but_not_passed(), test_full_step_flow_passes_gate_and_unlocks_next(), test_journey_next_up_points_to_first_unfinished_exercise() (+4 more)
+Cohesion: 0.14
+Nodes (13): client(), fake_gemini(), post(), fixture, test_cards_and_unlock(), test_failed_submission_is_recorded_but_not_passed(), test_full_step_flow_passes_gate_and_unlocks_next(), test_journey_next_up_points_to_first_unfinished_exercise() (+5 more)
 
 ### Community 6 - "File Structure"
 Cohesion: 0.12
@@ -797,8 +791,8 @@ Cohesion: 0.67
 Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_gold_is_normalised_too(), test_overall_is_pooled_not_mean_of_categories()
 
 ### Community 61 - "fn"
-Cohesion: 0.08
-Nodes (22): call_with_retry(), call_with_retry(), call_with_retry(), call_with_retry(), retry(), retry(), retry(), check_health() (+14 more)
+Cohesion: 0.05
+Nodes (29): call_with_retry(), call_with_retry(), call_with_retry(), call_with_retry(), call_with_retry(), call_with_retry(), call_with_retry(), retry() (+21 more)
 
 ### Community 64 - "st-meanstd/tests/test_hidden.py"
 Cohesion: 0.80
@@ -1350,7 +1344,7 @@ Nodes (3): daily_counts(), datetime, Count events per local calendar day in the 
 
 ### Community 1212 - "db.py"
 Cohesion: 0.06
-Nodes (56): _close(), _mk(), _ns(), test_check_1(), test_check_2(), test_cooldown_boundary_and_exact_threshold(), test_failed_trial_restarts_full_cooldown(), test_success_resets_failure_count() (+48 more)
+Nodes (58): _close(), _mk(), _ns(), test_check_1(), test_check_2(), test_cooldown_boundary_and_exact_threshold(), test_failed_trial_restarts_full_cooldown(), test_success_resets_failure_count() (+50 more)
 
 ### Community 1213 - "iqr_outliers"
 Cohesion: 0.32
@@ -1599,6 +1593,10 @@ Nodes (3): DataFrame, Series, rolling_7d_orders()
 ### Community 1285 - "rolling_7d_orders"
 Cohesion: 0.50
 Nodes (3): DataFrame, Series, rolling_7d_orders()
+
+### Community 1320 - "test_content_extras.py"
+Cohesion: 0.40
+Nodes (10): build(), load_one(), One step with one exercise 'e1'. files maps path-under-exercise -> text., test_exercises_sort_by_order_then_id(), test_extras_and_wrong_solutions(), test_files_are_resolved_and_must_exist(), test_quiz_loads_and_rejects_bad_answer_index(), test_sql_extra_seed_wrong_and_alt_queries() (+2 more)
 
 ### Community 1409 - "timeout_empty_default.py"
 Cohesion: 0.22
@@ -2187,12 +2185,12 @@ Nodes (3): Reference implementation used at training time. Do not change it. amo
 ## Knowledge Gaps
 - **881 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+876 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **169 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **162 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `fn()` connect `fn` to `exact_type.py`, `raises_first.py`, `check_health`, `make`, `CircuitBreaker`, `check_health`, `CircuitBreaker`, `CircuitBreaker`, `call_with_retry`, `check_health`, `check_health`, `flaky`, `predict_with_fallback`, `call_with_retry`, `call_with_retry`, `retry`, `tw-retry/solution.py`, `CircuitBreaker`, `catches_oserror.py`, `constant_delay.py`, `retries_everything.py`, `sleeps_after_last.py`, `CircuitBreaker`, `CircuitBreaker`, `check_health`?**
+- **Why does `fn()` connect `fn` to `retries_everything.py`, `exact_type.py`, `raises_first.py`, `predict_with_fallback`, `sleeps_after_last.py`, `make`, `constant_delay.py`, `retry`, `CircuitBreaker`, `flaky`, `CircuitBreaker`, `CircuitBreaker`, `CircuitBreaker`, `CircuitBreaker`, `CircuitBreaker`, `catches_oserror.py`, `tw-retry/solution.py`, `predict_with_fallback`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Why does `flaky()` connect `flaky` to `ai-retry/tests/test_hidden.py`, `test_app.py`, `rb-chunked-stream/tests/test_hidden.py`, `compare_shadow`, `fn`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
@@ -2204,5 +2202,5 @@ _Questions this graph is uniquely positioned to answer:_
   _`____` has 18 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Version`, `Version`, `Version` to the rest of the system?**
   _881 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `load_content` be split into smaller, more focused modules?**
-  _Cohesion score 0.1330049261083744 - nodes in this community are weakly interconnected._
+- **Should `test_app.py` be split into smaller, more focused modules?**
+  _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._

@@ -152,3 +152,6 @@ main li { margin: 3px 0; }
 /* journey rows: keep the bar and the label in fixed columns */
 .row .progress { flex: none; }
 .row > span.muted, .row > .tip > .ok, .row > span.ok { min-width: 104px; text-align: right; }
+
+button.danger { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, var(--border)); background: var(--bad-soft); }
+button.danger:hover { background: color-mix(in srgb, var(--bad) 18%, var(--surface)); border-color: var(--bad); }

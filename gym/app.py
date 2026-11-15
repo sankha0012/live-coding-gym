@@ -154,6 +154,11 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
         t = need(topics.get(topic_id), "topic")
         return {"id": t.id, "title": t.title, "summary": t.summary, "tags": t.tags, "brief": t.brief, "body": t.body}
 
+    @app.post("/api/progress/reset")
+    def progress_reset():
+        db.reset_progress(conn)
+        return {"ok": True}
+
     @app.get("/api/version")
     def version():
         """Short git commit of the code that is running, so you can tell which copy you are using."""

@@ -281,6 +281,13 @@ async function journeyView() {
     main.append(h("h2", {}, "Mock round history"));
     for (const m of j.mocks) main.append(h("div", { class: "row" }, `${m.started_at}  score ${m.total}/100`));
   }
+  main.append(h("h2", {}, "Reset"), h("div", { class: "bar" },
+    tip(h("button", { class: "danger", onclick: async () => {
+      if (!confirm("Delete ALL your progress: attempts, reviews, flashcard schedule, unlocked steps and mock scores? This cannot be undone.")) return;
+      await api("/progress/reset", {});
+      route();
+    } }, "Reset all progress"), "Start again from zero. Your typed code drafts stay in this browser."),
+    h("span", { class: "muted" }, "Deletes attempts, reviews, flashcards schedule, unlocks and mock scores.")));
 }
 
 async function stepView(id) {
@@ -363,9 +370,14 @@ async function exView(id, mode = "blank") {
     "An AI interviewer reviews your last passing submission. Pass the tests first.");
   let cm = null, elapsed = () => 0, lastPassed = null;
 
+  const draftKey = `draft:${id}:${mode}`;
+  const readDraft = () => { try { return localStorage.getItem(draftKey); } catch (e) { return null; } };
+  const writeDraft = (v) => { try { if (v === null) localStorage.removeItem(draftKey); else localStorage.setItem(draftKey, v); } catch (e) { /* drafts are a convenience only */ } };
   const begin = () => {
     holder.replaceChildren();
-    cm = editor(holder, ex.kind, ex.code);
+    const saved = readDraft();
+    cm = editor(holder, ex.kind, saved === null ? ex.code : saved);
+    cm.on("change", () => writeDraft(cm.getValue()));
     setTimeout(() => cm.refresh(), 0); // an editor built before it is on the page draws blank until refreshed
     elapsed = startTimer(clock, mode === "timed" ? ex.time_limit_s : 0);
   };
@@ -386,6 +398,11 @@ async function exView(id, mode = "blank") {
   main.append(holder, h("div", { class: "bar" },
     tip(h("button", { onclick: async () => cm && results(out, await api("/run", { exercise_id: id, code: cm.getValue() }), "run") },
       "Run"), "Runs your code as a script so you can try it with print(...). Nothing is recorded. Submit runs the hidden tests."),
+    tip(h("button", { onclick: () => {
+      if (!cm) return;
+      if (cm.getValue() !== ex.code && !confirm("Replace your code with the starter?")) return;
+      cm.setValue(ex.code); writeDraft(null); out.textContent = "";
+    } }, "Reset code"), "Put the editor back to how this exercise started. Your typed code is replaced."),
     tip(h("button", { class: "primary", onclick: async () => {
       if (!cm) return;
       const r = await api("/submit", { exercise_id: id, code: cm.getValue(), mode, duration_s: elapsed() });
