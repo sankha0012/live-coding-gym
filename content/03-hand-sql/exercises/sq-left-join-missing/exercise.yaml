@@ -5,3 +5,4 @@ mock: true
 time_limit_s: 480
 ordered: true
 seed_file: ../../../_shared/delivery.sql
+kb: [sql-left-join-anti-join, sql-nulls]

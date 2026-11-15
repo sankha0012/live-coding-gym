@@ -7,3 +7,4 @@ rubric:
   - Notes that sleep and the random generator are injected so tests are deterministic and fast.
   - Names a risk: retrying a call that is not idempotent can repeat a side effect, such as a double charge.
   - Gives cost: at most attempts calls and a bounded total wait.
+kb: [iv-explaining-code, prod-retry-backoff, py-time-clock-injection, py-random-seeds, prod-idempotency]

@@ -2,3 +2,4 @@ title: Test moving_average
 kind: tests
 time_limit_s: 600
 required: true
+kb: [test-raises, test-what-to-test, test-pytest-basics, py-slicing, algo-sliding-window]

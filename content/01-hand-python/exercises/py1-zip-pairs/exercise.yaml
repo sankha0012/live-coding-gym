@@ -2,3 +2,4 @@ title: Adjacent pairs
 kind: python
 time_limit_s: 360
 required: true
+kb: [py-loops-enumerate-zip, py-slicing, py-itertools]

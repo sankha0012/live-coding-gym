@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: true
 time_limit_s: 780
+kb: [py-datetime, py-dicts, algo-hash-map-counting]

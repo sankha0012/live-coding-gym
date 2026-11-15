@@ -148,3 +148,15 @@ One article per id at `content/_kb/<id>.md`. Exercises name the topics they use 
 - ai-llm-json-parsing: Parsing JSON from an LLM reply
 - ai-eval-harness: A tiny evaluation harness
 - ai-context-budget: Fitting chat history into a token budget
+
+## AI/ML engineering tools
+- tool-experiment-tracking: Experiment tracking and the model registry (MLflow)
+- tool-orchestration: Orchestration: DAGs, schedules, retries (Airflow and friends)
+- tool-docker: Containers and Docker
+- tool-model-serving: Model serving: batch versus online, FastAPI
+- tool-feature-store: Feature stores
+- tool-data-versioning: Data and model versioning (DVC)
+- tool-monitoring: Monitoring tools (Evidently, Prometheus)
+- tool-ci-cd-ml: CI/CD for ML
+- tool-cloud-platforms: Cloud ML platforms (SageMaker, Vertex AI, Databricks)
+- tool-rag-llm-stack: The LLM stack: embeddings, vector databases, RAG

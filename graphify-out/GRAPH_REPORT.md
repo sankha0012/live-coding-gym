@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-15)
 
 ## Corpus Check
-- 1800 files · ~268,579 words
+- 1942 files · ~331,824 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4365 nodes · 4180 edges · 1545 communities (1414 shown, 131 thin omitted)
+- 4963 nodes · 4676 edges · 1681 communities (1550 shown, 131 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 95 edges (avg confidence: 0.67)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `47838c7d`
+- Built from commit: `71fb9755`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -177,7 +177,7 @@
 - find_skew
 - pm-timeout-fallback/tests/test_hidden.py
 - mf-train-serve-skew/tests/test_hidden.py
-- db.py
+- Knowledge-base topics
 - migrate_old_gym.py
 - rb-chunked-stream/tests/test_hidden.py
 - sample_ids
@@ -192,7 +192,7 @@
 - find_leaky_features
 - rolling_mean
 - daily_counts
-- create_app
+- test_app_kinds.py
 - app.py
 - rb-dataclass-contract/tests/test_hidden.py
 - IdempotentRunner
@@ -276,10 +276,10 @@
 - chunk
 - parse_quantity
 - is_expired
-- test_gates.py
+- db.py
 - iqr_outliers
 - predict_with_fallback
-- run_python_tests
+- tool-ci-cd-ml.md
 - pd-agg/tests/test_hidden.py
 - days_since_previous
 - gmv_by_city
@@ -322,8 +322,8 @@
 - After the round
 - tw-parse-duration/solution.py
 - CI/CD for ML
-- mock.py
-- make_delivery_data.py
+- tool-cloud-platforms.md
+- tool-data-versioning.md
 - CircuitBreaker
 - catches_oserror.py
 - constant_delay.py
@@ -387,55 +387,191 @@
 - check_health
 - predict_with_fallback
 - predict_with_fallback
+- tool-docker.md
+- tool-experiment-tracking.md
+- tool-feature-store.md
+- tool-model-serving.md
+- tool-monitoring.md
+- tool-orchestration.md
+- tool-rag-llm-stack.md
+- ai-chunking.md
+- ai-context-budget.md
+- ai-embeddings-topk.md
+- ai-eval-harness.md
+- ai-llm-json-parsing.md
+- ai-prompt-anatomy.md
+- ai-verifying-ai-code.md
+- algo-binary-search.md
+- algo-hash-map-counting.md
+- algo-intervals.md
+- algo-lru-cache.md
+- algo-matrix.md
+- algo-prefix-sums.md
+- algo-sliding-window.md
+- algo-stack.md
+- algo-two-pointers.md
+- iv-coderbyte-format.md
+- iv-explaining-code.md
+- iv-routine-six-steps.md
+- ml-ab-test-z.md
+- ml-auc-ks.md
+- ml-bootstrap.md
+- ml-calibration.md
+- ml-column-transformer.md
+- ml-cross-validation.md
+- ml-joblib-persistence.md
+- ml-metrics-precision-recall-f1.md
+- ml-psi-drift.md
+- ml-sklearn-pipeline.md
+- ml-train-test-split-leakage.md
+- pd-dtypes-datetime.md
+- pd-groupby-agg.md
+- pd-merge.md
+- pd-missing-values.md
+- pd-outliers.md
+- pd-pivot.md
+- pd-read-inspect.md
+- pd-rolling.md
+- pd-select-filter.md
+- pd-sort-dedupe.md
+- pd-time-split-leakage.md
+- prod-atomic-write.md
+- prod-canary-shadow-ab.md
+- prod-checkpointing.md
+- prod-chunked-batch-processing.md
+- prod-circuit-breaker.md
+- prod-determinism.md
+- prod-drift-alerts-hysteresis.md
+- prod-event-dedup-ordering.md
+- prod-fallbacks.md
+- prod-health-checks.md
+- prod-idempotency.md
+- prod-input-validation.md
+- prod-monitoring-percentiles.md
+- prod-rate-limiter-token-bucket.md
+- prod-retry-backoff.md
+- prod-schema-evolution.md
+- prod-structured-logging.md
+- prod-timeouts-deadlines.md
+- prod-train-serve-skew.md
+- prod-ttl-cache.md
+- py-bisect.md
+- py-classes.md
+- py-closures-decorators.md
+- py-collections-deque.md
+- py-complexity.md
+- py-copy-mutability.md
+- py-counter-defaultdict.md
+- py-csv.md
+- py-dataclasses.md
+- py-datetime.md
+- py-dict-comprehensions.md
+- py-dicts.md
+- py-exceptions.md
+- py-f-strings.md
+- py-files-pathlib.md
+- py-functions-args.md
+- py-hashlib.md
+- py-heapq.md
+- py-input-print.md
+- py-iterators-generators.md
+- py-itertools.md
+- py-json.md
+- py-lambda-map-filter.md
+- py-list-comprehensions.md
+- py-lists.md
+- py-loops-enumerate-zip.md
+- py-math-nan.md
+- py-random-seeds.md
+- py-regex-basics.md
+- py-sets.md
+- py-slicing.md
+- py-sorting.md
+- py-str-methods.md
+- py-str-split-join.md
+- py-strings-basics.md
+- py-tempfile-os.md
+- py-time-clock-injection.md
+- py-truthiness-none.md
+- py-tuples-unpacking.md
+- py-typing-hints.md
+- sql-case.md
+- sql-conditional-aggregation.md
+- sql-cte.md
+- sql-data-quality-checks.md
+- sql-dates-sqlite.md
+- sql-dedupe.md
+- sql-dialects.md
+- sql-distinct.md
+- sql-group-by.md
+- sql-having.md
+- sql-joins.md
+- sql-lag-lead.md
+- sql-left-join-anti-join.md
+- sql-ntile-first-value.md
+- sql-nulls.md
+- sql-order-limit.md
+- sql-row-number-rank.md
+- sql-running-totals-frames.md
+- sql-select-where.md
+- sql-self-join.md
+- sql-subqueries.md
+- sql-window-functions.md
+- test-fakes-monkeypatch.md
+- test-fixtures.md
+- test-parametrize.md
+- test-pytest-basics.md
+- test-raises.md
+- test-what-to-test.md
 
 ## God Nodes (most connected - your core abstractions)
 1. `fn()` - 29 edges
-2. `load_content()` - 19 edges
-3. `exView()` - 17 edges
-4. `h()` - 15 edges
+2. `load_content()` - 21 edges
+3. `exView()` - 18 edges
+4. `h()` - 17 edges
 5. `BoundedQueue` - 14 edges
-6. `Authoring protocol (applies to Tasks 8 to 19)` - 14 edges
-7. `parse_config()` - 13 edges
-8. `TokenBucket` - 13 edges
-9. `check()` - 13 edges
-10. `LRUCache` - 12 edges
+6. `check()` - 14 edges
+7. `Authoring protocol (applies to Tasks 8 to 19)` - 14 edges
+8. `parse_config()` - 13 edges
+9. `TokenBucket` - 13 edges
+10. `create_app()` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `test_pending_review_can_be_retried()` --indirect_call--> `flaky()`  [INFERRED]
   tests/test_app.py → content/04-robust-code/exercises/rb-retry-classify/tests/test_hidden.py
 - `test_exercises_sort_by_order_then_id()` --calls--> `load_content()`  [EXTRACTED]
   tests/test_content_extras.py → gym/content.py
-- `build_rows()` --calls--> `pick()`  [INFERRED]
-  tools/make_delivery_data.py → gym/mock.py
-- `test_migrate_writes_a_checkable_journey()` --calls--> `migrate()`  [INFERRED]
-  tests/test_migrate.py → tools/migrate_old_gym.py
 - `test_migrate_does_not_overwrite_existing_work()` --calls--> `migrate()`  [INFERRED]
   tests/test_migrate.py → tools/migrate_old_gym.py
+- `call_with_retry()` --calls--> `fn()`  [INFERRED]
+  content/04-robust-code/exercises/ai-retry/solution.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
+- `call_with_retry()` --calls--> `fn()`  [INFERRED]
+  content/04-robust-code/exercises/rb-retry-classify/wrong/catches_oserror.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (1545 total, 131 thin omitted)
+## Communities (1681 total, 131 thin omitted)
 
 ### Community 0 - "run_test_writing"
 Cohesion: 0.33
 Nodes (10): _pytest(), Run pytest on test_candidate.py in a temp dir holding `files` (name -> text)., Grade a learner's test file: it must pass on `good` and fail on every `bads`…, run_test_writing(), names(), test_complete_tests_catch_every_bug(), test_empty_or_broken_test_files_fail(), test_hanging_test_times_out() (+2 more)
 
 ### Community 1 - "runner.py"
-Cohesion: 0.31
-Nodes (12): check_sql(), _query(), run_sql_free(), RunResult, _table(), test_duplicates_are_not_collapsed(), test_free_run_shows_rows(), test_nulls_compare_equal() (+4 more)
+Cohesion: 0.15
+Nodes (23): check_sql(), _query(), Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free(), run_python_tests(), run_sql_free(), RunResult (+15 more)
 
 ### Community 2 - "load_content"
-Cohesion: 0.17
-Nodes (12): Exercise, _existing(), load_content(), load_exercise(), _read(), Step, connect(), conn() (+4 more)
+Cohesion: 0.18
+Nodes (11): Exercise, _existing(), load_content(), load_exercise(), _read(), Step, connect(), conn() (+3 more)
 
 ### Community 3 - "prod-debug/tests/test_hidden.py"
 Cohesion: 0.47
 Nodes (10): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_check_5(), test_check_6() (+2 more)
 
 ### Community 4 - "app.js"
-Cohesion: 0.24
-Nodes (26): api(), cardsView(), CHIP_INFO, editor(), extrasPanel(), exView(), fmt(), h() (+18 more)
+Cohesion: 0.18
+Nodes (34): api(), cardsView(), CHIP_INFO, editor(), extrasPanel(), exView(), fmt(), h() (+26 more)
 
 ### Community 5 - "test_app.py"
 Cohesion: 0.15
@@ -466,8 +602,8 @@ Cohesion: 0.67
 Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4()
 
 ### Community 12 - "Live Coding Gym"
-Cohesion: 0.33
-Nodes (5): Adding content, Live Coding Gym, Run, Setup, Tests
+Cohesion: 0.29
+Nodes (6): Adding content, Knowledge base, Live Coding Gym, Run, Setup, Tests
 
 ### Community 13 - "count_words"
 Cohesion: 0.53
@@ -730,8 +866,8 @@ Cohesion: 0.22
 Nodes (8): Finding rows with no match, Joining three tables and a table to itself, Joins explained, Say it like this, The four kinds you need, The problem it solves, The smallest example, The three traps
 
 ### Community 351 - "check_content.py"
-Cohesion: 0.53
-Nodes (3): check_exercise(), main(), Check only some content while authoring. uv run python -m tools.check_ids ex-…
+Cohesion: 0.19
+Nodes (16): create_app(), main(), check_exercise(), check_kb(), Knowledge-base problems: broken articles, links to missing topics, exercises…, load_env(), Read KEY=VALUE lines into os.environ without overriding existing values., load_kb() (+8 more)
 
 ### Community 352 - "common_keys"
 Cohesion: 0.43
@@ -893,13 +1029,13 @@ Nodes (9): predict_with_fallback(), Clock, make_model(), test_exactly_at_deadlin
 Cohesion: 0.29
 Nodes (11): Online version for one row. Must return exactly what train_features returns for…, Reference implementation used at training time. Do not change it. amount: a…, serve_features(), train_features(), check(), test_category_is_cleaned(), test_log1p_not_log(), test_missing_amount() (+3 more)
 
-### Community 783 - "db.py"
+### Community 783 - "Knowledge-base topics"
 Cohesion: 0.17
-Nodes (18): create_mock(), finished_mocks(), get_attempt(), get_mock(), get_review(), _insert(), passed_attempts(), unlock() (+10 more)
+Nodes (11): AI assistants and LLM engineering, AI/ML engineering tools, Algorithm patterns, Interview technique, Knowledge-base topics, Machine learning and statistics, pandas, Python core (+3 more)
 
 ### Community 784 - "migrate_old_gym.py"
-Cohesion: 0.31
-Nodes (10): test_migrate_does_not_overwrite_existing_work(), checks_tests(), io_tests(), main(), migrate(), One-off: convert tools/old_gym.json (export of the old single-file gym) into…, Old behaviour: exec the submission, then the drill's setup code, in one…, slug() (+2 more)
+Cohesion: 0.27
+Nodes (11): test_migrate_does_not_overwrite_existing_work(), test_migrate_writes_a_checkable_journey(), checks_tests(), io_tests(), main(), migrate(), One-off: convert tools/old_gym.json (export of the old single-file gym) into…, Old behaviour: exec the submission, then the drill's setup code, in one… (+3 more)
 
 ### Community 785 - "rb-chunked-stream/tests/test_hidden.py"
 Cohesion: 0.32
@@ -953,9 +1089,9 @@ Nodes (9): Rolling mean feature. Output i is the mean of the `window` values tha
 Cohesion: 0.31
 Nodes (9): daily_counts(), datetime, Count events per local calendar day in the timezone `tz_name`. Aware timestamps…, test_aware_other_zone_is_converted(), test_aware_utc_is_converted(), test_daylight_saving_offset_changes(), test_empty(), test_naive_is_utc_and_shifts_back_a_day() (+1 more)
 
-### Community 798 - "create_app"
-Cohesion: 0.21
-Nodes (8): create_app(), main(), load_env(), Read KEY=VALUE lines into os.environ without overriding existing values., client(), fake_gemini(), fixture, test_sql_schema_hides_insert_lines()
+### Community 798 - "test_app_kinds.py"
+Cohesion: 0.28
+Nodes (4): client(), fake_gemini(), fixture, test_sql_schema_hides_insert_lines()
 
 ### Community 799 - "app.py"
 Cohesion: 0.36
@@ -1129,9 +1265,9 @@ Nodes (4): Online version for one row. Must return exactly what train_features r
 Cohesion: 0.67
 Nodes (3): daily_counts(), datetime, Count events per local calendar day in the timezone `tz_name`. Aware timestamps…
 
-### Community 1212 - "test_gates.py"
-Cohesion: 0.20
-Nodes (19): latest_review(), record_attempt(), save_review(), exercise_status(), journey(), _review_ok(), step_status(), test_latest_review_is_per_kind() (+11 more)
+### Community 1212 - "db.py"
+Cohesion: 0.07
+Nodes (48): create_mock(), finished_mocks(), get_attempt(), get_mock(), get_review(), _insert(), latest_review(), passed_attempts() (+40 more)
 
 ### Community 1213 - "iqr_outliers"
 Cohesion: 0.36
@@ -1141,9 +1277,9 @@ Nodes (10): iqr_outliers(), DataFrame, small(), test_input_untouched(), test_low
 Cohesion: 0.35
 Nodes (10): predict_with_fallback(), boom(), test_both_fail_use_default(), test_default_returned_as_is_even_none(), test_exception_falls_to_rule(), test_features_passed_through(), test_later_stage_not_called_when_earlier_answers(), test_model_answers() (+2 more)
 
-### Community 1215 - "run_python_tests"
-Cohesion: 0.26
-Nodes (11): Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free(), run_python_tests(), test_free_run_captures_output(), test_free_run_reports_exception(), test_infinite_loop_times_out(), test_reference_solution_passes() (+3 more)
+### Community 1215 - "tool-ci-cd-ml.md"
+Cohesion: 0.40
+Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
 
 ### Community 1216 - "pd-agg/tests/test_hidden.py"
 Cohesion: 0.35
@@ -1309,13 +1445,13 @@ Nodes (7): After the round, How to fill each part, One-page debrief template, Sa
 Cohesion: 0.29
 Nodes (6): A minimal real example, CI/CD for ML, The problem it solves, Three likely questions, What to say in an interview, Where it sits in an ML pipeline
 
-### Community 1262 - "mock.py"
-Cohesion: 0.39
-Nodes (6): pick(), score(), test_pick_fails_without_mock_exercises(), test_pick_returns_one_python_and_one_sql(), test_score_formula(), test_score_over_time_and_no_reviews()
+### Community 1262 - "tool-cloud-platforms.md"
+Cohesion: 0.40
+Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
 
-### Community 1268 - "make_delivery_data.py"
-Cohesion: 0.43
-Nodes (5): test_dataset_shape_and_determinism(), build_rows(), generate(), Generate the shared food-delivery dataset used by SQL and pandas exercises.…, sql_value()
+### Community 1268 - "tool-data-versioning.md"
+Cohesion: 0.40
+Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
 
 ### Community 1270 - "catches_oserror.py"
 Cohesion: 0.50
@@ -1381,8 +1517,552 @@ Nodes (3): DataFrame, Series, rolling_7d_orders()
 Cohesion: 0.50
 Nodes (3): DataFrame, Series, rolling_7d_orders()
 
+### Community 1545 - "tool-docker.md"
+Cohesion: 0.40
+Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
+
+### Community 1546 - "tool-experiment-tracking.md"
+Cohesion: 0.40
+Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
+
+### Community 1547 - "tool-feature-store.md"
+Cohesion: 0.40
+Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
+
+### Community 1548 - "tool-model-serving.md"
+Cohesion: 0.40
+Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
+
+### Community 1549 - "tool-monitoring.md"
+Cohesion: 0.40
+Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
+
+### Community 1550 - "tool-orchestration.md"
+Cohesion: 0.40
+Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
+
+### Community 1551 - "tool-rag-llm-stack.md"
+Cohesion: 0.40
+Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
+
+### Community 1552 - "ai-chunking.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1553 - "ai-context-budget.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1554 - "ai-embeddings-topk.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1555 - "ai-eval-harness.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1556 - "ai-llm-json-parsing.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1557 - "ai-prompt-anatomy.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1558 - "ai-verifying-ai-code.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1559 - "algo-binary-search.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1560 - "algo-hash-map-counting.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1561 - "algo-intervals.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1562 - "algo-lru-cache.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1563 - "algo-matrix.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1564 - "algo-prefix-sums.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1565 - "algo-sliding-window.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1566 - "algo-stack.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1567 - "algo-two-pointers.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1568 - "iv-coderbyte-format.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1569 - "iv-explaining-code.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1570 - "iv-routine-six-steps.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1571 - "ml-ab-test-z.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1572 - "ml-auc-ks.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1573 - "ml-bootstrap.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1574 - "ml-calibration.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1575 - "ml-column-transformer.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1576 - "ml-cross-validation.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1577 - "ml-joblib-persistence.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1578 - "ml-metrics-precision-recall-f1.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1579 - "ml-psi-drift.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1580 - "ml-sklearn-pipeline.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1581 - "ml-train-test-split-leakage.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1582 - "pd-dtypes-datetime.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1583 - "pd-groupby-agg.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1584 - "pd-merge.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1585 - "pd-missing-values.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1586 - "pd-outliers.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1587 - "pd-pivot.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1588 - "pd-read-inspect.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1589 - "pd-rolling.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1590 - "pd-select-filter.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1591 - "pd-sort-dedupe.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1592 - "pd-time-split-leakage.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1593 - "prod-atomic-write.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1594 - "prod-canary-shadow-ab.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1595 - "prod-checkpointing.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1596 - "prod-chunked-batch-processing.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1597 - "prod-circuit-breaker.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1598 - "prod-determinism.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1599 - "prod-drift-alerts-hysteresis.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1600 - "prod-event-dedup-ordering.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1601 - "prod-fallbacks.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1602 - "prod-health-checks.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1603 - "prod-idempotency.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1604 - "prod-input-validation.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1605 - "prod-monitoring-percentiles.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1606 - "prod-rate-limiter-token-bucket.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1607 - "prod-retry-backoff.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1608 - "prod-schema-evolution.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1609 - "prod-structured-logging.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1610 - "prod-timeouts-deadlines.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1611 - "prod-train-serve-skew.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1612 - "prod-ttl-cache.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1613 - "py-bisect.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1614 - "py-classes.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1615 - "py-closures-decorators.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1616 - "py-collections-deque.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1617 - "py-complexity.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1618 - "py-copy-mutability.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1619 - "py-counter-defaultdict.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1620 - "py-csv.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1621 - "py-dataclasses.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1622 - "py-datetime.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1623 - "py-dict-comprehensions.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1624 - "py-dicts.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1625 - "py-exceptions.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1626 - "py-f-strings.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1627 - "py-files-pathlib.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1628 - "py-functions-args.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1629 - "py-hashlib.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1630 - "py-heapq.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1631 - "py-input-print.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1632 - "py-iterators-generators.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1633 - "py-itertools.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1634 - "py-json.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1635 - "py-lambda-map-filter.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1636 - "py-list-comprehensions.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1637 - "py-lists.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1638 - "py-loops-enumerate-zip.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1639 - "py-math-nan.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1640 - "py-random-seeds.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1641 - "py-regex-basics.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1642 - "py-sets.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1643 - "py-slicing.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1644 - "py-sorting.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1645 - "py-str-methods.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1646 - "py-str-split-join.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1647 - "py-strings-basics.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1648 - "py-tempfile-os.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1649 - "py-time-clock-injection.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1650 - "py-truthiness-none.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1651 - "py-tuples-unpacking.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1652 - "py-typing-hints.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1653 - "sql-case.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1654 - "sql-conditional-aggregation.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1655 - "sql-cte.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1656 - "sql-data-quality-checks.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1657 - "sql-dates-sqlite.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1658 - "sql-dedupe.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1659 - "sql-dialects.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1660 - "sql-distinct.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1661 - "sql-group-by.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1662 - "sql-having.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1663 - "sql-joins.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1664 - "sql-lag-lead.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1665 - "sql-left-join-anti-join.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1666 - "sql-ntile-first-value.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1667 - "sql-nulls.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1668 - "sql-order-limit.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1669 - "sql-row-number-rank.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1670 - "sql-running-totals-frames.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1671 - "sql-select-where.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1672 - "sql-self-join.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1673 - "sql-subqueries.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1674 - "sql-window-functions.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1675 - "test-fakes-monkeypatch.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1676 - "test-fixtures.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1677 - "test-parametrize.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1678 - "test-pytest-basics.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1679 - "test-raises.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
+### Community 1680 - "test-what-to-test.md"
+Cohesion: 0.50
+Nodes (3): Common mistakes, Details, See also
+
 ## Knowledge Gaps
-- **438 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+433 more)
+- **878 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+873 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **131 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -1391,15 +2071,15 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `flaky()` connect `compare_shadow` to `test_app.py`, `fn`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `test_pending_review_can_be_retried()` connect `test_app.py` to `compare_shadow`, `create_app`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `fn()` connect `fn` to `retry`, `check_health`, `check_health`, `predict_with_fallback`, `predict_with_fallback`, `pm-health-check/tests/test_hidden.py`, `call_with_retry`, `retry`, `CircuitBreaker`, `catches_oserror.py`, `compare_shadow`, `retries_everything.py`, `sleeps_after_last.py`, `retry`, `constant_delay.py`, `tw-retry/solution.py`, `predict_with_fallback`?**
+- **Why does `test_pending_review_can_be_retried()` connect `test_app.py` to `compare_shadow`, `check_content.py`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
+- **Why does `fn()` connect `fn` to `retry`, `check_health`, `check_health`, `predict_with_fallback`, `predict_with_fallback`, `pm-health-check/tests/test_hidden.py`, `call_with_retry`, `retry`, `CircuitBreaker`, `catches_oserror.py`, `compare_shadow`, `retries_everything.py`, `sleeps_after_last.py`, `retry`, `constant_delay.py`, `tw-retry/solution.py`, `predict_with_fallback`?**
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **Are the 28 inferred relationships involving `fn()` (e.g. with `call_with_retry()` and `.call()`) actually correct?**
   _`fn()` has 28 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 18 inferred relationships involving `____` (e.g. with `apply_n_times()` and `.withdraw()`) actually correct?**
   _`____` has 18 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Version`, `Version`, `Version` to the rest of the system?**
-  _438 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _878 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `test_app.py` be split into smaller, more focused modules?**
   _Cohesion score 0.14736842105263157 - nodes in this community are weakly interconnected._

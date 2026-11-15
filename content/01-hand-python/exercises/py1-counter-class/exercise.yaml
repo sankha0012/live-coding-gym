@@ -2,3 +2,4 @@ title: Counter class
 kind: python
 time_limit_s: 540
 required: true
+kb: [py-classes, py-dicts, py-sorting, algo-hash-map-counting]

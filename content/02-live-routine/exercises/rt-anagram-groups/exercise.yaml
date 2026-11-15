@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: true
 time_limit_s: 780
+kb: [py-dicts, py-sorting, py-str-split-join, algo-hash-map-counting]

@@ -2,3 +2,4 @@ title: Aggregate health checks
 kind: python
 required: true
 time_limit_s: 720
+kb: [prod-health-checks, py-exceptions, py-tuples-unpacking]

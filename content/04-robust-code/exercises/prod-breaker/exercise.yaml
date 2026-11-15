@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: true
 time_limit_s: 1350
+kb: [prod-circuit-breaker, py-time-clock-injection, prod-fallbacks, py-classes]

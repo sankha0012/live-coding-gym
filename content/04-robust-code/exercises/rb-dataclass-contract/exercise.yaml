@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: false
 time_limit_s: 720
+kb: [py-dataclasses, prod-input-validation, py-math-nan, py-exceptions]

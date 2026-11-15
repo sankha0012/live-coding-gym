@@ -7,3 +7,4 @@ rubric:
   - "Keeps the candidate in control: small scope, asks for tests or an explanation."
   - "Would convince an observer the candidate understands the problem."
   - "States which copy of a duplicate wins and the exact ordering rule, including ties."
+kb: [ai-prompt-anatomy, prod-event-dedup-ordering, py-sorting, prod-determinism]

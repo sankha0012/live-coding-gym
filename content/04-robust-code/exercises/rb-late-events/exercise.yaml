@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: false
 time_limit_s: 780
+kb: [prod-event-dedup-ordering, py-sets, py-dicts]

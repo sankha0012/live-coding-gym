@@ -4,3 +4,4 @@ required: true
 mock: true
 time_limit_s: 720
 order: 10
+kb: [algo-hash-map-counting, py-sets, py-str-split-join, iv-coderbyte-format, py-input-print]

@@ -5,3 +5,4 @@ required: true
 mock: true
 ordered: true
 seed_file: ../../../_shared/delivery.sql
+kb: [sql-running-totals-frames, sql-window-functions, sql-cte, sql-dates-sqlite]

@@ -5,3 +5,4 @@ required: true
 files:
   - ../../../_shared/orders.csv
 
+kb: [pd-rolling, pd-dtypes-datetime]

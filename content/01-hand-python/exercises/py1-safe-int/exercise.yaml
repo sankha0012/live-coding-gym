@@ -3,3 +3,4 @@ kind: python
 time_limit_s: 420
 required: true
 order: 7
+kb: [py-exceptions, py-functions-args, py-math-nan]

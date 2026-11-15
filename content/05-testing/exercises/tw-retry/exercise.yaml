@@ -2,3 +2,4 @@ title: Test retry
 kind: tests
 time_limit_s: 900
 required: true
+kb: [test-fakes-monkeypatch, test-raises, prod-retry-backoff, py-time-clock-injection, py-closures-decorators]

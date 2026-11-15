@@ -7,3 +7,4 @@ rubric:
   - Names at least one concrete decision or trade-off and the reason for it.
   - Gives a result with a number or a clear before and after, and one thing learned or done differently next time.
   - Stays under about two minutes spoken and is easy to follow.
+kb: [iv-explaining-code, ai-prompt-anatomy]

@@ -1,3 +1,4 @@
 title: "Quiz: data traps and basic statistics"
 kind: quiz
 pass_ratio: 0.8
+kb: [pd-missing-values, pd-merge, ml-train-test-split-leakage]

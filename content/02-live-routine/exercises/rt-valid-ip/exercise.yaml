@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: true
 time_limit_s: 660
+kb: [py-str-split-join, py-str-methods, py-strings-basics]

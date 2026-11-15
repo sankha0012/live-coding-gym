@@ -6,3 +6,4 @@ rubric:
   - Names the problem it solves, which is giving the model current or private knowledge and fewer made-up answers, without retraining it.
   - Names concrete failure modes, such as retrieval missing the right chunk, bad chunking, stale documents, or the model ignoring or contradicting the context.
   - Is honest about limits - RAG reduces but does not remove hallucination, and you must evaluate retrieval and answers separately.
+kb: [tool-rag-llm-stack, ai-embeddings-topk, ai-chunking, ai-eval-harness]

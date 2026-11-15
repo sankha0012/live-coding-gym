@@ -2,3 +2,4 @@ title: Fill missing features from defaults
 kind: python
 required: true
 time_limit_s: 660
+kb: [prod-fallbacks, py-dicts, py-truthiness-none, py-copy-mutability]

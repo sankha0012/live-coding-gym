@@ -5,3 +5,4 @@ required: true
 files:
   - ../../../_shared/orders.csv
 
+kb: [pd-outliers, pd-select-filter, pd-missing-values]

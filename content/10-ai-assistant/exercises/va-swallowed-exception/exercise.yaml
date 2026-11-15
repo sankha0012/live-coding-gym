@@ -2,3 +2,4 @@ title: Verify AI code - swallowed error
 kind: python
 required: true
 time_limit_s: 600
+kb: [ai-verifying-ai-code, py-exceptions, py-str-methods]

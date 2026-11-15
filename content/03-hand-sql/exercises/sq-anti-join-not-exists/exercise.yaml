@@ -4,3 +4,4 @@ required: true
 time_limit_s: 600
 ordered: true
 seed_file: ../../../_shared/delivery.sql
+kb: [sql-subqueries, sql-left-join-anti-join, sql-select-where]

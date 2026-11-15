@@ -6,3 +6,4 @@ time_limit_s: 480
 ordered: true
 seed_file: ../../../_shared/delivery.sql
 order: 6
+kb: [sql-joins, sql-select-where, sql-order-limit]

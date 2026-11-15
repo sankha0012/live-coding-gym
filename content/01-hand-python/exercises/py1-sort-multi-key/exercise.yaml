@@ -2,3 +2,4 @@ title: Sort by score then name
 kind: python
 time_limit_s: 360
 required: true
+kb: [py-sorting, py-lambda-map-filter, py-tuples-unpacking]

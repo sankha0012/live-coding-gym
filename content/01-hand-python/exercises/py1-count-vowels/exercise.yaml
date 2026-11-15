@@ -3,3 +3,4 @@ kind: python
 required: true
 time_limit_s: 300
 order: 2
+kb: [py-str-methods, py-iterators-generators, py-strings-basics]

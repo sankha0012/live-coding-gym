@@ -3,3 +3,4 @@ kind: python
 time_limit_s: 720
 required: true
 mock: true
+kb: [prod-idempotency, py-dicts, py-exceptions, py-classes]

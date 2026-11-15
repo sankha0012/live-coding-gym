@@ -4,3 +4,4 @@ required: true
 mock: false
 time_limit_s: 630
 order: 10
+kb: [py-dicts, py-str-split-join, py-f-strings, py-sorting, iv-coderbyte-format]

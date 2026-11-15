@@ -1,3 +1,4 @@
 title: "Quiz: serving, monitoring, deployment, data contracts"
 kind: quiz
 pass_ratio: 0.8
+kb: [prod-monitoring-percentiles, prod-canary-shadow-ab, ml-psi-drift, prod-drift-alerts-hysteresis, prod-schema-evolution]

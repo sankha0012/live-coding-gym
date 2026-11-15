@@ -9,3 +9,4 @@ rubric:
   - Each value is converted and range-checked by its own small step, so the code is easy to read.
   - Booleans are parsed from text explicitly, because bool("false") is True.
   - The input dict is never modified, and defaults are used only for keys that are absent.
+kb: [prod-input-validation, py-exceptions, py-str-methods, py-math-nan]

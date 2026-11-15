@@ -2,3 +2,4 @@ title: Test parse_duration
 kind: tests
 time_limit_s: 900
 required: true
+kb: [test-parametrize, test-raises, test-what-to-test, py-regex-basics]

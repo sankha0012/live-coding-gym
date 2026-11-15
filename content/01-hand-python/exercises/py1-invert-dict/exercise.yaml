@@ -3,3 +3,4 @@ kind: python
 required: true
 time_limit_s: 420
 order: 6
+kb: [py-dicts, py-dict-comprehensions, py-sorting]

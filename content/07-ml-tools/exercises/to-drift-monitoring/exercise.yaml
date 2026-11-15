@@ -6,3 +6,4 @@ rubric:
   - Explains the problem, which is that models fail silently, so the code can run without errors while predictions get worse.
   - Gives a concrete example, such as comparing a feature's live distribution with the training one using PSI, or tracking accuracy once labels arrive.
   - Is honest about limits, such as labels arriving late, drift not always hurting quality, and alerts needing thresholds and an owner to avoid noise.
+kb: [tool-monitoring, ml-psi-drift, prod-drift-alerts-hysteresis, prod-monitoring-percentiles]

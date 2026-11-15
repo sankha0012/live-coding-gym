@@ -2,3 +2,4 @@ title: Verify AI code - scaler leakage
 kind: python
 required: true
 time_limit_s: 900
+kb: [ai-verifying-ai-code, ml-train-test-split-leakage, ml-sklearn-pipeline]

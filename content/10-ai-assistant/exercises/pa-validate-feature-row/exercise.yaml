@@ -7,3 +7,4 @@ rubric:
   - "Keeps the candidate in control: small scope, asks for tests or explanation"
   - "Would convince an observer the candidate understands the problem"
   - "Defines the schema format and what the error report contains for each bad field"
+kb: [ai-prompt-anatomy, prod-input-validation, py-math-nan]

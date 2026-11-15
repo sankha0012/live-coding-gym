@@ -5,3 +5,4 @@ required: true
 files:
   - ../../../_shared/orders.csv
   - ../../../_shared/restaurants.csv
+kb: [pd-groupby-agg, pd-merge, pd-sort-dedupe]

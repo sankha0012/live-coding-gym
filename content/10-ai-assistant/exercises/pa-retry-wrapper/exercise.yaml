@@ -7,3 +7,4 @@ rubric:
   - "Keeps the candidate in control: small scope, asks for tests or explanation"
   - "Would convince an observer the candidate understands the problem"
   - "Specifies backoff, a maximum number of attempts and which errors are retried"
+kb: [ai-prompt-anatomy, prod-retry-backoff, py-time-clock-injection, test-fakes-monkeypatch]

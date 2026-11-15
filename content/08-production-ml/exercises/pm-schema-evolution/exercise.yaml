@@ -2,3 +2,4 @@ title: Accept old and new payload versions
 kind: python
 time_limit_s: 720
 required: true
+kb: [prod-schema-evolution, prod-input-validation, py-exceptions, py-dicts]

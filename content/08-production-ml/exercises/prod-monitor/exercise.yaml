@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: false
 time_limit_s: 900
+kb: [py-math-nan, prod-drift-alerts-hysteresis, py-list-comprehensions]

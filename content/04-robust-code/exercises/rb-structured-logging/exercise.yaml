@@ -2,3 +2,4 @@ title: Structured log records
 kind: python
 time_limit_s: 600
 required: true
+kb: [prod-structured-logging, py-time-clock-injection, prod-input-validation, py-dicts]

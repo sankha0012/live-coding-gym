@@ -2,3 +2,4 @@ title: Test batch_split
 kind: tests
 time_limit_s: 900
 required: true
+kb: [test-what-to-test, test-raises, test-pytest-basics, py-slicing, py-copy-mutability]

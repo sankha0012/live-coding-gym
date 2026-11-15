@@ -3,3 +3,4 @@ kind: python
 time_limit_s: 900
 required: true
 mock: true
+kb: [prod-rate-limiter-token-bucket, py-time-clock-injection, py-classes]

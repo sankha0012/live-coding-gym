@@ -4,3 +4,4 @@ required: true
 time_limit_s: 420
 seed_file: ../../../_shared/delivery.sql
 order: 2
+kb: [sql-select-where, sql-nulls]

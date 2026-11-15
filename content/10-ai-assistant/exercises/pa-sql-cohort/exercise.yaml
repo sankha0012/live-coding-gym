@@ -7,3 +7,4 @@ rubric:
   - "Keeps the candidate in control: small scope, asks for tests or explanation"
   - "Would convince an observer the candidate understands the problem"
   - "Gives the table and column names and defines retention precisely"
+kb: [ai-prompt-anatomy, sql-dates-sqlite, sql-left-join-anti-join, sql-group-by, sql-cte]

@@ -7,3 +7,4 @@ rubric:
   - "Keeps the candidate in control: small scope, asks for tests or explanation"
   - "Would convince an observer the candidate understands the problem"
   - "Says what happens when the model fails on a chunk and how results map back to input rows"
+kb: [ai-prompt-anatomy, prod-chunked-batch-processing, py-csv, prod-checkpointing, py-iterators-generators]

@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: true
 time_limit_s: 1080
+kb: [prod-determinism, py-sorting, py-truthiness-none, py-list-comprehensions]

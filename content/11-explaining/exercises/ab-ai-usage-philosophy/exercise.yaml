@@ -7,3 +7,4 @@ rubric:
   - Shows that they can explain every line they submit and keeps the decisions for themselves.
   - Names a limit or risk, for example hidden assumptions, invented APIs, or code that passes the happy path only.
   - Describes how they write prompts, with context, constraints and examples, rather than just asking for the answer.
+kb: [ai-verifying-ai-code, ai-prompt-anatomy, iv-explaining-code]

@@ -7,3 +7,4 @@ rubric:
   - "Keeps the candidate in control: small scope, asks for tests or an explanation."
   - "Would convince an observer the candidate understands the problem."
   - "Makes the clock injectable so the limiter is testable and deterministic, and defines the refill and capacity rules exactly."
+kb: [ai-prompt-anatomy, prod-rate-limiter-token-bucket, py-time-clock-injection, test-fakes-monkeypatch]

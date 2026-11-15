@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: true
 time_limit_s: 720
+kb: [ai-eval-harness, py-loops-enumerate-zip, py-dicts, py-str-methods]

@@ -3,3 +3,4 @@ kind: python
 time_limit_s: 420
 required: true
 mock: true
+kb: [py-classes, py-lists, py-exceptions, algo-stack]

@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: true
 time_limit_s: 540
+kb: [py-list-comprehensions, test-what-to-test]

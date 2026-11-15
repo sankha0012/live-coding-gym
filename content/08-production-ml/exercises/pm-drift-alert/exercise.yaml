@@ -3,3 +3,4 @@ kind: python
 mock: true
 time_limit_s: 720
 required: true
+kb: [prod-drift-alerts-hysteresis, py-classes, ml-psi-drift]

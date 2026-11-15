@@ -6,3 +6,4 @@ mock: true
 files:
   - ../../../_shared/orders.csv
   - ../../../_shared/restaurants.csv
+kb: [pd-sort-dedupe, prod-event-dedup-ordering]

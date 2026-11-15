@@ -7,3 +7,4 @@ rubric:
   - Notes that a window function cannot be used in WHERE, so the filter on rn = 1 needs a CTE or subquery.
   - Names a risk: ties on created_at make ROW_NUMBER pick an arbitrary row, and a NULL subtotal makes total NULL so the sum skips that order.
   - Mentions cost: a sort per partition, about O(n log n).
+kb: [iv-explaining-code, sql-window-functions, sql-row-number-rank, sql-cte, sql-nulls]

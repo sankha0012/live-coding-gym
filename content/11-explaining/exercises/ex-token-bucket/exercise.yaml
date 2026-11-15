@@ -6,3 +6,4 @@ rubric:
   - "It explains how: tokens refill with elapsed time times rate, are capped at capacity, and each call spends tokens."
   - "It gives complexity: O(1) time and O(1) memory per bucket."
   - "It names a risk: it is not thread-safe, and a cost above capacity can never be allowed."
+kb: [iv-explaining-code, prod-rate-limiter-token-bucket, py-time-clock-injection]

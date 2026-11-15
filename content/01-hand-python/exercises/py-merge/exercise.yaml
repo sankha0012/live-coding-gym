@@ -4,3 +4,4 @@ required: true
 mock: true
 time_limit_s: 1200
 order: 60
+kb: [algo-intervals, py-sorting, py-lists]

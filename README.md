@@ -31,3 +31,11 @@ uv run pytest
 ```
 
 Progress is stored in `data/progress.db`. Delete that file to start over.
+
+## Knowledge base
+
+Reference articles live in `content/_kb/<topic-id>.md` (front matter: title, summary, tags; the text before `<!-- more -->` is the brief shown in the Help sidebar). `docs/kb-topics.md` lists every topic. An exercise names its topics with `kb: [id, id]` in `exercise.yaml`. Check with:
+
+```bash
+uv run python -m tools.check_ids kb
+```

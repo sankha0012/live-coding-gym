@@ -4,3 +4,4 @@ required: true
 mock: false
 time_limit_s: 720
 order: 60
+kb: [py-sets, py-lists]

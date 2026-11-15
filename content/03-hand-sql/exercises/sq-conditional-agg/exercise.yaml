@@ -5,3 +5,4 @@ required: true
 mock: true
 ordered: true
 seed_file: ../../../_shared/delivery.sql
+kb: [sql-conditional-aggregation, sql-case, sql-group-by, sql-joins]

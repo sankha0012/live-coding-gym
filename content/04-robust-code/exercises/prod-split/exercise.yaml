@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: false
 time_limit_s: 720
+kb: [py-hashlib, prod-determinism, ml-train-test-split-leakage]

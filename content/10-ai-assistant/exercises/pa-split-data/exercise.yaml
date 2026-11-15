@@ -7,3 +7,4 @@ rubric:
   - "Keeps the candidate in control: small scope, asks for tests or an explanation."
   - "Would convince an observer the candidate understands the problem."
   - "Requires the split to group by entity id and be stable across runs and processes, so no row of one entity appears on both sides (leakage)."
+kb: [ai-prompt-anatomy, ml-train-test-split-leakage, py-hashlib, prod-determinism]

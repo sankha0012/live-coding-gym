@@ -2,3 +2,4 @@ title: Verify AI code - time zones
 kind: python
 required: true
 time_limit_s: 720
+kb: [ai-verifying-ai-code, py-datetime]

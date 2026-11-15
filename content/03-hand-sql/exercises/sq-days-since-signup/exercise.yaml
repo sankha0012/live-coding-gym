@@ -4,3 +4,4 @@ required: true
 time_limit_s: 540
 ordered: true
 seed_file: ../../../_shared/delivery.sql
+kb: [sql-dates-sqlite, sql-select-where]

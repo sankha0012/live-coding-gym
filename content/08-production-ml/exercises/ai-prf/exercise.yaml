@@ -3,3 +3,4 @@ kind: python
 required: true
 mock: false
 time_limit_s: 540
+kb: [ml-metrics-precision-recall-f1, py-loops-enumerate-zip]

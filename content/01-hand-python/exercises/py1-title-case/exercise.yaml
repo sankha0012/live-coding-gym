@@ -2,3 +2,4 @@ title: Title case by hand
 kind: python
 required: true
 time_limit_s: 420
+kb: [py-str-split-join, py-slicing, py-str-methods]

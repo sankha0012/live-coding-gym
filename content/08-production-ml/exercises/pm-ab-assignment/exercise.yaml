@@ -2,3 +2,4 @@ title: Sticky A/B assignment
 kind: python
 time_limit_s: 720
 required: true
+kb: [prod-canary-shadow-ab, py-hashlib, prod-determinism, algo-prefix-sums, py-exceptions]

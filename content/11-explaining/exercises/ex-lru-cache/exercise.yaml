@@ -7,3 +7,4 @@ rubric:
   - Gives get and put as O(1) time and O(capacity) space.
   - Names a risk: the cached decorator uses None as the miss marker, so a function that returns None is never cached.
   - Mentions a fix, such as a sentinel object, or a lock for thread safety.
+kb: [iv-explaining-code, algo-lru-cache, py-collections-deque, py-closures-decorators]

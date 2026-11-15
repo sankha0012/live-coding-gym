@@ -7,3 +7,4 @@ rubric:
   - Notes that the clock is injected so time can be controlled in tests.
   - Names a risk: it is not thread safe, and in the half-open state many concurrent calls can all pass as trials.
   - Notes that it counts every Exception, including bugs, not only dependency failures.
+kb: [iv-explaining-code, prod-circuit-breaker, py-time-clock-injection, py-exceptions]

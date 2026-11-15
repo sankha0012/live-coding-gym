@@ -4,3 +4,4 @@ time_limit_s: 300
 required: true
 ordered: true
 seed_file: ../../../_shared/delivery.sql
+kb: [sql-group-by, sql-order-limit]

@@ -3,3 +3,4 @@ kind: python
 mock: true
 time_limit_s: 900
 required: true
+kb: [prod-checkpointing, prod-idempotency, py-dicts]
