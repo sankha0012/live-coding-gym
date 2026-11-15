@@ -133,7 +133,7 @@ function quizView(ex) {
     q.options.map((o, j) => h("label", { style: "display:block" },
       h("input", { type: "radio", name: `q${i}`, onchange: () => { picks[i] = j; } }), " " + o))));
   main.append(...boxes, h("div", { class: "bar" },
-    h("button", { onclick: async () => {
+    h("button", { class: "primary", onclick: async () => {
       if (picks.includes(null)) { note.replaceChildren(h("p", { class: "bad" }, "Answer every question.")); return; }
       const r = await api("/quiz", { exercise_id: ex.id, answers: picks });
       r.results.forEach((res, i) => boxes[i].append(h("p", { class: res.correct ? "ok" : "bad" },
@@ -336,7 +336,7 @@ async function exView(id, mode = "blank") {
     ? "Optional: explain your code as you would to the interviewer. It is sent with the AI review." : "Type your answer here, then press the button below." });
 
   if (!coded) {
-    main.append(text, h("div", { class: "bar" }, tip(h("button", { onclick: async (e) => {
+    main.append(text, h("div", { class: "bar" }, tip(h("button", { class: "primary", onclick: async (e) => {
       e.target.disabled = true;
       e.target.textContent = "Reviewing, please wait...";
       try { showReview(await api("/review", { exercise_id: id, text: text.value })); }
@@ -409,14 +409,14 @@ async function cardsView() {
     h("button", { onclick: () => grade(false) }, "Missed it"));
   main.append(h("p", { class: "muted" }, `${due.length} due`), md(card.front),
     h("textarea", { placeholder: "Type it from memory, then flip." }),
-    h("div", { class: "bar" }, h("button", { onclick: () => { back.hidden = false; buttons.hidden = false; } }, "Flip")),
+    h("div", { class: "bar" }, h("button", { class: "primary", onclick: () => { back.hidden = false; buttons.hidden = false; } }, "Flip")),
     back, buttons);
 }
 
 async function mockView() {
   main.append(h("h1", {}, "Mock round"),
     h("p", {}, "One Python task, one SQL task, the prompt you would give an AI assistant, then three follow-up questions from an AI interviewer. 45 minutes. The clock starts when you press Start. Score out of 100: hidden tests 50%, AI review 40%, finishing in time 10%."));
-  main.append(h("button", { onclick: async () => {
+  main.append(h("button", { class: "primary", onclick: async () => {
     const m = await api("/mock/start", {});
     main.replaceChildren();
     const clock = h("span", { class: "timer" });
@@ -428,7 +428,7 @@ async function mockView() {
       h("h2", {}, "SQL: " + m.sql.title), md(m.sql.prompt), h("pre", {}, m.sql.schema), sqlHolder,
       h("h2", {}, "Your prompt for the AI assistant"), prompt);
     const py = editor(pyHolder, "python", m.python.code), sql = editor(sqlHolder, "sql", m.sql.code);
-    main.append(h("div", { class: "bar" }, h("button", { onclick: async (e) => {
+    main.append(h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
       e.target.disabled = true;
       const r = await api(`/mock/${m.mock_id}/submit`, {
         python_code: py.getValue(), sql_code: sql.getValue(), prompt_text: prompt.value, duration_s: elapsed() });
@@ -439,7 +439,7 @@ async function mockView() {
       main.replaceChildren(h("h1", {}, "Follow-up questions"), h("h2", {}, "Python result"), pyOut,
         h("h2", {}, "SQL result"), sqlOut,
         ...r.questions.flatMap((q, i) => [h("p", {}, h("strong", {}, q)), answers[i]]),
-        h("div", { class: "bar" }, h("button", { onclick: async (ev) => {
+        h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (ev) => {
           ev.target.disabled = true;
           const done = await api(`/mock/${m.mock_id}/answers`, { answers: answers.map((a) => a.value) });
           main.replaceChildren(h("h1", {}, `Score: ${done.score.total}/100`),
@@ -461,6 +461,8 @@ async function render(view) {
 
 function route() {
   const [, name, id] = location.hash.split("/");
+  const section = name === "step" || name === "ex" ? "" : (name || "");
+  document.querySelectorAll("#nav a").forEach((a) => a.classList.toggle("active", a.dataset.route === section));
   if (name === "step") render(() => stepView(id));
   else if (name === "ex") render(() => exView(id));
   else if (name === "cards") render(cardsView);
@@ -474,6 +476,15 @@ fetch("/api/version").then((r) => r.json()).then((v) => {
   el.textContent = "version " + v.version;
   el.title = "Running from " + v.path;
 }).catch(() => {});
+
+document.getElementById("theme-toggle").addEventListener("click", () => {
+  const root = document.documentElement;
+  const dark = root.getAttribute("data-theme") === "dark" ||
+    (!root.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+  const next = dark ? "light" : "dark";
+  root.setAttribute("data-theme", next);
+  try { localStorage.setItem("theme", next); } catch (e) { /* not remembered in private mode */ }
+});
 
 window.addEventListener("hashchange", route);
 route();
