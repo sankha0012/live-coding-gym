@@ -42,11 +42,11 @@ pre code { background: none; padding: 0; }
 /* ---------- top bar and tabs ---------- */
 .topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 22px; height: 56px; padding: 0 28px;
   background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+.brand { white-space: nowrap; display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
 .brand:hover { text-decoration: none; }
 .logo { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, var(--accent), #9b5bf0); color: #fff; font: 600 12px var(--mono); }
 .topbar nav { display: flex; gap: 4px; height: 100%; }
-.topbar nav a { display: flex; align-items: center; padding: 0 14px; color: var(--muted); font-weight: 500; border-bottom: 2px solid transparent; margin-top: 2px; transition: color .12s, border-color .12s; }
+.topbar nav a { white-space: nowrap; display: flex; align-items: center; padding: 0 14px; color: var(--muted); font-weight: 500; border-bottom: 2px solid transparent; margin-top: 2px; transition: color .12s, border-color .12s; }
 .topbar nav a:hover { color: var(--text); text-decoration: none; }
 .topbar nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
 .spacer { flex: 1; }
@@ -159,3 +159,25 @@ button.danger:hover { background: color-mix(in srgb, var(--bad) 18%, var(--surfa
 .provider { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; font-weight: 500; }
 .provider select { max-width: 230px; padding: 5px 26px 5px 10px; font-size: 13px; }
 @media (max-width: 1000px) { .provider span { display: none; } .provider select { max-width: 150px; } }
+
+/* ---------- sidebar tabs and the assistant chat ---------- */
+.tabs { display: flex; gap: 4px; margin: 12px 0 8px; border-bottom: 1px solid var(--border); }
+.tab { border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none; padding: 8px 14px; color: var(--muted); font-weight: 600; margin-bottom: -1px; }
+.tab:hover { background: none; color: var(--text); border-color: transparent; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.chat { display: flex; flex-direction: column; }
+.chat-note { font-size: 12.5px; }
+.chat-list { display: flex; flex-direction: column; gap: 10px; max-height: 46vh; min-height: 120px; overflow: auto; padding: 6px 2px; }
+.msg { padding: 9px 13px; border-radius: 12px; max-width: 92%; font-size: 14px; overflow-wrap: anywhere; }
+.msg.user { align-self: flex-end; background: var(--accent); color: var(--on-accent); border-bottom-right-radius: 4px; white-space: pre-wrap; }
+.msg.assistant { align-self: flex-start; background: var(--surface-2); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.msg.assistant p { margin: 4px 0; }
+.msg.assistant pre { position: relative; font-size: 12px; white-space: pre; padding-top: 28px; }
+.copy { position: absolute; top: 4px; right: 4px; padding: 2px 9px; font-size: 11px; border-radius: 6px; }
+.chat-quick { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.chat-quick button { padding: 4px 11px; font-size: 12.5px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.chat-input { min-height: 70px; font-size: 14px; }
+.notice { background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+.chip.assisted { background: #fdf2d8; color: var(--warn); }
+:root[data-theme="dark"] .chip.assisted { background: #3a2f12; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .chip.assisted { background: #3a2f12; } }

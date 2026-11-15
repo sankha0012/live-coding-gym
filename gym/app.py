@@ -1,3 +1,4 @@
+import inspect
 import json
 import math
 import subprocess
@@ -8,7 +9,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import cards, config, db, gates, mock, reviewer, runner
+from . import assistant, cards, config, db, gates, mock, reviewer, runner
 from .content import load_content
 from .kb import load_kb
 
@@ -68,12 +69,12 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     all_cards = [c for s in steps for c in s.cards]
     app = FastAPI()
 
-    def ai_call(prompt):
+    def ai_call(prompt, json_mode=True):
         """Send a prompt to the AI provider chosen in the settings menu. `call` replaces it in tests."""
-        if call is not None:
-            return call(prompt)
+        if call is not None:  # a test double; only some of them care about json_mode
+            return call(prompt, json_mode=json_mode) if "json_mode" in inspect.signature(call).parameters else call(prompt)
         provider = db.get_setting(conn, "provider", "gemini")
-        return reviewer.PROVIDERS[provider][1](prompt)
+        return reviewer.PROVIDERS[provider][1](prompt, json_mode=json_mode)
 
     @app.middleware("http")
     async def no_cache(request, call_next):
@@ -113,7 +114,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def payload(ex, mode="blank"):
         st = status_of(ex)
         revealed = st["tests"] is True or st["review"] is True
-        rk = reviewer.REVIEW_KIND.get(ex.kind)
+        rk = "explain" if st.get("assisted") else reviewer.REVIEW_KIND.get(ex.kind)
         modes = [m for m in MODES.get(ex.kind, []) if m != "gaps" or ex.gaps]
         code = {"retype": "", "gaps": ex.gaps}.get(mode, ex.starter)
         schema = "\n".join(l for l in ex.seed.splitlines() if not l.startswith("INSERT"))
@@ -160,6 +161,83 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def kb_topic(topic_id: str):
         t = need(topics.get(topic_id), "topic")
         return {"id": t.id, "title": t.title, "summary": t.summary, "tags": t.tags, "brief": t.brief, "body": t.body}
+
+    class ChatBody(BaseModel):
+        scope: str
+        message: str
+        code: str = ""
+        output: str = ""
+        mode: str = ""
+
+    class ScopeBody(BaseModel):
+        scope: str
+
+    def chat_context(scope):
+        """What the assistant is helping with and which modes are allowed for it."""
+        if scope.startswith("mock:"):
+            try:
+                state = mock_state(int(scope[5:]))
+            except ValueError:
+                raise HTTPException(404, "mock not found")
+            py, sql = exercises[state["python_id"]], exercises[state["sql_id"]]
+            task = f"Python task: {py.title}\n{py.prompt}\n\nSQL task: {sql.title}\n{sql.prompt}"
+            return {"title": "Mock round", "kind": "python and sql", "task": task, "schema": schema_of(sql),
+                    "interview_allowed": True, "assist_key": None}
+        ex = get_ex(scope)
+        if ex.kind == "quiz":
+            raise HTTPException(400, "The assistant is not available on quizzes: they are the check itself.")
+        allowed = ex.kind in CODED and step_by_id[ex.step_id].order >= 4
+        return {"title": ex.title, "kind": ex.kind, "task": ex.prompt, "schema": schema_of(ex),
+                "interview_allowed": allowed, "assist_key": ex.id if ex.kind in CODED else None}
+
+    def schema_of(ex):
+        return "\n".join(l for l in ex.seed.splitlines() if not l.startswith("INSERT"))
+
+    def chat_state(scope, ctx):
+        rows = db.chat_history(conn, scope)
+        return {"messages": [{"role": r["role"], "content": r["content"]} for r in rows],
+                "interview_allowed": ctx["interview_allowed"], "provider": db.get_setting(conn, "provider", "gemini"),
+                "assisted": bool(ctx["assist_key"]) and db.is_assisted(conn, ctx["assist_key"])}
+
+    @app.get("/api/chat")
+    def chat_get(scope: str):
+        return chat_state(scope, chat_context(scope))
+
+    @app.post("/api/chat")
+    def chat_send(body: ChatBody):
+        ctx = chat_context(body.scope)
+        if not body.message.strip():
+            raise HTTPException(400, "write a message first")
+        mode = "interview" if body.mode == "interview" and ctx["interview_allowed"] else "tutor"
+        history = db.chat_history(conn, body.scope)
+        prompt = assistant.build_prompt(mode, ctx["title"], ctx["kind"], ctx["task"], ctx["schema"],
+                                        body.code, body.output, [dict(h) for h in history], body.message)
+        try:
+            reply = ai_call(prompt, json_mode=False)
+        except Exception as e:  # network, quota, bad key: say so, keep the conversation intact
+            raise HTTPException(502, f"The AI provider did not answer: {e}")
+        db.add_chat(conn, body.scope, "user", body.message, mode)
+        db.add_chat(conn, body.scope, "assistant", reply, mode)
+        if mode == "interview" and ctx["assist_key"] and assistant.has_code_block(reply):
+            db.mark_assisted(conn, ctx["assist_key"])
+        return {"reply": reply, "mode": mode, **chat_state(body.scope, ctx)}
+
+    @app.post("/api/chat/clear")
+    def chat_clear(body: ScopeBody):
+        chat_context(body.scope)
+        db.clear_chat(conn, body.scope)
+        return {"ok": True}
+
+    @app.post("/api/chat/grade")
+    def chat_grade(body: ScopeBody):
+        """Score the prompts the learner typed, the way the interviewer judges them."""
+        ctx = chat_context(body.scope)
+        typed = db.user_messages(conn, body.scope)
+        if not typed:
+            raise HTTPException(400, "You have not sent the assistant any prompts yet.")
+        answer = "\n\n".join(f"Prompt {i}: {m}" for i, m in enumerate(typed, 1))
+        # stored under a separate id so it never counts as the exercise's own prompt review
+        return do_review(f"chat:{body.scope}", "prompt", None, {"task": ctx["task"], "answer": answer})
 
     @app.post("/api/progress/reset")
     def progress_reset():
@@ -243,6 +321,13 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         kind = reviewer.REVIEW_KIND.get(ex.kind)
         if kind is None:
             raise HTTPException(400, "this exercise has no review")
+        if ex.kind in CODED and status_of(ex)["assisted"]:
+            # the assistant wrote code here: grade the learner's explanation of it, not the code
+            if not body.text.strip():
+                raise HTTPException(400, "The assistant wrote code for this exercise. Explain it in your own words first.")
+            attempt = need(db.get_attempt(conn, body.attempt_id), "attempt")
+            material = {"task": ex.prompt, "code": attempt["code"], "candidate explanation": body.text}
+            return do_review(ex.id, "explain", None, material, body.attempt_id)
         if ex.kind in CODED:
             attempt = need(db.get_attempt(conn, body.attempt_id), "attempt")
             material = {"task": ex.prompt, "code": attempt["code"],
@@ -293,6 +378,11 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def mock_state(mock_id):
         return json.loads(need(db.get_mock(conn, mock_id), "mock")["state_json"])
 
+    def typed_prompts(mock_id):
+        """The prompts the learner typed to the assistant during this mock round, numbered; '' if none."""
+        msgs = db.user_messages(conn, f"mock:{mock_id}")
+        return "\n\n".join(f"Prompt {i}: {m}" for i, m in enumerate(msgs, 1))
+
     @app.post("/api/mock/start")
     def mock_start():
         try:
@@ -308,7 +398,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         state = mock_state(mock_id)
         py, sql = exercises[state["python_id"]], exercises[state["sql_id"]]
         state.update(
-            python_code=body.python_code, prompt_text=body.prompt_text, duration_s=body.duration_s,
+            python_code=body.python_code, prompt_text=typed_prompts(mock_id) or body.prompt_text, duration_s=body.duration_s,
             python=asdict(grade(py, body.python_code)), sql=asdict(grade(sql, body.sql_code)),
             questions=reviewer.followups(py.prompt, body.python_code, ai_call))
         db.update_mock(conn, mock_id, state)

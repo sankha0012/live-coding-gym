@@ -13,6 +13,10 @@ CREATE TABLE IF NOT EXISTS reviews (
     created_at TEXT DEFAULT CURRENT_TIMESTAMP);
 CREATE TABLE IF NOT EXISTS cards (card_id TEXT PRIMARY KEY, box INTEGER, due TEXT);
 CREATE TABLE IF NOT EXISTS unlocks (step_id TEXT PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS chat (
+    id INTEGER PRIMARY KEY, scope TEXT, role TEXT, content TEXT, mode TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS assisted (scope TEXT PRIMARY KEY);
 CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT);
 CREATE TABLE IF NOT EXISTS mocks (
     id INTEGER PRIMARY KEY, started_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -118,9 +122,36 @@ def set_setting(conn, key, value):
     conn.commit()
 
 
+def add_chat(conn, scope, role, content, mode):
+    return _insert(conn, "INSERT INTO chat (scope, role, content, mode) VALUES (?,?,?,?)", (scope, role, content, mode))
+
+
+def chat_history(conn, scope):
+    return conn.execute("SELECT role, content, mode FROM chat WHERE scope = ? ORDER BY id", (scope,)).fetchall()
+
+
+def user_messages(conn, scope):
+    return [r["content"] for r in conn.execute(
+        "SELECT content FROM chat WHERE scope = ? AND role = 'user' ORDER BY id", (scope,))]
+
+
+def clear_chat(conn, scope):
+    conn.execute("DELETE FROM chat WHERE scope = ?", (scope,))
+    conn.commit()
+
+
+def mark_assisted(conn, scope):
+    conn.execute("INSERT OR IGNORE INTO assisted (scope) VALUES (?)", (scope,))
+    conn.commit()
+
+
+def is_assisted(conn, scope):
+    return conn.execute("SELECT 1 FROM assisted WHERE scope = ?", (scope,)).fetchone() is not None
+
+
 def reset_progress(conn):
     """Delete everything the learner has done (attempts, reviews, card schedule, unlocks, mocks)."""
-    for table in ("attempts", "reviews", "cards", "unlocks", "mocks"):
+    for table in ("attempts", "reviews", "cards", "unlocks", "mocks", "chat", "assisted"):
         conn.execute(f"DELETE FROM {table}")
     conn.commit()
 

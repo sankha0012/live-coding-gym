@@ -47,3 +47,7 @@ MLflow (slim package) and the Prometheus client are an optional dependency group
 ## AI provider
 
 Reviews, prompt grading and mock-round questions can use Gemini or Groq. Put the keys in `.env` (`GEMINI_API_KEY`, `GROQ_API_KEY`, and optionally `GEMINI_MODEL`, `GROQ_MODEL`) and pick the provider in the top bar. The choice is remembered.
+
+## AI assistant
+
+The right-hand sidebar has an Assistant tab on every exercise (not quizzes) and in mock rounds. Tutor mode (the only mode in steps 1 to 3, and for answer-writing exercises) explains and hints but never writes the solution. Interview mode behaves like the real interview's assistant. If it writes code for an exercise, that exercise only counts after you explain the code and pass the AI review. The assistant never sees the reference solution or the hidden tests.

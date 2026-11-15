@@ -7,8 +7,8 @@ from .reviewer import REVIEW_KIND
 TESTED = ("python", "sql", "quiz", "tests")
 
 
-def _review_ok(conn, ex, min_score):
-    row = db.latest_review(conn, ex.id, REVIEW_KIND[ex.kind])
+def _review_ok(conn, ex, min_score, kind=None):
+    row = db.latest_review(conn, ex.id, kind or REVIEW_KIND[ex.kind])
     if row is None or row["status"] != "done":
         return False
     scores = json.loads(row["scores_json"])
@@ -18,7 +18,8 @@ def _review_ok(conn, ex, min_score):
 def exercise_status(conn, ex, step):
     coded = ex.kind in TESTED
     rows = db.passed_attempts(conn, ex.id) if coded else []
-    status = {"tests": None, "timed": None, "review": None}
+    assisted = ex.kind in ("python", "sql", "tests") and db.is_assisted(conn, ex.id)
+    status = {"tests": None, "timed": None, "review": None, "explain": None}
     if coded:
         status["tests"] = any(r["mode"] in ("blank", "timed") for r in rows)
         if step.timed_required:
@@ -26,7 +27,10 @@ def exercise_status(conn, ex, step):
                 r["mode"] == "timed" and r["duration_s"] <= ex.time_limit_s for r in rows)
     if ex.review or not coded:
         status["review"] = _review_ok(conn, ex, step.min_score)
+    if assisted:  # the assistant wrote code here: it only counts once the learner explains it
+        status["explain"] = _review_ok(conn, ex, step.min_score, "explain")
     status["done"] = all(v for v in status.values() if v is not None)
+    status["assisted"] = assisted
     return status
 
 

@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-15)
 
 ## Corpus Check
-- 3048 files · ~417,323 words
+- 3049 files · ~417,948 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 6599 nodes · 6039 edges · 2351 communities (2189 shown, 162 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 141 edges (avg confidence: 0.68)
+- 6616 nodes · 6069 edges · 2361 communities (2187 shown, 174 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 144 edges (avg confidence: 0.68)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ea571bc5`
+- Built from commit: `94dff099`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -42,7 +42,7 @@
 - py-second/tests/test_hidden.py
 - py-topk/tests/test_hidden.py
 - py-window/tests/test_hidden.py
-- ai-retry/tests/test_hidden.py
+- call_with_retry
 - prod-events/tests/test_hidden.py
 - prod-validate/tests/test_hidden.py
 - dbg-avg/tests/test_hidden.py
@@ -57,7 +57,7 @@
 - py-latest/tests/test_hidden.py
 - py-newret/tests/test_hidden.py
 - prod-batch/tests/test_hidden.py
-- flaky
+- call_with_retry
 - dbg-late/tests/test_hidden.py
 - dbg-tags/tests/test_hidden.py
 - st-boot/tests/test_hidden.py
@@ -192,7 +192,7 @@
 - find_leaky_features
 - rolling_mean
 - daily_counts
-- test_app_kinds.py
+- create_app
 - app.py
 - rb-dataclass-contract/tests/test_hidden.py
 - IdempotentRunner
@@ -383,7 +383,7 @@
 - tw-validate-email/prompt.md
 - timeout_empty_default.py
 - Counter
-- predict_with_fallback
+- call_with_retry
 - Counter
 - Counter
 - tool-docker.md
@@ -522,6 +522,7 @@
 - test-pytest-basics.md
 - test-raises.md
 - test-what-to-test.md
+- call_with_retry
 - Counter
 - Stack
 - Stack
@@ -572,18 +573,27 @@
 - ge_threshold.py
 - lazy_length_check.py
 - sorts_by_signed_correlation.py
+- call_with_retry
+- retry
+- retry
+- check_health
+- check_health
+- check_health
+- check_health
+- check_health
+- predict_with_fallback
 
 ## God Nodes (most connected - your core abstractions)
 1. `fn()` - 48 edges
 2. `load_content()` - 21 edges
 3. `parse_config()` - 18 edges
 4. `BoundedQueue` - 18 edges
-5. `exView()` - 18 edges
-6. `TokenBucket` - 17 edges
-7. `h()` - 17 edges
-8. `Clock` - 16 edges
-9. `find_skew()` - 16 edges
-10. `compare_shadow()` - 16 edges
+5. `create_app()` - 18 edges
+6. `h()` - 18 edges
+7. `exView()` - 18 edges
+8. `TokenBucket` - 17 edges
+9. `Clock` - 16 edges
+10. `find_skew()` - 16 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `test_pending_review_can_be_retried()` --indirect_call--> `flaky()`  [INFERRED]
@@ -592,15 +602,15 @@
   tests/test_content_extras.py → gym/content.py
 - `test_migrate_does_not_overwrite_existing_work()` --calls--> `migrate()`  [INFERRED]
   tests/test_migrate.py → tools/migrate_old_gym.py
-- `_mk()` --indirect_call--> `good()`  [INFERRED]
-  content/04-robust-code/exercises/prod-breaker/tests/test_hidden.py → tests/test_gates.py
+- `common_keys()` --calls--> `keys()`  [INFERRED]
+  content/01-hand-python/exercises/py1-common-keys/gaps.py → tests/test_settings.py
 - `call_with_retry()` --calls--> `fn()`  [INFERRED]
-  content/04-robust-code/exercises/rb-retry-classify/wrong/catches_oserror.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
+  content/04-robust-code/exercises/ai-retry/solution.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (2351 total, 162 thin omitted)
+## Communities (2361 total, 174 thin omitted)
 
 ### Community 0 - "run_test_writing"
 Cohesion: 0.33
@@ -611,16 +621,16 @@ Cohesion: 0.15
 Nodes (23): check_sql(), _query(), Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free(), run_python_tests(), run_sql_free(), RunResult (+15 more)
 
 ### Community 2 - "load_content"
-Cohesion: 0.18
-Nodes (11): Exercise, _existing(), load_content(), load_exercise(), _read(), Step, connect(), conn() (+3 more)
+Cohesion: 0.16
+Nodes (13): Exercise, _existing(), load_content(), load_exercise(), Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric(), Step (+5 more)
 
 ### Community 3 - "prod-debug/tests/test_hidden.py"
 Cohesion: 0.33
 Nodes (15): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_check_5(), test_check_6() (+7 more)
 
 ### Community 4 - "app.js"
-Cohesion: 0.18
-Nodes (34): api(), cardsView(), CHIP_INFO, editor(), extrasPanel(), exView(), fmt(), h() (+26 more)
+Cohesion: 0.17
+Nodes (35): api(), cardsView(), CHIP_INFO, editor(), extrasPanel(), exView(), fmt(), h() (+27 more)
 
 ### Community 5 - "test_app.py"
 Cohesion: 0.14
@@ -631,8 +641,8 @@ Cohesion: 0.12
 Nodes (15): After this plan, File Structure, Global Constraints, Live Coding Gym App Implementation Plan, Task 10: Web page, Task 11: Content checker and run instructions, Task 1: Project skeleton, config and content loader, Task 2: Python runner (+7 more)
 
 ### Community 7 - "make"
-Cohesion: 0.07
-Nodes (42): check_health(), boom(), degraded(), down(), ok(), test_all_ok(), test_any_exception_type_is_down_with_its_class_name(), test_degraded() (+34 more)
+Cohesion: 0.06
+Nodes (46): check_health(), boom(), degraded(), down(), ok(), test_all_ok(), test_any_exception_type_is_down_with_its_class_name(), test_degraded() (+38 more)
 
 ### Community 8 - "Live Coding Gym: design spec"
 Cohesion: 0.15
@@ -679,8 +689,8 @@ Cohesion: 0.44
 Nodes (9): _close(), _ns(), test_braces_but_not_json(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_multiline_object_in_fence() (+1 more)
 
 ### Community 22 - "compare_shadow"
-Cohesion: 0.14
-Nodes (21): compare_shadow(), live(), shadow(), test_all_shadow_errors_gives_zero_rate(), test_any_shadow_exception_is_counted_not_raised(), test_diff_is_absolute_and_ranking_uses_it(), test_each_model_called_once_per_input(), test_empty_inputs() (+13 more)
+Cohesion: 0.08
+Nodes (43): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_other_base_and_tries(), test_success_late_and_last_error_raised(), call_with_retry() (+35 more)
 
 ### Community 28 - "Authoring protocol (applies to Tasks 8 to 19)"
 Cohesion: 0.06
@@ -701,10 +711,6 @@ Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test
 ### Community 33 - "py-window/tests/test_hidden.py"
 Cohesion: 0.47
 Nodes (8): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_same_minute_orders_all_count(), test_unsorted_input(), test_window_is_t_to_t_plus_59()
-
-### Community 34 - "ai-retry/tests/test_hidden.py"
-Cohesion: 0.54
-Nodes (7): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_other_base_and_tries(), test_success_late_and_last_error_raised()
 
 ### Community 35 - "prod-events/tests/test_hidden.py"
 Cohesion: 0.54
@@ -762,10 +768,6 @@ Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_repeated_custom
 Cohesion: 0.57
 Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_inf_none_and_other_exceptions(), test_rate_all_good_all_bad_and_zero_fallback()
 
-### Community 54 - "flaky"
-Cohesion: 0.28
-Nodes (15): call_with_retry(), Exception, TransientError, flaky(), test_backoff_keeps_doubling(), test_base_delay(), test_exhausted_reraises_last_without_extra_sleep(), test_last_transient_error_is_the_one_raised() (+7 more)
-
 ### Community 55 - "dbg-late/tests/test_hidden.py"
 Cohesion: 0.67
 Nodes (6): _close(), _ns(), test_all_late_is_one(), test_cancelled_orders_never_count_even_when_over_promise(), test_check_1(), test_check_2()
@@ -791,8 +793,8 @@ Cohesion: 0.67
 Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_gold_is_normalised_too(), test_overall_is_pooled_not_mean_of_categories()
 
 ### Community 61 - "fn"
-Cohesion: 0.05
-Nodes (29): call_with_retry(), call_with_retry(), call_with_retry(), call_with_retry(), call_with_retry(), call_with_retry(), call_with_retry(), retry() (+21 more)
+Cohesion: 0.12
+Nodes (17): call_with_retry(), call_with_retry(), retry(), check_health(), predict_with_fallback(), predict_with_fallback(), predict_with_fallback(), score_batch() (+9 more)
 
 ### Community 64 - "st-meanstd/tests/test_hidden.py"
 Cohesion: 0.80
@@ -831,8 +833,8 @@ Cohesion: 0.12
 Nodes (18): ConfigError, parse_config(), Exception, test_blank_name_and_unknown_keys(), test_bool_false_is_false(), test_bool_rejects_other_words_and_blank(), test_default_list_not_shared(), test_defaults() (+10 more)
 
 ### Community 323 - "____"
-Cohesion: 0.05
-Nodes (19): ____, apply_n_times(), BankAccount, chunks(), common_keys(), count_vowels(), sort_versions(), Version (+11 more)
+Cohesion: 0.04
+Nodes (21): ____, apply_n_times(), BankAccount, chunks(), common_keys(), count_vowels(), sort_versions(), Version (+13 more)
 
 ### Community 324 - "Counter"
 Cohesion: 0.21
@@ -943,8 +945,8 @@ Cohesion: 0.22
 Nodes (8): Finding rows with no match, Joining three tables and a table to itself, Joins explained, Say it like this, The four kinds you need, The problem it solves, The smallest example, The three traps
 
 ### Community 351 - "check_content.py"
-Cohesion: 0.19
-Nodes (16): create_app(), main(), check_exercise(), check_kb(), Knowledge-base problems: broken articles, links to missing topics, exercises…, load_env(), Read KEY=VALUE lines into os.environ without overriding existing values., load_kb() (+8 more)
+Cohesion: 0.24
+Nodes (12): check_exercise(), check_kb(), Knowledge-base problems: broken articles, links to missing topics, exercises…, load_kb(), The in-app knowledge base: short reference articles under content/_kb/<topic-…, Topic, build(), test_api_serves_index_article_and_exercise_topics() (+4 more)
 
 ### Community 352 - "common_keys"
 Cohesion: 0.33
@@ -1166,13 +1168,13 @@ Nodes (10): Rolling mean feature. Output i is the mean of the `window` values th
 Cohesion: 0.31
 Nodes (9): daily_counts(), datetime, Count events per local calendar day in the timezone `tz_name`. Aware timestamps…, test_aware_other_zone_is_converted(), test_aware_utc_is_converted(), test_daylight_saving_offset_changes(), test_empty(), test_naive_is_utc_and_shifts_back_a_day() (+1 more)
 
-### Community 798 - "test_app_kinds.py"
-Cohesion: 0.22
-Nodes (4): client(), fake_gemini(), fixture, test_sql_schema_hides_insert_lines()
+### Community 798 - "create_app"
+Cohesion: 0.18
+Nodes (9): create_app(), client(), fake_gemini(), fixture, test_sql_schema_hides_insert_lines(), test_progress_reset_keeps_the_provider_choice(), test_reviews_use_the_selected_provider(), test_settings_list_providers_with_models_and_key_status() (+1 more)
 
 ### Community 799 - "app.py"
-Cohesion: 0.36
-Nodes (9): BaseModel, CardBody, MockAnswers, MockSubmit, QuizBody, ReviewBody, RunBody, SubmitBody (+1 more)
+Cohesion: 0.24
+Nodes (12): BaseModel, CardBody, main(), MockAnswers, MockSubmit, QuizBody, ReviewBody, RunBody (+4 more)
 
 ### Community 800 - "rb-dataclass-contract/tests/test_hidden.py"
 Cohesion: 0.27
@@ -1595,8 +1597,8 @@ Cohesion: 0.50
 Nodes (3): DataFrame, Series, rolling_7d_orders()
 
 ### Community 1320 - "test_content_extras.py"
-Cohesion: 0.40
-Nodes (10): build(), load_one(), One step with one exercise 'e1'. files maps path-under-exercise -> text., test_exercises_sort_by_order_then_id(), test_extras_and_wrong_solutions(), test_files_are_resolved_and_must_exist(), test_quiz_loads_and_rejects_bad_answer_index(), test_sql_extra_seed_wrong_and_alt_queries() (+2 more)
+Cohesion: 0.38
+Nodes (11): build(), load_one(), One step with one exercise 'e1'. files maps path-under-exercise -> text., test_exercises_sort_by_order_then_id(), test_extras_and_wrong_solutions(), test_files_are_resolved_and_must_exist(), test_quiz_loads_and_rejects_bad_answer_index(), test_rubric_items_with_a_colon_stay_strings() (+3 more)
 
 ### Community 1409 - "timeout_empty_default.py"
 Cohesion: 0.22
@@ -2185,17 +2187,17 @@ Nodes (3): Reference implementation used at training time. Do not change it. amo
 ## Knowledge Gaps
 - **881 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+876 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **162 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **174 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `fn()` connect `fn` to `retries_everything.py`, `exact_type.py`, `raises_first.py`, `predict_with_fallback`, `sleeps_after_last.py`, `make`, `constant_delay.py`, `retry`, `CircuitBreaker`, `flaky`, `CircuitBreaker`, `CircuitBreaker`, `CircuitBreaker`, `CircuitBreaker`, `CircuitBreaker`, `catches_oserror.py`, `tw-retry/solution.py`, `predict_with_fallback`?**
+- **Why does `fn()` connect `fn` to `exact_type.py`, `raises_first.py`, `call_with_retry`, `make`, `CircuitBreaker`, `call_with_retry`, `CircuitBreaker`, `compare_shadow`, `CircuitBreaker`, `call_with_retry`, `retry`, `check_health`, `check_health`, `call_with_retry`, `check_health`, `check_health`, `predict_with_fallback`, `predict_with_fallback`, `call_with_retry`, `retry`, `retry`, `tw-retry/solution.py`, `CircuitBreaker`, `catches_oserror.py`, `constant_delay.py`, `retries_everything.py`, `sleeps_after_last.py`, `CircuitBreaker`, `CircuitBreaker`, `check_health`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `flaky()` connect `flaky` to `ai-retry/tests/test_hidden.py`, `test_app.py`, `rb-chunked-stream/tests/test_hidden.py`, `compare_shadow`, `fn`?**
-  _High betweenness centrality (0.002) - this node is a cross-community bridge._
-- **Why does `test_pending_review_can_be_retried()` connect `test_app.py` to `flaky`, `check_content.py`?**
-  _High betweenness centrality (0.002) - this node is a cross-community bridge._
+- **Why does `flaky()` connect `compare_shadow` to `rb-chunked-stream/tests/test_hidden.py`, `test_app.py`, `fn`?**
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+- **Why does `test_pending_review_can_be_retried()` connect `test_app.py` to `compare_shadow`, `create_app`?**
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Are the 47 inferred relationships involving `fn()` (e.g. with `call_with_retry()` and `call_with_retry()`) actually correct?**
   _`fn()` has 47 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 18 inferred relationships involving `____` (e.g. with `apply_n_times()` and `.withdraw()`) actually correct?**

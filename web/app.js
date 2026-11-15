@@ -79,12 +79,16 @@ const CHIP_INFO = {
   tests: "Hidden tests: passed once in blank or timed mode.",
   timed: "Passed within the time limit (in timed mode).",
   review: "AI review: every criterion at or above the step's minimum score.",
+  explain: "The assistant wrote code for this exercise, so you must explain it in your own words and pass the AI review.",
+  assisted: "You asked the assistant to write code for this exercise.",
 };
 
 function statusLine(st) {
   const chip = (key, label) => (st[key] === null ? null
     : tip(h("span", { class: "chip " + (st[key] ? "done" : "todo") }, label, " ", mark(st[key])), CHIP_INFO[key]));
-  return h("span", {}, chip("tests", "tests"), chip("timed", "timed"), chip("review", "AI review"));
+  return h("span", {}, chip("tests", "tests"), chip("timed", "timed"), chip("review", "AI review"),
+    chip("explain", "explain it back"),
+    st.assisted ? tip(h("span", { class: "chip assisted" }, "assisted"), CHIP_INFO.assisted) : null);
 }
 
 function reviewBox(rev, onRetry) {
@@ -181,8 +185,121 @@ function kbMatches(list, query) {
   return list.filter((t) => (t.title + " " + t.summary + " " + t.tags.join(" ")).toLowerCase().includes(q));
 }
 
-// The sidebar for one exercise: its relevant topics, a search over everything, and articles opened in place.
-function helpSidebar(ex) {
+const MODE_NOTE = {
+  tutor: "Tutor: explains, gives hints and reviews your code, but never writes the solution. Steps 1 to 3 train writing code by hand, so this is the only mode there.",
+  interview: "Interview: behaves like the assistant allowed in the real interview and writes code when you ask. The interviewer judges your prompts. If it writes code for you, you must explain that code to pass this exercise.",
+};
+const QUICK = [
+  ["Explain the task", "Explain this task in plain words and tell me what to think about first. Do not give the solution."],
+  ["Give me a hint", "Give me one hint to get unstuck, without giving the answer."],
+  ["Why does my code fail?", "My code fails or gives a wrong result. Look at my code and the last output, point at the likely problem and explain why, but do not rewrite it for me."],
+  ["Review my code", "Review my current code for correctness, edge cases and readability. List the problems; do not rewrite it."],
+];
+
+// The assistant chat. ctx = { getCode(), getOutput(), onAssisted() } gives it the learner's current state.
+function assistantPanel(scope, ctx) {
+  const list = h("div", { class: "chat-list" });
+  const note = h("p", { class: "muted chat-note" });
+  const quick = h("div", { class: "chat-quick" });
+  const gradeSlot = h("div");
+  const error = h("p", { class: "bad" });
+  const input = h("textarea", { class: "chat-input", rows: "3",
+    placeholder: "Ask the assistant. Enter sends, Shift+Enter adds a line." });
+  const modeSel = h("select", { onchange: () => draw() },
+    h("option", { value: "tutor" }, "Tutor"), h("option", { value: "interview" }, "Interview"));
+  const gradeBtn = tip(h("button", { onclick: async () => {
+    gradeBtn.disabled = true;
+    try { const rev = await api("/chat/grade", { scope }); gradeSlot.replaceChildren(reviewBox(rev, null)); }
+    catch (e) { gradeSlot.replaceChildren(h("p", { class: "bad" }, e.message)); }
+    gradeBtn.disabled = false;
+  } }, "Grade my prompts"), "An AI interviewer scores the prompts you typed here: clarity, constraints, edge cases, whether you stay in control.");
+  const clearBtn = tip(h("button", { onclick: async () => {
+    if (!confirm("Clear this chat? (It will not undo the 'assisted' mark on this exercise.)")) return;
+    await api("/chat/clear", { scope }); await load();
+  } }, "Clear chat"), "Delete this conversation.");
+  let state = { messages: [], interview_allowed: false };
+  const mode = () => (modeSel.value === "interview" && state.interview_allowed ? "interview" : "tutor");
+
+  function decorate(box) {  // a Copy button on every code block
+    box.querySelectorAll("pre").forEach((pre) => {
+      const b = h("button", { class: "copy", onclick: async () => {
+        try { await navigator.clipboard.writeText(pre.innerText.replace(/\nCopy$/, "")); b.textContent = "Copied"; }
+        catch (e) { b.textContent = "Select and copy"; }
+        setTimeout(() => { b.textContent = "Copy"; }, 1500);
+      } }, "Copy");
+      pre.append(b);
+    });
+  }
+  function draw() {
+    modeSel.querySelector('option[value="interview"]').disabled = !state.interview_allowed;
+    if (!state.interview_allowed) modeSel.value = "tutor";
+    note.textContent = MODE_NOTE[mode()];
+    list.replaceChildren(...(state.messages.length ? state.messages.map((m) => {
+      const box = m.role === "user" ? h("div", { class: "msg user" }, m.content) : h("div", { class: "msg assistant" }, md(m.content));
+      if (m.role !== "user") decorate(box);
+      return box;
+    }) : [h("p", { class: "muted" }, mode() === "tutor"
+      ? "Ask about the task, a concept or an error. Or use a quick button below."
+      : "Write your prompt as you would in the interview: task, inputs and outputs, constraints, edge cases.")]));
+    list.scrollTop = list.scrollHeight;
+    quick.replaceChildren(...(mode() === "tutor" ? QUICK.map(([label, text]) => h("button", { onclick: () => send(text) }, label)) : []));
+    gradeBtn.hidden = !(mode() === "interview" && state.messages.some((m) => m.role === "user"));
+  }
+  async function send(text) {
+    text = (text ?? input.value).trim();
+    if (!text) return;
+    error.textContent = "";
+    input.value = "";
+    state.messages.push({ role: "user", content: text });
+    state.messages.push({ role: "assistant", content: "Thinking..." });
+    draw();
+    try {
+      const r = await api("/chat", { scope, message: text, mode: mode(), code: ctx.getCode(), output: ctx.getOutput() });
+      const wasAssisted = state.assisted;
+      state = { ...state, messages: r.messages, assisted: r.assisted, interview_allowed: r.interview_allowed };
+      if (r.assisted && !wasAssisted && ctx.onAssisted) ctx.onAssisted();
+    } catch (e) {
+      state.messages.splice(-2, 2);
+      input.value = text;
+      error.textContent = e.message;
+    }
+    draw();
+  }
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
+  async function load() {
+    try { state = await api(`/chat?scope=${encodeURIComponent(scope)}`); if (state.interview_allowed) modeSel.value = "interview"; }
+    catch (e) { error.textContent = e.message; }
+    draw();
+  }
+  const el = h("div", { class: "chat" },
+    h("div", { class: "bar" }, tip(h("span", {}, "Mode"), "Tutor teaches and hints. Interview works like the assistant in the real interview."), modeSel, clearBtn),
+    note, list, error, quick, input,
+    h("div", { class: "bar" }, h("button", { class: "primary", onclick: () => send() }, "Send"), gradeBtn), gradeSlot);
+  load();
+  return el;
+}
+
+// Tabs inside the right-hand sidebar.
+function sidebarTabs(panes) {
+  let saved = "help";
+  try { saved = localStorage.getItem("helpTab") || "help"; } catch (e) { /* default */ }
+  if (!panes.some((p) => p.id === saved)) saved = panes[0].id;
+  const buttons = panes.map((p) => h("button", { class: "tab", onclick: () => show(p.id) }, p.label));
+  function show(id) {
+    panes.forEach((p, i) => { p.el.hidden = p.id !== id; buttons[i].classList.toggle("active", p.id === id); });
+    try { localStorage.setItem("helpTab", id); } catch (e) { /* not remembered */ }
+  }
+  helpPane.replaceChildren(h("div", { class: "tabs" }, ...(panes.length > 1 ? buttons : [])), ...panes.map((p) => p.el));
+  show(saved);
+  helpPane.hidden = false;
+  helpToggle.hidden = false;
+  let open = true;
+  try { open = localStorage.getItem("helpOpen") !== "0"; } catch (e) { /* keep default */ }
+  setHelpOpen(open);
+}
+
+// The sidebar for one exercise: its relevant topics, a search over everything, articles opened in place, and the assistant.
+function helpSidebar(ex, ctx) {
   const body = h("div");
   const search = h("input", { type: "search", placeholder: "Search the reference (e.g. join, sorted, window)" });
   const showArticle = async (id) => {
@@ -214,13 +331,10 @@ function helpSidebar(ex) {
     if (href && href.startsWith("#/kb/")) { e.preventDefault(); showArticle(href.slice(5)); }
     else if (a) a.target = "_blank";
   };
-  helpPane.replaceChildren(h("h2", {}, "Help"), search, body);
   showTopics();
-  helpPane.hidden = false;
-  helpToggle.hidden = false;
-  let open = true;
-  try { open = localStorage.getItem("helpOpen") !== "0"; } catch (e) { /* keep default */ }
-  setHelpOpen(open);
+  const panes = [{ id: "help", label: "Help", el: h("div", {}, search, body) }];
+  if (ex.kind !== "quiz") panes.push({ id: "assistant", label: "Assistant", el: assistantPanel(ex.id, ctx) });
+  sidebarTabs(panes);
 }
 
 async function kbView(id) {
@@ -322,7 +436,8 @@ async function exView(id, mode = "blank") {
   const coded = ex.modes.length > 0;
   const back = h("p", {}, h("a", { href: `#/step/${ex.step_id}` }, "← Back to the step"));
   main.append(back, h("h1", {}, ex.title, " ", kindBadge(ex.kind)));
-  helpSidebar(ex);
+  const ctx = { getCode: () => "", getOutput: () => "", onAssisted: () => {} };
+  helpSidebar(ex, ctx);
   if (ex.kind === "quiz") { main.append(md(ex.prompt)); return quizView(ex); }
   main.append(md(ex.prompt));
   if (ex.schema) main.append(h("details", {}, h("summary", {}, "Tables"), h("pre", {}, ex.schema)));
@@ -333,14 +448,18 @@ async function exView(id, mode = "blank") {
   nextSlot.replaceChildren(nextBar(ex, false));
   const refreshExtras = async () => extras.replaceChildren(extrasPanel(await api(`/exercise/${id}?mode=${mode}`)));
   refreshExtras();
+  let applyStatus = () => {};
+  const refreshStatus = async () => applyStatus((await api(`/exercise/${id}?mode=${mode}`)).status);
   const showReview = (rev) => {
     reviewSlot.replaceChildren(reviewBox(rev, async () => {
       showReview(await api(`/reviews/${rev.review_id}/retry`, {}));
     }) || "");
-    if (rev && rev.status === "done") { refreshExtras(); nextSlot.replaceChildren(nextBar(ex, true)); }
+    if (rev && rev.status === "done") { refreshExtras(); refreshStatus(); nextSlot.replaceChildren(nextBar(ex, true)); }
   };
-  const text = h("textarea", { placeholder: coded
-    ? "Optional: explain your code as you would to the interviewer. It is sent with the AI review." : "Type your answer here, then press the button below." });
+  const PLAIN = coded
+    ? "Optional: explain your code as you would to the interviewer. It is sent with the AI review." : "Type your answer here, then press the button below.";
+  const text = h("textarea", { placeholder: PLAIN });
+  ctx.getCode = () => text.value;
 
   if (!coded) {
     main.append(text, h("div", { class: "bar" }, tip(h("button", { class: "primary", onclick: async (e) => {
@@ -359,8 +478,18 @@ async function exView(id, mode = "blank") {
     ex.modes.map((m) => h("option", m === mode ? { value: m, selected: "" } : { value: m }, m)));
   const clock = h("span", { class: "timer" });
   const statusEl = h("span", {}, statusLine(ex.status));
+  const assistNote = h("div");
+  applyStatus = (st) => {
+    statusEl.replaceChildren(statusLine(st));
+    const needExplain = st.assisted && st.explain !== true;
+    assistNote.replaceChildren(needExplain ? h("div", { class: "notice" }, h("strong", {}, "Explain it back. "),
+      "The assistant wrote code for this exercise, so it only counts once you explain that code in your own words. Write your explanation in the box below the results, pass the tests, then press 'Get AI review'.") : "");
+    text.placeholder = st.assisted
+      ? "Required: explain, in your own words, what the code does, why it works and one edge case. The AI review grades this explanation." : PLAIN;
+  };
+  applyStatus(ex.status);
   const modeHelp = h("span", { class: "muted" }, MODE_INFO[mode] || "");
-  main.append(h("div", { class: "bar" }, tip(h("span", {}, "Mode"), "How you want to practise this exercise. Switching mode keeps your progress."),
+  main.append(assistNote, h("div", { class: "bar" }, tip(h("span", {}, "Mode"), "How you want to practise this exercise. Switching mode keeps your progress."),
       picker, tip(clock, "Elapsed time" + (mode === "timed" ? ` / limit (${fmt(ex.time_limit_s)})` : ". No limit in this mode."))),
     h("div", { class: "bar" }, modeHelp), h("div", { class: "bar" }, h("span", { class: "muted" }, "Progress (hover a tick):"), statusEl));
 
@@ -369,6 +498,9 @@ async function exView(id, mode = "blank") {
   const reviewBtn = tip(h("button", { disabled: "" }, "Get AI review of my passing code"),
     "An AI interviewer reviews your last passing submission. Pass the tests first.");
   let cm = null, elapsed = () => 0, lastPassed = null;
+  ctx.getCode = () => (cm ? cm.getValue() : "");
+  ctx.getOutput = () => out.textContent;
+  ctx.onAssisted = refreshStatus;
 
   const draftKey = `draft:${id}:${mode}`;
   const readDraft = () => { try { return localStorage.getItem(draftKey); } catch (e) { return null; } };
@@ -407,7 +539,7 @@ async function exView(id, mode = "blank") {
       if (!cm) return;
       const r = await api("/submit", { exercise_id: id, code: cm.getValue(), mode, duration_s: elapsed() });
       results(out, r);
-      statusEl.replaceChildren(statusLine(r.status));
+      applyStatus(r.status);
       if (r.passed) { lastPassed = r.attempt_id; reviewBtn.disabled = false; refreshExtras(); nextSlot.replaceChildren(nextBar(ex, true)); }
     } }, "Submit"), "Run the hidden tests and record the attempt. A pass counts toward the step.")), nextSlot, h("h2", {}, "Results"), out, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
   showReview(ex.review);
@@ -432,19 +564,21 @@ async function cardsView() {
 
 async function mockView() {
   main.append(h("h1", {}, "Mock round"),
-    h("p", {}, "One Python task, one SQL task, the prompt you would give an AI assistant, then three follow-up questions from an AI interviewer. 45 minutes. The clock starts when you press Start. Score out of 100: hidden tests 50%, AI review 40%, finishing in time 10%."));
+    h("p", {}, "One Python task, one SQL task, an AI assistant in the sidebar (your prompts to it are scored, like in the real interview), then three follow-up questions from an AI interviewer. 45 minutes. The clock starts when you press Start. Score out of 100: hidden tests 50%, AI review 40%, finishing in time 10%."));
   main.append(h("button", { class: "primary", onclick: async () => {
     const m = await api("/mock/start", {});
     main.replaceChildren();
     const clock = h("span", { class: "timer" });
     const elapsed = startTimer(clock, m.time_limit_s);
     const pyHolder = h("div"), sqlHolder = h("div");
-    const prompt = h("textarea", { placeholder: "The prompt you would give an AI assistant for the Python task. The interviewer judges this." });
+    const prompt = h("textarea", { placeholder: "Optional. If you use the assistant in the sidebar, the prompts you type there are scored. If you do not, write here the prompt you would give an AI assistant for the Python task." });
     main.append(h("div", { class: "bar" }, h("strong", {}, "Mock round"), clock),
       h("h2", {}, "Python: " + m.python.title), md(m.python.prompt), pyHolder,
       h("h2", {}, "SQL: " + m.sql.title), md(m.sql.prompt), h("pre", {}, m.sql.schema), sqlHolder,
       h("h2", {}, "Your prompt for the AI assistant"), prompt);
     const py = editor(pyHolder, "python", m.python.code), sql = editor(sqlHolder, "sql", m.sql.code);
+    sidebarTabs([{ id: "assistant", label: "Assistant", el: assistantPanel(`mock:${m.mock_id}`, {
+      getCode: () => `# PYTHON\n${py.getValue()}\n\n-- SQL\n${sql.getValue()}`, getOutput: () => "", onAssisted: () => {} }) }]);
     main.append(h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
       e.target.disabled = true;
       const r = await api(`/mock/${m.mock_id}/submit`, {

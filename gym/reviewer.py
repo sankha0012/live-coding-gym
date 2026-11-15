@@ -55,11 +55,11 @@ FALLBACK_QUESTIONS = [
 ]
 
 
-def call_gemini(prompt, timeout=60):
+def call_gemini(prompt, timeout=60, json_mode=True):
     model = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
     body = json.dumps({
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"responseMimeType": "application/json"},
+        "generationConfig": {"responseMimeType": "application/json"} if json_mode else {},
     }).encode()
     req = urllib.request.Request(
         API.format(model=model),
@@ -74,13 +74,13 @@ def call_gemini(prompt, timeout=60):
 GROQ_API = "https://api.groq.com/openai/v1/chat/completions"
 
 
-def call_groq(prompt, timeout=60):
+def call_groq(prompt, timeout=60, json_mode=True):
     """Groq's OpenAI-compatible chat endpoint, asked for a JSON object."""
-    body = json.dumps({
-        "model": os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b"),
-        "messages": [{"role": "user", "content": prompt}],
-        "response_format": {"type": "json_object"},
-    }).encode()
+    payload = {"model": os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b"),
+               "messages": [{"role": "user", "content": prompt}]}
+    if json_mode:
+        payload["response_format"] = {"type": "json_object"}
+    body = json.dumps(payload).encode()
     req = urllib.request.Request(GROQ_API, data=body, headers={
         "Content-Type": "application/json", "User-Agent": "live-coding-gym/1.0",
         "Authorization": "Bearer " + os.environ["GROQ_API_KEY"]})

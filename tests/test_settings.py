@@ -38,7 +38,7 @@ def test_reviews_use_the_selected_provider(tmp_path, keys, monkeypatch):
     seen = []
 
     def fake(name):
-        def call(prompt):
+        def call(prompt, json_mode=True):
             seen.append(name)
             return json.dumps({"scores": [4, 4, 4, 4], "verdict": "v", "feedback": "f"})
         return call
