@@ -4,3 +4,5 @@ required: true
 mock: true
 time_limit_s: 720
 kb: [py-str-split-join, py-dicts, py-tuples-unpacking, algo-hash-map-counting]
+plan_required: 2
+grade_prompts: true

@@ -3,7 +3,8 @@ from pathlib import Path
 
 import yaml
 
-KINDS = {"python", "sql", "open", "prompt", "explain", "quiz", "tests"}
+KINDS = {"python", "sql", "open", "prompt", "explain", "quiz", "tests", "read", "triage"}
+ASSISTANTS = ("train", "explain", "off", "free")
 EXT = {"python": "py", "sql": "sql", "tests": "py"}
 
 
@@ -38,6 +39,18 @@ class Exercise:
     kb: list = field(default_factory=list)
     impl_good: str = ""
     impls_bad: dict = field(default_factory=dict)
+    assistant: str = "train"      # train | explain | off | free: what the assistant may do on this exercise
+    plan_required: int = 0        # at least this many comment lines (the plan) in a submission
+    grade_prompts: bool = False   # the learner's prompts to the assistant must pass the prompt review
+    name_bug: bool = False        # the learner must name the bug in one sentence (reviewed against bug.md)
+    bug: str = ""
+    change: str = ""              # control check: the small change to make by hand
+    change_dir: Path | None = None
+    change_solution: str = ""
+    snippet: str = ""             # read kind: the code to read
+    expected: str = ""            # read kind: what it prints
+    questions: list = field(default_factory=list)
+    proposals: list = field(default_factory=list)  # triage kind
 
 
 @dataclass
@@ -51,6 +64,10 @@ class Step:
     lessons: list = field(default_factory=list)
     exercises: list = field(default_factory=list)
     cards: list = field(default_factory=list)
+    shelf: bool = False           # Library step: always unlocked, never gates anything
+    includes: list = field(default_factory=list)   # ids of exercises moved into this step from other steps
+    sequence: list = field(default_factory=list)   # explicit exercise order
+    intro: str = ""
 
 
 def _read(path):
@@ -94,7 +111,26 @@ def load_exercise(d, step_id):
         order=meta.get("order", 50),
         kb=meta.get("kb") or [],
         files=[_existing((d / f).resolve()) for f in meta.get("files", [])],
+        plan_required=meta.get("plan_required", 0),
+        grade_prompts=meta.get("grade_prompts", False),
+        name_bug=meta.get("name_bug", False),
+        bug=_read(d / "bug.md"),
+        change=_read(d / "change.md"),
+        questions=meta.get("questions") or [],
     )
+    policy = meta.get("assistant")
+    if policy is False:  # YAML reads an unquoted `off` as a boolean
+        policy = "off"
+    ex.assistant = policy or ("train" if kind in ("python", "sql", "tests") else "explain")
+    if ex.assistant not in ASSISTANTS:
+        raise ValueError(f"unknown assistant policy {ex.assistant!r}")
+    if ex.name_bug and not ex.bug:
+        raise ValueError("name_bug needs bug.md")
+    if ex.change:
+        ex.change_dir = d / "change_tests"
+        if not (ex.change_dir / "test_change.py").exists():
+            raise ValueError("change.md needs change_tests/test_change.py")
+        ex.change_solution = (d / "change_solution.py").read_text()
     ext = EXT.get(kind)
     if ext:
         ex.starter = _read(d / f"starter.{ext}")
@@ -117,6 +153,14 @@ def load_exercise(d, step_id):
         ex.impls_bad = {p.stem: p.read_text() for p in sorted(d.glob("impl_bad_*.py"))}
         if not ex.impls_bad:
             raise ValueError("a tests exercise needs at least one impl_bad_*.py")
+    if kind == "read":
+        ex.snippet = (d / "snippet.py").read_text()
+        ex.expected = (d / "expected.txt").read_text()
+    if kind == "triage":
+        ex.proposals = yaml.safe_load((d / "proposals.yaml").read_text())
+        for i, p in enumerate(ex.proposals, 1):
+            if p.get("correct") not in ("accept", "reject") or not p.get("title") or not p.get("code"):
+                raise ValueError(f"proposal {i}: needs title, code and correct: accept|reject")
     if kind == "quiz":
         ex.quiz = yaml.safe_load((d / "quiz.yaml").read_text())
         for i, q in enumerate(ex.quiz, 1):
@@ -141,6 +185,10 @@ def load_content(content_dir):
             pass_ratio=gate.get("pass_ratio", 0.7),
             timed_required=gate.get("timed_required", False),
             cards=yaml.safe_load(_read(sd / "cards.yaml")) or [],
+            shelf=meta.get("shelf", False),
+            includes=meta.get("includes") or [],
+            sequence=meta.get("sequence") or [],
+            intro=meta.get("intro", ""),
         )
         for lp in sorted((sd / "lessons").glob("*.md")):
             body = lp.read_text()
@@ -152,7 +200,25 @@ def load_content(content_dir):
                 step.exercises.append(load_exercise(ed, sd.name))
             except Exception as e:  # one broken exercise must not stop the app
                 errors.append(f"{ed}: {e}")
-        step.exercises.sort(key=lambda e: (e.order, e.id))
         steps.append(step)
+    # includes: exercises are moved (in the view only; their files stay where they are) into the including step
+    home = {ex.id: (s, ex) for s in steps for ex in s.exercises}
+    for step in steps:
+        for xid in step.includes:
+            if xid not in home:
+                errors.append(f"{step.id}: includes unknown exercise {xid}")
+                continue
+            old, ex = home[xid]
+            if old is not step:
+                old.exercises.remove(ex)
+                ex.step_id = step.id
+                step.exercises.append(ex)
+                home[xid] = (step, ex)
+    for step in steps:
+        rank = {xid: i for i, xid in enumerate(step.sequence)}
+        step.exercises.sort(key=lambda e: (rank.get(e.id, 10_000), e.order, e.id))
+        for xid in step.sequence:
+            if xid not in {e.id for e in step.exercises}:
+                errors.append(f"{step.id}: sequence names unknown exercise {xid}")
     steps.sort(key=lambda s: s.order)
     return steps, errors

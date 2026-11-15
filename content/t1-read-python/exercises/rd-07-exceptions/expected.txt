@@ -1,0 +1,7 @@
+checked '0.8'
+skip 'abc'
+checked 'abc'
+checked '1.5'
+rejected: score out of range: 1.5
+checked '0.25'
+[0.8, 0.25]

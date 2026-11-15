@@ -1,0 +1,3 @@
+RunningMean('latency', n=2, mean=100.00)
+RunningMean('empty', n=0, mean=0.00)
+3 100.0

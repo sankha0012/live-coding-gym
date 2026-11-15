@@ -1,5 +1,6 @@
 title: Hand-coding Python from zero
-order: 1
+order: 101
+shelf: true
 gate:
   min_score: 3
   timed_required: false

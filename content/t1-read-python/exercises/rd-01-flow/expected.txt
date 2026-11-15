@@ -1,0 +1,7 @@
+resnet epoch 1: loss=1.0 (no change)
+resnet epoch 2: loss=0.5 (improved)
+resnet epoch 3: loss=0.333 (improved)
+resnet epoch 4: loss=0.25 (improved)
+resnet epoch 5: loss=0.2 (improved)
+good enough
+best=0.2 after 5 epochs

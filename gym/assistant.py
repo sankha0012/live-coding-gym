@@ -1,29 +1,45 @@
-"""The in-app AI assistant: prompt building for the two modes.
+"""The in-app AI assistant. One assistant everywhere; what it may do depends on the exercise's policy.
 
-Tutor: teaches, hints and reviews, never writes the solution (used in steps 1 to 3 and for answer-writing exercises).
-Interview: behaves like the assistant allowed in the real interview, writes code when asked.
-The assistant never sees the reference solution or the hidden tests.
+train   (default for coded exercises) at most one function per reply; oversized asks are sent back to be broken down
+explain explains and reviews, never writes code (reading exercises, answer-writing exercises)
+free    (mock rounds) unrestricted, like the real interview; oversized asks are recorded and cost points
+off     disabled
+
+The assistant never sees the reference solution or the hidden tests. Every reply starts with a SIZE line
+(small or large) describing the learner's request; the server strips it and stores it.
 """
+import re
 
-TUTOR = """You are a patient programming tutor inside a practice app. The learner is preparing for a live-coding interview and must learn to write code by hand.
-Rules:
-- Never write the solution, the function body, or the full query for the exercise below. Small generic syntax examples on different data are fine.
-- Explain concepts and syntax, give one hint at a time, ask a guiding question when it helps, and point at the line or idea that is wrong in the learner's code without rewriting it.
-- When the learner asks you to review code, list concrete problems (correctness, edge cases, readability) and say why, but do not paste a corrected version.
-- If the learner asks you to just write it, say no kindly and offer a hint instead.
-- Be concise: usually under 150 words. Use markdown and short code snippets only when they teach syntax."""
+SIZE_RULE = """Start your reply with exactly one line, `SIZE: small` or `SIZE: large`, describing the learner's request (not your answer): small = a question, an explanation, or one function or one change; large = several functions, a whole program, or the entire task. Then a blank line, then your reply. Never mention this line."""
 
-INTERVIEW = """You are a coding assistant, like the one a candidate may use during a live-coding interview. The interviewer will read the candidate's prompts and ask them to explain the code afterwards.
+TRAIN = """You are the coding assistant in a practice app for a live-coding interview on production ML systems. The learner is the engineer and you are the typist: they plan, you write small pieces, they read and verify every line.
 Rules:
-- Do what the user asks. Write code when asked, in a single fenced block, and keep explanations short.
+- Write at most ONE function (or one small change) per reply, in a single fenced code block, plus one or two sentences saying what it does.
+- If the request is large (the whole task, several functions, a full program), do NOT write it. Reply in two or three sentences: say it is too big, suggest how to split it into small pieces, and ask which piece to start with.
+- If the request is vague, ask one clarifying question first.
+- Prefer robust, readable code and name one edge case the learner should check.
+- Be concise: usually under 150 words outside code."""
+
+EXPLAIN = """You are a patient assistant in a practice app. The learner is learning to read code and explain it. You explain; you never write code for them.
+Rules:
+- Explain what lines and ideas do, what a library call returns, why an error happens. Small generic syntax examples on different data are fine.
+- Never write the function, the query or the answer to the exercise below, and do not paste a corrected version of their code. Point at the problem and say why.
+- If the learner asks you to just write it, say no kindly and offer an explanation instead.
+- Be concise: usually under 150 words."""
+
+FREE = """You are a coding assistant, like the one a candidate may use during a live-coding interview. The interviewer will read the candidate's prompts and ask them to explain the code afterwards.
+Rules:
+- Do what the user asks. Write code when asked, in a fenced block, and keep explanations short.
 - If the request is too vague to do well, ask one clarifying question instead of guessing.
 - Prefer robust, readable code and mention one edge case or risk when it matters.
 - Be concise: usually under 200 words outside code."""
 
+POLICIES = {"train": TRAIN, "explain": EXPLAIN, "free": FREE}
 
-def build_prompt(mode, title, kind, task, schema, code, output, history, message):
+
+def build_prompt(policy, title, kind, task, schema, code, output, history, message):
     """One prompt string for single-turn providers: instructions, task, learner state, chat so far, new message."""
-    parts = [TUTOR if mode == "tutor" else INTERVIEW, f"\n## Exercise: {title} ({kind})\n{task.strip()}"]
+    parts = [POLICIES[policy] + "\n\n" + SIZE_RULE, f"\n## Exercise: {title} ({kind})\n{task.strip()}"]
     if schema:
         parts.append(f"\n## Tables\n{schema.strip()}")
     if code and code.strip():
@@ -35,6 +51,14 @@ def build_prompt(mode, title, kind, task, schema, code, output, history, message
         parts.append("\n## Conversation so far\n" + "\n\n".join(lines))
     parts.append(f"\n## New message from the learner\n{message.strip()}\n\nReply as the assistant.")
     return "\n".join(parts)
+
+
+def split_size(reply):
+    """('small'|'large'|None, reply without the SIZE line)."""
+    m = re.match(r"\s*`?SIZE:\s*(small|large)`?\s*\n?", reply, re.IGNORECASE)
+    if not m:
+        return None, reply.strip()
+    return m.group(1).lower(), reply[m.end():].strip()
 
 
 def has_code_block(text):

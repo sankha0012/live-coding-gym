@@ -1,5 +1,6 @@
 title: Hand-coding SQL
-order: 3
+order: 103
+shelf: true
 gate:
   min_score: 3
   timed_required: false

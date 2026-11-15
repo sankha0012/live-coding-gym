@@ -4,7 +4,7 @@ import sys
 from . import config
 from .content import load_content
 from .kb import load_kb
-from .runner import check_sql, run_python_tests, run_test_writing
+from .runner import check_sql, run_python_free, run_python_tests, run_test_writing
 
 
 def check_exercise(ex):
@@ -37,6 +37,28 @@ def check_exercise(ex):
             p.append(f"{ex.id}: reference tests do not catch every bug (or fail on the good implementation)")
         if ex.starter and run_test_writing(ex.starter, ex.impl_good, ex.impls_bad).passed:
             p.append(f"{ex.id}: starter already passes")
+    if ex.kind == "read":
+        r = run_python_free(ex.snippet)
+        norm = lambda t: "\n".join(x.rstrip() for x in t.strip().splitlines())
+        if not r.passed or norm(r.output) != norm(ex.expected):
+            p.append(f"{ex.id}: snippet output differs from expected.txt")
+        if not ex.questions:
+            p.append(f"{ex.id}: a read exercise needs questions")
+    if ex.kind == "triage":
+        verdicts = {x["correct"] for x in ex.proposals}
+        if len(ex.proposals) < 3 or verdicts != {"accept", "reject"}:
+            p.append(f"{ex.id}: triage needs 3+ proposals with both accept and reject")
+        if any(not x.get("why") for x in ex.proposals):
+            p.append(f"{ex.id}: every proposal needs a why")
+    if ex.name_bug and ex.starter and run_python_tests(ex.starter, ex.dir / "tests", files=ex.files).passed:
+        p.append(f"{ex.id}: buggy starter passes the tests")
+    if ex.change:
+        if not run_python_tests(ex.change_solution, ex.change_dir, files=ex.files).passed:
+            p.append(f"{ex.id}: change_solution fails change_tests")
+        if run_python_tests(ex.solution, ex.change_dir, files=ex.files).passed:
+            p.append(f"{ex.id}: change_tests pass on the unchanged solution")
+        if not run_python_tests(ex.change_solution, ex.dir / "tests", files=ex.files).passed:
+            p.append(f"{ex.id}: change_solution breaks the hidden tests")
     return p
 
 

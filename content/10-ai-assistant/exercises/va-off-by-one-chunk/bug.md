@@ -1,0 +1,1 @@
+The loop bound `range(0, len(items) - size, size)` is off by one: it stops too early, so the last chunk is never produced, and the output is missing the final items (or is empty when the list is no longer than `size`).

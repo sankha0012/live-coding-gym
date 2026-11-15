@@ -4,11 +4,12 @@ import math
 from . import db
 from .reviewer import REVIEW_KIND
 
-TESTED = ("python", "sql", "quiz", "tests")
+TESTED = ("python", "sql", "quiz", "tests", "read", "triage")
+PASS_MODES = ("blank", "timed", "challenge")
 
 
-def _review_ok(conn, ex, min_score, kind=None):
-    row = db.latest_review(conn, ex.id, kind or REVIEW_KIND[ex.kind])
+def _review_ok(conn, exercise_id, kind, min_score):
+    row = db.latest_review(conn, exercise_id, kind)
     if row is None or row["status"] != "done":
         return False
     scores = json.loads(row["scores_json"])
@@ -18,17 +19,26 @@ def _review_ok(conn, ex, min_score, kind=None):
 def exercise_status(conn, ex, step):
     coded = ex.kind in TESTED
     rows = db.passed_attempts(conn, ex.id) if coded else []
-    assisted = ex.kind in ("python", "sql", "tests") and db.is_assisted(conn, ex.id)
-    status = {"tests": None, "timed": None, "review": None, "explain": None}
+    code_kind = ex.kind in ("python", "sql", "tests")
+    assisted = code_kind and ex.assistant != "off" and db.is_assisted(conn, ex.id)
+    status = {"tests": None, "timed": None, "review": None, "explain": None,
+              "control": None, "bug": None, "prompts": None}
     if coded:
-        status["tests"] = any(r["mode"] in ("blank", "timed") for r in rows)
+        status["tests"] = any(r["mode"] in PASS_MODES for r in rows)
         if step.timed_required:
             status["timed"] = any(
                 r["mode"] == "timed" and r["duration_s"] <= ex.time_limit_s for r in rows)
-    if ex.review or not coded:
-        status["review"] = _review_ok(conn, ex, step.min_score)
+    if ex.review or not coded or ex.kind in ("read", "triage"):
+        status["review"] = _review_ok(conn, ex.id, REVIEW_KIND[ex.kind], step.min_score)
     if assisted:  # the assistant wrote code here: it only counts once the learner explains it
-        status["explain"] = _review_ok(conn, ex, step.min_score, "explain")
+        status["explain"] = _review_ok(conn, ex.id, "explain", step.min_score)
+    if ex.change_dir:  # control check: explain two lines, then change the code by hand
+        control = db.get_control(conn, ex.id)
+        status["control"] = bool(control and control["a_ok"] and control["b_ok"])
+    if ex.name_bug:
+        status["bug"] = _review_ok(conn, ex.id, "bug", step.min_score)
+    if ex.grade_prompts:
+        status["prompts"] = _review_ok(conn, f"chat:{ex.id}", "prompt", step.min_score)
     status["done"] = all(v for v in status.values() if v is not None)
     status["assisted"] = assisted
     return status
@@ -43,13 +53,16 @@ def step_status(conn, step):
 
 
 def journey(conn, steps):
+    """One row per step. Track steps unlock in order; Library (shelf) steps are always open."""
     manual = db.unlocked(conn)
     out, previous_passed = [], True
     for step in steps:
         st = step_status(conn, step)
-        out.append({"id": step.id, "title": step.title, "order": step.order,
-                    "passed": st["passed"], "done": st["done"], "total": st["total"],
-                    "pass_ratio": step.pass_ratio, "needed": math.ceil(step.pass_ratio * st["total"]),
-                    "unlocked": previous_passed or step.id in manual})
-        previous_passed = st["passed"]
+        row = {"id": step.id, "title": step.title, "order": step.order, "shelf": step.shelf,
+               "passed": st["passed"], "done": st["done"], "total": st["total"],
+               "pass_ratio": step.pass_ratio, "needed": math.ceil(step.pass_ratio * st["total"]),
+               "unlocked": step.shelf or previous_passed or step.id in manual}
+        out.append(row)
+        if not step.shelf:
+            previous_passed = st["passed"]
     return out

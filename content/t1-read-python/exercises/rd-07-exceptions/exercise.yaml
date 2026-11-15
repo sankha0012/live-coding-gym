@@ -1,0 +1,8 @@
+title: Read - exceptions and finally
+kind: read
+order: 7
+kb: [py-exceptions]
+questions:
+  - "Why does 'checked' print even for the value that fails to convert?"
+  - "What happens to the loop when parse_score raises ValueError for 1.5?"
+  - "Why is 'abc' not in the final list even though no error reached the loop?"

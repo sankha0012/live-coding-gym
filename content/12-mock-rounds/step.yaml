@@ -1,5 +1,6 @@
 title: Mock rounds and readiness
-order: 12
+order: 112
+shelf: true
 gate:
   min_score: 3
   timed_required: false

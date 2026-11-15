@@ -1,0 +1,7 @@
+[('svm', 0.81), ('tree', 0.9), ('logreg', 0.81), ('knn', 0.77)]
+1 tree 0.9
+2 logreg 0.81
+3 svm 0.81
+4 knn 0.77
+['svm', 'knn', 'tree', 'logreg']
+['svm', 'tree', 'logreg', 'knn']

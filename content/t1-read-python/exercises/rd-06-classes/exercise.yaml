@@ -1,0 +1,8 @@
+title: A running mean class
+kind: read
+order: 6
+kb: [py-classes]
+questions:
+  - What does __init__ set up, and what does self refer to?
+  - Why can latency.add(120).add(80) be chained?
+  - Why does the last line print 3 and 100.0 after calling alias.add(100)?

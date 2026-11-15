@@ -17,6 +17,9 @@ CREATE TABLE IF NOT EXISTS chat (
     id INTEGER PRIMARY KEY, scope TEXT, role TEXT, content TEXT, mode TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP);
 CREATE TABLE IF NOT EXISTS assisted (scope TEXT PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS control (
+    exercise_id TEXT PRIMARY KEY, attempt_id INTEGER, lines_json TEXT, a_ok INTEGER DEFAULT 0, b_ok INTEGER DEFAULT 0);
+CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY, scope TEXT, kind TEXT, chat_id INTEGER);
 CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT);
 CREATE TABLE IF NOT EXISTS mocks (
     id INTEGER PRIMARY KEY, started_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -31,6 +34,9 @@ def connect(path):
     conn = sqlite3.connect(path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.executescript(SCHEMA)
+    if "size" not in {r["name"] for r in conn.execute("PRAGMA table_info(chat)")}:  # older progress files
+        conn.execute("ALTER TABLE chat ADD COLUMN size TEXT")
+        conn.commit()
     return conn
 
 
@@ -122,12 +128,44 @@ def set_setting(conn, key, value):
     conn.commit()
 
 
-def add_chat(conn, scope, role, content, mode):
-    return _insert(conn, "INSERT INTO chat (scope, role, content, mode) VALUES (?,?,?,?)", (scope, role, content, mode))
+def add_chat(conn, scope, role, content, mode, size=None):
+    return _insert(conn, "INSERT INTO chat (scope, role, content, mode, size) VALUES (?,?,?,?,?)",
+                   (scope, role, content, mode, size))
 
 
 def chat_history(conn, scope):
-    return conn.execute("SELECT role, content, mode FROM chat WHERE scope = ? ORDER BY id", (scope,)).fetchall()
+    return conn.execute("SELECT id, role, content, mode, size FROM chat WHERE scope = ? ORDER BY id", (scope,)).fetchall()
+
+
+def add_event(conn, scope, kind):
+    """Record that the learner did something (for example ran code) and where in the chat it happened."""
+    last = conn.execute("SELECT COALESCE(MAX(id), 0) FROM chat WHERE scope = ?", (scope,)).fetchone()[0]
+    return _insert(conn, "INSERT INTO events (scope, kind, chat_id) VALUES (?,?,?)", (scope, kind, last))
+
+
+def events(conn, scope, kind):
+    return [r["chat_id"] for r in conn.execute("SELECT chat_id FROM events WHERE scope = ? AND kind = ?", (scope, kind))]
+
+
+def last_passed_attempt(conn, exercise_id):
+    return conn.execute(
+        "SELECT * FROM attempts WHERE exercise_id = ? AND passed = 1 AND mode IN ('blank', 'timed', 'challenge') "
+        "ORDER BY id DESC LIMIT 1", (exercise_id,)).fetchone()
+
+
+def get_control(conn, exercise_id):
+    return conn.execute("SELECT * FROM control WHERE exercise_id = ?", (exercise_id,)).fetchone()
+
+
+def start_control(conn, exercise_id, attempt_id, lines):
+    conn.execute("INSERT OR REPLACE INTO control (exercise_id, attempt_id, lines_json, a_ok, b_ok) VALUES (?,?,?,0,0)",
+                 (exercise_id, attempt_id, json.dumps(lines)))
+    conn.commit()
+
+
+def set_control_part(conn, exercise_id, part, ok):
+    conn.execute(f"UPDATE control SET {'a_ok' if part == 'a' else 'b_ok'} = ? WHERE exercise_id = ?", (int(ok), exercise_id))
+    conn.commit()
 
 
 def user_messages(conn, scope):
@@ -151,7 +189,7 @@ def is_assisted(conn, scope):
 
 def reset_progress(conn):
     """Delete everything the learner has done (attempts, reviews, card schedule, unlocks, mocks)."""
-    for table in ("attempts", "reviews", "cards", "unlocks", "mocks", "chat", "assisted"):
+    for table in ("attempts", "reviews", "cards", "unlocks", "mocks", "chat", "assisted", "control", "events"):
         conn.execute(f"DELETE FROM {table}")
     conn.commit()
 

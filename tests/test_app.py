@@ -11,7 +11,9 @@ PY_SOLUTION = (FIXTURES / "01-hand-python/exercises/count-words/solution.py").re
 SQL_SOLUTION = (FIXTURES / "03-hand-sql/exercises/top-customers/solution.sql").read_text()
 
 
-def fake_gemini(prompt):
+def fake_gemini(prompt, json_mode=True):
+    if not json_mode:
+        return "SIZE: small\n\n```python\nx = 1\n```"
     if '"questions"' in prompt:
         return json.dumps({"questions": ["q1?", "q2?", "q3?"]})
     n = int(re.search(r"Return exactly (\d+) scores", prompt).group(1))
@@ -42,17 +44,22 @@ def test_step_lists_lessons_and_exercises(client):
     assert client.get("/api/step/nope").status_code == 404
 
 
-def test_exercise_payload_depends_on_mode(client):
+def test_exercise_payload_modes_are_blank_and_challenge(client):
     blank = client.get("/api/exercise/count-words").json()
-    assert blank["modes"] == ["retype", "gaps", "blank", "timed"]
-    assert blank["code"].endswith("pass\n") and blank["solution"] == ""
-    retype = client.get("/api/exercise/count-words?mode=retype").json()
-    assert "counts.get" in retype["solution"] and retype["code"] == ""
-    gaps = client.get("/api/exercise/count-words?mode=gaps").json()
-    assert "____" in gaps["code"]
+    assert blank["modes"] == ["blank", "challenge"]
+    assert blank["code"].endswith("pass\n") and blank["assistant"] == "train"
+    challenge = client.get("/api/exercise/count-words?mode=challenge").json()
+    assert challenge["code"] == "" and challenge["mode"] == "challenge"
+    assert client.get("/api/exercise/count-words?mode=retype").json()["mode"] == "blank"  # the old modes are gone
     sql = client.get("/api/exercise/top-customers").json()
-    assert sql["modes"] == ["retype", "blank", "timed"] and "CREATE TABLE" in sql["schema"]
-    assert client.get("/api/exercise/explain-count-words").json()["modes"] == []
+    assert "CREATE TABLE" in sql["schema"]
+    explain = client.get("/api/exercise/explain-count-words").json()
+    assert explain["modes"] == [] and explain["assistant"] == "explain"
+
+
+def test_a_challenge_pass_counts_like_any_pass(client):
+    sub = post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION, "mode": "challenge", "duration_s": 99})
+    assert sub["passed"] and sub["status"]["tests"] is True
 
 
 def test_run_does_not_record_an_attempt(client):
@@ -121,19 +128,21 @@ def test_cards_and_unlock(client):
 
 def test_mock_round(client):
     start = post(client, "/api/mock/start")
-    assert start["python"]["id"] == "count-words" and start["sql"]["id"] == "top-customers"
+    assert [t["id"] for t in start["tasks"]] == ["count-words"]
     mid = start["mock_id"]
-    sub = post(client, f"/api/mock/{mid}/submit", {
-        "python_code": PY_SOLUTION, "sql_code": SQL_SOLUTION,
-        "prompt_text": "Write count_words with validation.", "duration_s": 600})
-    assert sub["python"]["passed"] and sub["sql"]["passed"] and sub["questions"] == ["q1?", "q2?", "q3?"]
-    done = post(client, f"/api/mock/{mid}/answers", {"answers": ["a", "b", "c"]})
-    assert done["score"]["total"] == round(100 * (0.5 + 0.4 * 4 / 5 + 0.1))
-    assert len(done["reviews"]) == 3 and done["readiness"] is None
+    sub = post(client, f"/api/mock/{mid}/submit", {"codes": [PY_SOLUTION], "duration_s": 600})
+    assert sub["results"][0]["passed"] and sub["questions"] == ["q1?", "q2?", "q3?"]
+    assert len(sub["lines"]) == 2  # one task: two lines to explain
+    # the assistant in a mock round: small asks, code that was run
+    post(client, "/api/chat", {"scope": f"mock:{mid}", "message": "write count_words"})
+    post(client, "/api/run", {"exercise_id": "count-words", "code": PY_SOLUTION, "scope": f"mock:{mid}"})
+    done = post(client, f"/api/mock/{mid}/answers", {"answers": ["a", "b", "c"], "line_answers": ["x", "y"]})
+    assert done["score"]["asks"] == 1.0 and done["score"]["ran"] == 1.0 and done["score"]["lines"] == 0.8
+    assert done["score"]["total"] == round(100 * (0.35 + 0.25 * 4 / 5 + 0.1 + 0.1 + 0.1 + 0.1 * 0.8))
+    assert len(done["reviews"]) >= 3 and done["readiness"] is None
     j = client.get("/api/journey").json()
     assert j["mocks"][0]["total"] == done["score"]["total"]
-    assert client.post("/api/mock/999/submit", json={
-        "python_code": "", "sql_code": "", "prompt_text": "", "duration_s": 0}).status_code == 404
+    assert client.post("/api/mock/999/submit", json={"codes": [], "duration_s": 0}).status_code == 404
 
 
 def test_journey_next_up_points_to_first_unfinished_exercise(client):

@@ -1,5 +1,6 @@
 title: AI/ML engineering tools tour
-order: 7
+order: 107
+shelf: true
 gate:
   min_score: 3
   timed_required: false

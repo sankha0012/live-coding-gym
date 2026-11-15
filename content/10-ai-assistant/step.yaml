@@ -1,5 +1,6 @@
 title: Using an AI assistant while observed
-order: 10
+order: 110
+shelf: true
 gate:
   min_score: 3
   timed_required: false

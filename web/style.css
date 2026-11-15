@@ -181,3 +181,9 @@ button.danger:hover { background: color-mix(in srgb, var(--bad) 18%, var(--surfa
 .chip.assisted { background: #fdf2d8; color: var(--warn); }
 :root[data-theme="dark"] .chip.assisted { background: #3a2f12; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .chip.assisted { background: #3a2f12; } }
+
+.library { margin-top: 1.5rem; border: 1px solid var(--border, #ddd); border-radius: 8px; padding: .5rem .9rem; }
+.library > summary { cursor: pointer; padding: .3rem 0; }
+.notice h3 { margin: .8rem 0 .3rem; font-size: 1rem; }
+.notice textarea { width: 100%; min-height: 3.5rem; margin: .3rem 0; }
+.review input[type=text] { width: 100%; margin-top: .4rem; }

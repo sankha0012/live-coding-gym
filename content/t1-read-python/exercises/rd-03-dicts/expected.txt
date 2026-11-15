@@ -1,0 +1,6 @@
+{'click': 3, 'view': 2, 'buy': 1}
+click 3 over
+view 2 ok
+buy 1 ok
+None
+['click', 'view', 'buy']

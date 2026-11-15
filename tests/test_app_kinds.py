@@ -58,7 +58,7 @@ def test_quiz_bad_requests(client):
 
 def test_tests_kind_flow(client):
     ex = client.get("/api/exercise/t1").json()
-    assert ex["modes"] == ["blank", "timed"]
+    assert ex["modes"] == ["blank", "challenge"]
     run = client.post("/api/run", json={"exercise_id": "t1", "code": TESTS}).json()
     assert run["passed"] and [t["name"] for t in run["tests"]] == [
         "passes on the correct implementation", "catches bug 1"]

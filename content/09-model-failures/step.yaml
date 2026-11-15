@@ -1,5 +1,6 @@
 title: Common model failures
-order: 9
+order: 109
+shelf: true
 gate:
   min_score: 3
   timed_required: false

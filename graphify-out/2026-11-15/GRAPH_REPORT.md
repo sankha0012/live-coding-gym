@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-15)
 
 ## Corpus Check
-- 3049 files · ~417,948 words
+- 3051 files · ~421,225 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 6616 nodes · 6069 edges · 2361 communities (2187 shown, 174 thin omitted)
+- 6650 nodes · 6131 edges · 2361 communities (2187 shown, 174 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 144 edges (avg confidence: 0.68)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `94dff099`
+- Built from commit: `923edeef`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -170,7 +170,7 @@
 - port_float.py
 - TokenBucket
 - BoundedQueue
-- check
+- test_assistant.py
 - DriftAlert
 - Clock
 - rb-safe-metrics/tests/test_hidden.py
@@ -179,7 +179,7 @@
 - mf-train-serve-skew/tests/test_hidden.py
 - Knowledge-base topics
 - migrate_old_gym.py
-- rb-chunked-stream/tests/test_hidden.py
+- flaky
 - sample_ids
 - assign
 - run_batch
@@ -578,18 +578,18 @@
 - retry
 - check_health
 - check_health
-- check_health
+- predict_with_fallback
 - check_health
 - check_health
 - predict_with_fallback
 
 ## God Nodes (most connected - your core abstractions)
 1. `fn()` - 48 edges
-2. `load_content()` - 21 edges
-3. `parse_config()` - 18 edges
-4. `BoundedQueue` - 18 edges
-5. `create_app()` - 18 edges
-6. `h()` - 18 edges
+2. `create_app()` - 22 edges
+3. `load_content()` - 21 edges
+4. `h()` - 20 edges
+5. `parse_config()` - 18 edges
+6. `BoundedQueue` - 18 edges
 7. `exView()` - 18 edges
 8. `TokenBucket` - 17 edges
 9. `Clock` - 16 edges
@@ -600,12 +600,12 @@
   tests/test_app.py → content/04-robust-code/exercises/rb-retry-classify/tests/test_hidden.py
 - `test_exercises_sort_by_order_then_id()` --calls--> `load_content()`  [EXTRACTED]
   tests/test_content_extras.py → gym/content.py
+- `test_migrate_writes_a_checkable_journey()` --calls--> `migrate()`  [INFERRED]
+  tests/test_migrate.py → tools/migrate_old_gym.py
 - `test_migrate_does_not_overwrite_existing_work()` --calls--> `migrate()`  [INFERRED]
   tests/test_migrate.py → tools/migrate_old_gym.py
 - `common_keys()` --calls--> `keys()`  [INFERRED]
   content/01-hand-python/exercises/py1-common-keys/gaps.py → tests/test_settings.py
-- `call_with_retry()` --calls--> `fn()`  [INFERRED]
-  content/04-robust-code/exercises/ai-retry/solution.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
 
 ## Import Cycles
 - None detected.
@@ -621,16 +621,16 @@ Cohesion: 0.15
 Nodes (23): check_sql(), _query(), Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free(), run_python_tests(), run_sql_free(), RunResult (+15 more)
 
 ### Community 2 - "load_content"
-Cohesion: 0.16
-Nodes (13): Exercise, _existing(), load_content(), load_exercise(), Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric(), Step (+5 more)
+Cohesion: 0.15
+Nodes (14): Exercise, _existing(), load_content(), load_exercise(), Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric(), Step (+6 more)
 
 ### Community 3 - "prod-debug/tests/test_hidden.py"
 Cohesion: 0.33
 Nodes (15): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_check_5(), test_check_6() (+7 more)
 
 ### Community 4 - "app.js"
-Cohesion: 0.17
-Nodes (35): api(), cardsView(), CHIP_INFO, editor(), extrasPanel(), exView(), fmt(), h() (+27 more)
+Cohesion: 0.16
+Nodes (39): api(), assistantPanel(), cardsView(), CHIP_INFO, editor(), extrasPanel(), exView(), fmt() (+31 more)
 
 ### Community 5 - "test_app.py"
 Cohesion: 0.14
@@ -661,8 +661,8 @@ Cohesion: 0.44
 Nodes (9): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_inner_shifts_after_a_long_one(), test_input_not_mutated() (+1 more)
 
 ### Community 12 - "Live Coding Gym"
-Cohesion: 0.25
-Nodes (7): Adding content, Knowledge base, Live Coding Gym, Optional tools, Run, Setup, Tests
+Cohesion: 0.20
+Nodes (9): Adding content, AI assistant, AI provider, Knowledge base, Live Coding Gym, Optional tools, Run, Setup (+1 more)
 
 ### Community 13 - "count_words"
 Cohesion: 0.53
@@ -689,8 +689,8 @@ Cohesion: 0.44
 Nodes (9): _close(), _ns(), test_braces_but_not_json(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_multiline_object_in_fence() (+1 more)
 
 ### Community 22 - "compare_shadow"
-Cohesion: 0.08
-Nodes (43): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_other_base_and_tries(), test_success_late_and_last_error_raised(), call_with_retry() (+35 more)
+Cohesion: 0.14
+Nodes (21): compare_shadow(), live(), shadow(), test_all_shadow_errors_gives_zero_rate(), test_any_shadow_exception_is_counted_not_raised(), test_diff_is_absolute_and_ranking_uses_it(), test_each_model_called_once_per_input(), test_empty_inputs() (+13 more)
 
 ### Community 28 - "Authoring protocol (applies to Tasks 8 to 19)"
 Cohesion: 0.06
@@ -794,7 +794,7 @@ Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_gold_is_normali
 
 ### Community 61 - "fn"
 Cohesion: 0.12
-Nodes (17): call_with_retry(), call_with_retry(), retry(), check_health(), predict_with_fallback(), predict_with_fallback(), predict_with_fallback(), score_batch() (+9 more)
+Nodes (17): call_with_retry(), call_with_retry(), retry(), check_health(), check_health(), predict_with_fallback(), predict_with_fallback(), score_batch() (+9 more)
 
 ### Community 64 - "st-meanstd/tests/test_hidden.py"
 Cohesion: 0.80
@@ -945,8 +945,8 @@ Cohesion: 0.22
 Nodes (8): Finding rows with no match, Joining three tables and a table to itself, Joins explained, Say it like this, The four kinds you need, The problem it solves, The smallest example, The three traps
 
 ### Community 351 - "check_content.py"
-Cohesion: 0.24
-Nodes (12): check_exercise(), check_kb(), Knowledge-base problems: broken articles, links to missing topics, exercises…, load_kb(), The in-app knowledge base: short reference articles under content/_kb/<topic-…, Topic, build(), test_api_serves_index_article_and_exercise_topics() (+4 more)
+Cohesion: 0.15
+Nodes (21): check(), check_exercise(), check_kb(), Knowledge-base problems: broken articles, links to missing topics, exercises…, load_kb(), The in-app knowledge base: short reference articles under content/_kb/<topic-…, Topic, test_duplicate_exercise_id_is_reported() (+13 more)
 
 ### Community 352 - "common_keys"
 Cohesion: 0.33
@@ -1080,9 +1080,9 @@ Nodes (15): TokenBucket, Clock, test_bad_arguments(), test_burst_then_deny(), te
 Cohesion: 0.16
 Nodes (14): BoundedQueue, parametrize, test_bad_args(), test_default_policy_is_drop_oldest(), test_drop_oldest(), test_drop_oldest_keeps_fifo_across_many_drops(), test_empty_get_raises(), test_falsy_items_are_ordinary_items() (+6 more)
 
-### Community 776 - "check"
-Cohesion: 0.38
-Nodes (9): check(), test_duplicate_exercise_id_is_reported(), test_missing_say_and_hint_are_reported(), test_sample_content_is_clean(), test_sql_wrong_and_alt_queries_are_checked(), test_starter_that_already_passes_is_reported(), test_tests_kind_checks(), test_wrong_reference_solution_is_reported() (+1 more)
+### Community 776 - "test_assistant.py"
+Cohesion: 0.14
+Nodes (19): build_prompt(), has_code_block(), The in-app AI assistant: prompt building for the two modes. Tutor: teaches,…, One prompt string for single-turn providers: instructions, task, learner state,…, True when a reply contains a fenced code block (the signal that the assistant…, build(), chat(), env() (+11 more)
 
 ### Community 777 - "DriftAlert"
 Cohesion: 0.29
@@ -1113,12 +1113,12 @@ Cohesion: 0.17
 Nodes (11): AI assistants and LLM engineering, AI/ML engineering tools, Algorithm patterns, Interview technique, Knowledge-base topics, Machine learning and statistics, pandas, Python core (+3 more)
 
 ### Community 784 - "migrate_old_gym.py"
-Cohesion: 0.27
-Nodes (11): test_migrate_does_not_overwrite_existing_work(), test_migrate_writes_a_checkable_journey(), checks_tests(), io_tests(), main(), migrate(), One-off: convert tools/old_gym.json (export of the old single-file gym) into…, Old behaviour: exec the submission, then the drill's setup code, in one… (+3 more)
+Cohesion: 0.31
+Nodes (10): test_migrate_does_not_overwrite_existing_work(), checks_tests(), io_tests(), main(), migrate(), One-off: convert tools/old_gym.json (export of the old single-file gym) into…, Old behaviour: exec the submission, then the drill's setup code, in one…, slug() (+2 more)
 
-### Community 785 - "rb-chunked-stream/tests/test_hidden.py"
-Cohesion: 0.27
-Nodes (13): process_stream(), bad_on_three(), double(), test_bad_chunk_size(), test_bad_chunk_size_even_for_empty_input(), test_does_not_stop_and_keeps_global_index(), test_empty_input(), test_error_message_keeps_exception_text() (+5 more)
+### Community 785 - "flaky"
+Cohesion: 0.11
+Nodes (35): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_other_base_and_tries(), test_success_late_and_last_error_raised(), process_stream() (+27 more)
 
 ### Community 786 - "sample_ids"
 Cohesion: 0.25
@@ -1345,8 +1345,8 @@ Cohesion: 0.67
 Nodes (3): daily_counts(), datetime, Count events per local calendar day in the timezone `tz_name`. Aware timestamps…
 
 ### Community 1212 - "db.py"
-Cohesion: 0.06
-Nodes (58): _close(), _mk(), _ns(), test_check_1(), test_check_2(), test_cooldown_boundary_and_exact_threshold(), test_failed_trial_restarts_full_cooldown(), test_success_resets_failure_count() (+50 more)
+Cohesion: 0.05
+Nodes (60): _close(), _mk(), _ns(), test_check_1(), test_check_2(), test_cooldown_boundary_and_exact_threshold(), test_failed_trial_restarts_full_cooldown(), test_success_resets_failure_count() (+52 more)
 
 ### Community 1213 - "iqr_outliers"
 Cohesion: 0.32
@@ -2185,24 +2185,24 @@ Cohesion: 0.67
 Nodes (3): Reference implementation used at training time. Do not change it. amount: a…, serve_features(), train_features()
 
 ## Knowledge Gaps
-- **881 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+876 more)
+- **885 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+880 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **174 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `fn()` connect `fn` to `exact_type.py`, `raises_first.py`, `call_with_retry`, `make`, `CircuitBreaker`, `call_with_retry`, `CircuitBreaker`, `compare_shadow`, `CircuitBreaker`, `call_with_retry`, `retry`, `check_health`, `check_health`, `call_with_retry`, `check_health`, `check_health`, `predict_with_fallback`, `predict_with_fallback`, `call_with_retry`, `retry`, `retry`, `tw-retry/solution.py`, `CircuitBreaker`, `catches_oserror.py`, `constant_delay.py`, `retries_everything.py`, `sleeps_after_last.py`, `CircuitBreaker`, `CircuitBreaker`, `check_health`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `flaky()` connect `compare_shadow` to `rb-chunked-stream/tests/test_hidden.py`, `test_app.py`, `fn`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `test_pending_review_can_be_retried()` connect `test_app.py` to `compare_shadow`, `create_app`?**
+- **Why does `fn()` connect `fn` to `exact_type.py`, `raises_first.py`, `call_with_retry`, `make`, `CircuitBreaker`, `call_with_retry`, `flaky`, `CircuitBreaker`, `CircuitBreaker`, `call_with_retry`, `retry`, `check_health`, `predict_with_fallback`, `call_with_retry`, `check_health`, `check_health`, `predict_with_fallback`, `predict_with_fallback`, `call_with_retry`, `retry`, `retry`, `tw-retry/solution.py`, `CircuitBreaker`, `catches_oserror.py`, `constant_delay.py`, `retries_everything.py`, `sleeps_after_last.py`, `CircuitBreaker`, `CircuitBreaker`, `check_health`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+- **Why does `flaky()` connect `flaky` to `test_app.py`, `fn`, `compare_shadow`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+- **Why does `test_pending_review_can_be_retried()` connect `test_app.py` to `flaky`, `create_app`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **Are the 47 inferred relationships involving `fn()` (e.g. with `call_with_retry()` and `call_with_retry()`) actually correct?**
   _`fn()` has 47 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 18 inferred relationships involving `____` (e.g. with `apply_n_times()` and `.withdraw()`) actually correct?**
   _`____` has 18 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Version`, `Version`, `Version` to the rest of the system?**
-  _881 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _885 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `test_app.py` be split into smaller, more focused modules?**
   _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._

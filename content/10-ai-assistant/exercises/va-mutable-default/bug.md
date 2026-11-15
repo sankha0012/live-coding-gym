@@ -1,0 +1,1 @@
+The default `log=[]` is a mutable default argument: Python creates the list once at definition time, so every call without `log` appends to the same shared list, and events from earlier calls show up in later results.

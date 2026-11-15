@@ -1,0 +1,5 @@
+batches is a generator function because it contains yield. Calling it does not run any of its body; it just returns a generator object, so the first thing printed is "created". The call to next(gen) starts the body: the range gives start = 0, the function prints "making batch at 0", then yields the slice [10, 11, 12] and pauses. The for loop then resumes the same generator, so it continues from where next left off: start = 3 prints its message and yields [13, 14, 15], which the loop body prints along with the sum 42. The next step is start = 6, which yields [16] with sum 16. After that the range is exhausted, the generator finishes, and the for loop ends. The final list(gen) asks an already finished generator for its items, and it has none left, so it prints an empty list.
+
+Q1: It prints on the first next(gen), not when batches is called, because generator bodies run lazily, only when a value is requested.
+Q2: It prints [] because the generator was already fully consumed by next and the for loop, and a generator cannot be rewound.
+Q3: Seven ids split into groups of three leave one id over, and the slice items[6:9] just stops at the end of the list.

@@ -1,0 +1,8 @@
+title: Counting events
+kind: read
+order: 3
+kb: [py-dicts, py-counter-defaultdict]
+questions:
+  - What does counts.get(event, 0) + 1 do the first time an event is seen?
+  - Why does buy print ok even though no limit was listed for it?
+  - What does the last line sort, and what does key=counts.get mean?

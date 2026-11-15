@@ -1,0 +1,1 @@
+Angle brackets `<` and `>` now count as brackets too, alongside `()`, `[]` and `{}`. They must be closed in the right order and must not cross other brackets, so `{<[x]>}` prints `true`, `<(>)` prints `false`, and a lone `<` or `>` prints `false`. Strings without angle brackets behave exactly as before.

@@ -1,0 +1,8 @@
+created
+making batch at 0
+first: [10, 11, 12]
+making batch at 3
+batch: [13, 14, 15] sum: 42
+making batch at 6
+batch: [16] sum: 16
+[]

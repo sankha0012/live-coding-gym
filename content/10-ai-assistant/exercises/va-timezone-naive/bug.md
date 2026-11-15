@@ -1,0 +1,1 @@
+Calling `replace(tzinfo=timezone.utc)` on every value relabels an aware datetime in another zone as UTC instead of converting it, so its instant is wrong by the offset and expiry is decided incorrectly.

@@ -1,0 +1,8 @@
+title: Read - generators and yield
+kind: read
+order: 8
+kb: [py-iterators-generators]
+questions:
+  - "When does 'making batch at 0' print: when batches is called, or later? Why?"
+  - "What does the last print show, and why?"
+  - "Why is the final batch only [16]?"

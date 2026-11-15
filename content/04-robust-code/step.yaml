@@ -1,5 +1,6 @@
 title: Robust code
-order: 4
+order: 104
+shelf: true
 gate:
   min_score: 3
   timed_required: false

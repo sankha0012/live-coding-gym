@@ -1,5 +1,6 @@
 title: Testing your own code
-order: 5
+order: 105
+shelf: true
 gate:
   min_score: 3
   timed_required: false

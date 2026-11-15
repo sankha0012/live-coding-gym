@@ -57,12 +57,8 @@ const KIND_INFO = {
   open: ["Open question", "Answer in your own words. An AI interviewer scores it against a rubric."],
   prompt: ["Prompt", "Write the prompt you would give an AI assistant. An AI interviewer scores the prompt."],
   explain: ["Explain code", "Explain the code as you would to the interviewer. An AI interviewer scores it."],
-};
-const MODE_INFO = {
-  retype: "Study the solution, then hide it and type it from memory.",
-  gaps: "Fill in the blanks (____) of a half-written solution.",
-  blank: "Start from the bare function. Passing the hidden tests here counts toward the step.",
-  timed: "Same as blank, against the clock. Optional extra practice for interview pace.",
+  read: ["Read code", "Read a script, predict exactly what it prints, then explain it. No writing code."],
+  triage: ["Accept or reject", "The assistant proposed changes. Decide which to accept and say why."],
 };
 
 function kindBadge(kind) {
@@ -76,18 +72,20 @@ function mark(value) {
 }
 
 const CHIP_INFO = {
-  tests: "Hidden tests: passed once in blank or timed mode.",
-  timed: "Passed within the time limit (in timed mode).",
+  tests: "Hidden tests: passed once.",
   review: "AI review: every criterion at or above the step's minimum score.",
   explain: "The assistant wrote code for this exercise, so you must explain it in your own words and pass the AI review.",
+  control: "Control check: explain two lines of your own code, then make one small change by hand with the assistant locked.",
+  bug: "Name the bug in one sentence after you fixed it. An AI interviewer compares it with the real cause.",
+  prompts: "The prompts you typed to the assistant must pass the AI prompt review (small, clear, with constraints).",
   assisted: "You asked the assistant to write code for this exercise.",
 };
 
 function statusLine(st) {
   const chip = (key, label) => (st[key] === null ? null
     : tip(h("span", { class: "chip " + (st[key] ? "done" : "todo") }, label, " ", mark(st[key])), CHIP_INFO[key]));
-  return h("span", {}, chip("tests", "tests"), chip("timed", "timed"), chip("review", "AI review"),
-    chip("explain", "explain it back"),
+  return h("span", {}, chip("tests", "tests"), chip("review", "AI review"),
+    chip("explain", "explain it back"), chip("control", "control check"), chip("bug", "name the bug"), chip("prompts", "prompts"),
     st.assisted ? tip(h("span", { class: "chip assisted" }, "assisted"), CHIP_INFO.assisted) : null);
 }
 
@@ -185,18 +183,19 @@ function kbMatches(list, query) {
   return list.filter((t) => (t.title + " " + t.summary + " " + t.tags.join(" ")).toLowerCase().includes(q));
 }
 
-const MODE_NOTE = {
-  tutor: "Tutor: explains, gives hints and reviews your code, but never writes the solution. Steps 1 to 3 train writing code by hand, so this is the only mode there.",
-  interview: "Interview: behaves like the assistant allowed in the real interview and writes code when you ask. The interviewer judges your prompts. If it writes code for you, you must explain that code to pass this exercise.",
+const POLICY_NOTE = {
+  train: "This assistant types code for you, but only one small piece per ask. Plan first, ask for one function, read every line, run it. Big asks are sent back.",
+  explain: "This assistant explains only. It never writes code here. Use it to understand what a line or a script does.",
+  off: "The assistant is off on this exercise. Find and fix the problem yourself, like in the real interview when it fails you.",
+  free: "Interview conditions: the assistant writes code when you ask. Keep asks small and read what it gives you.",
 };
 const QUICK = [
   ["Explain the task", "Explain this task in plain words and tell me what to think about first. Do not give the solution."],
-  ["Give me a hint", "Give me one hint to get unstuck, without giving the answer."],
   ["Why does my code fail?", "My code fails or gives a wrong result. Look at my code and the last output, point at the likely problem and explain why, but do not rewrite it for me."],
   ["Review my code", "Review my current code for correctness, edge cases and readability. List the problems; do not rewrite it."],
 ];
 
-// The assistant chat. ctx = { getCode(), getOutput(), onAssisted() } gives it the learner's current state.
+// The assistant chat. ctx = { getCode(), getOutput(), getLine(), onAssisted(), grade } gives it the learner's current state.
 function assistantPanel(scope, ctx) {
   const list = h("div", { class: "chat-list" });
   const note = h("p", { class: "muted chat-note" });
@@ -204,21 +203,18 @@ function assistantPanel(scope, ctx) {
   const gradeSlot = h("div");
   const error = h("p", { class: "bad" });
   const input = h("textarea", { class: "chat-input", rows: "3",
-    placeholder: "Ask the assistant. Enter sends, Shift+Enter adds a line." });
-  const modeSel = h("select", { onchange: () => draw() },
-    h("option", { value: "tutor" }, "Tutor"), h("option", { value: "interview" }, "Interview"));
+    placeholder: "Ask for ONE small piece. Enter sends, Shift+Enter adds a line." });
   const gradeBtn = tip(h("button", { onclick: async () => {
     gradeBtn.disabled = true;
-    try { const rev = await api("/chat/grade", { scope }); gradeSlot.replaceChildren(reviewBox(rev, null)); }
+    try { const rev = await api("/chat/grade", { scope }); gradeSlot.replaceChildren(reviewBox(rev, null)); if (ctx.onGraded) ctx.onGraded(); }
     catch (e) { gradeSlot.replaceChildren(h("p", { class: "bad" }, e.message)); }
     gradeBtn.disabled = false;
-  } }, "Grade my prompts"), "An AI interviewer scores the prompts you typed here: clarity, constraints, edge cases, whether you stay in control.");
+  } }, "Grade my prompts"), "An AI interviewer scores the prompts you typed here: clarity, size of each ask, constraints, whether you stay in control.");
   const clearBtn = tip(h("button", { onclick: async () => {
     if (!confirm("Clear this chat? (It will not undo the 'assisted' mark on this exercise.)")) return;
     await api("/chat/clear", { scope }); await load();
   } }, "Clear chat"), "Delete this conversation.");
-  let state = { messages: [], interview_allowed: false };
-  const mode = () => (modeSel.value === "interview" && state.interview_allowed ? "interview" : "tutor");
+  let state = { messages: [], policy: "train", locked: false };
 
   function decorate(box) {  // a Copy button on every code block
     box.querySelectorAll("pre").forEach((pre) => {
@@ -231,19 +227,27 @@ function assistantPanel(scope, ctx) {
     });
   }
   function draw() {
-    modeSel.querySelector('option[value="interview"]').disabled = !state.interview_allowed;
-    if (!state.interview_allowed) modeSel.value = "tutor";
-    note.textContent = MODE_NOTE[mode()];
+    const off = state.policy === "off", locked = state.locked;
+    note.textContent = locked ? "Locked: the control check is open. Make the change by hand; the assistant is back when you finish it." : POLICY_NOTE[state.policy];
     list.replaceChildren(...(state.messages.length ? state.messages.map((m) => {
       const box = m.role === "user" ? h("div", { class: "msg user" }, m.content) : h("div", { class: "msg assistant" }, md(m.content));
-      if (m.role !== "user") decorate(box);
+      if (m.role !== "user") {
+        decorate(box);
+        if (m.size) box.prepend(tip(h("span", { class: "chip " + (m.size === "large" ? "todo" : "done") }, m.size === "large" ? "large ask" : "small ask"),
+          "How big your request was. Small asks keep you in control."));
+      }
       return box;
-    }) : [h("p", { class: "muted" }, mode() === "tutor"
-      ? "Ask about the task, a concept or an error. Or use a quick button below."
-      : "Write your prompt as you would in the interview: task, inputs and outputs, constraints, edge cases.")]));
+    }) : [h("p", { class: "muted" }, off ? "" : "Ask about a concept, or for one small piece of code. Or use a quick button below.")]));
     list.scrollTop = list.scrollHeight;
-    quick.replaceChildren(...(mode() === "tutor" ? QUICK.map(([label, text]) => h("button", { onclick: () => send(text) }, label)) : []));
-    gradeBtn.hidden = !(mode() === "interview" && state.messages.some((m) => m.role === "user"));
+    const can = !off && !locked;
+    const lineBtn = h("button", { onclick: () => {
+      const l = ctx.getLine && ctx.getLine();
+      if (!l) { error.textContent = "Click a line in the editor first."; return; }
+      send(`Explain this line in plain words: ${l}`);
+    } }, "Explain this line");
+    quick.replaceChildren(...(can ? [lineBtn, ...QUICK.map(([label, text]) => h("button", { onclick: () => send(text) }, label))] : []));
+    input.disabled = !can;
+    gradeBtn.hidden = !(ctx.grade && state.messages.some((m) => m.role === "user"));
   }
   async function send(text) {
     text = (text ?? input.value).trim();
@@ -254,9 +258,9 @@ function assistantPanel(scope, ctx) {
     state.messages.push({ role: "assistant", content: "Thinking..." });
     draw();
     try {
-      const r = await api("/chat", { scope, message: text, mode: mode(), code: ctx.getCode(), output: ctx.getOutput() });
+      const r = await api("/chat", { scope, message: text, code: ctx.getCode(), output: ctx.getOutput() });
       const wasAssisted = state.assisted;
-      state = { ...state, messages: r.messages, assisted: r.assisted, interview_allowed: r.interview_allowed };
+      state = { ...state, messages: r.messages, assisted: r.assisted, policy: r.policy, locked: r.locked };
       if (r.assisted && !wasAssisted && ctx.onAssisted) ctx.onAssisted();
     } catch (e) {
       state.messages.splice(-2, 2);
@@ -267,14 +271,15 @@ function assistantPanel(scope, ctx) {
   }
   input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
   async function load() {
-    try { state = await api(`/chat?scope=${encodeURIComponent(scope)}`); if (state.interview_allowed) modeSel.value = "interview"; }
+    try { state = await api(`/chat?scope=${encodeURIComponent(scope)}`); }
     catch (e) { error.textContent = e.message; }
     draw();
   }
   const el = h("div", { class: "chat" },
-    h("div", { class: "bar" }, tip(h("span", {}, "Mode"), "Tutor teaches and hints. Interview works like the assistant in the real interview."), modeSel, clearBtn),
+    h("div", { class: "bar" }, h("strong", {}, "Assistant"), clearBtn),
     note, list, error, quick, input,
     h("div", { class: "bar" }, h("button", { class: "primary", onclick: () => send() }, "Send"), gradeBtn), gradeSlot);
+  el.refresh = load;
   load();
   return el;
 }
@@ -333,7 +338,7 @@ function helpSidebar(ex, ctx) {
   };
   showTopics();
   const panes = [{ id: "help", label: "Help", el: h("div", {}, search, body) }];
-  if (ex.kind !== "quiz") panes.push({ id: "assistant", label: "Assistant", el: assistantPanel(ex.id, ctx) });
+  if (ex.kind !== "quiz") { ctx.assistantEl = assistantPanel(ex.id, ctx); panes.push({ id: "assistant", label: "Assistant", el: ctx.assistantEl }); }
   sidebarTabs(panes);
 }
 
@@ -361,10 +366,30 @@ async function kbView(id) {
   draw(list);
 }
 
+function stepRow(s, j) {
+  const pct = s.total ? Math.round(100 * s.done / s.total) : 0;
+  const need = s.total ? Math.round(100 * s.needed / s.total) : 0;
+  const bar = tip(h("div", { class: "progress" }, h("div", { class: "fill", style: `width:${pct}%` }),
+    s.shelf ? null : h("div", { class: "needed", style: `left:${need}%` })),
+    s.total ? `${s.done} of ${s.total} done.` + (s.shelf ? "" : ` The marker shows the ${s.needed} needed to pass.`) : "No exercises here.");
+  const label = s.shelf ? h("span", { class: "muted" }, `${s.done}/${s.total}`)
+    : s.passed ? tip(h("span", { class: "ok" }, "passed ✓"), "You finished enough of this step.")
+    : s.total ? h("span", { class: "muted" }, `${s.done}/${s.total} (need ${s.needed})`) : h("span", { class: "muted" }, "mock rounds");
+  const name = s.shelf ? s.title : `${s.order}. ${s.title}`;
+  const title = s.unlocked ? h("a", { href: `#/step/${s.id}` }, name)
+    : tip(h("span", {}, `🔒 ${name}`), "Opens when you finish the step above, or unlock it yourself.");
+  const row = h("div", { class: "row" + (s.unlocked ? "" : " locked") }, h("span", { class: "grow" }, title), bar, label);
+  if (!s.unlocked) {
+    row.append(tip(h("button", { onclick: async () => { await api("/unlock", { step_id: s.id }); route(); } }, "Unlock"),
+      "Open this step now without finishing the previous one."));
+  }
+  return row;
+}
+
 async function journeyView() {
   const j = await api("/journey");
-  main.append(h("h1", {}, "Your journey"),
-    h("p", { class: "muted" }, "Work from the top. Each step opens when you finish most of the previous one. Stuck or short on time? You can unlock any step yourself."));
+  main.append(h("h1", {}, "Your track"),
+    h("p", { class: "muted" }, "The goal is control, not memorised syntax: read every line, steer the assistant in small steps, catch its mistakes, and explain what you ship. Work from the top. Each step opens when you finish most of the previous one."));
   if (j.errors.length) main.append(h("pre", { class: "bad" }, "Broken content:\n" + j.errors.join("\n")));
   main.append(j.next
     ? h("div", { class: "bar" }, tip(h("a", { class: "button", href: `#/ex/${j.next.exercise_id}` }, "Continue: " + j.next.title),
@@ -374,22 +399,11 @@ async function journeyView() {
     tip(h("span", {}, j.readiness === null ? "Readiness: not yet measured" : `Readiness: ${j.readiness}/100`),
       "Average score of your last three mock rounds. It is an estimate, not a promise."),
     "   ", h("a", { href: "#/cards" }, `Flashcards due today: ${j.due_cards}`)));
-  for (const s of j.steps) {
-    const pct = s.total ? Math.round(100 * s.done / s.total) : 0;
-    const need = s.total ? Math.round(100 * s.needed / s.total) : 0;
-    const bar = tip(h("div", { class: "progress" }, h("div", { class: "fill", style: `width:${pct}%` }),
-      h("div", { class: "needed", style: `left:${need}%` })),
-      s.total ? `${s.done} of ${s.total} done. The marker shows the ${s.needed} needed to pass.` : "No exercises here. This step is measured by mock rounds.");
-    const label = s.passed ? tip(h("span", { class: "ok" }, "passed ✓"), "You finished enough of this step.")
-      : s.total ? h("span", { class: "muted" }, `${s.done}/${s.total} (need ${s.needed})`) : h("span", { class: "muted" }, "mock rounds");
-    const title = s.unlocked ? h("a", { href: `#/step/${s.id}` }, `${s.order}. ${s.title}`)
-      : tip(h("span", {}, `🔒 ${s.order}. ${s.title}`), "Opens when you finish the step above, or unlock it yourself.");
-    const row = h("div", { class: "row" + (s.unlocked ? "" : " locked") }, h("span", { class: "grow" }, title), bar, label);
-    if (!s.unlocked) {
-      row.append(tip(h("button", { onclick: async () => { await api("/unlock", { step_id: s.id }); route(); } }, "Unlock"),
-        "Open this step now without finishing the previous one."));
-    }
-    main.append(row);
+  for (const s of j.steps) main.append(stepRow(s, j));
+  if (j.library && j.library.length) {
+    main.append(h("details", { class: "library" }, h("summary", {}, h("strong", {}, "Library"),
+      h("span", { class: "muted" }, "  optional: the old hand-coding drills, SQL and extra practice. Always open.")),
+      ...j.library.map((s) => stepRow(s, j))));
   }
   if (j.mocks.length) {
     main.append(h("h2", {}, "Mock round history"));
@@ -407,8 +421,9 @@ async function journeyView() {
 async function stepView(id) {
   const s = await api(`/step/${id}`);
   const g = s.gate;
-  main.append(h("p", {}, h("a", { href: "#/" }, "← Journey")), h("h1", {}, s.title));
-  if (g.total) {
+  main.append(h("p", {}, h("a", { href: "#/" }, "← Track")), h("h1", {}, s.title));
+  if (s.intro) main.append(h("p", {}, s.intro));
+  if (g.total && !s.shelf) {
     main.append(h("p", { class: "muted" },
       `Pass this step by finishing ${g.needed} of its ${g.total} required exercises (${g.done} done). ` +
       "Hover a badge or tick for what it means."));
@@ -418,7 +433,7 @@ async function stepView(id) {
     main.append(h("details", {}, h("summary", {}, lesson.title), md(lesson.body)));
   }
   if (!s.exercises.length) {
-    main.append(h("p", {}, "This step has no exercises. Practise with ", h("a", { href: "#/mock" }, "mock rounds"), "; your last three scores give the readiness estimate."));
+    main.append(h("p", {}, "This step is practised with ", h("a", { href: "#/mock" }, "mock rounds"), "; your last three scores give the readiness estimate."));
     return;
   }
   main.append(h("h2", {}, "Exercises"));
@@ -431,16 +446,146 @@ async function stepView(id) {
   }
 }
 
+// ---------- exercise kinds added by the redesign ----------
+function readView(ex, id, afterChange) {
+  const reviewSlot = h("div"), msg = h("div"), outBox = h("pre", { hidden: "" });
+  const prediction = h("textarea", { placeholder: "Type exactly what the program prints, line by line." });
+  const answer = h("textarea", { placeholder: "Answer the questions below in your own words." });
+  const showOut = (t) => { outBox.hidden = false; outBox.textContent = "Real output:\n" + t; };
+  if (ex.expected) showOut(ex.expected);
+  const snippet = h("div");
+  const cm = CodeMirror(snippet, { value: ex.snippet, mode: "python", lineNumbers: true, readOnly: true });
+  setTimeout(() => cm.refresh(), 0);
+  main.append(h("h2", {}, "Read this code"), snippet, h("h2", {}, "1. Predict the output"), prediction,
+    h("div", { class: "bar" },
+      tip(h("button", { class: "primary", onclick: async () => {
+        const r = await api("/predict", { exercise_id: id, prediction: prediction.value });
+        msg.replaceChildren(h("p", { class: r.passed ? "ok" : "bad" }, r.passed ? "✓ Correct prediction." : "✗ Not the same as the real output. Read the code again, then retry or reveal."));
+        if (r.passed) { showOut((await api(`/exercise/${id}`)).expected); }
+        afterChange(r.status);
+      } }, "Check my prediction"), "Compared exactly with what the program prints (trailing spaces ignored)."),
+      tip(h("button", { onclick: async () => {
+        try { const r = await api("/predict/reveal", { exercise_id: id }); showOut(r.output); }
+        catch (e) { msg.replaceChildren(h("p", { class: "bad" }, e.message)); }
+      } }, "Show the output"), "Only after you tried a prediction. Then work out why it prints that.")), msg, outBox,
+    h("h2", {}, "2. Explain it"), h("ol", {}, ex.questions.map((q) => h("li", {}, q))), answer,
+    h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
+      e.target.disabled = true; e.target.textContent = "Reviewing, please wait...";
+      try { showReview(await api("/review", { exercise_id: id, text: answer.value })); }
+      catch (err) { reviewSlot.replaceChildren(h("pre", { class: "bad" }, String(err))); }
+      e.target.disabled = false; e.target.textContent = "Submit for review";
+    } }, "Submit for review")), reviewSlot);
+  function showReview(rev) {
+    reviewSlot.replaceChildren(reviewBox(rev, async () => showReview(await api(`/reviews/${rev.review_id}/retry`, {}))) || "");
+    if (rev && rev.status === "done") afterChange();
+  }
+  showReview(ex.review);
+  return reviewSlot;
+}
+
+function triageView(ex, id, afterChange) {
+  const picks = ex.proposals.map(() => ({ choice: null, reason: "" }));
+  const out = h("div");
+  const boxes = ex.proposals.map((p, i) => {
+    const reason = h("input", { type: "text", placeholder: "Why? One sentence.", oninput: (e) => { picks[i].reason = e.target.value; } });
+    const radios = ["accept", "reject"].map((c) => h("label", { style: "margin-right:1rem" },
+      h("input", { type: "radio", name: `p${i}`, onchange: () => { picks[i].choice = c; } }), " " + c));
+    return h("div", { class: "review" }, h("p", {}, h("strong", {}, `${i + 1}. ${p.title}`)), h("pre", {}, p.code), h("div", {}, ...radios), reason);
+  });
+  main.append(...boxes, h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
+    if (picks.some((x) => !x.choice)) { out.replaceChildren(h("p", { class: "bad" }, "Decide on every change.")); return; }
+    e.target.disabled = true;
+    try {
+      const r = await api("/triage", { exercise_id: id, decisions: picks.map((x) => ({ choice: x.choice, reason: x.reason })) });
+      r.results.forEach((res, i) => boxes[i].append(h("p", { class: res.correct ? "ok" : "bad" },
+        (res.correct ? "✓ " : `✗ the right call was ${res.key}. `) + res.why)));
+      out.replaceChildren(h("p", {}, `${r.correct}/${r.total} right. ` + (r.passed ? "Passed." : "Not yet: read the reasons, then retry.")),
+        r.review ? reviewBox(r.review, null) : h("p", { class: "muted" }, "Fill in a reason for every change to get the AI review of your reasoning (needed to finish)."));
+      afterChange(r.status);
+    } catch (err) { out.replaceChildren(h("p", { class: "bad" }, err.message)); }
+    e.target.disabled = false;
+  } }, "Submit decisions")), out);
+}
+
+// name-the-bug box: shown once the learner's fix passes
+function bugPanel(ex, id, afterChange) {
+  const slot = h("div"), box = h("textarea", { placeholder: "In one sentence: what was the bug, where, and what did it cause?" });
+  const btn = h("button", { class: "primary", onclick: async (e) => {
+    e.target.disabled = true;
+    try {
+      const rev = await api("/bug", { exercise_id: id, text: box.value });
+      slot.replaceChildren(reviewBox(rev, null)); afterChange();
+    } catch (err) { slot.replaceChildren(h("p", { class: "bad" }, err.message)); }
+    e.target.disabled = false;
+  } }, "Submit for review");
+  return h("div", { class: "notice" }, h("strong", {}, "Name the bug. "), "Once the tests pass, say in one sentence what was wrong. This is what you would tell a teammate.", box, h("div", { class: "bar" }, btn), slot);
+}
+
+// The control check: explain two of your own lines, then change the code by hand with the assistant locked.
+function controlPanel(ex, id, ctx, afterChange) {
+  const el = h("div", { class: "notice" });
+  async function call(path, body) { const r = await api(path, { exercise_id: id, ...body }); if (r.status) afterChange(r.status); if (ctx.assistantEl) ctx.assistantEl.refresh(); return r; }
+  let last = "";
+  function draw(info, code) {
+    if (code) last = code;
+    code = last;
+    el.replaceChildren(h("strong", {}, "Control check. "));
+    if (info.complete) { el.append(h("span", { class: "ok" }, "✓ Done: you explained your code and changed it by hand.")); return; }
+    if (!info.started) {
+      const startBtn = h("button", { class: "primary", onclick: async () => {
+        const r = await call("/control/start", {}); draw(r.control, r.code);
+      } }, "Start control check");
+      if (!info.ready) startBtn.setAttribute("disabled", "");
+      el.append("Prove that you control this code. I pick two lines of your passing solution for you to explain, then you make one small change by hand. The assistant is off until you finish.",
+        h("div", { class: "bar" }, startBtn, info.ready ? null : h("span", { class: "muted" }, "Pass the tests first.")));
+      return;
+    }
+    const expl = info.lines.map(() => h("textarea", { placeholder: "What does this line do, and why is it there?" }));
+    const revSlot = h("div");
+    el.append(h("h3", {}, "A. Explain these two lines of your code") ,
+      ...info.lines.flatMap((l, i) => [h("pre", {}, `${l.no}: ${l.text}`), expl[i]]),
+      h("div", { class: "bar" }, h("button", { class: info.a_ok ? "" : "primary", onclick: async (e) => {
+        e.target.disabled = true;
+        try { const r = await call("/control/explain", { explanations: expl.map((x) => x.value) }); revSlot.replaceChildren(reviewBox(r.review, null)); draw(r.control, code); el.append(revSlot); }
+        catch (err) { revSlot.replaceChildren(h("p", { class: "bad" }, err.message)); }
+        e.target.disabled = false;
+      } }, info.a_ok ? "✓ Explained (check again)" : "Check my explanations")), revSlot);
+    const holder = h("div"), out = h("pre");
+    const cm = editor(holder, "python", code || "");
+    cm.on("change", () => { last = cm.getValue(); });
+    setTimeout(() => cm.refresh(), 0);
+    el.append(h("h3", {}, "B. Make this change by hand"), md(info.change), holder,
+      h("div", { class: "bar" }, h("button", { class: info.b_ok ? "" : "primary", onclick: async () => {
+        const r = await call("/control/change", { code: cm.getValue() }); results(out, r); draw(r.control, cm.getValue()); el.append(out);
+      } }, info.b_ok ? "✓ Passed (run again)" : "Run the change tests"),
+        h("span", { class: "muted" }, "The assistant is locked until both parts pass.")), out);
+  }
+  (async () => {
+    const info = ex.control;
+    if (info.started && !info.complete) { const r = await api("/control/start", { exercise_id: id }); draw(r.control, r.code); }
+    else draw(info, "");
+  })();
+  el.redraw = async () => { const fresh = (await api(`/exercise/${id}`)).control; if (!fresh.started || fresh.complete) draw(fresh, ""); };
+  return el;
+}
+
 async function exView(id, mode = "blank") {
   const ex = await api(`/exercise/${id}?mode=${mode}`);
   const coded = ex.modes.length > 0;
   const back = h("p", {}, h("a", { href: `#/step/${ex.step_id}` }, "← Back to the step"));
   main.append(back, h("h1", {}, ex.title, " ", kindBadge(ex.kind)));
-  const ctx = { getCode: () => "", getOutput: () => "", onAssisted: () => {} };
+  const ctx = { getCode: () => "", getOutput: () => "", getLine: () => "", onAssisted: () => {}, grade: ex.grade_prompts };
+  const statusEl = h("span", {});
+  let applyStatus = (st) => { statusEl.replaceChildren(statusLine(st)); };
+  const refreshStatus = async () => applyStatus((await api(`/exercise/${id}?mode=${mode}`)).status);
+  const after = (st) => { if (st) applyStatus(st); else refreshStatus(); };
+  ctx.onGraded = refreshStatus;
   helpSidebar(ex, ctx);
   if (ex.kind === "quiz") { main.append(md(ex.prompt)); return quizView(ex); }
   main.append(md(ex.prompt));
   if (ex.schema) main.append(h("details", {}, h("summary", {}, "Tables"), h("pre", {}, ex.schema)));
+  const progress = h("div", { class: "bar" }, h("span", { class: "muted" }, "Progress (hover a tick):"), statusEl);
+  applyStatus(ex.status);
 
   const reviewSlot = h("div");
   const extras = h("div");
@@ -448,21 +593,36 @@ async function exView(id, mode = "blank") {
   nextSlot.replaceChildren(nextBar(ex, false));
   const refreshExtras = async () => extras.replaceChildren(extrasPanel(await api(`/exercise/${id}?mode=${mode}`)));
   refreshExtras();
-  let applyStatus = () => {};
-  const refreshStatus = async () => applyStatus((await api(`/exercise/${id}?mode=${mode}`)).status);
   const showReview = (rev) => {
     reviewSlot.replaceChildren(reviewBox(rev, async () => {
       showReview(await api(`/reviews/${rev.review_id}/retry`, {}));
     }) || "");
     if (rev && rev.status === "done") { refreshExtras(); refreshStatus(); nextSlot.replaceChildren(nextBar(ex, true)); }
   };
+
+  const finished = async (st) => {
+    const now = st || (await api(`/exercise/${id}`)).status;
+    applyStatus(now); refreshExtras(); nextSlot.replaceChildren(nextBar(ex, now.done));
+  };
+  if (ex.kind === "read") {
+    main.append(progress);
+    readView(ex, id, finished);
+    main.append(nextSlot, extras);
+    return;
+  }
+  if (ex.kind === "triage") {
+    main.append(progress);
+    triageView(ex, id, finished);
+    main.append(nextSlot, extras);
+    return;
+  }
   const PLAIN = coded
     ? "Optional: explain your code as you would to the interviewer. It is sent with the AI review." : "Type your answer here, then press the button below.";
   const text = h("textarea", { placeholder: PLAIN });
   ctx.getCode = () => text.value;
 
   if (!coded) {
-    main.append(text, h("div", { class: "bar" }, tip(h("button", { class: "primary", onclick: async (e) => {
+    main.append(progress, text, h("div", { class: "bar" }, tip(h("button", { class: "primary", onclick: async (e) => {
       e.target.disabled = true;
       e.target.textContent = "Reviewing, please wait...";
       try { showReview(await api("/review", { exercise_id: id, text: text.value })); }
@@ -474,10 +634,6 @@ async function exView(id, mode = "blank") {
     return;
   }
 
-  const picker = h("select", { onchange: (e) => render(() => exView(id, e.target.value)) },
-    ex.modes.map((m) => h("option", m === mode ? { value: m, selected: "" } : { value: m }, m)));
-  const clock = h("span", { class: "timer" });
-  const statusEl = h("span", {}, statusLine(ex.status));
   const assistNote = h("div");
   applyStatus = (st) => {
     statusEl.replaceChildren(statusLine(st));
@@ -486,12 +642,22 @@ async function exView(id, mode = "blank") {
       "The assistant wrote code for this exercise, so it only counts once you explain that code in your own words. Write your explanation in the box below the results, pass the tests, then press 'Get AI review'.") : "");
     text.placeholder = st.assisted
       ? "Required: explain, in your own words, what the code does, why it works and one edge case. The AI review grades this explanation." : PLAIN;
+    if (st.tests && bugSlot && ex.name_bug && !bugSlot.firstChild) bugSlot.append(bugPanel(ex, id, refreshStatus));
+    if (controlEl && st.tests) controlEl.redraw();
   };
-  applyStatus(ex.status);
-  const modeHelp = h("span", { class: "muted" }, MODE_INFO[mode] || "");
-  main.append(assistNote, h("div", { class: "bar" }, tip(h("span", {}, "Mode"), "How you want to practise this exercise. Switching mode keeps your progress."),
-      picker, tip(clock, "Elapsed time" + (mode === "timed" ? ` / limit (${fmt(ex.time_limit_s)})` : ". No limit in this mode."))),
-    h("div", { class: "bar" }, modeHelp), h("div", { class: "bar" }, h("span", { class: "muted" }, "Progress (hover a tick):"), statusEl));
+  const clock = h("span", { class: "timer" });
+  const bugSlot = h("div");
+  const controlEl = ex.control ? controlPanel(ex, id, ctx, after) : null;
+  const challenge = mode === "challenge";
+  const modeBar = h("div", { class: "bar" },
+    tip(h("button", { onclick: () => render(() => exView(id, challenge ? "blank" : "challenge")) },
+      challenge ? "Back to the starter code" : "Challenge: empty editor"),
+      "Optional hard mode: start from an empty editor. It counts like any pass but never blocks you."),
+    tip(clock, "Elapsed time. There is no limit."),
+    ex.plan_required ? tip(h("span", { class: "chip todo" }, `plan: ${ex.plan_required}+ comment lines`),
+      "Write your plan as # comment lines in the editor first. Submit is refused without it.") : null,
+    ex.assistant === "off" ? tip(h("span", { class: "chip todo" }, "assistant off"), "Fix this one yourself.") : null);
+  main.append(assistNote, modeBar, progress);
 
   const holder = h("div");
   const out = h("pre");
@@ -500,23 +666,18 @@ async function exView(id, mode = "blank") {
   let cm = null, elapsed = () => 0, lastPassed = null;
   ctx.getCode = () => (cm ? cm.getValue() : "");
   ctx.getOutput = () => out.textContent;
+  ctx.getLine = () => (cm ? cm.getLine(cm.getCursor().line).trim() : "");
   ctx.onAssisted = refreshStatus;
+  applyStatus(ex.status);
 
   const draftKey = `draft:${id}:${mode}`;
   const readDraft = () => { try { return localStorage.getItem(draftKey); } catch (e) { return null; } };
   const writeDraft = (v) => { try { if (v === null) localStorage.removeItem(draftKey); else localStorage.setItem(draftKey, v); } catch (e) { /* drafts are a convenience only */ } };
-  const begin = () => {
-    holder.replaceChildren();
-    const saved = readDraft();
-    cm = editor(holder, ex.kind, saved === null ? ex.code : saved);
-    cm.on("change", () => writeDraft(cm.getValue()));
-    setTimeout(() => cm.refresh(), 0); // an editor built before it is on the page draws blank until refreshed
-    elapsed = startTimer(clock, mode === "timed" ? ex.time_limit_s : 0);
-  };
-  if (mode === "retype") {
-    holder.append(h("p", {}, "Read the solution until you can rebuild it, then hide it and type it from memory."),
-      h("pre", {}, ex.solution), h("button", { onclick: begin }, "Hide and start"));
-  } else begin();
+  const saved = readDraft();
+  cm = editor(holder, ex.kind, saved === null ? ex.code : saved);
+  cm.on("change", () => writeDraft(cm.getValue()));
+  setTimeout(() => cm.refresh(), 0); // an editor built before it is on the page draws blank until refreshed
+  elapsed = startTimer(clock, 0);
 
   reviewBtn.addEventListener("click", async () => {
     reviewBtn.disabled = true;
@@ -541,14 +702,16 @@ async function exView(id, mode = "blank") {
       results(out, r);
       applyStatus(r.status);
       if (r.passed) { lastPassed = r.attempt_id; reviewBtn.disabled = false; refreshExtras(); nextSlot.replaceChildren(nextBar(ex, true)); }
-    } }, "Submit"), "Run the hidden tests and record the attempt. A pass counts toward the step.")), nextSlot, h("h2", {}, "Results"), out, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
+    } }, "Submit"), "Run the hidden tests and record the attempt. A pass counts toward the step.")), nextSlot, h("h2", {}, "Results"), out,
+    bugSlot, controlEl, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
+  if (ex.status.tests && ex.name_bug) bugSlot.append(bugPanel(ex, id, refreshStatus));
   showReview(ex.review);
 }
 
 async function cardsView() {
   const due = await api("/cards/due");
   main.append(h("h1", {}, "Warm-up cards"),
-    h("p", { class: "muted" }, "Read the task, type the answer from memory, then press Flip to check. Cards you miss come back today; cards you get right come back after 1, 2, 4, 8, then 16 days."));
+    h("p", { class: "muted" }, "Look at the card, say or type your answer, then press Flip to check. Cards you miss come back today; cards you get right come back after 1, 2, 4, 8, then 16 days."));
   if (!due.length) { main.append(h("p", {}, "Nothing due. Come back tomorrow.")); return; }
   const card = due[0];
   const back = h("pre", { hidden: "" }, card.back);
@@ -557,45 +720,52 @@ async function cardsView() {
     h("button", { onclick: () => grade(true) }, "Got it"),
     h("button", { onclick: () => grade(false) }, "Missed it"));
   main.append(h("p", { class: "muted" }, `${due.length} due`), md(card.front),
-    h("textarea", { placeholder: "Type it from memory, then flip." }),
+    h("textarea", { placeholder: "Your answer (optional), then flip." }),
     h("div", { class: "bar" }, h("button", { class: "primary", onclick: () => { back.hidden = false; buttons.hidden = false; } }, "Flip")),
     back, buttons);
 }
 
 async function mockView() {
   main.append(h("h1", {}, "Mock round"),
-    h("p", {}, "One Python task, one SQL task, an AI assistant in the sidebar (your prompts to it are scored, like in the real interview), then three follow-up questions from an AI interviewer. 45 minutes. The clock starts when you press Start. Score out of 100: hidden tests 50%, AI review 40%, finishing in time 10%."));
+    h("p", {}, "Two Python tasks with the assistant on, 35 minutes. Then two 'explain this line' questions about your own code and three follow-up questions. The clock starts when you press Start. Score out of 100: hidden tests 35%, AI review 25%, finishing in time 10%, small asks 10%, running code before accepting the assistant's code 10%, explaining your lines 10%."));
   main.append(h("button", { class: "primary", onclick: async () => {
     const m = await api("/mock/start", {});
+    const scope = `mock:${m.mock_id}`;
     main.replaceChildren();
     const clock = h("span", { class: "timer" });
     const elapsed = startTimer(clock, m.time_limit_s);
-    const pyHolder = h("div"), sqlHolder = h("div");
-    const prompt = h("textarea", { placeholder: "Optional. If you use the assistant in the sidebar, the prompts you type there are scored. If you do not, write here the prompt you would give an AI assistant for the Python task." });
-    main.append(h("div", { class: "bar" }, h("strong", {}, "Mock round"), clock),
-      h("h2", {}, "Python: " + m.python.title), md(m.python.prompt), pyHolder,
-      h("h2", {}, "SQL: " + m.sql.title), md(m.sql.prompt), h("pre", {}, m.sql.schema), sqlHolder,
-      h("h2", {}, "Your prompt for the AI assistant"), prompt);
-    const py = editor(pyHolder, "python", m.python.code), sql = editor(sqlHolder, "sql", m.sql.code);
-    sidebarTabs([{ id: "assistant", label: "Assistant", el: assistantPanel(`mock:${m.mock_id}`, {
-      getCode: () => `# PYTHON\n${py.getValue()}\n\n-- SQL\n${sql.getValue()}`, getOutput: () => "", onAssisted: () => {} }) }]);
+    main.append(h("div", { class: "bar" }, h("strong", {}, "Mock round"), clock));
+    const editors = m.tasks.map((t, i) => {
+      const holder = h("div"), out = h("pre");
+      main.append(h("h2", {}, `Task ${i + 1}: ${t.title}`), md(t.prompt), holder,
+        h("div", { class: "bar" }, h("button", { onclick: async () => results(out, await api("/run", { exercise_id: t.id, code: cm.getValue(), scope }), "run") }, "Run")), out);
+      const cm = editor(holder, "python", t.code);
+      setTimeout(() => cm.refresh(), 0);
+      return cm;
+    });
+    sidebarTabs([{ id: "assistant", label: "Assistant", el: assistantPanel(scope, {
+      getCode: () => editors.map((e, i) => `# TASK ${i + 1}\n${e.getValue()}`).join("\n\n"), getOutput: () => "",
+      getLine: () => { const e = editors.find((x) => x.hasFocus()) || editors[0]; return e.getLine(e.getCursor().line).trim(); },
+      onAssisted: () => {}, grade: true }) }]);
     main.append(h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
       e.target.disabled = true;
-      const r = await api(`/mock/${m.mock_id}/submit`, {
-        python_code: py.getValue(), sql_code: sql.getValue(), prompt_text: prompt.value, duration_s: elapsed() });
+      const r = await api(`/mock/${m.mock_id}/submit`, { codes: editors.map((x) => x.getValue()), duration_s: elapsed() });
       clearInterval(tick);
-      const pyOut = h("pre"), sqlOut = h("pre");
-      results(pyOut, r.python); results(sqlOut, r.sql);
+      const outs = r.results.map((res, i) => { const o = h("pre"); results(o, res); return [h("h2", {}, `Task ${i + 1} result`), o]; });
+      const lineAnswers = r.lines.map(() => h("textarea"));
       const answers = r.questions.map(() => h("textarea"));
-      main.replaceChildren(h("h1", {}, "Follow-up questions"), h("h2", {}, "Python result"), pyOut,
-        h("h2", {}, "SQL result"), sqlOut,
+      main.replaceChildren(h("h1", {}, "Follow-up questions"), ...outs.flat(),
+        h("h2", {}, "Explain these lines of your code"),
+        ...r.lines.flatMap((l, i) => [h("pre", {}, `Task ${l.task + 1}, line ${l.no}: ${l.text}`), lineAnswers[i]]),
+        h("h2", {}, "Questions"),
         ...r.questions.flatMap((q, i) => [h("p", {}, h("strong", {}, q)), answers[i]]),
         h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (ev) => {
           ev.target.disabled = true;
-          const done = await api(`/mock/${m.mock_id}/answers`, { answers: answers.map((a) => a.value) });
-          main.replaceChildren(h("h1", {}, `Score: ${done.score.total}/100`),
-            h("p", {}, `Tests passed: ${Math.round(done.score.pass_rate * 100)}%. Review average: ${done.score.review_avg.toFixed(1)}/5. ` +
-              `${done.score.in_time ? "Inside" : "Over"} the time limit. ` +
+          const done = await api(`/mock/${m.mock_id}/answers`, { answers: answers.map((a) => a.value), line_answers: lineAnswers.map((a) => a.value) });
+          const sc = done.score, pc = (x) => Math.round(x * 100) + "%";
+          main.replaceChildren(h("h1", {}, `Score: ${sc.total}/100`),
+            h("p", {}, `Tests passed: ${pc(sc.pass_rate)}. Review average: ${sc.review_avg.toFixed(1)}/5. ${sc.in_time ? "Inside" : "Over"} the time limit. ` +
+              `Small asks: ${pc(sc.asks)}. Ran code before accepting: ${pc(sc.ran)}. Line explanations: ${pc(sc.lines)}. ` +
               (done.readiness === null ? "" : `Readiness estimate: ${done.readiness}/100.`)),
             ...done.reviews.map((rev) => reviewBox(rev, null)));
         } }, "Submit answers")));

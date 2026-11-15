@@ -1,0 +1,48 @@
+- title: Guard the empty list in average_price
+  code: |
+    def average_price(prices):
+    +    if not prices:
+    +        return 0.0
+         return sum(prices) / len(prices)
+  correct: accept
+  why: It fixes the ZeroDivisionError for an empty list with a two-line guard and nothing else changes. Returning 0.0 is a choice worth checking against the spec, but it is small, visible and in scope.
+- title: Wrap order parsing in try/except
+  code: |
+    def parse_order(row):
+    +    try:
+             qty = int(row["qty"])
+             return Order(row["sku"], qty)
+    +    except Exception:
+    +        return None
+  correct: reject
+  why: The broad except hides every failure and turns bad rows into None, which will surface later as a confusing error or silently dropped orders. Missing quantity should be handled explicitly, not swallowed.
+- title: Treat a missing quantity as an explicit error
+  code: |
+    def parse_order(row):
+    -    qty = int(row["qty"])
+    +    raw = row.get("qty")
+    +    if raw is None or raw == "":
+    +        raise ValueError(f"missing qty for sku {row['sku']}")
+    +    qty = int(raw)
+         return Order(row["sku"], qty)
+  correct: accept
+  why: It handles exactly the case you reported, fails loudly with a message that names the row, and leaves the other behaviour alone.
+- title: Add pandas to compute the average
+  code: |
+    + import pandas as pd
+    +
+      def average_price(prices):
+    -    return sum(prices) / len(prices)
+    +    return pd.Series(prices).mean()
+  correct: reject
+  why: It adds a dependency nobody asked for to replace one line of arithmetic, and it does not fix the empty-list problem the way you wanted (it returns NaN).
+- title: Loop over range(1, len(orders)) in the totals
+  code: |
+    def total(orders):
+         t = 0
+    -    for i in range(len(orders)):
+    +    for i in range(1, len(orders)):
+             t += orders[i].qty * orders[i].price
+         return t
+  correct: reject
+  why: Starting at 1 skips the first order, so every total is wrong. It is an off-by-one that nobody asked for and it looks like a harmless tidy-up.
