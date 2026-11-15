@@ -22,3 +22,15 @@ def test_input_not_changed():
 
 def test_returns_lists():
     assert all(isinstance(r, list) for r in rotate([[1, 2], [3, 4]]))
+
+
+def test_4x4_clockwise():
+    m = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]
+    assert rotate(m) == [[13, 9, 5, 1], [14, 10, 6, 2], [15, 11, 7, 3], [16, 12, 8, 4]]
+
+
+def test_result_is_a_new_matrix():
+    for m in ([[5]], [[1, 2], [3, 4]]):
+        out = rotate(m)
+        assert out is not m
+        assert all(r is not q for r in out for q in m)

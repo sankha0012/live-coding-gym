@@ -1,0 +1,9 @@
+import math
+def assign(orders, couriers):
+    free = dict(couriers); result = {}
+    for oid, ox, oy in sorted(orders):
+        if not free:
+            result[oid] = None; continue
+        best = min(free, key=lambda c: (math.dist((ox, oy), free[c]), c))
+        result[oid] = best; del free[best]
+    return result

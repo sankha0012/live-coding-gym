@@ -44,3 +44,26 @@ def test_zero_and_empty_string_are_not_null_and_default_tolerance():
     assert find_skew({"a": 0, "b": ""}, {"a": None, "b": None}) == {"a": "diff", "b": "diff"}
     assert find_skew({"a": 1.0}, {"a": 1.001}) == {"a": "diff"}
     assert find_skew({"a": 1.0}, {"a": 1.0000001}) == {}
+
+
+def test_number_online_nan_offline_is_skew():
+    assert find_skew({"a": 1.0}, {"a": NAN}) == {"a": "diff"}
+    assert find_skew({"a": NAN}, {"a": 1.0}) == {"a": "diff"}
+    assert find_skew({"a": 0}, {"a": NAN}) == {"a": "diff"}
+
+
+def test_null_valued_feature_present_vs_absent():
+    assert find_skew({"a": None}, {}) == {"a": "missing_offline"}
+    assert find_skew({}, {"a": NAN}) == {"a": "missing_online"}
+    assert find_skew({"a": None}, {"a": None}) == {}
+
+
+def test_mixed_reasons_sorted_by_name():
+    out = find_skew({"b": 1, "z": 9, "m": 1}, {"a": 2, "b": 5, "m": 1, "y": 3})
+    assert list(out.items()) == [("a", "missing_online"), ("b", "diff"), ("y", "missing_online"), ("z", "missing_offline")]
+
+
+def test_tolerance_is_absolute_not_relative():
+    assert find_skew({"a": 0.001}, {"a": 0.4}, tolerance=0.5) == {}
+    assert find_skew({"a": 1000.0}, {"a": 1000.4}, tolerance=0.5) == {}
+    assert find_skew({"a": 1000.0}, {"a": 1000.4}, tolerance=0.3) == {"a": "diff"}

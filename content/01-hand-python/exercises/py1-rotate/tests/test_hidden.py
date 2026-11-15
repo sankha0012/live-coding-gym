@@ -32,3 +32,12 @@ def test_input_unchanged():
 def test_negative_wraps():
     assert rotate([1, 2, 3], -4) == [2, 3, 1]
     assert rotate([1, 2, 3, 4, 5], -7) == [3, 4, 5, 1, 2]
+
+
+def test_always_returns_a_new_list():
+    data = [1, 2, 3]
+    for k in (0, 3, 6, 1, -3):
+        out = rotate(data, k)
+        assert out is not data
+        out.append(99)
+        assert data == [1, 2, 3]

@@ -28,3 +28,7 @@ def test_punctuation_is_not_stripped():
 
 def test_splits_on_any_whitespace():
     assert word_count_top("a\nb\ta  a", 2) == [("a", 3), ("b", 1)]
+
+
+def test_n_zero_returns_nothing():
+    assert word_count_top("a b a", 0) == []

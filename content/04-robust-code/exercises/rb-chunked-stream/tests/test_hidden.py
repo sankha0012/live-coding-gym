@@ -85,3 +85,38 @@ def test_retry_is_one_record_at_a_time():
     res, errs = process_stream(range(4), h, 4)
     assert res == [0, 2, 4, 6] and errs == []
     assert calls == [[0, 1, 2, 3], [0], [1], [2], [3]]
+
+
+def test_bad_chunk_size_even_for_empty_input():
+    for n in (0, -1, -5):
+        for recs in ([], iter([]), [1, 2]):
+            try:
+                process_stream(recs, double, n)
+                assert False, (n, recs)
+            except ValueError:
+                pass
+
+
+def test_single_record_batch_is_retried_alone():
+    calls = []
+
+    def flaky(batch):
+        calls.append(list(batch))
+        if len(calls) % 2 == 1:
+            raise RuntimeError("first try fails")
+        return double(batch)
+
+    res, errs = process_stream([5, 6], flaky, 1)
+    assert res == [10, 12] and errs == []
+    assert calls == [[5], [5], [6], [6]]
+
+
+def test_error_message_keeps_exception_text():
+    def h(batch):
+        if "bad" in batch:
+            raise ValueError("bad: record, really")
+        return batch
+
+    res, errs = process_stream(["a", "bad", "b", "c"], h, 2)
+    assert res == ["a", "b", "c"]
+    assert errs == [{"index": 1, "error": "ValueError: bad: record, really"}]

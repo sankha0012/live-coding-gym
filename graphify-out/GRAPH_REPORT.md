@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-15)
 
 ## Corpus Check
-- 2157 files · ~371,302 words
+- 3048 files · ~416,926 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5181 nodes · 4679 edges · 1896 communities (1765 shown, 131 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 95 edges (avg confidence: 0.67)
+- 6596 nodes · 6035 edges · 2357 communities (2188 shown, 169 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 141 edges (avg confidence: 0.68)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0ae70496`
+- Built from commit: `ae199633`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,7 +22,7 @@
 - app.js
 - test_app.py
 - File Structure
-- pm-health-check/tests/test_hidden.py
+- make
 - Live Coding Gym: design spec
 - prod-monitor/tests/test_hidden.py
 - Live Coding Gym: working rules
@@ -57,7 +57,7 @@
 - py-latest/tests/test_hidden.py
 - py-newret/tests/test_hidden.py
 - prod-batch/tests/test_hidden.py
-- prod-breaker/tests/test_hidden.py
+- flaky
 - dbg-late/tests/test_hidden.py
 - dbg-tags/tests/test_hidden.py
 - st-boot/tests/test_hidden.py
@@ -68,14 +68,14 @@
 - CircuitBreaker
 - dbg-tags/starter.py
 - st-meanstd/tests/test_hidden.py
+- cb-brackets/tests/test_hidden.py
 - test_io
-- test_io
-- test_io
-- test_io
-- test_io
-- test_io
-- test_io
-- test_io
+- cb-longest/tests/test_hidden.py
+- cb-movavg/tests/test_hidden.py
+- cb-pairsum/tests/test_hidden.py
+- cb-rle/tests/test_hidden.py
+- cb-sumkeys/tests/test_hidden.py
+- cb-wordfreq/tests/test_hidden.py
 - 02-coderbyte.md
 - average_delivery_minutes
 - 04-python.md
@@ -131,7 +131,7 @@
 - rank
 - title_case
 - anagram_groups
-- first_index
+- rt-binary-search/tests/test_hidden.py
 - rotate
 - top_k
 - Clarifying questions
@@ -167,7 +167,7 @@
 - field_order.py
 - no_order.py
 - not_frozen.py
-- pm-ttl-cache/tests/test_hidden.py
+- port_float.py
 - TokenBucket
 - BoundedQueue
 - check
@@ -182,7 +182,7 @@
 - rb-chunked-stream/tests/test_hidden.py
 - sample_ids
 - assign
-- Handler
+- run_batch
 - drift_alarm
 - is_expired
 - final_state
@@ -204,7 +204,7 @@
 - chunk
 - parse_quantity
 - Portuguese phrase bank
-- atomic_write_json
+- rb-atomic-write/tests/test_hidden.py
 - make_record
 - Monitoring basics
 - dedupe_events
@@ -215,7 +215,7 @@
 - mean_valid
 - Explanation structure
 - Complexity cheatsheet
-- test_content_extras.py
+- port_upper_exclusive.py
 - Determinism
 - The failure modes checklist
 - Injecting clocks and sleep
@@ -381,11 +381,11 @@
 - retry
 - tw-retry/prompt.md
 - tw-validate-email/prompt.md
-- retry
+- timeout_empty_default.py
+- Counter
 - check_health
-- check_health
-- predict_with_fallback
-- predict_with_fallback
+- Counter
+- Counter
 - tool-docker.md
 - tool-experiment-tracking.md
 - tool-feature-store.md
@@ -523,35 +523,90 @@
 - test-raises.md
 - test-what-to-test.md
 - check_health
+- Counter
+- Stack
+- Stack
+- TTLCache
+- BankAccount
+- BankAccount
+- BankAccount
+- BoundedQueue
+- BoundedQueue
+- BoundedQueue
+- BankAccount
+- Version
+- LRUCache
+- LRUCache
+- LRUCache
+- CircuitBreaker
+- CircuitBreaker
+- CircuitBreaker
+- CircuitBreaker
+- CircuitBreaker
+- IdempotentRunner
+- IdempotentRunner
+- IdempotentRunner
+- TokenBucket
+- TokenBucket
+- exact_type.py
+- raises_first.py
+- all_zero_none.py
+- int_div.py
+- negatives_dropped.py
+- DriftAlert
+- DriftAlert
+- DriftAlert
+- ge_tolerance.py
+- null_check_online_only.py
+- relative_tolerance.py
+- train_features
+- strip_or_unknown.py
+- sort_desc.py
+- py1-dataclass-order/wrong/sort_in_place.py
+- Order
+- Order
+- Order
+- Order
+- int_try_parse.py
+- prefix_regex_parse.py
+- three_parts_only.py
+- ge_threshold.py
+- lazy_length_check.py
+- sorts_by_signed_correlation.py
+- call_with_retry
+- call_with_retry
+- check_health
+- check_health
+- check_health
 
 ## God Nodes (most connected - your core abstractions)
-1. `fn()` - 29 edges
+1. `fn()` - 48 edges
 2. `load_content()` - 21 edges
-3. `exView()` - 18 edges
-4. `h()` - 17 edges
-5. `BoundedQueue` - 14 edges
-6. `check()` - 14 edges
-7. `Authoring protocol (applies to Tasks 8 to 19)` - 14 edges
-8. `parse_config()` - 13 edges
-9. `TokenBucket` - 13 edges
-10. `create_app()` - 13 edges
+3. `parse_config()` - 18 edges
+4. `BoundedQueue` - 18 edges
+5. `exView()` - 18 edges
+6. `TokenBucket` - 17 edges
+7. `h()` - 17 edges
+8. `Clock` - 16 edges
+9. `find_skew()` - 16 edges
+10. `compare_shadow()` - 16 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `test_pending_review_can_be_retried()` --indirect_call--> `flaky()`  [INFERRED]
   tests/test_app.py → content/04-robust-code/exercises/rb-retry-classify/tests/test_hidden.py
-- `test_exercises_sort_by_order_then_id()` --calls--> `load_content()`  [EXTRACTED]
-  tests/test_content_extras.py → gym/content.py
 - `test_migrate_does_not_overwrite_existing_work()` --calls--> `migrate()`  [INFERRED]
   tests/test_migrate.py → tools/migrate_old_gym.py
 - `call_with_retry()` --calls--> `fn()`  [INFERRED]
   content/04-robust-code/exercises/ai-retry/solution.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
 - `call_with_retry()` --calls--> `fn()`  [INFERRED]
-  content/04-robust-code/exercises/rb-retry-classify/wrong/catches_oserror.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
+  content/04-robust-code/exercises/ai-retry/wrong/linear.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
+- `call_with_retry()` --calls--> `fn()`  [INFERRED]
+  content/04-robust-code/exercises/ai-retry/wrong/wraps_error.py → content/09-model-failures/exercises/mf-partial-batch-failure/tests/test_hidden.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (1896 total, 131 thin omitted)
+## Communities (2357 total, 169 thin omitted)
 
 ### Community 0 - "run_test_writing"
 Cohesion: 0.33
@@ -562,12 +617,12 @@ Cohesion: 0.15
 Nodes (23): check_sql(), _query(), Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free(), run_python_tests(), run_sql_free(), RunResult (+15 more)
 
 ### Community 2 - "load_content"
-Cohesion: 0.18
-Nodes (11): Exercise, _existing(), load_content(), load_exercise(), _read(), Step, connect(), conn() (+3 more)
+Cohesion: 0.13
+Nodes (21): Exercise, _existing(), load_content(), load_exercise(), _read(), Step, connect(), conn() (+13 more)
 
 ### Community 3 - "prod-debug/tests/test_hidden.py"
-Cohesion: 0.47
-Nodes (10): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_check_5(), test_check_6() (+2 more)
+Cohesion: 0.33
+Nodes (15): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_check_5(), test_check_6() (+7 more)
 
 ### Community 4 - "app.js"
 Cohesion: 0.18
@@ -581,25 +636,25 @@ Nodes (12): client(), fake_gemini(), post(), fixture, test_cards_and_unlock(), t
 Cohesion: 0.12
 Nodes (15): After this plan, File Structure, Global Constraints, Live Coding Gym App Implementation Plan, Task 10: Web page, Task 11: Content checker and run instructions, Task 1: Project skeleton, config and content loader, Task 2: Python runner (+7 more)
 
-### Community 7 - "pm-health-check/tests/test_hidden.py"
-Cohesion: 0.12
-Nodes (25): check_health(), boom(), degraded(), down(), ok(), test_all_ok(), test_degraded(), test_empty_is_ok() (+17 more)
+### Community 7 - "make"
+Cohesion: 0.07
+Nodes (42): check_health(), boom(), degraded(), down(), ok(), test_all_ok(), test_any_exception_type_is_down_with_its_class_name(), test_degraded() (+34 more)
 
 ### Community 8 - "Live Coding Gym: design spec"
 Cohesion: 0.15
 Nodes (12): 1. Purpose, 2. Scope decisions, 3. Architecture, 4. The journey, 5. Content format, 6. Error handling, 7. Testing, 8. Build order (+4 more)
 
 ### Community 9 - "prod-monitor/tests/test_hidden.py"
-Cohesion: 0.56
-Nodes (8): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_check_5(), test_check_6()
+Cohesion: 0.31
+Nodes (17): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_check_5(), test_check_6() (+9 more)
 
 ### Community 10 - "Live Coding Gym: working rules"
 Cohesion: 0.33
 Nodes (5): Keeping the graph current, Live Coding Gym: working rules, Mandatory workflow tools, Project rules, Token habits
 
 ### Community 11 - "py-merge/tests/test_hidden.py"
-Cohesion: 0.67
-Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4()
+Cohesion: 0.44
+Nodes (9): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_inner_shifts_after_a_long_one(), test_input_not_mutated() (+1 more)
 
 ### Community 12 - "Live Coding Gym"
 Cohesion: 0.25
@@ -610,156 +665,184 @@ Cohesion: 0.53
 Nodes (4): count_words(), test_basic(), test_empty(), test_mixed_case()
 
 ### Community 14 - "py-session/tests/test_hidden.py"
-Cohesion: 0.67
-Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4()
+Cohesion: 0.50
+Nodes (8): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_duplicate_timestamps_are_kept(), test_input_not_reordered()
 
 ### Community 15 - "prod-split/tests/test_hidden.py"
-Cohesion: 0.67
-Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4()
+Cohesion: 0.50
+Nodes (8): _close(), _ns(), test_bucket_boundary_is_strict(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_extremes_and_exact_buckets()
 
 ### Community 16 - "prod-debug/starter.py"
 Cohesion: 0.29
 Nodes (6): mean_score(), normalize(), Average of the scores, ignoring None. Empty or all-None -> None., The k feature names with the largest absolute weight; ties broken by name., Scale 'amount' to [0, 1] within the batch. Must NOT modify the input. If all…, top_features()
 
 ### Community 20 - "ai-chunk/tests/test_hidden.py"
-Cohesion: 0.67
-Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4()
+Cohesion: 0.44
+Nodes (9): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_partial_last_chunk_is_kept(), test_words_split_on_any_whitespace() (+1 more)
 
 ### Community 21 - "ai-json/tests/test_hidden.py"
-Cohesion: 0.67
-Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4()
+Cohesion: 0.44
+Nodes (9): _close(), _ns(), test_braces_but_not_json(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_multiline_object_in_fence() (+1 more)
 
 ### Community 22 - "compare_shadow"
 Cohesion: 0.14
-Nodes (23): call_with_retry(), Exception, TransientError, flaky(), test_base_delay(), test_exhausted_reraises_last_without_extra_sleep(), test_permanent_error_not_retried(), test_retries_with_exponential_backoff() (+15 more)
+Nodes (21): compare_shadow(), live(), shadow(), test_all_shadow_errors_gives_zero_rate(), test_any_shadow_exception_is_counted_not_raised(), test_diff_is_absolute_and_ranking_uses_it(), test_each_model_called_once_per_input(), test_empty_inputs() (+13 more)
 
 ### Community 28 - "Authoring protocol (applies to Tasks 8 to 19)"
 Cohesion: 0.06
 Nodes (30): Authoring protocol (applies to Tasks 8 to 19), File Structure, Global Constraints, Journey (fixed folder names and gates), Live Coding Gym Content Implementation Plan, Part 1: App extensions, Part 2: Shared dataset and migration, Part 3: Authoring (+22 more)
 
 ### Community 29 - "py-assign/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.42
+Nodes (9): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_distance_is_euclidean(), test_greedy_not_global_matching(), test_more_orders_than_couriers_and_input_untouched() (+1 more)
 
 ### Community 30 - "py-second/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.42
+Nodes (9): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_input_not_mutated(), test_negative_values(), test_second_highest_not_second_lowest() (+1 more)
 
 ### Community 32 - "py-topk/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.62
+Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_repeat_inside_one_order_counts_each_time()
 
 ### Community 33 - "py-window/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.47
+Nodes (8): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_same_minute_orders_all_count(), test_unsorted_input(), test_window_is_t_to_t_plus_59()
 
 ### Community 34 - "ai-retry/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.54
+Nodes (7): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_other_base_and_tries(), test_success_late_and_last_error_raised()
 
 ### Community 35 - "prod-events/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.54
+Nodes (7): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_many_duplicates_counted_each_time(), test_tie_breaks_by_event_id_not_status_or_arrival()
 
 ### Community 36 - "prod-validate/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.47
+Nodes (8): _close(), _ns(), test_boundaries_and_zero_are_valid(), test_check_1(), test_check_2(), test_check_3(), test_input_not_modified(), test_unconvertible_types_and_infinities()
 
 ### Community 42 - "dbg-avg/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.61
+Nodes (7): _close(), _ns(), test_average_is_not_floored_or_rounded(), test_cancelled_with_minutes_not_counted(), test_check_1(), test_check_2(), test_check_3()
 
 ### Community 43 - "st-auc/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.67
+Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_ties_mixed_with_unequal_class_sizes_and_unsorted_input()
 
 ### Community 44 - "ai-prf/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.56
+Nodes (8): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_no_flags_but_positives_exist(), test_precision_and_recall_differ(), test_score_equal_to_threshold_is_positive()
 
 ### Community 45 - "ai-psi/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.61
+Nodes (7): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_unequal_shift(), test_zero_bin_is_clamped_not_skipped()
 
 ### Community 46 - "ai-topk/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.54
+Nodes (7): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_cosine_not_dot_or_distance(), test_ties_broken_by_id()
 
 ### Community 47 - "ai-trim/tests/test_hidden.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_check_3()
+Cohesion: 0.38
+Nodes (10): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_input_not_modified(), test_no_system_message_and_empty(), test_only_a_leading_system_message_is_special() (+2 more)
 
 ### Community 48 - "extract_old_gym.js"
 Cohesion: 0.33
 Nodes (4): code, fs, html, out
 
 ### Community 49 - "py-avg/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.57
+Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_true_division_and_plain_mean(), test_zero_is_a_value_not_missing()
 
 ### Community 50 - "py-city/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.50
+Nodes (7): _close(), _ns(), test_check_1(), test_check_2(), test_city_with_only_cancelled_orders_is_absent(), test_rounded_to_two_decimals_exactly(), test_sums_several_orders_per_city()
 
 ### Community 51 - "py-latest/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.57
+Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_input_not_reordered(), test_latest_is_by_timestamp_not_position_or_status_text()
 
 ### Community 52 - "py-newret/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.67
+Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_repeated_customer_stays_returning()
 
 ### Community 53 - "prod-batch/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.57
+Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_inf_none_and_other_exceptions(), test_rate_all_good_all_bad_and_zero_fallback()
 
-### Community 54 - "prod-breaker/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+### Community 54 - "flaky"
+Cohesion: 0.28
+Nodes (15): call_with_retry(), Exception, TransientError, flaky(), test_backoff_keeps_doubling(), test_base_delay(), test_exhausted_reraises_last_without_extra_sleep(), test_last_transient_error_is_the_one_raised() (+7 more)
 
 ### Community 55 - "dbg-late/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.67
+Nodes (6): _close(), _ns(), test_all_late_is_one(), test_cancelled_orders_never_count_even_when_over_promise(), test_check_1(), test_check_2()
 
 ### Community 56 - "dbg-tags/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.57
+Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_each_order_keeps_its_own_tags(), test_ties_by_smaller_id_whatever_the_dict_order()
 
 ### Community 57 - "st-boot/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.54
+Nodes (7): _close(), _ns(), test_check_1(), test_check_2(), test_interval_follows_the_skew_of_the_resampled_means(), test_interval_is_a_95_percent_interval_of_the_bootstrap_means(), test_same_seed_same_interval_whatever_the_global_state()
 
 ### Community 58 - "st-ks/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.61
+Nodes (7): _close(), _ns(), test_check_1(), test_check_2(), test_gap_is_absolute_when_bads_score_lower(), test_tied_scores_are_evaluated_together(), test_unequal_group_sizes_use_shares_not_counts()
 
 ### Community 59 - "st-z/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.73
+Nodes (5): _close(), _ns(), test_check_1(), test_check_2(), test_unequal_sample_sizes_use_pooled_rate_weighted_by_n()
 
 ### Community 60 - "ai-eval/tests/test_hidden.py"
-Cohesion: 0.80
-Nodes (4): _close(), _ns(), test_check_1(), test_check_2()
+Cohesion: 0.67
+Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_gold_is_normalised_too(), test_overall_is_pooled_not_mean_of_categories()
 
 ### Community 61 - "fn"
-Cohesion: 0.23
-Nodes (11): retry(), retry(), predict_with_fallback(), score_batch(), fn(), test_all_good(), test_bad_row_does_not_sink_batch(), test_empty() (+3 more)
+Cohesion: 0.08
+Nodes (22): call_with_retry(), call_with_retry(), call_with_retry(), call_with_retry(), retry(), retry(), retry(), check_health() (+14 more)
 
 ### Community 64 - "st-meanstd/tests/test_hidden.py"
-Cohesion: 0.83
-Nodes (3): _close(), _ns(), test_check_1()
+Cohesion: 0.80
+Nodes (4): _close(), _ns(), test_check_1(), test_non_integer_mean_and_other_shapes()
+
+### Community 66 - "cb-brackets/tests/test_hidden.py"
+Cohesion: 0.67
+Nodes (3): parametrize, test_io(), test_no_crash()
+
+### Community 68 - "cb-longest/tests/test_hidden.py"
+Cohesion: 0.67
+Nodes (3): parametrize, test_io(), test_no_crash()
+
+### Community 69 - "cb-movavg/tests/test_hidden.py"
+Cohesion: 0.67
+Nodes (3): parametrize, test_io(), test_no_crash()
+
+### Community 70 - "cb-pairsum/tests/test_hidden.py"
+Cohesion: 0.67
+Nodes (3): parametrize, test_io(), test_no_crash()
+
+### Community 71 - "cb-rle/tests/test_hidden.py"
+Cohesion: 0.67
+Nodes (3): parametrize, test_io(), test_no_crash()
+
+### Community 72 - "cb-sumkeys/tests/test_hidden.py"
+Cohesion: 0.67
+Nodes (3): parametrize, test_io(), test_no_crash()
+
+### Community 73 - "cb-wordfreq/tests/test_hidden.py"
+Cohesion: 0.67
+Nodes (3): parametrize, test_io(), test_no_crash()
 
 ### Community 117 - "parse_config"
-Cohesion: 0.14
-Nodes (13): ConfigError, parse_config(), Exception, test_blank_name_and_unknown_keys(), test_bool_false_is_false(), test_bool_rejects_other_words_and_blank(), test_default_list_not_shared(), test_defaults() (+5 more)
+Cohesion: 0.12
+Nodes (18): ConfigError, parse_config(), Exception, test_blank_name_and_unknown_keys(), test_bool_false_is_false(), test_bool_rejects_other_words_and_blank(), test_default_list_not_shared(), test_defaults() (+10 more)
 
 ### Community 323 - "____"
 Cohesion: 0.05
 Nodes (19): ____, apply_n_times(), BankAccount, chunks(), common_keys(), count_vowels(), sort_versions(), Version (+11 more)
 
 ### Community 324 - "Counter"
-Cohesion: 0.22
-Nodes (6): Counter, test_add_and_count(), test_instances_are_separate(), test_missing_item_is_zero(), test_most_common_edges(), test_most_common_with_ties()
+Cohesion: 0.21
+Nodes (7): Counter, test_add_and_count(), test_instances_are_separate(), test_missing_item_is_zero(), test_most_common_edges(), test_most_common_with_ties(), test_reading_a_missing_item_does_not_add_it()
 
 ### Community 325 - "LRUCache"
 Cohesion: 0.24
@@ -770,8 +853,8 @@ Cohesion: 0.24
 Nodes (6): BankAccount, test_balance_read_only(), test_deposit_and_withdraw(), test_non_positive_amounts(), test_overdraft_raises_and_keeps_balance(), test_withdraw_whole_balance()
 
 ### Community 327 - "Stack"
-Cohesion: 0.23
-Nodes (5): Stack, test_empty_raises(), test_len_tracks_pushes_and_pops(), test_lifo(), test_peek_does_not_remove()
+Cohesion: 0.21
+Nodes (7): Stack, test_empty_raises(), test_falsy_items_are_ordinary_items(), test_len_tracks_pushes_and_pops(), test_lifo(), test_peek_does_not_remove(), test_stacks_are_independent()
 
 ### Community 328 - "Dicts and sets"
 Cohesion: 0.17
@@ -798,24 +881,24 @@ Cohesion: 0.18
 Nodes (10): Dates, Errors, files, JSON and dates, Files, Say it like this, The problem it solves, The smallest runnable example, Trap 1: the bare except, Trap 2: JSON does not round-trip everything (+2 more)
 
 ### Community 334 - "two_sum"
-Cohesion: 0.33
-Nodes (9): two_sum(), test_basic(), test_duplicates_and_negatives(), test_empty(), test_not_found(), test_same_position_not_twice(), test_smallest_j(), test_smallest_j_beats_smallest_i() (+1 more)
+Cohesion: 0.30
+Nodes (10): two_sum(), test_basic(), test_duplicates_and_negatives(), test_empty(), test_negative_numbers_as_second_value(), test_not_found(), test_same_position_not_twice(), test_smallest_j() (+2 more)
 
 ### Community 335 - "caesar"
 Cohesion: 0.36
 Nodes (8): caesar(), test_accented_unchanged(), test_basic(), test_big_shift(), test_keeps_other_chars(), test_negative(), test_upper_wrap_and_big_negative(), test_zero_and_empty()
 
 ### Community 336 - "chunks"
-Cohesion: 0.33
-Nodes (8): chunks(), parametrize, test_bad_n(), test_bad_n_with_empty_list(), test_basic(), test_empty(), test_exact_fit(), test_n_bigger_than_list()
+Cohesion: 0.31
+Nodes (9): chunks(), parametrize, test_bad_n(), test_bad_n_with_empty_list(), test_basic(), test_empty(), test_exact_fit(), test_input_list_not_modified() (+1 more)
 
 ### Community 337 - "rotate"
-Cohesion: 0.36
-Nodes (8): rotate(), test_basic(), test_empty(), test_input_unchanged(), test_k_larger_than_length(), test_negative(), test_negative_wraps(), test_zero()
+Cohesion: 0.33
+Nodes (9): rotate(), test_always_returns_a_new_list(), test_basic(), test_empty(), test_input_unchanged(), test_k_larger_than_length(), test_negative(), test_negative_wraps() (+1 more)
 
 ### Community 338 - "word_count_top"
-Cohesion: 0.36
-Nodes (8): word_count_top(), test_basic(), test_empty(), test_lowercases(), test_n_larger_than_distinct(), test_punctuation_is_not_stripped(), test_splits_on_any_whitespace(), test_ties_alphabetical()
+Cohesion: 0.33
+Nodes (9): word_count_top(), test_basic(), test_empty(), test_lowercases(), test_n_larger_than_distinct(), test_n_zero_returns_nothing(), test_punctuation_is_not_stripped(), test_splits_on_any_whitespace() (+1 more)
 
 ### Community 339 - "Lists and loops"
 Cohesion: 0.20
@@ -842,24 +925,24 @@ Cohesion: 0.44
 Nodes (7): sort_versions(), Version, test_compare(), test_empty_and_input_untouched(), test_field_names_and_order(), test_frozen(), test_sort()
 
 ### Community 345 - "py1-json-roundtrip/tests/test_hidden.py"
-Cohesion: 0.42
-Nodes (7): from_json(), to_json(), test_empty_dict(), test_invalid_returns_none(), test_nested_keys_sorted(), test_roundtrip(), test_sorted_compact()
+Cohesion: 0.33
+Nodes (10): from_json(), to_json(), test_empty_dict(), test_invalid_returns_none(), test_json_literals_parse(), test_nested_keys_sorted(), test_roundtrip(), test_sorted_compact() (+2 more)
 
 ### Community 346 - "running_sum"
-Cohesion: 0.39
-Nodes (7): running_sum(), test_basic(), test_empty(), test_floats(), test_input_unchanged(), test_negative(), test_single()
+Cohesion: 0.36
+Nodes (8): running_sum(), test_basic(), test_empty(), test_floats(), test_input_unchanged(), test_negative(), test_single(), test_zeros_keep_their_position()
 
 ### Community 347 - "pairs"
-Cohesion: 0.39
-Nodes (7): pairs(), test_basic(), test_duplicates_kept(), test_empty(), test_returns_tuples(), test_single(), test_two()
+Cohesion: 0.33
+Nodes (9): pairs(), test_basic(), test_duplicates_kept(), test_empty(), test_falsy_items_are_kept(), test_repeated_pairs_are_kept(), test_returns_tuples(), test_single() (+1 more)
 
 ### Community 348 - "first_unique"
 Cohesion: 0.39
 Nodes (7): first_unique(), test_basic(), test_case_matters(), test_empty(), test_none(), test_single(), test_unique_after_repeats()
 
 ### Community 349 - "is_valid_ip"
-Cohesion: 0.39
-Nodes (7): is_valid_ip(), test_bad_characters_and_empty(), test_leading_zero(), test_out_of_range(), test_signs_and_non_ascii_digits(), test_valid(), test_wrong_part_count()
+Cohesion: 0.30
+Nodes (10): is_valid_ip(), test_bad_characters_and_empty(), test_leading_zero(), test_longer_leading_zeros(), test_more_valid(), test_other_formats_rejected(), test_out_of_range(), test_signs_and_non_ascii_digits() (+2 more)
 
 ### Community 350 - "Joins explained"
 Cohesion: 0.22
@@ -870,40 +953,40 @@ Cohesion: 0.19
 Nodes (16): create_app(), main(), check_exercise(), check_kb(), Knowledge-base problems: broken articles, links to missing topics, exercises…, load_env(), Read KEY=VALUE lines into os.environ without overriding existing values., load_kb() (+8 more)
 
 ### Community 352 - "common_keys"
-Cohesion: 0.43
-Nodes (6): common_keys(), test_basic(), test_empty_list(), test_no_overlap(), test_single_dict(), test_three_dicts_sorted()
+Cohesion: 0.33
+Nodes (9): common_keys(), test_basic(), test_empty_list(), test_every_dict_must_have_the_key(), test_inputs_not_modified(), test_many_keys_sorted(), test_no_overlap(), test_single_dict() (+1 more)
 
 ### Community 353 - "compose"
 Cohesion: 0.43
 Nodes (6): compose(), test_empty_is_identity(), test_reusable_and_args_not_mutated(), test_right_to_left(), test_single(), test_three_functions()
 
 ### Community 354 - "compress_spaces"
-Cohesion: 0.43
-Nodes (6): compress_spaces(), test_already_clean(), test_basic(), test_long_runs(), test_only_spaces_and_empty(), test_other_whitespace_kept()
+Cohesion: 0.39
+Nodes (7): compress_spaces(), test_already_clean(), test_basic(), test_long_runs(), test_only_spaces_and_empty(), test_only_spaces_are_trimmed_at_the_edges(), test_other_whitespace_kept()
 
 ### Community 355 - "count_vowels"
 Cohesion: 0.43
 Nodes (6): count_vowels(), test_basic(), test_empty(), test_none_and_y(), test_repeats_and_mixed_case(), test_upper()
 
 ### Community 356 - "days_between"
-Cohesion: 0.39
-Nodes (6): days_between(), parametrize, test_backward_is_positive(), test_bad_input_raises(), test_forward(), test_same_day_and_leap_year()
+Cohesion: 0.33
+Nodes (8): days_between(), parametrize, test_backward_is_positive(), test_bad_input_raises(), test_century_leap_rules(), test_forward(), test_long_span_and_invalid_leap_day(), test_same_day_and_leap_year()
 
 ### Community 357 - "group_by_length"
 Cohesion: 0.43
 Nodes (6): group_by_length(), test_basic(), test_duplicates_kept(), test_empty(), test_empty_string_has_length_zero(), test_input_order_kept()
 
 ### Community 358 - "is_palindrome"
-Cohesion: 0.43
-Nodes (6): is_palindrome(), test_case(), test_digits_are_ignored(), test_empty_and_no_letters(), test_not_palindrome(), test_sentence()
+Cohesion: 0.36
+Nodes (8): is_palindrome(), test_case(), test_digits_are_ignored(), test_empty_and_no_letters(), test_inner_letters_must_match(), test_non_ascii_letters_count(), test_not_palindrome(), test_sentence()
 
 ### Community 359 - "safe_int"
-Cohesion: 0.43
-Nodes (6): safe_int(), test_bad_text_gives_default(), test_floats(), test_int_passes_through(), test_none_gives_default(), test_strings()
+Cohesion: 0.33
+Nodes (9): safe_int(), test_bad_text_gives_default(), test_floats(), test_int_passes_through(), test_large_values_are_exact(), test_near_whole_float_is_not_whole(), test_none_gives_default(), test_strings() (+1 more)
 
 ### Community 360 - "set_diff_report"
-Cohesion: 0.43
-Nodes (6): set_diff_report(), test_basic(), test_empty(), test_identical(), test_many_items_come_back_sorted(), test_sorted_and_deduplicated()
+Cohesion: 0.39
+Nodes (7): set_diff_report(), test_basic(), test_duplicates_removed_in_every_list(), test_empty(), test_identical(), test_many_items_come_back_sorted(), test_sorted_and_deduplicated()
 
 ### Community 361 - "rank"
 Cohesion: 0.43
@@ -914,20 +997,20 @@ Cohesion: 0.43
 Nodes (6): title_case(), test_apostrophe_and_edge_spaces(), test_basic(), test_empty(), test_keeps_spaces(), test_single_letter_words()
 
 ### Community 363 - "anagram_groups"
-Cohesion: 0.43
-Nodes (6): anagram_groups(), test_basic(), test_duplicates_kept(), test_empty(), test_single_and_empty_word(), test_sorted_by_first_word_not_by_key()
+Cohesion: 0.36
+Nodes (8): anagram_groups(), test_basic(), test_counts_matter_not_just_letters(), test_duplicates_kept(), test_empty(), test_groups_not_ordered_by_size(), test_single_and_empty_word(), test_sorted_by_first_word_not_by_key()
 
-### Community 364 - "first_index"
-Cohesion: 0.43
-Nodes (6): first_index(), test_basic(), test_duplicates_first(), test_empty_and_single(), test_ends(), test_missing()
+### Community 364 - "rt-binary-search/tests/test_hidden.py"
+Cohesion: 0.18
+Nodes (11): first_index(), _C, _comparisons(), test_basic(), test_duplicates_first(), test_empty_and_single(), test_ends(), test_exhaustive_small_lists() (+3 more)
 
 ### Community 365 - "rotate"
-Cohesion: 0.43
-Nodes (6): rotate(), test_1x1_and_empty(), test_2x2(), test_3x3(), test_input_not_changed(), test_returns_lists()
+Cohesion: 0.36
+Nodes (8): rotate(), test_1x1_and_empty(), test_2x2(), test_3x3(), test_4x4_clockwise(), test_input_not_changed(), test_result_is_a_new_matrix(), test_returns_lists()
 
 ### Community 366 - "top_k"
-Cohesion: 0.43
-Nodes (6): top_k(), test_basic(), test_empty_and_zero(), test_k_too_big(), test_ties_all_equal(), test_ties_by_first_appearance()
+Cohesion: 0.39
+Nodes (7): top_k(), test_basic(), test_empty_and_zero(), test_k_too_big(), test_ties_all_equal(), test_ties_by_first_appearance(), test_ties_first_appearance_not_last()
 
 ### Community 367 - "Clarifying questions"
 Cohesion: 0.25
@@ -958,76 +1041,76 @@ Cohesion: 0.48
 Nodes (5): apply_n_times(), test_call_count(), test_double(), test_strings(), test_zero_returns_input_without_calls()
 
 ### Community 377 - "flatten"
-Cohesion: 0.48
-Nodes (5): flatten(), test_basic(), test_does_not_change_input(), test_empty(), test_one_level_only()
+Cohesion: 0.39
+Nodes (7): flatten(), test_basic(), test_does_not_change_input(), test_empty(), test_keeps_duplicates_and_order(), test_keeps_falsy_items(), test_one_level_only()
 
 ### Community 378 - "invert_dict"
-Cohesion: 0.48
-Nodes (5): invert_dict(), test_all_unique(), test_empty(), test_keys_sorted(), test_repeated_values()
+Cohesion: 0.43
+Nodes (6): invert_dict(), test_all_unique(), test_empty(), test_every_group_sorted(), test_keys_sorted(), test_repeated_values()
 
 ### Community 379 - "merge_dicts_sum"
-Cohesion: 0.48
-Nodes (5): merge_dicts_sum(), test_basic(), test_empty_list_and_empty_dicts(), test_input_not_changed(), test_many_dicts()
+Cohesion: 0.36
+Nodes (8): merge_dicts_sum(), test_basic(), test_empty_list_and_empty_dicts(), test_floats(), test_input_not_changed(), test_many_dicts(), test_zero_and_negative_totals_kept(), test_zero_values_keep_their_key()
 
 ### Community 380 - "parse_csv_line"
-Cohesion: 0.48
-Nodes (5): parse_csv_line(), test_empty_fields(), test_empty_line(), test_plain(), test_quoted_comma()
+Cohesion: 0.36
+Nodes (8): parse_csv_line(), test_doubled_quote_is_literal_quote(), test_empty_fields(), test_empty_line(), test_plain(), test_quoted_comma(), test_spaces_are_kept(), test_trailing_empty_field_kept()
 
 ### Community 381 - "reverse_words"
 Cohesion: 0.48
 Nodes (5): reverse_words(), test_basic(), test_empty(), test_extra_spaces(), test_single_word()
 
 ### Community 385 - "unique"
-Cohesion: 0.48
-Nodes (5): unique(), test_already_unique(), test_basic(), test_empty(), test_strings_and_order()
+Cohesion: 0.43
+Nodes (6): unique(), test_already_unique(), test_basic(), test_empty(), test_falsy_items_are_kept(), test_strings_and_order()
 
 ### Community 386 - "parse_logs"
-Cohesion: 0.48
-Nodes (5): parse_logs(), test_basic(), test_empty(), test_malformed_skipped(), test_message_keeps_spaces()
+Cohesion: 0.36
+Nodes (8): parse_logs(), test_basic(), test_empty(), test_error_messages_keep_order_and_duplicates(), test_malformed_skipped(), test_message_keeps_spaces(), test_message_spacing_kept(), test_only_level_field_decides_error()
 
 ### Community 387 - "roman_to_int"
-Cohesion: 0.48
-Nodes (5): roman_to_int(), test_empty(), test_long(), test_simple(), test_subtractive()
+Cohesion: 0.36
+Nodes (8): roman_to_int(), test_all_values_1_to_3999(), test_empty(), test_every_subtractive_pair(), test_long(), test_simple(), test_subtractive(), _to_roman()
 
-### Community 773 - "pm-ttl-cache/tests/test_hidden.py"
-Cohesion: 0.17
-Nodes (12): TTLCache, Clock, make(), test_evicts_oldest_when_full(), test_expired_entries_are_dropped_before_evicting_live_ones(), test_expires_at_exactly_ttl(), test_get_does_not_refresh_age(), test_none_value_is_a_hit_and_bad_size() (+4 more)
+### Community 773 - "port_float.py"
+Cohesion: 0.22
+Nodes (3): ConfigError, parse_config(), Exception
 
 ### Community 774 - "TokenBucket"
-Cohesion: 0.25
-Nodes (11): TokenBucket, Clock, test_bad_arguments(), test_burst_then_deny(), test_clock_going_backwards(), test_cost_above_capacity_never_allowed(), test_cost_needs_only_that_many_tokens(), test_denied_call_consumes_nothing() (+3 more)
+Cohesion: 0.22
+Nodes (15): TokenBucket, Clock, test_bad_arguments(), test_burst_then_deny(), test_clock_going_backwards(), test_cost_above_capacity_never_allowed(), test_cost_needs_only_that_many_tokens(), test_denied_call_consumes_nothing() (+7 more)
 
 ### Community 775 - "BoundedQueue"
-Cohesion: 0.19
-Nodes (10): BoundedQueue, parametrize, test_bad_args(), test_drop_oldest(), test_empty_get_raises(), test_fifo_order(), test_never_above_capacity_and_counts(), test_none_is_a_valid_item() (+2 more)
+Cohesion: 0.16
+Nodes (14): BoundedQueue, parametrize, test_bad_args(), test_default_policy_is_drop_oldest(), test_drop_oldest(), test_drop_oldest_keeps_fifo_across_many_drops(), test_empty_get_raises(), test_falsy_items_are_ordinary_items() (+6 more)
 
 ### Community 776 - "check"
-Cohesion: 0.42
-Nodes (8): check(), test_duplicate_exercise_id_is_reported(), test_missing_say_and_hint_are_reported(), test_sample_content_is_clean(), test_starter_that_already_passes_is_reported(), test_tests_kind_checks(), test_wrong_reference_solution_is_reported(), test_wrong_solution_that_passes_is_reported()
+Cohesion: 0.38
+Nodes (9): check(), test_duplicate_exercise_id_is_reported(), test_missing_say_and_hint_are_reported(), test_sample_content_is_clean(), test_sql_wrong_and_alt_queries_are_checked(), test_starter_that_already_passes_is_reported(), test_tests_kind_checks(), test_wrong_reference_solution_is_reported() (+1 more)
 
 ### Community 777 - "DriftAlert"
 Cohesion: 0.29
 Nodes (10): DriftAlert, feed(), test_bad_thresholds(), test_boundaries_do_not_change_state(), test_equal_thresholds_allowed(), test_no_flapping_inside_band(), test_raise_again_after_clear(), test_raise_and_clear() (+2 more)
 
 ### Community 778 - "Clock"
-Cohesion: 0.33
-Nodes (9): process_until(), Clock, test_all_done_before_deadline(), test_boundary_is_exclusive(), test_deadline_already_passed(), test_empty_items(), test_handler_error_propagates(), test_input_not_modified_and_works_on_iterables() (+1 more)
+Cohesion: 0.29
+Nodes (12): process_until(), Clock, test_all_done_before_deadline(), test_boundary_is_exclusive(), test_clock_consulted_before_each_item(), test_deadline_already_passed(), test_empty_items(), test_falsy_results_are_kept() (+4 more)
 
 ### Community 779 - "rb-safe-metrics/tests/test_hidden.py"
-Cohesion: 0.29
-Nodes (11): _ok(), safe_mean(), safe_rate(), test_mean_basic(), test_mean_empty_and_all_invalid(), test_mean_keeps_zeros(), test_mean_never_returns_nan(), test_mean_skips_none_and_nan() (+3 more)
+Cohesion: 0.24
+Nodes (14): _ok(), safe_mean(), safe_rate(), test_mean_all_zeros_and_negatives_and_fractions(), test_mean_basic(), test_mean_does_not_modify_input(), test_mean_empty_and_all_invalid(), test_mean_keeps_zeros() (+6 more)
 
 ### Community 780 - "find_skew"
-Cohesion: 0.28
-Nodes (11): find_skew(), _is_null(), _is_num(), test_empty_inputs(), test_identical_is_clean(), test_missing_features_on_either_side(), test_non_numeric_and_bool(), test_null_handling() (+3 more)
+Cohesion: 0.22
+Nodes (15): find_skew(), _is_null(), _is_num(), test_empty_inputs(), test_identical_is_clean(), test_missing_features_on_either_side(), test_mixed_reasons_sorted_by_name(), test_non_numeric_and_bool() (+7 more)
 
 ### Community 781 - "pm-timeout-fallback/tests/test_hidden.py"
-Cohesion: 0.37
-Nodes (9): predict_with_fallback(), Clock, make_model(), test_exactly_at_deadline_is_ok(), test_exception_uses_fallback(), test_falsy_results_are_kept(), test_fast_call(), test_slow_and_raising_is_error() (+1 more)
+Cohesion: 0.35
+Nodes (11): predict_with_fallback(), Clock, make_model(), test_any_exception_type_falls_back_once(), test_exactly_at_deadline_is_ok(), test_exception_uses_fallback(), test_falsy_fallback_is_returned_as_is(), test_falsy_results_are_kept() (+3 more)
 
 ### Community 782 - "mf-train-serve-skew/tests/test_hidden.py"
-Cohesion: 0.29
-Nodes (11): Online version for one row. Must return exactly what train_features returns for…, Reference implementation used at training time. Do not change it. amount: a…, serve_features(), train_features(), check(), test_category_is_cleaned(), test_log1p_not_log(), test_missing_amount() (+3 more)
+Cohesion: 0.28
+Nodes (13): Online version for one row. Must return exactly what train_features returns for…, Reference implementation used at training time. Do not change it. amount: a…, serve_features(), train_features(), check(), test_category_is_cleaned(), test_log1p_not_log(), test_missing_amount() (+5 more)
 
 ### Community 783 - "Knowledge-base topics"
 Cohesion: 0.17
@@ -1038,52 +1121,52 @@ Cohesion: 0.27
 Nodes (11): test_migrate_does_not_overwrite_existing_work(), test_migrate_writes_a_checkable_journey(), checks_tests(), io_tests(), main(), migrate(), One-off: convert tools/old_gym.json (export of the old single-file gym) into…, Old behaviour: exec the submission, then the drill's setup code, in one… (+3 more)
 
 ### Community 785 - "rb-chunked-stream/tests/test_hidden.py"
-Cohesion: 0.32
-Nodes (10): process_stream(), bad_on_three(), double(), test_bad_chunk_size(), test_does_not_stop_and_keeps_global_index(), test_empty_input(), test_happy_path_and_batch_sizes(), test_is_lazy() (+2 more)
+Cohesion: 0.27
+Nodes (13): process_stream(), bad_on_three(), double(), test_bad_chunk_size(), test_bad_chunk_size_even_for_empty_input(), test_does_not_stop_and_keeps_global_index(), test_empty_input(), test_error_message_keeps_exception_text() (+5 more)
 
 ### Community 786 - "sample_ids"
-Cohesion: 0.30
-Nodes (10): sample_ids(), test_bad_k(), test_different_seeds_differ(), test_does_not_touch_global_state(), test_duplicate_values_picked_by_position(), test_edges(), test_independent_of_global_random_use(), test_input_not_modified() (+2 more)
+Cohesion: 0.25
+Nodes (13): sample_ids(), test_bad_k(), test_different_seeds_differ(), test_does_not_touch_global_state(), test_duplicate_values_picked_by_position(), test_edges(), test_independent_of_global_random_use(), test_input_not_modified() (+5 more)
 
 ### Community 787 - "assign"
-Cohesion: 0.27
-Nodes (9): assign(), parametrize, test_bad_weights(), test_even_split(), test_experiments_independent(), test_returns_known_variant(), test_sticky(), test_weights_respected() (+1 more)
+Cohesion: 0.22
+Nodes (13): assign(), parametrize, test_bad_weights(), test_even_split(), test_experiments_independent(), test_fractional_weights(), test_many_equal_variants_each_get_their_share(), test_returns_known_variant() (+5 more)
 
-### Community 788 - "Handler"
-Cohesion: 0.35
-Nodes (8): run_batch(), Handler, test_crash_on_first_item_keeps_checkpoint_at_zero(), test_crash_then_resume(), test_empty_items(), test_finished_items_not_reprocessed(), test_full_run(), test_resume_from_existing_checkpoint()
+### Community 788 - "run_batch"
+Cohesion: 0.29
+Nodes (11): run_batch(), Handler, test_crash_on_first_item_keeps_checkpoint_at_zero(), test_crash_then_resume(), test_duplicate_items_are_each_processed_once(), test_empty_items(), test_falsy_results_are_recorded(), test_finished_items_not_reprocessed() (+3 more)
 
 ### Community 789 - "drift_alarm"
-Cohesion: 0.30
-Nodes (10): drift_alarm(), test_both_reasons_in_order(), test_empty_windows_never_raise(), test_exactly_on_limit_is_not_alarm(), test_mean_shift(), test_no_drift(), test_std_blowup(), test_std_collapse_and_custom_k() (+2 more)
+Cohesion: 0.22
+Nodes (15): drift_alarm(), test_both_reasons_in_order(), test_empty_windows_never_raise(), test_exactly_on_limit_is_not_alarm(), test_mean_drop_alarms_too(), test_mean_shift(), test_mean_uses_k_too(), test_no_drift() (+7 more)
 
 ### Community 790 - "is_expired"
 Cohesion: 0.26
 Nodes (10): is_expired(), True if now is at or after expires_at. Naive datetimes are treated as UTC.…, _utc(), fixed_local_zone(), fixture, test_aware_other_zone_is_converted(), test_both_naive(), test_inputs_unchanged() (+2 more)
 
 ### Community 791 - "final_state"
-Cohesion: 0.44
-Nodes (9): final_state(), ev(), test_duplicate_id_keeps_first_even_if_different(), test_empty_and_input_not_modified(), test_exact_duplicate_ignored(), test_in_order(), test_out_of_order_uses_event_time(), test_tie_between_distinct_events() (+1 more)
+Cohesion: 0.34
+Nodes (13): final_state(), ev(), test_duplicate_id_keeps_first_even_if_different(), test_duplicate_of_older_event_does_not_win_late(), test_empty_and_input_not_modified(), test_exact_duplicate_ignored(), test_in_order(), test_negative_and_zero_timestamps() (+5 more)
 
 ### Community 792 - "percentiles"
-Cohesion: 0.33
-Nodes (9): percentiles(), test_empty(), test_one_to_hundred(), test_one_to_ten(), test_outlier_drives_tail(), test_rank_is_ceiling_not_round(), test_returns_observed_values(), test_single_value() (+1 more)
+Cohesion: 0.28
+Nodes (11): percentiles(), test_empty(), test_nearest_rank_for_every_small_n(), test_one_to_hundred(), test_one_to_ten(), test_outlier_drives_tail(), test_rank_is_ceiling_not_round(), test_returns_observed_values() (+3 more)
 
 ### Community 793 - "latest_version"
-Cohesion: 0.33
-Nodes (9): latest_version(), _parse(), test_filters_by_name_and_stage(), test_four_part_versions(), test_not_found_raises_lookup_error(), test_only_bad_versions_raises(), test_padding_tie_and_bad_versions(), test_semantic_not_string_order() (+1 more)
+Cohesion: 0.25
+Nodes (12): latest_version(), _parse(), parametrize, test_filters_by_name_and_stage(), test_first_of_equal_versions_even_when_later_is_better_elsewhere(), test_four_part_versions(), test_malformed_versions_are_skipped_not_guessed(), test_not_found_raises_lookup_error() (+4 more)
 
 ### Community 794 - "calibration_bins"
-Cohesion: 0.40
-Nodes (9): calibration_bins(), _check(), test_bad_input_raises(), test_bin_edge_goes_up(), test_empty_bins_skipped(), test_empty_input(), test_float_product_rule_and_unsorted_input(), test_one_goes_to_last_bin() (+1 more)
+Cohesion: 0.33
+Nodes (12): calibration_bins(), _check(), test_bad_input_raises(), test_bin_edge_goes_up(), test_bin_is_floor_not_round(), test_default_is_ten_bins(), test_empty_bins_skipped(), test_empty_input() (+4 more)
 
 ### Community 795 - "find_leaky_features"
-Cohesion: 0.33
-Nodes (9): _corr(), find_leaky_features(), test_constant_feature_not_leaky(), test_constant_labels_never_leaky(), test_empty_features(), test_exact_copy_is_leaky(), test_length_mismatch_raises(), test_negative_correlation_counts() (+1 more)
+Cohesion: 0.26
+Nodes (12): _corr(), find_leaky_features(), test_constant_feature_not_leaky(), test_constant_labels_never_leaky(), test_empty_features(), test_every_feature_length_is_checked(), test_exact_copy_is_leaky(), test_exactly_at_threshold_is_not_leaky() (+4 more)
 
 ### Community 796 - "rolling_mean"
-Cohesion: 0.31
-Nodes (9): Rolling mean feature. Output i is the mean of the `window` values that end at…, rolling_mean(), test_bad_window(), test_basic(), test_empty(), test_first_full_window_is_not_skipped(), test_includes_current_value(), test_window_larger_than_input() (+1 more)
+Cohesion: 0.29
+Nodes (10): Rolling mean feature. Output i is the mean of the `window` values that end at…, rolling_mean(), test_bad_window(), test_basic(), test_empty(), test_first_full_window_is_not_skipped(), test_includes_current_value(), test_negative_window_raises() (+2 more)
 
 ### Community 797 - "daily_counts"
 Cohesion: 0.31
@@ -1098,36 +1181,36 @@ Cohesion: 0.36
 Nodes (9): BaseModel, CardBody, MockAnswers, MockSubmit, QuizBody, ReviewBody, RunBody, SubmitBody (+1 more)
 
 ### Community 800 - "rb-dataclass-contract/tests/test_hidden.py"
-Cohesion: 0.33
-Nodes (7): Order, msg(), test_all_problems_reported_in_order(), test_boundaries_valid(), test_nan_and_bool_rejected(), test_single_problems(), test_valid_order()
+Cohesion: 0.27
+Nodes (10): Order, msg(), test_all_problems_reported_in_order(), test_boundaries_valid(), test_nan_and_bool_rejected(), test_ranges_and_pair_ordering(), test_single_problems(), test_status_is_exact_match() (+2 more)
 
 ### Community 801 - "IdempotentRunner"
-Cohesion: 0.31
-Nodes (6): IdempotentRunner, test_failure_is_remembered(), test_key_not_payload_identifies_request(), test_none_result_is_stored(), test_other_key_still_works_after_failure(), test_runs_once_per_key()
+Cohesion: 0.24
+Nodes (10): IdempotentRunner, test_failure_is_remembered(), test_falsy_keys_are_valid_keys(), test_falsy_results_are_stored(), test_key_not_payload_identifies_request(), test_none_result_is_stored(), test_other_key_still_works_after_failure(), test_repeat_after_failure_ignores_new_payload_and_does_not_call() (+2 more)
 
 ### Community 802 - "rank"
-Cohesion: 0.40
-Nodes (8): rank(), ids(), test_empty(), test_example(), test_full_ties_keep_input_order(), test_input_not_modified(), test_none_last_and_ties_by_id(), test_zero_score_is_not_none()
+Cohesion: 0.30
+Nodes (12): rank(), ids(), test_empty(), test_example(), test_fractional_scores_are_not_rounded(), test_full_ties_keep_input_order(), test_input_not_modified(), test_mixed_ties_everything_at_once() (+4 more)
 
 ### Community 803 - "assign_arm"
-Cohesion: 0.36
-Nodes (8): assign_arm(), test_about_five_percent(), test_empty_id_and_return_values(), test_only_adds_users_when_percent_grows(), test_percent_is_respected(), test_salt_reshuffles(), test_sticky(), test_zero_and_hundred()
+Cohesion: 0.27
+Nodes (10): assign_arm(), test_about_five_percent(), test_default_salt_is_canary_v1(), test_empty_id_and_return_values(), test_only_adds_users_when_percent_grows(), test_percent_is_respected(), test_salt_reshuffles(), test_share_even_at_other_percents() (+2 more)
 
 ### Community 804 - "validate_request"
-Cohesion: 0.36
-Nodes (8): validate_request(), test_bad_type_and_bool_is_not_a_number(), test_empty_request_and_inputs_not_mutated(), test_happy_path_drops_unknown_and_converts_int_to_float(), test_missing_required_and_optional(), test_range_is_inclusive_and_nan_fails(), test_reports_all_problems_and_keeps_good_fields(), test_zero_and_empty_string_are_values_not_missing()
+Cohesion: 0.26
+Nodes (12): validate_request(), test_bad_type_and_bool_is_not_a_number(), test_bool_is_not_a_float_either(), test_empty_request_and_inputs_not_mutated(), test_happy_path_drops_unknown_and_converts_int_to_float(), test_min_and_max_are_independent_and_ignored_for_str(), test_missing_required_and_optional(), test_nan_is_out_of_range_even_without_bounds() (+4 more)
 
 ### Community 805 - "parse_event"
-Cohesion: 0.36
-Nodes (8): parse_event(), parametrize, test_extra_keys_dropped(), test_input_not_mutated(), test_rejected(), test_v1_rounding(), test_v1_upgrade(), test_v2_passthrough()
+Cohesion: 0.31
+Nodes (11): parse_event(), parametrize, test_extra_keys_dropped(), test_input_not_mutated(), test_more_rejected(), test_rejected(), test_v1_extra_keys_dropped_too(), test_v1_negative_amounts_round_to_nearest() (+3 more)
 
 ### Community 806 - "check_staleness"
-Cohesion: 0.36
-Nodes (8): check_staleness(), datetime, test_data_stale(), test_exactly_at_limit_is_ok(), test_fractional_age_counts(), test_fresh(), test_future_timestamp_raises(), test_model_stale_data_fresh()
+Cohesion: 0.30
+Nodes (10): check_staleness(), datetime, test_ages_keep_the_fraction(), test_data_stale(), test_each_age_uses_its_own_limit(), test_exactly_at_limit_is_ok(), test_fractional_age_counts(), test_fresh() (+2 more)
 
 ### Community 807 - "chunk"
-Cohesion: 0.33
-Nodes (8): chunk(), Split items into consecutive lists of at most `size` items. chunk([1, 2, 3, 4,…, test_bad_size(), test_empty(), test_exact_multiple(), test_input_unchanged(), test_remainder(), test_smaller_than_size()
+Cohesion: 0.29
+Nodes (10): chunk(), Split items into consecutive lists of at most `size` items. chunk([1, 2, 3, 4,…, test_bad_size(), test_bad_size_raises_even_for_empty_input(), test_empty(), test_exact_multiple(), test_input_unchanged(), test_remainder() (+2 more)
 
 ### Community 808 - "parse_quantity"
 Cohesion: 0.31
@@ -1137,29 +1220,29 @@ Nodes (8): parse_quantity(), Parse an item count. None or blank -> 0. Whole-numb
 Cohesion: 0.20
 Nodes (9): Pensando em voz alta, Portuguese phrase bank, Say it like this, Sobre o uso de IA, Sobre pontos fracos, The problem it solves, The six steps in Portuguese, The smallest runnable example (+1 more)
 
-### Community 810 - "atomic_write_json"
-Cohesion: 0.50
-Nodes (7): atomic_write_json(), _dir(), test_creates_file(), test_empty_object(), test_failure_keeps_old_file_and_no_temp(), test_failure_without_existing_file(), test_overwrites_existing()
+### Community 810 - "rb-atomic-write/tests/test_hidden.py"
+Cohesion: 0.36
+Nodes (12): atomic_write_json(), _dir(), _spy_replace(), test_creates_file(), test_empty_object(), test_failure_in_replace_step_leaves_no_temp(), test_failure_keeps_old_file_and_no_temp(), test_failure_without_existing_file() (+4 more)
 
 ### Community 811 - "make_record"
-Cohesion: 0.39
-Nodes (7): make_record(), test_bad_level_and_event(), test_basic(), test_fields_not_modified_and_new_dict(), test_none_fields_and_clock_called_once(), test_real_values_win_when_no_collision(), test_reserved_keys_rejected()
+Cohesion: 0.28
+Nodes (11): make_record(), test_bad_level_and_event(), test_basic(), test_falsy_values_and_zero_clock_are_kept(), test_fields_not_modified_and_new_dict(), test_key_order_is_level_event_ts_then_fields(), test_none_fields_and_clock_called_once(), test_only_exact_reserved_names_are_rejected() (+3 more)
 
 ### Community 812 - "Monitoring basics"
 Cohesion: 0.22
 Nodes (8): Alert thresholds, Data drift and prediction drift, Latency percentiles, Monitoring basics, Say it like this, The problem it solves, The three traps, What to log
 
 ### Community 813 - "dedupe_events"
-Cohesion: 0.39
-Nodes (7): dedupe_events(), test_empty(), test_input_not_modified(), test_keeps_first_and_counts(), test_no_duplicates(), test_order_preserved(), test_same_id_different_type_is_different()
+Cohesion: 0.36
+Nodes (8): dedupe_events(), test_empty(), test_falsy_ids_are_deduped_too(), test_input_not_modified(), test_keeps_first_and_counts(), test_no_duplicates(), test_order_preserved(), test_same_id_different_type_is_different()
 
 ### Community 814 - "binary_metrics"
 Cohesion: 0.39
 Nodes (7): binary_metrics(), test_always_negative_on_imbalanced(), test_empty(), test_f1_is_harmonic_mean(), test_length_mismatch_raises(), test_mixed(), test_no_positives_in_truth()
 
 ### Community 815 - "guard_scores"
-Cohesion: 0.39
-Nodes (7): guard_scores(), test_all_good(), test_bool_is_bad(), test_custom_fallback_and_string(), test_empty(), test_input_not_modified(), test_nan_inf_none()
+Cohesion: 0.33
+Nodes (9): guard_scores(), test_all_good(), test_bool_is_bad(), test_custom_fallback_and_string(), test_empty(), test_input_not_modified(), test_nan_inf_none(), test_numeric_strings_are_still_bad() (+1 more)
 
 ### Community 816 - "Debugging routine"
 Cohesion: 0.22
@@ -1170,8 +1253,8 @@ Cohesion: 0.44
 Nodes (7): prepare(), Split, then scale features using statistics from the train rows only. Returns…, _data(), test_deterministic_and_seed_matters(), test_scaler_fit_on_train_only(), test_split_sizes_and_labels(), test_train_standardised_and_test_uses_train_stats()
 
 ### Community 818 - "mean_valid"
-Cohesion: 0.36
-Nodes (7): mean_valid(), Mean of the numbers in values, ignoring None and NaN. Zero counts as a valid…, test_all_invalid(), test_empty(), test_ignores_nan_and_none(), test_plain(), test_zero_counts()
+Cohesion: 0.33
+Nodes (8): mean_valid(), Mean of the numbers in values, ignoring None and NaN. Zero counts as a valid…, test_all_invalid(), test_empty(), test_ignores_nan_and_none(), test_plain(), test_zero_and_negative_values_and_zero_mean(), test_zero_counts()
 
 ### Community 819 - "Explanation structure"
 Cohesion: 0.22
@@ -1181,9 +1264,9 @@ Nodes (8): A full worked example, Explanation structure, Say it like this, The p
 Cohesion: 0.22
 Nodes (8): Complexity cheatsheet, Python structures, Say it like this, SQL, The problem it solves, The smallest runnable example, The three traps people hit, Useful rules of thumb
 
-### Community 821 - "test_content_extras.py"
-Cohesion: 0.42
-Nodes (9): build(), load_one(), One step with one exercise 'e1'. files maps path-under-exercise -> text., test_exercises_sort_by_order_then_id(), test_extras_and_wrong_solutions(), test_files_are_resolved_and_must_exist(), test_quiz_loads_and_rejects_bad_answer_index(), test_sql_seed_file() (+1 more)
+### Community 821 - "port_upper_exclusive.py"
+Cohesion: 0.22
+Nodes (3): ConfigError, parse_config(), Exception
 
 ### Community 822 - "Determinism"
 Cohesion: 0.25
@@ -1210,8 +1293,8 @@ Cohesion: 0.25
 Nodes (7): Data contracts, Say it like this, The problem it solves, The smallest runnable example, The three traps, Versioning, What to do on violation
 
 ### Community 828 - "fill_features"
-Cohesion: 0.43
-Nodes (6): fill_features(), test_absent_and_none(), test_empty_row_and_no_mutation(), test_extra_keys_kept(), test_nothing_missing(), test_zero_and_false_are_real()
+Cohesion: 0.36
+Nodes (8): fill_features(), test_absent_and_none(), test_defaults_not_modified(), test_empty_row_and_no_mutation(), test_empty_string_is_a_real_value(), test_extra_keys_kept(), test_nothing_missing(), test_zero_and_false_are_real()
 
 ### Community 829 - "clip_probs"
 Cohesion: 0.43
@@ -1266,16 +1349,16 @@ Cohesion: 0.67
 Nodes (3): daily_counts(), datetime, Count events per local calendar day in the timezone `tz_name`. Aware timestamps…
 
 ### Community 1212 - "db.py"
-Cohesion: 0.07
-Nodes (48): create_mock(), finished_mocks(), get_attempt(), get_mock(), get_review(), _insert(), latest_review(), passed_attempts() (+40 more)
+Cohesion: 0.06
+Nodes (56): _close(), _mk(), _ns(), test_check_1(), test_check_2(), test_cooldown_boundary_and_exact_threshold(), test_failed_trial_restarts_full_cooldown(), test_success_resets_failure_count() (+48 more)
 
 ### Community 1213 - "iqr_outliers"
-Cohesion: 0.36
-Nodes (10): iqr_outliers(), DataFrame, small(), test_input_untouched(), test_low_and_high_outliers_sorted(), test_matches_reference_on_real_data(), test_missing_values_do_not_shift_quartiles(), test_missing_values_ignored_and_never_flagged() (+2 more)
+Cohesion: 0.32
+Nodes (12): iqr_outliers(), DataFrame, small(), test_ids_sorted_when_rows_are_not(), test_input_untouched(), test_low_and_high_outliers_sorted(), test_matches_reference_on_real_data(), test_missing_values_do_not_shift_quartiles() (+4 more)
 
 ### Community 1214 - "predict_with_fallback"
-Cohesion: 0.35
-Nodes (10): predict_with_fallback(), boom(), test_both_fail_use_default(), test_default_returned_as_is_even_none(), test_exception_falls_to_rule(), test_features_passed_through(), test_later_stage_not_called_when_earlier_answers(), test_model_answers() (+2 more)
+Cohesion: 0.30
+Nodes (12): predict_with_fallback(), boom(), test_any_exception_type_is_caught(), test_both_fail_use_default(), test_default_returned_as_is_even_none(), test_exception_falls_to_rule(), test_features_passed_through(), test_later_stage_not_called_when_earlier_answers() (+4 more)
 
 ### Community 1215 - "tool-ci-cd-ml.md"
 Cohesion: 0.40
@@ -1286,20 +1369,20 @@ Cohesion: 0.35
 Nodes (9): city_dashboard(), DataFrame, check(), reference(), small(), test_city_without_late_orders_has_nan_avg_late(), test_inputs_not_modified(), test_matches_reference_on_real_data() (+1 more)
 
 ### Community 1217 - "days_since_previous"
-Cohesion: 0.31
-Nodes (9): days_since_previous(), DataFrame, Series, small(), test_fractional_days(), test_input_not_modified(), test_matches_reference_on_real_data(), test_single_order_customers_all_nan() (+1 more)
+Cohesion: 0.29
+Nodes (10): days_since_previous(), DataFrame, Series, small(), test_fractional_days(), test_input_not_modified(), test_labels_are_kept_not_positions(), test_matches_reference_on_real_data() (+2 more)
 
 ### Community 1218 - "gmv_by_city"
 Cohesion: 0.31
 Nodes (9): gmv_by_city(), DataFrame, Series, reference(), small(), test_inputs_not_modified(), test_matches_reference_on_real_data(), test_small_case_missing_subtotal_and_cancelled() (+1 more)
 
 ### Community 1219 - "latest_per_key"
-Cohesion: 0.35
-Nodes (9): latest_per_key(), DataFrame, _frame(), test_empty_frame(), test_input_not_modified(), test_latest_row_wins_not_the_last_in_file(), test_many_ties_keep_the_last_in_input(), test_orders_one_row_per_customer() (+1 more)
+Cohesion: 0.32
+Nodes (10): latest_per_key(), DataFrame, _frame(), test_empty_frame(), test_input_not_modified(), test_latest_row_wins_not_the_last_in_file(), test_many_ties_keep_the_last_in_input(), test_orders_one_row_per_customer() (+2 more)
 
 ### Community 1220 - "rolling_7d_orders"
-Cohesion: 0.33
-Nodes (9): DataFrame, Series, rolling_7d_orders(), reference(), small(), test_empty_and_untouched(), test_first_days_use_partial_window_and_ints(), test_gap_days_are_counted_as_zero_and_window_is_by_days() (+1 more)
+Cohesion: 0.32
+Nodes (10): DataFrame, Series, rolling_7d_orders(), reference(), small(), test_empty_and_untouched(), test_first_days_use_partial_window_and_ints(), test_gap_days_are_counted_as_zero_and_window_is_by_days() (+2 more)
 
 ### Community 1221 - "build_preprocessor"
 Cohesion: 0.36
@@ -1314,8 +1397,8 @@ Cohesion: 0.42
 Nodes (8): fix_types(), DataFrame, _raw(), test_coupon_empty_becomes_nan_and_codes_kept(), test_empty_frame(), test_input_not_modified(), test_real_data_types(), test_spaces_only_coupon_and_other_columns_untouched()
 
 ### Community 1224 - "leaky_features"
-Cohesion: 0.38
-Nodes (8): leaky_features(), DataFrame, Series, build(), test_constant_column_and_no_leak_and_no_columns(), test_finds_positive_and_negative_leaks_sorted(), test_inputs_not_modified(), test_threshold_is_strict_and_configurable()
+Cohesion: 0.33
+Nodes (11): leaky_features(), DataFrame, Series, build(), test_constant_column_and_no_leak_and_no_columns(), test_correlation_exactly_at_threshold_is_not_flagged(), test_finds_positive_and_negative_leaks_sorted(), test_inputs_not_modified() (+3 more)
 
 ### Community 1225 - "city_cuisine_counts"
 Cohesion: 0.38
@@ -1326,8 +1409,8 @@ Cohesion: 0.47
 Nodes (8): cv_accuracy(), _data(), _reference(), test_dataframe_and_series_input(), test_imbalanced_small_class(), test_matches_reference(), test_repeatable_and_inputs_untouched(), test_small_noisy_data_leak_sensitive()
 
 ### Community 1227 - "build_model"
-Cohesion: 0.36
-Nodes (8): build_model(), Pipeline, _data(), test_fits_and_predicts_with_nan(), test_median_is_learned_from_training_data(), test_new_object_each_call_and_unfitted(), test_predict_on_all_nan_row(), test_steps_and_order()
+Cohesion: 0.35
+Nodes (9): build_model(), Pipeline, _data(), test_fits_and_predicts_with_nan(), test_fitting_one_pipeline_does_not_touch_the_next(), test_median_is_learned_from_training_data(), test_new_object_each_call_and_unfitted(), test_predict_on_all_nan_row() (+1 more)
 
 ### Community 1228 - "Monitoring: Evidently and Prometheus"
 Cohesion: 0.20
@@ -1350,8 +1433,8 @@ Cohesion: 0.22
 Nodes (8): How many tests is enough, Say it like this, The problem it solves, The smallest runnable example, The three groups, Three traps people hit, What to test, Why this matters in an interview
 
 ### Community 1233 - "coupon_effect"
-Cohesion: 0.39
-Nodes (7): coupon_effect(), DataFrame, small(), test_input_not_modified(), test_matches_reference_on_real_data(), test_returns_rounded_tuple_of_two(), test_small_case_ignores_cancelled_and_null_subtotal()
+Cohesion: 0.36
+Nodes (8): coupon_effect(), DataFrame, small(), test_input_not_modified(), test_matches_reference_on_real_data(), test_only_delivered_counts_not_just_non_cancelled(), test_returns_rounded_tuple_of_two(), test_small_case_ignores_cancelled_and_null_subtotal()
 
 ### Community 1234 - "add_time_features"
 Cohesion: 0.42
@@ -1362,8 +1445,8 @@ Cohesion: 0.42
 Nodes (7): fill_subtotal(), DataFrame, _small(), test_input_not_modified_and_index_kept(), test_matches_reference_on_real_data(), test_nothing_missing_and_empty(), test_small_frame_uses_restaurant_then_global_median()
 
 ### Community 1236 - "city_cuisine_summary"
-Cohesion: 0.42
-Nodes (7): city_cuisine_summary(), DataFrame, _small(), test_empty_orders(), test_missing_subtotal_still_counts_and_unknown_restaurant_ignored(), test_real_data_matches_reference(), test_tie_order_and_index()
+Cohesion: 0.38
+Nodes (8): city_cuisine_summary(), DataFrame, _small(), test_cuisine_breaks_ties_within_a_city_whatever_the_row_order(), test_empty_orders(), test_missing_subtotal_still_counts_and_unknown_restaurant_ignored(), test_real_data_matches_reference(), test_tie_order_and_index()
 
 ### Community 1237 - "time_split"
 Cohesion: 0.39
@@ -1406,8 +1489,8 @@ Cohesion: 0.39
 Nodes (5): make(), test_highest_first(), test_input_not_modified(), test_k_larger_than_list(), test_k_zero_and_negative()
 
 ### Community 1247 - "merge_restaurants"
-Cohesion: 0.39
-Nodes (6): merge_restaurants(), DataFrame, test_duplicate_restaurant_key_raises(), test_inputs_not_modified_and_empty_orders(), test_order_without_restaurant_is_kept(), test_real_data_matches_reference()
+Cohesion: 0.33
+Nodes (8): merge_restaurants(), DataFrame, test_duplicate_key_nobody_uses_is_not_an_error(), test_duplicate_restaurant_key_raises(), test_inputs_not_modified_and_empty_orders(), test_order_without_restaurant_is_kept(), test_real_data_matches_reference(), test_unsorted_inputs_not_modified_even_on_the_error_path()
 
 ### Community 1248 - "Missing values"
 Cohesion: 0.25
@@ -1516,6 +1599,10 @@ Nodes (3): DataFrame, Series, rolling_7d_orders()
 ### Community 1285 - "rolling_7d_orders"
 Cohesion: 0.50
 Nodes (3): DataFrame, Series, rolling_7d_orders()
+
+### Community 1409 - "timeout_empty_default.py"
+Cohesion: 0.22
+Nodes (3): ConfigError, parse_config(), Exception
 
 ### Community 1545 - "tool-docker.md"
 Cohesion: 0.40
@@ -2061,25 +2148,61 @@ Nodes (3): Common mistakes, Details, See also
 Cohesion: 0.50
 Nodes (3): Common mistakes, Details, See also
 
+### Community 1921 - "exact_type.py"
+Cohesion: 0.50
+Nodes (3): call_with_retry(), Exception, TransientError
+
+### Community 1922 - "raises_first.py"
+Cohesion: 0.50
+Nodes (3): call_with_retry(), Exception, TransientError
+
+### Community 1923 - "all_zero_none.py"
+Cohesion: 0.83
+Nodes (3): _ok(), safe_mean(), safe_rate()
+
+### Community 1924 - "int_div.py"
+Cohesion: 0.83
+Nodes (3): _ok(), safe_mean(), safe_rate()
+
+### Community 1925 - "negatives_dropped.py"
+Cohesion: 0.83
+Nodes (3): _ok(), safe_mean(), safe_rate()
+
+### Community 1929 - "ge_tolerance.py"
+Cohesion: 0.83
+Nodes (3): find_skew(), _is_null(), _is_num()
+
+### Community 1930 - "null_check_online_only.py"
+Cohesion: 0.83
+Nodes (3): find_skew(), _is_null(), _is_num()
+
+### Community 1931 - "relative_tolerance.py"
+Cohesion: 0.83
+Nodes (3): find_skew(), _is_null(), _is_num()
+
+### Community 1937 - "train_features"
+Cohesion: 0.67
+Nodes (3): Reference implementation used at training time. Do not change it. amount: a…, serve_features(), train_features()
+
 ## Knowledge Gaps
-- **879 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+874 more)
+- **881 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+876 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **131 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **169 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `flaky()` connect `compare_shadow` to `test_app.py`, `fn`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `test_pending_review_can_be_retried()` connect `test_app.py` to `compare_shadow`, `check_content.py`?**
+- **Why does `fn()` connect `fn` to `exact_type.py`, `raises_first.py`, `check_health`, `make`, `CircuitBreaker`, `check_health`, `CircuitBreaker`, `CircuitBreaker`, `call_with_retry`, `check_health`, `check_health`, `flaky`, `predict_with_fallback`, `call_with_retry`, `call_with_retry`, `retry`, `tw-retry/solution.py`, `CircuitBreaker`, `catches_oserror.py`, `constant_delay.py`, `retries_everything.py`, `sleeps_after_last.py`, `CircuitBreaker`, `CircuitBreaker`, `check_health`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `fn()` connect `fn` to `retry`, `check_health`, `check_health`, `predict_with_fallback`, `predict_with_fallback`, `pm-health-check/tests/test_hidden.py`, `call_with_retry`, `check_health`, `retry`, `CircuitBreaker`, `catches_oserror.py`, `compare_shadow`, `retries_everything.py`, `sleeps_after_last.py`, `constant_delay.py`, `tw-retry/solution.py`, `predict_with_fallback`?**
+- **Why does `flaky()` connect `flaky` to `ai-retry/tests/test_hidden.py`, `test_app.py`, `rb-chunked-stream/tests/test_hidden.py`, `compare_shadow`, `fn`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
-- **Are the 28 inferred relationships involving `fn()` (e.g. with `call_with_retry()` and `.call()`) actually correct?**
-  _`fn()` has 28 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `test_pending_review_can_be_retried()` connect `test_app.py` to `flaky`, `check_content.py`?**
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
+- **Are the 47 inferred relationships involving `fn()` (e.g. with `call_with_retry()` and `call_with_retry()`) actually correct?**
+  _`fn()` has 47 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 18 inferred relationships involving `____` (e.g. with `apply_n_times()` and `.withdraw()`) actually correct?**
   _`____` has 18 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Version`, `Version`, `Version` to the rest of the system?**
-  _879 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `test_app.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.14736842105263157 - nodes in this community are weakly interconnected._
+  _881 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `load_content` be split into smaller, more focused modules?**
+  _Cohesion score 0.1330049261083744 - nodes in this community are weakly interconnected._

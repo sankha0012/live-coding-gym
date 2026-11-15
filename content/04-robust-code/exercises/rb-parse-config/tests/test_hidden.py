@@ -71,3 +71,49 @@ def test_name_missing_and_other_problems_together_even_if_name_blank():
     with pytest.raises(ConfigError) as e:
         parse_config({"name": "", "port": "x"})
     assert e.value.problems == ["name: invalid", "port: invalid"]
+
+
+def test_port_bounds():
+    assert parse_config({"name": "x", "port": "1"})["port"] == 1
+    assert parse_config({"name": "x", "port": "65535"})["port"] == 65535
+    for bad in ["65536", "-1", "0", "  "]:
+        with pytest.raises(ConfigError) as e:
+            parse_config({"name": "x", "port": bad})
+        assert e.value.problems == ["port: invalid"], bad
+
+
+def test_timeout_small_positive_and_empty():
+    assert parse_config({"name": "x", "timeout_s": " 0.001 "})["timeout_s"] == 0.001
+    assert parse_config({"name": "x", "timeout_s": "3"})["timeout_s"] == 3.0
+    for bad in ["", "  ", "-inf"]:
+        with pytest.raises(ConfigError) as e:
+            parse_config({"name": "x", "timeout_s": bad})
+        assert e.value.problems == ["timeout_s: invalid"], bad
+
+
+def test_result_types_and_default_types():
+    got = parse_config({"name": "x", "port": "9000", "timeout_s": "2"})
+    assert type(got["port"]) is int and type(got["timeout_s"]) is float
+    assert type(got["name"]) is str and type(got["tags"]) is list
+    d = parse_config({"name": "x"})
+    assert d["debug"] is False and type(d["port"]) is int and type(d["timeout_s"]) is float
+    assert parse_config({"name": "x", "debug": "0"})["debug"] is False
+    assert parse_config({"name": "x", "debug": " False "})["debug"] is False
+    assert parse_config({"name": "x", "debug": "1"})["debug"] is True
+
+
+def test_tags_keep_order_and_duplicates():
+    assert parse_config({"name": "x", "tags": "b, a ,b,,c"})["tags"] == ["b", "a", "b", "c"]
+    assert parse_config({"name": "x", "tags": " solo "})["tags"] == ["solo"]
+
+
+def test_input_not_modified_on_success_or_failure():
+    raw = {"name": " x ", "port": " 80 ", "tags": " a , b ", "extra": "1", "debug": " 1"}
+    snap = dict(raw)
+    parse_config(raw)
+    assert raw == snap
+    bad = {"name": " ", "port": "x", "tags": " a ", "zz": "1"}
+    snap = dict(bad)
+    with pytest.raises(ConfigError):
+        parse_config(bad)
+    assert bad == snap

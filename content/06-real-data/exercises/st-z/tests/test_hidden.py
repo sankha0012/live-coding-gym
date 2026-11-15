@@ -25,3 +25,11 @@ def test_check_2():
     ns = _ns()
     got = eval('two_prop_z(50, 500, 50, 500)', ns)
     assert _close(got, eval('0.0', ns)), repr(got)
+
+def test_unequal_sample_sizes_use_pooled_rate_weighted_by_n():
+    ns = _ns()
+    f = ns["two_prop_z"]
+    # p1=.15 (n=200), p2=.225 (n=400), pooled p=120/600=.2, se=sqrt(.16*.0075)
+    assert _close(f(30, 200, 90, 400), 0.075 / (0.0012 ** 0.5))
+    assert _close(f(90, 400, 30, 200), -0.075 / (0.0012 ** 0.5))
+    assert _close(f(45, 300, 60, 1200), -6.071767407189162)

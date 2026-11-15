@@ -30,3 +30,27 @@ def test_check_3():
     ns = _ns()
     got = eval("assign([(1, 0, 0)], {'B': (1, 0), 'A': (0, 1)})", ns)
     assert _close(got, eval("{1: 'A'}", ns)), repr(got)
+
+def test_distance_is_euclidean():
+    ns = _ns()
+    got = eval("assign([(1, 0, 0)], {'A': (3, 3), 'B': (5, 0)})", ns)
+    assert got == {1: 'A'}, repr(got)
+
+def test_orders_processed_in_given_order():
+    ns = _ns()
+    got = eval("assign([(9, 0, 0), (3, 0, 0)], {'A': (1, 0), 'B': (5, 0)})", ns)
+    assert got == {9: 'A', 3: 'B'}, repr(got)
+
+def test_greedy_not_global_matching():
+    ns = _ns()
+    got = eval("assign([(1, 4, 0), (2, 0, 0)], {'A': (0, 0), 'B': (10, 0)})", ns)
+    assert got == {1: 'A', 2: 'B'}, repr(got)
+
+def test_more_orders_than_couriers_and_input_untouched():
+    ns = _ns()
+    couriers = {'A': (0, 0), 'B': (9, 9)}
+    orders = [(1, 0, 0), (2, 0, 0), (3, 0, 0)]
+    got = ns['assign'](orders, couriers)
+    assert got == {1: 'A', 2: 'B', 3: None}, repr(got)
+    assert couriers == {'A': (0, 0), 'B': (9, 9)}
+    assert orders == [(1, 0, 0), (2, 0, 0), (3, 0, 0)]

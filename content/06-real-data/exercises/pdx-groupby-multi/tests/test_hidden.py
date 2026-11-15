@@ -53,3 +53,22 @@ def test_empty_orders():
     got = city_cuisine_summary(orders.iloc[0:0], restaurants)
     assert len(got) == 0
     assert list(got.columns) == COLS
+
+
+def test_cuisine_breaks_ties_within_a_city_whatever_the_row_order():
+    orders = pd.DataFrame({
+        "order_id": [1, 2, 3, 4, 5, 6],
+        "restaurant_id": [2, 1, 3, 3, 4, 4],
+        "subtotal": [10.0, 20.0, 30.0, 40.0, 50.0, 60.0],
+    })
+    restaurants = pd.DataFrame({
+        "restaurant_id": [1, 2, 3, 4],
+        "city": ["Rio", "Rio", "Recife", "Aracaju"],
+        "cuisine": ["burger", "pizza", "sushi", "sushi"],
+    })
+    got = city_cuisine_summary(orders, restaurants)
+    assert got[["city", "cuisine"]].values.tolist() == [
+        ["Aracaju", "sushi"], ["Recife", "sushi"], ["Rio", "burger"], ["Rio", "pizza"],
+    ]
+    assert got["orders"].tolist() == [2, 2, 1, 1]
+    assert got["avg_subtotal"].tolist() == [55.0, 35.0, 20.0, 10.0]

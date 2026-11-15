@@ -15,3 +15,9 @@ def test_all_unique():
 
 def test_empty():
     assert invert_dict({}) == {}
+
+
+def test_every_group_sorted():
+    d = {"z": 1, "y": 2, "b": 1, "x": 2, "a": 1}
+    assert invert_dict(d) == {1: ["a", "b", "z"], 2: ["x", "y"]}
+    assert list(invert_dict(d)[2]) == ["x", "y"]

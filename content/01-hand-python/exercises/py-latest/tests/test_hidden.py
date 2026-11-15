@@ -25,3 +25,14 @@ def test_check_2():
     ns = _ns()
     got = eval('latest_status([])', ns)
     assert _close(got, eval('{}', ns)), repr(got)
+
+def test_latest_is_by_timestamp_not_position_or_status_text():
+    ns = _ns()
+    got = ns['latest_status']([(1, 2, 'packed'), (1, 3, 'created'), (1, 1, 'shipped')])
+    assert got == {1: 'created'}, repr(got)
+
+def test_input_not_reordered():
+    ns = _ns()
+    events = [(1, 2, 'b'), (1, 1, 'a')]
+    ns['latest_status'](events)
+    assert events == [(1, 2, 'b'), (1, 1, 'a')]

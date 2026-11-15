@@ -1,3 +1,7 @@
+import os
+import subprocess
+import sys
+
 from solution import assign_arm
 
 IDS = [f"user-{i}" for i in range(10000)]
@@ -40,3 +44,28 @@ def test_salt_reshuffles():
 def test_empty_id_and_return_values():
     assert assign_arm("") in {"canary", "stable"}
     assert {assign_arm(u, 50) for u in IDS[:50]} == {"canary", "stable"}
+
+
+def test_default_salt_is_canary_v1():
+    for u in IDS[:500]:
+        assert assign_arm(u) == assign_arm(u, 5, "canary-v1")
+        assert assign_arm(u, 50) == assign_arm(u, 50, salt="canary-v1")
+
+
+def test_same_in_every_process():
+    here = os.path.dirname(os.path.abspath(__import__("solution").__file__))
+    code = "from solution import assign_arm;print([assign_arm(f'u{i}', 50) for i in range(60)])"
+    outs = set()
+    for seed in ("1", "2", "3"):
+        env = dict(os.environ, PYTHONHASHSEED=seed)
+        r = subprocess.run([sys.executable, "-c", code], cwd=here, env=env,
+                           capture_output=True, text=True, timeout=5)
+        assert r.returncode == 0, r.stderr
+        outs.add(r.stdout)
+    assert len(outs) == 1
+
+
+def test_share_even_at_other_percents():
+    for pct, lo, hi in ((10, 0.09, 0.11), (25, 0.235, 0.265)):
+        share = sum(assign_arm(u, pct) == "canary" for u in IDS) / len(IDS)
+        assert lo <= share <= hi, pct

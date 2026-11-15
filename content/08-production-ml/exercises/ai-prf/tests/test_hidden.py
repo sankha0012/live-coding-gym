@@ -30,3 +30,18 @@ def test_check_3():
     ns = _ns()
     got = eval('prf([1, 1, 0], [0.9, 0.7, 0.2], 0.5)', ns)
     assert _close(got, eval('(1.0, 1.0, 1.0)', ns)), repr(got)
+
+def test_score_equal_to_threshold_is_positive():
+    ns = _ns()
+    got = eval('prf([1, 0], [0.5, 0.5], 0.5)', ns)
+    assert _close(got, eval('(0.5, 1.0, 2 / 3)', ns)), repr(got)
+
+def test_precision_and_recall_differ():
+    ns = _ns()
+    got = eval('prf([1, 1, 0, 0, 0], [0.9, 0.1, 0.8, 0.7, 0.2], 0.5)', ns)
+    assert _close(got, eval('(1 / 3, 0.5, 0.4)', ns)), repr(got)
+
+def test_no_flags_but_positives_exist():
+    ns = _ns()
+    got = eval('prf([1, 0], [0.1, 0.2], 0.5)', ns)
+    assert _close(got, eval('(0.0, 0.0, 0.0)', ns)), repr(got)

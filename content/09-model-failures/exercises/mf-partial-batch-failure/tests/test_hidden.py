@@ -39,3 +39,24 @@ def test_empty():
 
 def test_zero_score_is_kept():
     assert score_batch([{"price": 0}], fn) == {"scores": [0], "errors": []}
+
+
+def test_only_exception_is_caught():
+    import pytest
+
+    def stop(_row):
+        raise KeyboardInterrupt
+
+    with pytest.raises(KeyboardInterrupt):
+        score_batch([{"price": 1}], stop)
+
+
+def test_score_fn_called_once_per_row_in_order():
+    seen = []
+
+    def spy(row):
+        seen.append(row["price"])
+        return row["price"]
+
+    score_batch([{"price": 3}, {"price": 1}, {"price": 2}], spy)
+    assert seen == [3, 1, 2]

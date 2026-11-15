@@ -1,0 +1,1 @@
+SELECT DISTINCT subtotal AS second FROM orders WHERE subtotal IS NOT NULL ORDER BY subtotal DESC LIMIT 1 OFFSET 1;

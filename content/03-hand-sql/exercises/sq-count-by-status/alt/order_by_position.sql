@@ -1,0 +1,1 @@
+SELECT status, COUNT(1) AS n FROM orders GROUP BY 1 ORDER BY 2 DESC, 1;

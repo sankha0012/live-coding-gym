@@ -25,3 +25,59 @@ def test_check_2():
     ns = _ns()
     got = eval('_scenario2()', ns)
     assert _close(got, eval('2', ns)), repr(got)
+
+
+def _mk(ns, max_failures, cooldown):
+    class Clk:
+        t = 0
+        def __call__(self):
+            return self.t
+    clk, calls = Clk(), []
+    def bad():
+        calls.append("bad")
+        raise RuntimeError("down")
+    def good():
+        calls.append("good")
+        return "model"
+    return ns['CircuitBreaker'](max_failures=max_failures, cooldown=cooldown, clock=clk), clk, calls, bad, good
+
+
+def test_failed_trial_restarts_full_cooldown():
+    ns = _ns()
+    cb, clk, calls, bad, good = _mk(ns, 3, 30)
+    for _ in range(3):
+        assert cb.call(bad, "fb") == "fb"
+    assert calls == ["bad"] * 3
+    clk.t = 31
+    assert cb.call(bad, "fb") == "fb"          # trial fails -> reopen at t=31
+    assert len(calls) == 4
+    assert cb.call(good, "fb") == "fb"         # still open, fn not called
+    clk.t = 60
+    assert cb.call(good, "fb") == "fb"         # only 29s since reopen
+    assert len(calls) == 4
+    clk.t = 61
+    assert cb.call(good, "fb") == "model"      # 30s elapsed: trial allowed
+    assert cb.call(good, "fb") == "model" and len(calls) == 6
+
+
+def test_success_resets_failure_count():
+    ns = _ns()
+    cb, clk, calls, bad, good = _mk(ns, 3, 30)
+    cb.call(bad, "fb"); cb.call(bad, "fb")
+    assert cb.call(good, "fb") == "model"
+    cb.call(bad, "fb"); cb.call(bad, "fb")
+    assert cb.call(good, "fb") == "model"      # only 2 failures since success: still closed
+    assert calls == ["bad", "bad", "good", "bad", "bad", "good"]
+
+
+def test_cooldown_boundary_and_exact_threshold():
+    ns = _ns()
+    cb, clk, calls, bad, good = _mk(ns, 3, 30)
+    cb.call(bad, "fb"); cb.call(bad, "fb")
+    assert cb.call(good, "fb") == "model"      # 2 failures < 3: closed
+    for _ in range(3):
+        cb.call(bad, "fb")
+    clk.t = 29
+    assert cb.call(good, "fb") == "fb"         # 29 < 30: still open
+    clk.t = 30
+    assert cb.call(good, "fb") == "model"      # exactly cooldown seconds: trial allowed

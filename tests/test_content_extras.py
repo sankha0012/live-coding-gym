@@ -86,3 +86,14 @@ def test_exercises_sort_by_order_then_id(tmp_path):
         (d / "prompt.md").write_text("p")
     steps, _ = load_content(tmp_path)
     assert [e.id for e in steps[0].exercises] == ["b-first", "c-default", "a-late"]
+
+
+def test_sql_extra_seed_wrong_and_alt_queries(tmp_path):
+    (tmp_path / "_shared").mkdir()
+    (tmp_path / "_shared" / "s.sql").write_text("CREATE TABLE t (x INTEGER);\nINSERT INTO t VALUES (1);\n")
+    build(tmp_path, "sql", {"solution.sql": "SELECT MAX(x) FROM t;", "seed_extra.sql": "INSERT INTO t VALUES (5);\n",
+                            "wrong/first.sql": "SELECT x FROM t LIMIT 1;", "alt/order.sql": "SELECT x FROM t ORDER BY x DESC LIMIT 1;"},
+          meta="seed_file: ../../../_shared/s.sql\n")
+    ex, errors = load_one(tmp_path)
+    assert errors == [] and "VALUES (5)" in ex.seed and "VALUES (1)" in ex.seed
+    assert list(ex.wrong) == ["first"] and list(ex.alt) == ["order"]

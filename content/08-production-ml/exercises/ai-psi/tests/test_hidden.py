@@ -30,3 +30,12 @@ def test_check_3():
     ns = _ns()
     got = eval('psi([0.5, 0.5], [1.0, 0.0]) > 0.25', ns)
     assert _close(got, eval('True', ns)), repr(got)
+
+def test_zero_bin_is_clamped_not_skipped():
+    ns = _ns()
+    assert _close(eval('round(psi([0.5, 0.5], [1.0, 0.0]), 3)', ns), 4.604)
+    assert _close(eval('round(psi([0.0, 1.0], [0.5, 0.5]), 3)', ns), 4.604)
+
+def test_unequal_shift():
+    ns = _ns()
+    assert _close(eval('round(psi([0.4, 0.6], [0.1, 0.9]), 4)', ns), 0.5375)

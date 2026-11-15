@@ -30,3 +30,41 @@ def test_check_3():
     ns = _ns()
     got = eval('_run(0, 3)', ns)
     assert _close(got, eval("('ok', 1, [])", ns)), repr(got)
+
+
+def test_other_base_and_tries():
+    ns = _ns()
+    f = ns['call_with_retry']
+    for tries, expect in [(5, [0.5, 1.0, 2.0, 4.0]), (1, []), (2, [0.5])]:
+        waits, calls = [], []
+        def boom():
+            calls.append(1)
+            raise RuntimeError("x")
+        try:
+            f(boom, max_tries=tries, base=0.5, sleep=waits.append)
+            assert False, "should raise"
+        except RuntimeError:
+            pass
+        assert len(calls) == tries and waits == expect, (tries, calls, waits)
+
+
+def test_success_late_and_last_error_raised():
+    ns = _ns()
+    f = ns['call_with_retry']
+    waits, n = [], []
+    def flaky():
+        n.append(1)
+        if len(n) < 5:
+            raise RuntimeError("fail %d" % len(n))
+        return "ok"
+    assert f(flaky, max_tries=5, base=2.0, sleep=waits.append) == "ok"
+    assert len(n) == 5 and waits == [2.0, 4.0, 8.0, 16.0]
+    n.clear()
+    def bad():
+        n.append(1)
+        raise ValueError("err %d" % len(n))
+    try:
+        f(bad, max_tries=3, base=1.0, sleep=lambda s: None)
+        assert False
+    except ValueError as e:
+        assert str(e) == "err 3"

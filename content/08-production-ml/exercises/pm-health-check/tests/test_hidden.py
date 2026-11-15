@@ -61,3 +61,37 @@ def test_unhashable_and_wrong_case_results_are_invalid():
     out = check_health([("x", lambda: []), ("y", lambda: "OK")])
     assert out["status"] == "down"
     assert out["reasons"] == ["x: down (invalid result)", "y: down (invalid result)"]
+
+
+def test_any_exception_type_is_down_with_its_class_name():
+    def bad_key():
+        return {}["k"]
+
+    def bad_math():
+        return 1 / 0
+
+    def bad_value():
+        raise ValueError("nope")
+
+    out = check_health([("a", bad_key), ("b", bad_math), ("c", bad_value), ("d", ok)])
+    assert out == {
+        "status": "down",
+        "reasons": [
+            "a: down (raised KeyError)",
+            "b: down (raised ZeroDivisionError)",
+            "c: down (raised ValueError)",
+        ],
+    }
+
+
+def test_each_check_runs_exactly_once():
+    calls = []
+
+    def make(name, result):
+        def fn():
+            calls.append(name)
+            return result
+        return fn
+
+    check_health([("a", make("a", "degraded")), ("b", make("b", "ok")), ("c", make("c", "down"))])
+    assert calls == ["a", "b", "c"]

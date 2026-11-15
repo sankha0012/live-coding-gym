@@ -40,3 +40,27 @@ def test_rate_missing_values():
     assert safe_rate(2, None) is None
     assert safe_rate(float("nan"), 5) is None
     assert safe_rate(2, float("nan")) is None
+
+
+def test_mean_all_zeros_and_negatives_and_fractions():
+    assert safe_mean([0, 0]) == 0.0 and safe_mean([0]) == 0.0
+    assert safe_mean([0.0, None, 0.0]) == 0.0
+    assert safe_mean([-1, -3]) == -2.0
+    assert safe_mean([-2, 2, None]) == 0.0
+    assert safe_mean([1, 2]) == 1.5
+    assert safe_mean([1, 2, 2, None, None]) == 5 / 3
+
+
+def test_mean_does_not_modify_input():
+    vals = [1.0, None, float("nan"), 3.0]
+    safe_mean(vals)
+    assert len(vals) == 4 and vals[1] is None and math.isnan(vals[2])
+
+
+def test_rate_small_total_and_values_above_one():
+    assert safe_rate(1, 0.5) == 2.0
+    assert safe_rate(1, 0.25) == 4.0
+    assert safe_rate(5, 4) == 1.25
+    assert safe_rate(-1, 4) == -0.25
+    assert safe_rate(0, 0.001) == 0.0
+    assert safe_rate(3, 0.0) is None

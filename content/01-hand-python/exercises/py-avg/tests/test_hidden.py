@@ -25,3 +25,13 @@ def test_check_2():
     ns = _ns()
     got = eval('avg_by_customer([])', ns)
     assert _close(got, eval('{}', ns)), repr(got)
+
+def test_true_division_and_plain_mean():
+    ns = _ns()
+    got = ns['avg_by_customer']([(1, 1), (1, 2), (1, 4)])
+    assert abs(got[1] - 7 / 3) < 1e-9, repr(got)
+
+def test_zero_is_a_value_not_missing():
+    ns = _ns()
+    got = ns['avg_by_customer']([(1, 0), (1, 10), (2, 0), (3, None)])
+    assert got == {1: 5.0, 2: 0.0, 3: None}, repr(got)

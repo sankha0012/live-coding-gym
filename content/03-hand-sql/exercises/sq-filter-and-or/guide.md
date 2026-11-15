@@ -9,4 +9,4 @@
 
 **Check it.** Rows with a NULL subtotal fail `subtotal > 140`, so they drop out. It is one pass, linear.
 
-**Watch out.** Without the parentheses, AND groups first, so `delivery_fee = 0` stands alone and any cancelled or cheap order with free delivery slips through (357 rows instead of 28).
+**Watch out.** Without the parentheses, AND groups first, so `delivery_fee = 0` stands alone and any cancelled or cheap order with free delivery slips through (358 rows instead of 29).

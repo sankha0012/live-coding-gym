@@ -30,3 +30,22 @@ def test_check_3():
     ns = _ns()
     got = eval('second_highest([])', ns)
     assert _close(got, eval('None', ns)), repr(got)
+
+def test_second_highest_not_second_lowest():
+    ns = _ns()
+    assert ns['second_highest']([1, 2, 3, 10]) == 3
+
+def test_negative_values():
+    ns = _ns()
+    assert ns['second_highest']([-5, -3, -9]) == -5
+
+def test_zero_is_a_valid_answer():
+    ns = _ns()
+    assert ns['second_highest']([0, 5]) == 0
+    assert ns['second_highest']([5, 0, 0]) == 0
+
+def test_input_not_mutated():
+    ns = _ns()
+    vals = [1, 9, 3]
+    ns['second_highest'](vals)
+    assert vals == [1, 9, 3]

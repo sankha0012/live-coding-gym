@@ -28,3 +28,19 @@ def test_floats():
     assert safe_int(7.5, default=-1) == -1
     assert safe_int(float("nan"), default=-1) == -1
     assert safe_int(float("inf"), default=-1) == -1
+
+
+def test_whole_float_becomes_int_type():
+    assert type(safe_int(7.0)) is int
+    assert type(safe_int(-3.0)) is int
+    assert type(safe_int("12")) is int
+
+
+def test_near_whole_float_is_not_whole():
+    assert safe_int(7.0000000001, default=-1) == -1
+    assert safe_int(6.9999999999, default=-1) == -1
+
+
+def test_large_values_are_exact():
+    assert safe_int(2**70) == 2**70
+    assert safe_int("9007199254740993") == 9007199254740993

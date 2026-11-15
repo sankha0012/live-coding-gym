@@ -31,6 +31,7 @@ class Exercise:
     guide: str = ""
     files: list = field(default_factory=list)
     wrong: dict = field(default_factory=dict)
+    alt: dict = field(default_factory=dict)
     quiz: list = field(default_factory=list)
     pass_ratio: float = 0.8
     order: int = 50
@@ -101,6 +102,11 @@ def load_exercise(d, step_id):
     if kind == "sql":
         seed = d / meta["seed_file"] if "seed_file" in meta else d / "seed.sql"
         ex.seed = _existing(seed.resolve()).read_text()
+        extra = d / "seed_extra.sql"  # edge-case rows (ties, NULLs, duplicates) added on top of the shared data
+        if extra.exists():
+            ex.seed += "\n" + extra.read_text()
+        ex.wrong = {p.stem: p.read_text() for p in sorted((d / "wrong").glob("*.sql"))}
+        ex.alt = {p.stem: p.read_text() for p in sorted((d / "alt").glob("*.sql"))}
     if kind == "tests":
         ex.impl_good = (d / "impl_good.py").read_text()
         ex.impls_bad = {p.stem: p.read_text() for p in sorted(d.glob("impl_bad_*.py"))}

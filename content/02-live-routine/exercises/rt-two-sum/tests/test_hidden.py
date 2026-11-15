@@ -33,3 +33,8 @@ def test_smallest_j_beats_smallest_i():
 
 def test_tie_uses_largest_i():
     assert two_sum([2, 2, 8], 10) == [1, 2]
+
+
+def test_negative_numbers_as_second_value():
+    assert two_sum([1, -1], 0) == [0, 1]
+    assert two_sum([5, -3, 2], 2) == [0, 1]

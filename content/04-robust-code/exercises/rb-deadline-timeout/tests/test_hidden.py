@@ -70,3 +70,36 @@ def test_input_not_modified_and_works_on_iterables():
     process_until(items, lambda x: x, 100, Clock())
     assert items == [1, 2, 3]
     assert process_until(iter([1, 2]), lambda x: x, 100, Clock()) == ([1, 2], [])
+
+
+def test_falsy_results_are_kept():
+    c = Clock()
+    got = process_until([0, 1, 2, 3], lambda x: None if x % 2 else 0, 100, c)
+    assert got == ([0, None, 0, None], [])
+
+
+def test_generator_input_stopping_midway_keeps_unstarted_items():
+    c = Clock()
+
+    def handler(x):
+        c.t += 1
+        return x * 10
+
+    results, remaining = process_until((i for i in range(6)), handler, 3, c)
+    assert results == [0, 10, 20]
+    assert remaining == [3, 4, 5] and isinstance(remaining, list)
+    results, remaining = process_until((i for i in range(3)), handler, 0, Clock(5))
+    assert (results, remaining) == ([], [0, 1, 2])
+
+
+def test_clock_consulted_before_each_item():
+    c = Clock()
+    seen = []
+
+    def handler(x):
+        seen.append(c.t)
+        c.t += 4
+        return x
+
+    results, remaining = process_until([1, 2, 3, 4], handler, 9, c)
+    assert seen == [0, 4, 8] and results == [1, 2, 3] and remaining == [4]

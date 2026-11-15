@@ -55,3 +55,30 @@ def test_check_8():
     ns = _ns()
     got = eval('mean_score([])', ns)
     assert _close(got, eval('None', ns)), repr(got)
+
+def test_top_features_respects_k():
+    ns = _ns()
+    assert _close(eval("top_features({'a': 1, 'b': -5, 'c': 3}, k=1)", ns), ['b'])
+    assert _close(eval("top_features({'a': 1, 'b': -5, 'c': 3}, k=3)", ns), ['b', 'c', 'a'])
+
+def test_top_features_tie_by_name_and_input_untouched():
+    ns = _ns()
+    got = eval("(lambda w: (top_features(w, 3), w))({'z': 2, 'y': -2, 'x': 2, 'q': 9})", ns)
+    assert got[0] == ['q', 'x', 'y'], got
+    assert got[1] == {'z': 2, 'y': -2, 'x': 2, 'q': 9}
+
+def test_normalize_keeps_other_keys_and_scales_negative():
+    ns = _ns()
+    got = eval("normalize([{'id': 'a', 'amount': -2}, {'id': 'b', 'amount': 4}, {'id': 'c', 'amount': 1}])", ns)
+    assert _close(got, [{'id': 'a', 'amount': 0.0}, {'id': 'b', 'amount': 1.0}, {'id': 'c', 'amount': 0.5}]), repr(got)
+
+def test_normalize_constant_keeps_other_keys():
+    ns = _ns()
+    got = eval("normalize([{'id': 1, 'amount': 7}, {'id': 2, 'amount': 7}])", ns)
+    assert _close(got, [{'id': 1, 'amount': 0.0}, {'id': 2, 'amount': 0.0}]), repr(got)
+
+def test_mean_score_counts_zero():
+    ns = _ns()
+    assert _close(eval('mean_score([0, 2, None])', ns), 1.0)
+    assert eval('mean_score([0])', ns) == 0.0
+    assert eval('mean_score([0, None])', ns) == 0.0

@@ -53,3 +53,8 @@ def test_empty_and_untouched():
     before = df.copy()
     rolling_7d_orders(df)
     pd.testing.assert_frame_equal(df, before)
+
+
+def test_values_have_an_integer_dtype():
+    got = rolling_7d_orders(small())
+    assert pd.api.types.is_integer_dtype(got.dtype), got.dtype

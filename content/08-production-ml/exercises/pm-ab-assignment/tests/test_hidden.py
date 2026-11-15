@@ -64,3 +64,28 @@ def test_same_in_every_process():
         assert r.returncode == 0, r.stderr
         outs.add(r.stdout)
     assert len(outs) == 1
+
+
+def test_fractional_weights():
+    n = 4000
+    got = [assign(f"user-{i}", "exp-f", {"a": 0.25, "b": 0.75}) for i in range(n)]
+    assert 0.21 < got.count("a") / n < 0.29
+
+
+def test_many_equal_variants_each_get_their_share():
+    names = [f"v{i}" for i in range(6)]
+    n = 6000
+    got = [assign(f"user-{i}", "exp-six", {k: 1 for k in names}) for i in range(n)]
+    for k in names:
+        assert 0.145 < got.count(k) / n < 0.19, k
+
+
+def test_uneven_three_way_split():
+    n = 6000
+    got = [assign(f"user-{i}", "exp-3", {"a": 1, "b": 2, "c": 7}) for i in range(n)]
+    for k, want in (("a", 0.1), ("b", 0.2), ("c", 0.7)):
+        assert abs(got.count(k) / n - want) < 0.03, k
+
+
+def test_single_variant():
+    assert assign("u", "e", {"only": 5}) == "only"

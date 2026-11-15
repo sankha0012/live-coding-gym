@@ -31,3 +31,16 @@ def test_empty_row_and_no_mutation():
     got, names = fill_features(row, D)
     assert got == D and names == ["distance_km", "is_rain", "items"]
     assert row == {}
+
+
+def test_empty_string_is_a_real_value():
+    got, names = fill_features({"label": "", "items": ""}, {"label": "none", "items": 1, "k": 2})
+    assert got == {"label": "", "items": "", "k": 2}
+    assert names == ["k"]
+
+
+def test_defaults_not_modified():
+    defaults = {"a": 1, "b": 2}
+    got, names = fill_features({"a": 5}, defaults)
+    assert got == {"a": 5, "b": 2} and names == ["b"]
+    assert defaults == {"a": 1, "b": 2}

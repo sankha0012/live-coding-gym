@@ -45,3 +45,21 @@ def test_features_passed_through():
 
 def test_default_returned_as_is_even_none():
     assert predict_with_fallback({}, boom, lambda f: None, None) == (None, "default")
+
+
+def test_any_exception_type_is_caught():
+    def raiser(exc):
+        def f(_):
+            raise exc
+
+        return f
+
+    for exc in (KeyError("k"), ZeroDivisionError(), TypeError("t"), OSError("io")):
+        assert predict_with_fallback({}, raiser(exc), lambda f: 0.5, 0.1) == (0.5, "rule")
+        assert predict_with_fallback({}, raiser(exc), raiser(exc), 0.1) == (0.1, "default")
+
+
+def test_rule_gets_the_features():
+    seen = []
+    assert predict_with_fallback({"a": 2}, lambda f: None, lambda f: seen.append(f) or 0.5, 0.1) == (0.5, "rule")
+    assert seen == [{"a": 2}]

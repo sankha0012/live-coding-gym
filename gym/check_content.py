@@ -26,6 +26,12 @@ def check_exercise(ex):
     elif ex.kind == "sql":
         if not check_sql(ex.seed, ex.solution, ex.solution, ex.ordered).passed:
             p.append(f"{ex.id}: reference solution fails to run")
+        for name, query in ex.wrong.items():
+            if check_sql(ex.seed, query, ex.solution, ex.ordered).passed:
+                p.append(f"{ex.id}: wrong query {name} gives the reference result")
+        for name, query in ex.alt.items():
+            if not check_sql(ex.seed, query, ex.solution, ex.ordered).passed:
+                p.append(f"{ex.id}: alternative query {name} does not match the reference")
     elif ex.kind == "tests":
         if not run_test_writing(ex.solution, ex.impl_good, ex.impls_bad).passed:
             p.append(f"{ex.id}: reference tests do not catch every bug (or fail on the good implementation)")

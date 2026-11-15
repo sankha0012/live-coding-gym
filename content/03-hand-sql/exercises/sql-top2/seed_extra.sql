@@ -1,0 +1,3 @@
+INSERT INTO restaurants (restaurant_id, name, city, cuisine) VALUES (900001, 'Rest 900001', 'Belo Horizonte', 'healthy');
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900001, 1, 900001, 1, '2026-09-10 13:00:00', 3000.0, 0.0, NULL, 'delivered', 60, 55.0);
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900002, 2, 900001, 1, '2026-09-24 13:00:00', 3000.0, 0.0, NULL, 'delivered', 60, 58.0);

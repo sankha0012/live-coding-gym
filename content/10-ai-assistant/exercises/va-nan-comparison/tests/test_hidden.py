@@ -19,3 +19,9 @@ def test_all_invalid():
 
 def test_empty():
     assert mean_valid([]) is None
+
+
+def test_zero_and_negative_values_and_zero_mean():
+    assert mean_valid([0.0]) == 0.0
+    assert mean_valid([-2.0, float("nan"), 2.0]) == 0.0
+    assert mean_valid([-1.0, float("nan"), None, -3.0]) == -2.0

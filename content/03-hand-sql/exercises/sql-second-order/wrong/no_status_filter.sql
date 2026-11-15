@@ -1,0 +1,2 @@
+WITH ranked AS (SELECT customer_id, created_at, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at) AS n FROM orders)
+SELECT AVG(julianday(b.created_at) - julianday(a.created_at)) AS avg_days FROM ranked a JOIN ranked b ON a.customer_id = b.customer_id AND a.n = 1 AND b.n = 2;

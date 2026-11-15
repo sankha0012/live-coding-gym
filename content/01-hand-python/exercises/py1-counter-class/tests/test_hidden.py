@@ -36,3 +36,11 @@ def test_instances_are_separate():
     a, b = Counter(), Counter()
     a.add("x")
     assert b.count("x") == 0
+
+
+def test_reading_a_missing_item_does_not_add_it():
+    c = Counter()
+    c.add("a")
+    assert c.count("ghost") == 0
+    assert c.most_common(5) == [("a", 1)]
+    assert c.total() == 1

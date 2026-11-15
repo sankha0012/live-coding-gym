@@ -43,3 +43,24 @@ def test_inputs_not_modified():
     leaky_features(X, y)
     pd.testing.assert_frame_equal(X, bx)
     pd.testing.assert_series_equal(y, by)
+
+
+def test_result_sorted_whatever_the_column_order():
+    X, y = build()
+    Xr = X[["weak", "negative_leak", "noise", "almost_label"]]
+    assert leaky_features(Xr, y) == ["almost_label", "negative_leak"]
+
+
+def test_correlation_exactly_at_threshold_is_not_flagged():
+    _, y = build()
+    X = pd.DataFrame({"copy": y.copy(), "neg": -y})
+    assert leaky_features(X, y, threshold=1.0) == []
+    assert leaky_features(X, y, threshold=0.99) == ["copy", "neg"]
+
+
+def test_pearson_not_rank_correlation():
+    # y**3 is perfectly monotone in y (Spearman 1.0) but its Pearson correlation is about 0.86
+    _, y = build()
+    X = pd.DataFrame({"cubic": y**3})
+    assert leaky_features(X, y) == []
+    assert leaky_features(X, y, threshold=0.8) == ["cubic"]

@@ -59,3 +59,54 @@ def test_key_not_payload_identifies_request():
     assert r.run(("user", 1), "first") == "first"
     assert r.run(("user", 1), "second") == "first"
     assert r.run(("user", 2), "second") == "second"
+
+
+def test_falsy_results_are_stored():
+    for value in (0, "", [], False, 0.0):
+        calls = []
+
+        def f(p, value=value):
+            calls.append(p)
+            return value
+
+        r = IdempotentRunner(f)
+        assert r.run("k", 1) == value
+        assert r.run("k", 2) == value
+        assert calls == [1], value
+
+
+def test_falsy_keys_are_valid_keys():
+    calls = []
+    r = IdempotentRunner(lambda p: calls.append(p) or p)
+    for key in (0, "", None, ()):
+        assert r.run(key, "first") == "first"
+        assert r.run(key, "second") == "first"
+    assert calls == ["first"] * 4
+
+
+def test_runners_do_not_share_state():
+    calls1, calls2 = [], []
+    r1 = IdempotentRunner(lambda p: calls1.append(p) or "one")
+    r2 = IdempotentRunner(lambda p: calls2.append(p) or "two")
+    assert r1.run("k", 1) == "one"
+    assert r2.run("k", 2) == "two"
+    assert calls1 == [1] and calls2 == [2]
+    assert r1.run("k", 3) == "one" and r2.run("k", 4) == "two"
+
+
+def test_repeat_after_failure_ignores_new_payload_and_does_not_call():
+    calls = []
+
+    def f(p):
+        calls.append(p)
+        if p == "bad":
+            raise KeyError("bad")
+        return p
+
+    r = IdempotentRunner(f)
+    for _ in range(3):
+        with pytest.raises(KeyError):
+            r.run("k", "bad")
+    with pytest.raises(KeyError):
+        r.run("k", "good")
+    assert calls == ["bad"]

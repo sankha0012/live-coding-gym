@@ -35,3 +35,18 @@ def test_check_4():
     ns = _ns()
     got = eval('merge_shifts([])', ns)
     assert _close(got, eval('[]', ns)), repr(got)
+
+def test_touching_shifts_merge():
+    ns = _ns()
+    assert ns['merge_shifts']([[1, 2], [2, 3]]) == [[1, 3]]
+
+def test_inner_shifts_after_a_long_one():
+    ns = _ns()
+    assert ns['merge_shifts']([[1, 10], [2, 3], [5, 6]]) == [[1, 10]]
+
+def test_input_not_mutated():
+    ns = _ns()
+    shifts = [[5, 8], [1, 6], [20, 21]]
+    got = ns['merge_shifts'](shifts)
+    assert got == [[1, 8], [20, 21]]
+    assert shifts == [[5, 8], [1, 6], [20, 21]]

@@ -1,0 +1,7 @@
+def sessionize(timestamps, gap=30):
+    if not timestamps: return []
+    ts = sorted(timestamps); s = [[ts[0]]]
+    for t in ts[1:]:
+        if t - s[-1][0] > gap: s.append([t])
+        else: s[-1].append(t)
+    return s

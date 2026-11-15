@@ -27,3 +27,9 @@ def test_bad_n(n):
 def test_bad_n_with_empty_list():
     with pytest.raises(ValueError):
         chunks([], 0)
+
+
+def test_input_list_not_modified():
+    items = [1, 2, 3, 4, 5]
+    assert chunks(items, 2) == [[1, 2], [3, 4], [5]]
+    assert items == [1, 2, 3, 4, 5]

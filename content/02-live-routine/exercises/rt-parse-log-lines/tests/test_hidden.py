@@ -21,3 +21,20 @@ def test_malformed_skipped():
 
 def test_empty():
     assert parse_logs([]) == ({}, [])
+
+
+def test_message_spacing_kept():
+    assert parse_logs(["2026-08-01T10:00:00 ERROR a  b"]) == ({"ERROR": 1}, ["a  b"])
+
+
+def test_only_level_field_decides_error():
+    assert parse_logs(["2026-08-01T10:00:00 INFO ERROR in the text"]) == ({"INFO": 1}, [])
+
+
+def test_error_messages_keep_order_and_duplicates():
+    lines = [
+        "2026-08-01T10:00:00 ERROR zeta",
+        "2026-08-01T10:00:01 ERROR alpha",
+        "2026-08-01T10:00:02 ERROR zeta",
+    ]
+    assert parse_logs(lines) == ({"ERROR": 3}, ["zeta", "alpha", "zeta"])

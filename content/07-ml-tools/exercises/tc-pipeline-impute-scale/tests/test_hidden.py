@@ -52,3 +52,12 @@ def test_predict_on_all_nan_row():
     m = build_model().fit(X, y)
     row = np.full((1, 3), np.nan)
     assert m.predict(row).shape == (1,)
+
+
+def test_fitting_one_pipeline_does_not_touch_the_next():
+    X, y = _data()
+    a = build_model().fit(X, y)
+    b = build_model()
+    assert all(sa is not sb for (_, sa), (_, sb) in zip(a.steps, b.steps))
+    assert not hasattr(b.steps[0][1], "statistics_")
+    assert not hasattr(b.steps[1][1], "mean_")

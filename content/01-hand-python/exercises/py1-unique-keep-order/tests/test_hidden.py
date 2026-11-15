@@ -15,3 +15,8 @@ def test_strings_and_order():
 
 def test_already_unique():
     assert unique([1, 2, 3]) == [1, 2, 3]
+
+
+def test_falsy_items_are_kept():
+    assert unique([0, "", 0, None, ""]) == [0, "", None]
+    assert unique([1, 0, 1]) == [1, 0]

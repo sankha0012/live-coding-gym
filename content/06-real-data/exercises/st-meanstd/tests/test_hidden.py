@@ -20,3 +20,12 @@ def test_check_1():
     ns = _ns()
     got = eval('tuple(round(v, 4) for v in mean_std([2, 4, 4, 4, 5, 5, 7, 9]))', ns)
     assert _close(got, eval('(5.0, 2.1381)', ns)), repr(got)
+
+def test_non_integer_mean_and_other_shapes():
+    import statistics
+    ns = _ns()
+    f = ns["mean_std"]
+    for xs in ([1, 2, 4], [3, 5], [-2.5, 0.5, 7.25, 1.0], [10.0, 10.0, 10.0]):
+        m, sd = f(xs)
+        assert _close(m, statistics.mean(xs)), xs
+        assert _close(sd, statistics.stdev(xs)), xs

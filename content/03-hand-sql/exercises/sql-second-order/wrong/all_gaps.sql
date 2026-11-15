@@ -1,0 +1,1 @@
+SELECT AVG(gap) AS avg_days FROM (SELECT julianday(created_at) - julianday(LAG(created_at) OVER (PARTITION BY customer_id ORDER BY created_at)) AS gap FROM orders WHERE status = 'delivered') WHERE gap IS NOT NULL;

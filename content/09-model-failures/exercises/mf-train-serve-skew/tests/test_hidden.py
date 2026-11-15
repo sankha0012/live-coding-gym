@@ -41,3 +41,14 @@ def test_missing_category():
 def test_train_reference_unchanged():
     got = train_features([{"amount": 0.0, "category": " A "}], STATS)
     assert got == [{"amount_z": -4.0 / 3.0, "category": "a"}]
+
+
+def test_whitespace_only_category_matches_training():
+    # training strips it to "", it is not a missing category
+    check({"amount": 5.0, "category": "   "})
+    assert serve_features({"amount": 5.0, "category": "   "}, STATS)["category"] == ""
+
+
+def test_same_keys_as_training():
+    row = {"amount": 3.0, "category": "Pizza", "extra": 1}
+    assert set(serve_features(row, STATS)) == set(train_features([row], STATS)[0])

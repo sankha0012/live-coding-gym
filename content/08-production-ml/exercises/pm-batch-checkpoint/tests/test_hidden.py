@@ -57,3 +57,38 @@ def test_resume_from_existing_checkpoint():
     store = {"next": 2, "results": ["a", "b"]}
     assert run_batch([1, 2, 3, 4], h, store) == ["a", "b", 30, 40]
     assert h.calls == [3, 4]
+
+
+def test_falsy_results_are_recorded():
+    store = {}
+    handler = lambda x: [0, None, "", False][x]
+    assert run_batch([0, 1, 2, 3], handler, store) == [0, None, "", False]
+    assert store["next"] == 4
+
+
+def test_duplicate_items_are_each_processed_once():
+    calls = []
+
+    def handler(x):
+        calls.append(x)
+        if len(calls) == 2:
+            raise RuntimeError("crash on the second call")
+        return len(calls)
+
+    items = [7, 7, 7]
+    store = {}
+    with pytest.raises(RuntimeError):
+        run_batch(items, handler, store)
+    assert store["next"] == 1
+    assert run_batch(items, handler, store) == [1, 3, 4]
+    assert len(calls) == 4
+
+
+def test_second_crash_then_resume_again():
+    items = [1, 2, 3, 4]
+    h, store = Handler(fail_at=[2, 4]), {}
+    for _ in range(2):
+        with pytest.raises(RuntimeError):
+            run_batch(items, h, store)
+    assert run_batch(items, h, store) == [10, 20, 30, 40]
+    assert h.calls == [1, 2, 2, 3, 4, 4]

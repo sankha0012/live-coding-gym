@@ -25,3 +25,8 @@ def test_check_2():
     ns = _ns()
     got = eval('new_or_returning([])', ns)
     assert _close(got, eval('[]', ns)), repr(got)
+
+def test_repeated_customer_stays_returning():
+    ns = _ns()
+    got = ns['new_or_returning']([1, 1, 1, 2, 1])
+    assert got == ['new', 'returning', 'returning', 'new', 'returning'], repr(got)

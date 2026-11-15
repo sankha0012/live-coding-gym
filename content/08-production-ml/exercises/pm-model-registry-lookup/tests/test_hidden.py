@@ -60,3 +60,24 @@ def test_trailing_zeros_and_long_versions():
     assert latest_version(recs, "m", "p") is recs[1]
     tie = [{"name": "m", "version": "1.0", "stage": "p"}, {"name": "m", "version": "1", "stage": "p"}]
     assert latest_version(tie, "m", "p") is tie[0]
+
+
+@pytest.mark.parametrize("junk", ["99.-1", "99.", "99..1", "99.0-rc1", "99.x", "99.1.beta", ".5"])
+def test_malformed_versions_are_skipped_not_guessed(junk):
+    recs = [
+        {"name": "m", "version": "1.0", "stage": "p"},
+        {"name": "m", "version": junk, "stage": "p"},
+    ]
+    assert latest_version(recs, "m", "p") is recs[0]
+    with pytest.raises(LookupError):
+        latest_version(recs[1:], "m", "p")
+
+
+def test_first_of_equal_versions_even_when_later_is_better_elsewhere():
+    recs = [
+        {"name": "m", "version": "1.2", "stage": "p"},
+        {"name": "x", "version": "9", "stage": "p"},
+        {"name": "m", "version": "1.2.0", "stage": "p"},
+        {"name": "m", "version": "1.1.9", "stage": "p"},
+    ]
+    assert latest_version(recs, "m", "p") is recs[0]

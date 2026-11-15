@@ -64,3 +64,35 @@ def test_none_is_a_valid_item():
 def test_bad_args(args):
     with pytest.raises(ValueError):
         BoundedQueue(*args)
+
+
+def test_default_policy_is_drop_oldest():
+    q = BoundedQueue(1)
+    assert q.put(1) is True
+    assert q.put(2) is True
+    assert q.dropped == 1
+    assert q.get() == 2
+
+
+def test_falsy_items_are_ordinary_items():
+    q = BoundedQueue(3)
+    for x in (0, "", False):
+        assert q.put(x) is True
+    assert len(q) == 3
+    assert [q.get(), q.get(), q.get()] == [0, "", False]
+
+
+def test_get_on_empty_after_draining():
+    q = BoundedQueue(2)
+    q.put(1)
+    q.get()
+    with pytest.raises(IndexError):
+        q.get()
+
+
+def test_drop_oldest_keeps_fifo_across_many_drops():
+    q = BoundedQueue(3)
+    for i in range(10):
+        q.put(i)
+    assert q.dropped == 7
+    assert [q.get(), q.get(), q.get()] == [7, 8, 9]

@@ -41,3 +41,27 @@ def test_empty_and_input_not_modified():
 def test_duplicate_id_keeps_first_even_if_different():
     events = [ev("1", "a", 1, "x"), ev("1", "a", 9, "z")]
     assert final_state(events) == {"a": "x"}
+
+
+def test_negative_and_zero_timestamps():
+    events = [ev("1", "a", -5, "x"), ev("2", "b", 0, "y"), ev("3", "a", -9, "z")]
+    assert final_state(events) == {"a": "x", "b": "y"}
+
+
+def test_tie_decided_by_position_not_id_or_state():
+    events = [ev("9", "a", 3, "zeta"), ev("2", "a", 3, "alpha")]
+    assert final_state(events) == {"a": "alpha"}
+    events = [ev("2", "a", 3, "alpha"), ev("9", "a", 3, "zeta")]
+    assert final_state(events) == {"a": "zeta"}
+    events = [ev("5", "a", 3, "m"), ev("1", "a", 3, "b"), ev("7", "a", 2, "z"), ev("5", "a", 3, "m")]
+    assert final_state(events) == {"a": "b"}
+
+
+def test_same_ts_in_different_entities_are_independent():
+    events = [ev("1", "a", 4, "x"), ev("2", "b", 4, "y"), ev("3", "a", 4, "z")]
+    assert final_state(events) == {"a": "z", "b": "y"}
+
+
+def test_duplicate_of_older_event_does_not_win_late():
+    events = [ev("1", "a", 1, "old"), ev("2", "a", 2, "new"), ev("1", "a", 1, "old"), ev("1", "a", 1, "old")]
+    assert final_state(events) == {"a": "new"}

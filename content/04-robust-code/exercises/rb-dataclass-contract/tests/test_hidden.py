@@ -41,3 +41,30 @@ def test_boundaries_valid():
     assert msg(items=1) is None
     assert msg(items=50) is None
     assert msg(total=0.0) is None
+
+
+def test_strict_types_no_coercion():
+    assert msg(order_id=5) == "order_id invalid"
+    assert msg(order_id=["o"]) == "order_id invalid"
+    assert msg(items=2.0) == "items invalid"
+    assert msg(items="3") == "items invalid"
+    assert msg(total="5") == "total invalid"
+    assert msg(total=None) == "total invalid"
+    assert msg(status=None) == "status invalid"
+
+
+def test_status_is_exact_match():
+    for s in ("NEW", "Paid", "shipped ", "", "cancelled"):
+        assert msg(status=s) == "status invalid", s
+    for s in ("new", "paid", "shipped"):
+        assert msg(status=s) is None
+
+
+def test_ranges_and_pair_ordering():
+    assert msg(items=-3) == "items invalid"
+    assert msg(total=-0.01) == "total invalid"
+    assert msg(total=7) is None
+    assert msg(order_id="", total=-1) == "order_id invalid; total invalid"
+    assert msg(items=0, status="x") == "items invalid; status invalid"
+    assert msg(total=float("nan"), status="x") == "total invalid; status invalid"
+    assert msg(order_id="", status="x") == "order_id invalid; status invalid"

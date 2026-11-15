@@ -4,3 +4,4 @@ Write `parse_csv_line(line: str) -> list[str]` that splits one CSV line into fie
 - Quotes are removed from the result.
 - Empty fields are kept: `"a,,c"` gives `["a", "", "c"]`.
 - An empty line returns an empty list.
+- Spaces are kept as written (fields are not trimmed), and a doubled quote `""` inside a quoted field is one literal quote.

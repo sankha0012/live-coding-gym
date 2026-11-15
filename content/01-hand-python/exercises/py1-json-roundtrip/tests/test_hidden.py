@@ -21,3 +21,21 @@ def test_roundtrip():
 def test_invalid_returns_none():
     assert from_json("{bad") is None
     assert from_json("") is None
+
+
+def test_spaces_inside_strings_survive():
+    assert to_json({"a b": "x y"}) == '{"a b":"x y"}'
+    assert from_json(to_json({"k k": "v v"})) == {"k k": "v v"}
+
+
+def test_valid_falsy_json_is_not_none():
+    assert from_json("0") == 0
+    assert from_json("[]") == []
+    assert from_json("false") is False
+    assert from_json('""') == ""
+    assert from_json("{}") == {}
+
+
+def test_json_literals_parse():
+    assert from_json("true") is True
+    assert from_json('{"a": null}') == {"a": None}

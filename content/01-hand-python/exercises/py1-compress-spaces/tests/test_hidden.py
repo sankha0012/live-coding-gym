@@ -20,3 +20,8 @@ def test_other_whitespace_kept():
 
 def test_long_runs():
     assert compress_spaces("a     b") == "a b"
+
+
+def test_only_spaces_are_trimmed_at_the_edges():
+    assert compress_spaces(" \ta  b\n ") == "\ta b\n"
+    assert compress_spaces("a \t b") == "a \t b"

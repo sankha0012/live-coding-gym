@@ -30,3 +30,23 @@ def test_check_3():
     ns = _ns()
     got = eval('apply_events(list(reversed(EV)))', ns)
     assert _close(got, eval("({7: 'delivered', 8: 'created'}, 1)", ns)), repr(got)
+
+
+def test_tie_breaks_by_event_id_not_status_or_arrival():
+    ns = _ns()
+    f = ns['apply_events']
+    a = {"event_id": "e9", "order_id": 1, "ts": 50, "status": "alpha"}
+    b = {"event_id": "e2", "order_id": 1, "ts": 50, "status": "zulu"}
+    c = {"event_id": "e5", "order_id": 1, "ts": 50, "status": "mid"}
+    for evs in ([a, b, c], [b, c, a], [c, b, a], [a, c, b]):
+        assert f(evs) == ({1: "alpha"}, 0), evs
+
+
+def test_many_duplicates_counted_each_time():
+    ns = _ns()
+    f = ns['apply_events']
+    e1 = {"event_id": "x1", "order_id": 1, "ts": 1, "status": "a"}
+    e2 = {"event_id": "x2", "order_id": 2, "ts": 2, "status": "b"}
+    res, dupes = f([e1, e1, e2, dict(e1), e2, e1])
+    assert res == {1: "a", 2: "b"} and dupes == 4
+    assert f([e1, e2]) == ({1: "a", 2: "b"}, 0)

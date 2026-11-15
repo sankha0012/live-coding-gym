@@ -61,3 +61,16 @@ def test_orders_one_row_per_customer():
     assert len(got) == orders["customer_id"].nunique()
     want = orders.groupby("customer_id")["created_at"].max()
     assert got.set_index("customer_id")["created_at"].equals(want)
+
+
+def test_whole_row_kept_even_when_latest_has_missing_values():
+    df = pd.DataFrame({
+        "id": [1, 1, 2],
+        "ts": pd.to_datetime(["2026-01-01 09:00", "2026-01-01 10:00", "2026-01-01 08:00"]),
+        "val": ["old", None, "x"],
+        "n": [5.0, None, 7.0],
+    })
+    got = latest_per_key(df, "id", "ts")
+    assert got["ts"].tolist() == pd.to_datetime(["2026-01-01 10:00", "2026-01-01 08:00"]).tolist()
+    assert got["val"].isna().tolist() == [True, False]
+    assert got["n"].isna().tolist() == [True, False]

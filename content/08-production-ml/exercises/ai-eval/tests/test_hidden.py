@@ -25,3 +25,13 @@ def test_check_2():
     ns = _ns()
     got = eval('score([], [], [])', ns)
     assert _close(got, eval("{'overall': 0.0}", ns)), repr(got)
+
+def test_gold_is_normalised_too():
+    ns = _ns()
+    got = eval("score(['yes', 'no'], [' Yes ', 'NO'], ['a', 'b'])", ns)
+    assert _close(got, eval("{'overall': 1.0, 'a': 1.0, 'b': 1.0}", ns)), repr(got)
+
+def test_overall_is_pooled_not_mean_of_categories():
+    ns = _ns()
+    got = eval("score(['x', 'x', 'x', 'q'], ['x', 'x', 'x', 'y'], ['big', 'big', 'big', 'small'])", ns)
+    assert _close(got, eval("{'overall': 0.75, 'big': 1.0, 'small': 0.0}", ns)), repr(got)

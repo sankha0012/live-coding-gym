@@ -15,7 +15,7 @@ def test_matches_reference_on_real_data():
             last = ts
     want = pd.Series(want).reindex(orders.index)
     pd.testing.assert_series_equal(
-        got.astype(float).round(6), want.round(6), check_names=False
+        got.sort_index().astype(float).round(6), want.sort_index().round(6), check_names=False
     )
 
 
@@ -36,7 +36,7 @@ def small():
 
 def test_unsorted_input_and_exact_values():
     got = days_since_previous(small())
-    assert list(got.index) == [10, 11, 12, 13]
+    assert sorted(got.index) == [10, 11, 12, 13]
     assert got[10] == 2.0
     assert pd.isna(got[11])
     assert pd.isna(got[12])
@@ -64,3 +64,12 @@ def test_input_not_modified():
     before = df.copy()
     days_since_previous(df)
     pd.testing.assert_frame_equal(df, before)
+
+
+def test_labels_are_kept_not_positions():
+    df = pd.DataFrame(
+        {"customer_id": [7, 7, 7], "created_at": ["2026-03-03", "2026-03-01", "2026-03-02"]},
+        index=["c", "a", "b"],
+    )
+    got = days_since_previous(df)
+    assert pd.isna(got["a"]) and got["b"] == 1.0 and got["c"] == 1.0

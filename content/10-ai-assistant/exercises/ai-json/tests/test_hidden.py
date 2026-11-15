@@ -35,3 +35,22 @@ def test_check_4():
     ns = _ns()
     got = eval('extract_json(\'Result: {"a": {"b": 2}}\')', ns)
     assert _close(got, eval("{'a': {'b': 2}}", ns)), repr(got)
+
+
+def test_braces_but_not_json():
+    f = _ns()["extract_json"]
+    assert f("see {not json} here") is None
+    assert f("{'a': 1}") is None
+
+
+def test_multiline_object_in_fence():
+    f = _ns()["extract_json"]
+    text = 'Here you go:\n```json\n{\n  "a": 1,\n  "b": {"c": [1, 2]}\n}\n```\nDone.'
+    assert f(text) == {"a": 1, "b": {"c": [1, 2]}}
+
+
+def test_plain_object_and_only_objects():
+    f = _ns()["extract_json"]
+    assert f('{"a": "}"}') == {"a": "}"}
+    assert f("[1, 2, 3]") is None
+    assert f("42") is None

@@ -107,3 +107,33 @@ def test_get_does_not_refresh_age():
     assert cache.get("a") == 1
     cache.set("c", 3)
     assert cache.get("a") is None and cache.get("b") == 2
+
+
+def test_len_ignores_expired_without_a_get_or_set():
+    cache, clock = make(ttl=10, size=5)
+    cache.set("a", 1)
+    clock.t += 4
+    cache.set("b", 2)
+    assert len(cache) == 2
+    clock.t += 6
+    assert len(cache) == 1
+    clock.t += 4
+    assert len(cache) == 0
+
+
+def test_falsy_values_are_hits():
+    cache, _ = make()
+    cache.set("zero", 0)
+    cache.set("empty", "")
+    assert cache.get("zero", "d") == 0 and cache.get("empty", "d") == ""
+    assert len(cache) == 2
+
+
+def test_size_one_cache_keeps_only_latest():
+    cache, clock = make(size=1)
+    cache.set("a", 1)
+    clock.t += 1
+    cache.set("b", 2)
+    assert cache.get("a") is None and cache.get("b") == 2 and len(cache) == 1
+    cache.set("b", 3)
+    assert cache.get("b") == 3 and len(cache) == 1

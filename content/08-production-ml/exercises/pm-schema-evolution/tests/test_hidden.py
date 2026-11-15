@@ -53,3 +53,30 @@ def test_input_not_mutated():
 def test_rejected(bad):
     with pytest.raises(ValueError):
         parse_event(bad)
+
+
+@pytest.mark.parametrize("amount,cents", [(-19.99, -1999), (-0.29, -29), (-3, -300)])
+def test_v1_negative_amounts_round_to_nearest(amount, cents):
+    assert parse_event({"version": 1, "user_id": "u", "amount": amount})["amount_cents"] == cents
+
+
+def test_v1_extra_keys_dropped_too():
+    got = parse_event({"version": 1, "user_id": "u", "amount": 2.5, "debug": 1, "amount_cents": 7})
+    assert got == {"version": 2, "user_id": "u", "amount_cents": 250, "currency": "BRL"}
+
+
+@pytest.mark.parametrize("bad", [
+    {"version": True, "user_id": "u", "amount": 1.0},
+    {"version": 1, "user_id": 5, "amount": 1.0},
+    {"version": 1, "user_id": None, "amount": 1.0},
+    {"version": 1, "user_id": "u", "amount": True},
+    {"version": 1, "user_id": "u", "amount": None},
+    {"version": 2, "user_id": 5, "amount_cents": 1, "currency": "USD"},
+    {"version": 2, "user_id": "u", "amount_cents": 1, "currency": 5},
+    {"version": 2, "user_id": "u", "amount_cents": 1, "currency": None},
+    {"version": 2, "user_id": "u", "amount_cents": 1250.0, "currency": "USD"},
+    {"version": 2, "user_id": "u", "amount_cents": None, "currency": "USD"},
+])
+def test_more_rejected(bad):
+    with pytest.raises(ValueError):
+        parse_event(bad)

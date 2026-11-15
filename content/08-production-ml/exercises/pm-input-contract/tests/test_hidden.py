@@ -60,3 +60,30 @@ def test_zero_and_empty_string_are_values_not_missing():
     assert clean == {"user_id": "", "age": 0, "score": 0.0}
     _, bad = validate_request({"user_id": "u", "age": "5"}, CONTRACT)
     assert bad == ["bad_type:age"]
+
+
+def test_bool_is_not_a_float_either():
+    _, bad = validate_request({"user_id": "u", "age": 1, "score": True}, CONTRACT)
+    assert bad == ["bad_type:score"]
+
+
+def test_nan_is_out_of_range_even_without_bounds():
+    rules = {"x": {"type": float}}
+    clean, bad = validate_request({"x": float("nan")}, rules)
+    assert bad == ["out_of_range:x"] and clean == {}
+    clean, bad = validate_request({"x": 1e30}, rules)
+    assert bad == [] and clean == {"x": 1e30}
+
+
+def test_min_and_max_are_independent_and_ignored_for_str():
+    rules = {"lo": {"type": int, "min": 5}, "hi": {"type": float, "max": 1.0}, "s": {"type": str, "min": 100, "max": 1}}
+    clean, bad = validate_request({"lo": 4, "hi": 2, "s": "abc"}, rules)
+    assert bad == ["out_of_range:lo", "out_of_range:hi"]
+    assert clean == {"s": "abc"}
+    clean, bad = validate_request({"lo": 5000, "hi": -50}, rules)
+    assert bad == [] and clean == {"lo": 5000, "hi": -50.0}
+
+
+def test_violations_follow_contract_order_not_request_order():
+    _, bad = validate_request({"score": 2.0, "age": 500, "user_id": 1}, CONTRACT)
+    assert bad == ["bad_type:user_id", "out_of_range:age", "out_of_range:score"]

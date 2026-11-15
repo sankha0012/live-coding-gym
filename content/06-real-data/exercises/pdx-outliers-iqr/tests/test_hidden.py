@@ -53,3 +53,15 @@ def test_missing_values_do_not_shift_quartiles():
     # without the NaNs: Q1=11.25, Q3=13.75, upper fence 17.5, so 25 is flagged
     df = small([10.0, 11.0, 12.0, 13.0, 14.0, 25.0] + [None] * 6)
     assert iqr_outliers(df) == [105]
+
+
+def test_quartiles_use_linear_interpolation():
+    # linear: Q1=4, Q3=9.25, fences -3.875 and 17.125 -> only 24 is flagged
+    assert iqr_outliers(small([3.0, 4.0, 4.0, 5.0, 5.0, 8.0, 17.0, 24.0])) == [107]
+    # linear: Q1=11.5, Q3=18, fences 1.75 and 27.75 -> only 1.0 is flagged
+    assert iqr_outliers(small([1.0, 7.0, 13.0, 13.0, 16.0, 16.0, 24.0, 27.0])) == [100]
+
+
+def test_ids_sorted_when_rows_are_not():
+    df = pd.DataFrame({"order_id": [9, 4, 7, 1, 6, 3, 8, 2], "subtotal": [50.0, 10.0, 11.0, 12.0, 13.0, 14.0, 11.5, 1.0]})
+    assert iqr_outliers(df) == [2, 9]

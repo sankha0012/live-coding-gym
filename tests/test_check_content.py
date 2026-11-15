@@ -62,3 +62,23 @@ def test_tests_kind_checks(tmp_path):
     assert check(tmp_path / "c") == []
     (ex / "solution.py").write_text("from solution import f\n\ndef test_f():\n    assert f() in (1, 2)\n")
     assert any("do not catch every bug" in p for p in check(tmp_path / "c"))
+
+
+def test_sql_wrong_and_alt_queries_are_checked(tmp_path):
+    step = tmp_path / "c" / "01-s"
+    ex = step / "exercises" / "q1"
+    (ex / "wrong").mkdir(parents=True)
+    (ex / "alt").mkdir()
+    (step / "step.yaml").write_text("title: S\norder: 1\n")
+    files = {"exercise.yaml": "title: Q\nkind: sql\n", "prompt.md": "p", "hint.md": "h", "say.md": "s", "guide.md": "g",
+             "seed.sql": "CREATE TABLE t (x INTEGER);\nINSERT INTO t VALUES (1), (3);\n",
+             "solution.sql": "SELECT MAX(x) FROM t;", "starter.sql": "SELECT",
+             "wrong/min.sql": "SELECT MIN(x) FROM t;", "alt/order.sql": "SELECT x FROM t ORDER BY x DESC LIMIT 1;"}
+    for name, text in files.items():
+        (ex / name).write_text(text)
+    assert check(tmp_path / "c") == []
+    (ex / "wrong" / "same.sql").write_text("SELECT x FROM t ORDER BY x DESC LIMIT 1;")
+    (ex / "alt" / "bad.sql").write_text("SELECT MIN(x) FROM t;")
+    problems = check(tmp_path / "c")
+    assert any("wrong query same gives the reference result" in p for p in problems)
+    assert any("alternative query bad does not match" in p for p in problems) and len(problems) == 2

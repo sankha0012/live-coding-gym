@@ -68,3 +68,70 @@ def test_zero_retries():
     except TransientError:
         pass
     assert st["calls"] == 1 and sleeps == []
+
+
+def test_backoff_keeps_doubling():
+    sleeps = []
+    fn, st = flaky(10, TimeoutError)
+    try:
+        call_with_retry(fn, 5, sleeps.append)
+        assert False
+    except TimeoutError:
+        pass
+    assert st["calls"] == 6
+    assert sleeps == [1.0, 2.0, 4.0, 8.0, 16.0]
+
+
+def test_transient_subclasses_are_retried():
+    class MyTransient(TransientError):
+        pass
+
+    for exc in (ConnectionResetError, BrokenPipeError, ConnectionRefusedError, MyTransient):
+        sleeps = []
+        fn, st = flaky(1, exc)
+        assert call_with_retry(fn, 2, sleeps.append) == "ok"
+        assert st["calls"] == 2 and sleeps == [1.0], exc
+
+
+def test_other_oserrors_are_permanent():
+    for exc in (OSError, PermissionError, IsADirectoryError, FileExistsError):
+        sleeps = []
+        fn, st = flaky(5, exc)
+        try:
+            call_with_retry(fn, 3, sleeps.append)
+            assert False
+        except exc:
+            pass
+        assert st["calls"] == 1 and sleeps == [], exc
+
+
+def test_last_transient_error_is_the_one_raised():
+    sleeps, calls = [], []
+
+    def fn():
+        calls.append(1)
+        raise TimeoutError("attempt %d" % len(calls))
+
+    try:
+        call_with_retry(fn, 2, sleeps.append)
+        assert False
+    except TimeoutError as e:
+        assert str(e) == "attempt 3"
+    assert sleeps == [1.0, 2.0]
+
+
+def test_permanent_error_after_transient_failures_stops_at_once():
+    sleeps, calls = [], []
+
+    def fn():
+        calls.append(1)
+        if len(calls) < 3:
+            raise TransientError("t")
+        raise ValueError("bad request")
+
+    try:
+        call_with_retry(fn, 5, sleeps.append)
+        assert False
+    except ValueError as e:
+        assert str(e) == "bad request"
+    assert len(calls) == 3 and sleeps == [1.0, 2.0]

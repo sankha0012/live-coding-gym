@@ -88,3 +88,48 @@ def test_cost_needs_only_that_many_tokens():
     c.t = 0.5
     assert b.allow(0.5) is True
     assert b.allow(0.01) is False
+
+
+def test_refill_measured_from_construction_time():
+    c = Clock(100.0)
+    b = TokenBucket(3, 1, c)
+    assert [b.allow() for _ in range(3)] == [True, True, True]
+    c.t = 100.4
+    assert b.allow() is False
+    c.t = 101.0
+    assert b.allow() is True
+    assert b.allow() is False
+
+
+def test_zero_cost_always_allowed_and_free():
+    c = Clock()
+    b = TokenBucket(2, 1, c)
+    assert b.allow(2) is True
+    assert b.allow(0) is True
+    assert b.allow() is False
+    c.t = 1
+    assert b.allow() is True
+
+
+def test_two_buckets_are_independent():
+    c1, c2 = Clock(), Clock()
+    a = TokenBucket(1, 1, c1)
+    b = TokenBucket(1, 1, c2)
+    assert a.allow() is True
+    assert b.allow() is True
+    assert a.allow() is False and b.allow() is False
+    c1.t = 1
+    assert a.allow() is True
+    assert b.allow() is False
+
+
+def test_partial_refills_accumulate_across_denied_calls():
+    c = Clock()
+    b = TokenBucket(5, 2, c)
+    assert b.allow(5) is True
+    for t in (0.25, 0.5, 0.75):
+        c.t = t
+        assert b.allow(2) is False
+    c.t = 1.0
+    assert b.allow(2) is True
+    assert b.allow(0.5) is False

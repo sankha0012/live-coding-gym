@@ -43,3 +43,14 @@ def test_input_not_modified():
     before = df.copy()
     coupon_effect(df)
     pd.testing.assert_frame_equal(df, before)
+
+
+def test_only_delivered_counts_not_just_non_cancelled():
+    df = pd.DataFrame(
+        {
+            "subtotal": [10.0, 90.0, 20.0, 50.0, 80.0],
+            "coupon_code": ["A", "A", None, None, None],
+            "status": ["delivered", "refunded", "delivered", "pending", "refunded"],
+        }
+    )
+    assert coupon_effect(df) == (10.0, 20.0)

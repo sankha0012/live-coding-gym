@@ -37,3 +37,24 @@ def test_empty_raises():
     s.pop()
     with pytest.raises(IndexError):
         s.pop()
+
+
+def test_falsy_items_are_ordinary_items():
+    s = Stack()
+    for x in [0, "", None, [], False]:
+        s.push(x)
+    assert len(s) == 5
+    assert s.peek() is False
+    assert [s.pop() for _ in range(5)] == [False, [], None, "", 0]
+    assert len(s) == 0
+    with pytest.raises(IndexError):
+        s.pop()
+
+
+def test_stacks_are_independent():
+    a, b = Stack(), Stack()
+    a.push(1)
+    assert len(b) == 0
+    with pytest.raises(IndexError):
+        b.pop()
+    assert a.pop() == 1

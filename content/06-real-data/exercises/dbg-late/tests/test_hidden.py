@@ -25,3 +25,18 @@ def test_check_2():
     ns = _ns()
     got = eval('late_rate([O[2]])', ns)
     assert _close(got, eval('0.0', ns)), repr(got)
+
+def test_cancelled_orders_never_count_even_when_over_promise():
+    ns = _ns()
+    got = ns["late_rate"]([
+        {"status": "delivered", "promised_minutes": 30, "actual_minutes": 31},
+        {"status": "delivered", "promised_minutes": 30, "actual_minutes": 29},
+        {"status": "delivered", "promised_minutes": 30, "actual_minutes": 30},
+        {"status": "cancelled", "promised_minutes": 30, "actual_minutes": 90},
+    ])
+    assert _close(got, 1 / 3), repr(got)
+
+def test_all_late_is_one():
+    ns = _ns()
+    got = ns["late_rate"]([{"status": "delivered", "promised_minutes": 30, "actual_minutes": 31}])
+    assert _close(got, 1.0), repr(got)

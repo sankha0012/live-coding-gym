@@ -1,4 +1,6 @@
+import math
 import random
+from fractions import Fraction
 
 from solution import percentiles
 
@@ -44,3 +46,16 @@ def test_rank_is_ceiling_not_round():
     assert percentiles([1, 2, 3, 4, 5])["p50"] == 3
     assert percentiles([1, 2, 3, 4, 5, 6, 7])["p50"] == 4
     assert percentiles([1, 2, 3])["p50"] == 2
+
+
+def test_nearest_rank_for_every_small_n():
+    for n in range(1, 131):
+        data = list(range(1, n + 1))
+        want = {f"p{p}": math.ceil(Fraction(p * n, 100)) for p in (50, 95, 99)}
+        assert percentiles(data) == want, n
+
+
+def test_values_are_taken_from_the_data_with_duplicates():
+    data = [5, 5, 9, 1, 1, 7, 7, 7, 3, 2, 2]
+    got = percentiles(data)
+    assert got == {"p50": 5, "p95": 9, "p99": 9}

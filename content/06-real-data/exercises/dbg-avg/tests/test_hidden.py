@@ -30,3 +30,21 @@ def test_check_3():
     ns = _ns()
     got = eval('average_delivery_minutes([O[2]])', ns)
     assert _close(got, eval('None', ns)), repr(got)
+
+def test_cancelled_with_minutes_not_counted():
+    ns = _ns()
+    got = ns["average_delivery_minutes"]([
+        {"status": "delivered", "actual_minutes": 20},
+        {"status": "delivered", "actual_minutes": 25},
+        {"status": "cancelled", "actual_minutes": 100},
+    ])
+    assert _close(got, 22.5), repr(got)
+
+def test_average_is_not_floored_or_rounded():
+    ns = _ns()
+    got = ns["average_delivery_minutes"]([
+        {"status": "delivered", "actual_minutes": 20},
+        {"status": "delivered", "actual_minutes": 25},
+        {"status": "delivered", "actual_minutes": 26},
+    ])
+    assert _close(got, 71 / 3), repr(got)

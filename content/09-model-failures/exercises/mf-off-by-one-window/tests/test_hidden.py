@@ -33,3 +33,8 @@ def test_empty():
 def test_bad_window():
     with pytest.raises(ValueError):
         rolling_mean([1, 2], 0)
+
+
+def test_negative_window_raises():
+    with pytest.raises(ValueError):
+        rolling_mean([1, 2, 3], -1)

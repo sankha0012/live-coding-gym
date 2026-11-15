@@ -62,3 +62,51 @@ def test_live_error_propagates():
 
     with pytest.raises(ValueError):
         compare_shadow(bad_live, shadow, ["a"])
+
+
+def test_diff_is_absolute_and_ranking_uses_it():
+    scores = {"a": (0.5, 1.5), "b": (0.5, 0.0), "c": (0.5, 0.9)}
+    out = compare_shadow(lambda x: scores[x][0], lambda x: scores[x][1], ["b", "c", "a"], tolerance=0.1, top=5)
+    assert [w["input"] for w in out["worst"]] == ["a", "b", "c"]
+    assert [w["diff"] for w in out["worst"]] == [1.0, 0.5, 0.4]
+    assert out["worst"][0] == {"input": "a", "live": 0.5, "shadow": 1.5, "diff": 1.0}
+
+
+def test_each_model_called_once_per_input():
+    live_calls, shadow_calls = [], []
+
+    def lv(x):
+        live_calls.append(x)
+        return 1.0
+
+    def sh(x):
+        shadow_calls.append(x)
+        return 1.0
+
+    compare_shadow(lv, sh, [1, 2, 3])
+    assert live_calls == [1, 2, 3] and shadow_calls == [1, 2, 3]
+
+
+def test_any_shadow_exception_is_counted_not_raised():
+    def sh(x):
+        raise [KeyError, ZeroDivisionError, ValueError][x]("boom")
+
+    out = compare_shadow(lambda x: 0.0, sh, [0, 1, 2])
+    assert out["shadow_errors"] == 3 and out["total"] == 3 and out["disagreements"] == 0
+
+
+def test_worst_is_capped_by_top_and_default_is_three():
+    out = compare_shadow(lambda x: 0.0, lambda x: x, [1, 2, 3, 4, 5])
+    assert [w["input"] for w in out["worst"]] == [5, 4, 3]
+    assert out["disagreements"] == 5
+    assert compare_shadow(lambda x: 0.0, lambda x: x, [1, 2, 3], top=0)["worst"] == []
+
+
+def test_rate_over_compared_with_mixed_errors():
+    def sh(x):
+        if x in (1, 2):
+            raise RuntimeError
+        return 1.0 if x == 3 else 0.0
+
+    out = compare_shadow(lambda x: 0.0, sh, [1, 2, 3, 4])
+    assert out["shadow_errors"] == 2 and out["disagreements"] == 1 and out["rate"] == 0.5

@@ -25,3 +25,8 @@ def test_input_unchanged():
 
 def test_floats():
     assert running_sum([0.5, 0.25, -0.75]) == [0.5, 0.75, 0.0]
+
+
+def test_zeros_keep_their_position():
+    assert running_sum([0, 1, 0, 2, 0]) == [0, 1, 1, 3, 3]
+    assert running_sum([0]) == [0]

@@ -60,3 +60,18 @@ def test_falsy_results_are_kept():
     c = Clock()
     assert predict_with_fallback(lambda x: 0, 1, -1, 1, c) == (0, "model")
     assert predict_with_fallback(lambda x: None, 1, -1, 1, c) == (None, "model")
+
+
+def test_any_exception_type_falls_back_once():
+    for exc in (KeyError("k"), ZeroDivisionError(), TypeError("t"), OSError("io"), AttributeError("a")):
+        c = Clock()
+        m = make_model(c, 0.01, boom=exc)
+        assert predict_with_fallback(m, 1, None, 0.5, c) == (None, "error")
+        assert m.calls == [1]
+
+
+def test_falsy_fallback_is_returned_as_is():
+    c = Clock()
+    m = make_model(c, 2.0)
+    assert predict_with_fallback(m, 1, 0, 0.5, c) == (0, "timeout")
+    assert predict_with_fallback(m, 1, None, 0.5, c) == (None, "timeout")

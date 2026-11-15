@@ -29,3 +29,11 @@ def test_input_not_modified():
     src = [float("nan"), 1.0]
     guard_scores(src)
     assert math.isnan(src[0]) and src[1] == 1.0
+
+
+def test_numeric_strings_are_still_bad():
+    assert guard_scores(["0.7", 0.2]) == ([0.5, 0.2], 1)
+
+
+def test_out_of_range_numbers_are_still_good():
+    assert guard_scores([-0.5, 2.0, 7]) == ([-0.5, 2.0, 7], 0)

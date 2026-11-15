@@ -30,3 +30,8 @@ def test_check_3():
     ns = _ns()
     got = eval("top_k_dishes([['b'],['a']], 5)", ns)
     assert _close(got, eval("['a', 'b']", ns)), repr(got)
+
+def test_repeat_inside_one_order_counts_each_time():
+    ns = _ns()
+    got = ns['top_k_dishes']([['b', 'b'], ['a']], 1)
+    assert got == ['b'], repr(got)

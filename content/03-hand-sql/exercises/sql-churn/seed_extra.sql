@@ -1,0 +1,10 @@
+INSERT INTO customers (customer_id, name, city, signup_date) VALUES (900001, 'Cust 900001', 'Sao Paulo', '2026-07-01');
+INSERT INTO customers (customer_id, name, city, signup_date) VALUES (900002, 'Cust 900002', 'Sao Paulo', '2026-07-01');
+INSERT INTO customers (customer_id, name, city, signup_date) VALUES (900003, 'Cust 900003', 'Sao Paulo', '2026-07-01');
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900001, 900001, 1, 1, '2026-08-31 15:00:00', 40.0, 5.0, NULL, 'delivered', 40, 35.0);
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900002, 900002, 1, 1, '2026-08-10 12:00:00', 40.0, 5.0, NULL, 'delivered', 40, 35.0);
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900003, 900002, 1, 1, '2026-10-31 23:30:00', 40.0, 5.0, NULL, 'delivered', 40, 35.0);
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900004, 900003, 1, 1, '2026-08-12 12:00:00', 40.0, 5.0, NULL, 'delivered', 40, 35.0);
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900005, 900003, 1, NULL, '2026-10-12 12:00:00', 40.0, 5.0, NULL, 'cancelled', 40, NULL);
+INSERT INTO customers (customer_id, name, city, signup_date) VALUES (900004, 'Cust 900004', 'Sao Paulo', '2026-07-01');
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900006, 900004, 1, 1, '2026-08-31 18:00:00', 40.0, 5.0, NULL, 'delivered', 40, 35.0);

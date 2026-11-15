@@ -1,0 +1,1 @@
+INSERT INTO orders VALUES (900001, 22, 1, NULL, '2026-08-02 10:00:00', 99.0, 5.0, NULL, 'cancelled', 40, NULL);

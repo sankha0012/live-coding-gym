@@ -1,0 +1,1 @@
+SELECT AVG(julianday(last) - julianday(first)) AS avg_days FROM (SELECT MIN(created_at) AS first, MAX(created_at) AS last FROM orders WHERE status = 'delivered' GROUP BY customer_id HAVING COUNT(*) >= 2);

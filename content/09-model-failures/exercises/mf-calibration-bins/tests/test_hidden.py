@@ -47,3 +47,19 @@ def test_bad_input_raises():
         calibration_bins([1.2], [1])
     with pytest.raises(ValueError):
         calibration_bins([-0.1], [0])
+
+
+def test_bin_is_floor_not_round():
+    # 0.26 * 10 = 2.6 floors to bin 2 (rounding would give 3)
+    got = calibration_bins([0.26, 0.74], [1, 0], n_bins=10)
+    _check(got, [(2, 0.26, 1.0, 1), (7, 0.74, 0.0, 1)])
+
+
+def test_default_is_ten_bins():
+    got = calibration_bins([0.12, 0.18, 0.99], [0, 1, 1])
+    _check(got, [(1, 0.15, 0.5, 2), (9, 0.99, 1.0, 1)])
+
+
+def test_more_labels_than_probs_raises():
+    with pytest.raises(ValueError):
+        calibration_bins([0.5], [1, 0])

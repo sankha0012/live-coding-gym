@@ -35,3 +35,14 @@ def test_check_4():
     ns = _ns()
     got = eval('sessionize([0, 30, 60])', ns)
     assert _close(got, eval('[[0, 30, 60]]', ns)), repr(got)
+
+def test_duplicate_timestamps_are_kept():
+    ns = _ns()
+    assert ns['sessionize']([5, 5, 5]) == [[5, 5, 5]]
+    assert ns['sessionize']([40, 0, 0]) == [[0, 0], [40]]
+
+def test_input_not_reordered():
+    ns = _ns()
+    ts = [50, 0, 10]
+    ns['sessionize'](ts)
+    assert ts == [50, 0, 10]

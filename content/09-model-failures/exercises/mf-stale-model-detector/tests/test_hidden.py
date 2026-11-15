@@ -39,3 +39,16 @@ def test_future_timestamp_raises():
         check_staleness(NOW + timedelta(seconds=1), NOW, NOW, 30, 14)
     with pytest.raises(ValueError):
         check_staleness(NOW, NOW + timedelta(days=1), NOW, 30, 14)
+
+
+def test_ages_keep_the_fraction():
+    r = check_staleness(NOW - timedelta(days=2, hours=12), NOW - timedelta(hours=6), NOW, 30, 14)
+    assert r["model_age_days"] == pytest.approx(2.5)
+    assert r["data_age_days"] == pytest.approx(0.25)
+
+
+def test_each_age_uses_its_own_limit():
+    r = check_staleness(NOW - timedelta(days=5), NOW - timedelta(days=1), NOW, 3, 30)
+    assert r["model_stale"] is True and r["data_stale"] is False
+    r = check_staleness(NOW - timedelta(days=1), NOW - timedelta(days=5), NOW, 30, 3)
+    assert r["model_stale"] is False and r["data_stale"] is True

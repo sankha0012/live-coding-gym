@@ -27,3 +27,12 @@ def test_many_items_come_back_sorted():
         "removed": ["f", "h", "j", "l", "n", "p"],
         "kept": ["b", "d"],
     }
+
+
+def test_duplicates_removed_in_every_list():
+    got = set_diff_report(["k", "k", "a", "a", "z"], ["k", "b", "b", "q"])
+    assert got == {"added": ["b", "q"], "removed": ["a", "z"], "kept": ["k"]}
+    got = set_diff_report([], ["c", "c", "c"])
+    assert got == {"added": ["c"], "removed": [], "kept": []}
+    got = set_diff_report(["c", "c"], [])
+    assert got == {"added": [], "removed": ["c"], "kept": []}

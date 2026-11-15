@@ -23,3 +23,13 @@ def test_returns_tuples():
 
 def test_duplicates_kept():
     assert pairs([1, 1, 2, 1]) == [(1, 1), (1, 2), (2, 1)]
+
+
+def test_repeated_pairs_are_kept():
+    assert pairs([1, 2, 1, 2, 1]) == [(1, 2), (2, 1), (1, 2), (2, 1)]
+    assert pairs([5, 5, 5]) == [(5, 5), (5, 5)]
+
+
+def test_falsy_items_are_kept():
+    assert pairs([0, 1, 0]) == [(0, 1), (1, 0)]
+    assert pairs([None, "", 0]) == [(None, ""), ("", 0)]

@@ -1,0 +1,3 @@
+INSERT INTO couriers (courier_id, name, vehicle) VALUES (900001, 'Courier X1', 'cargo bike');
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900001, 1, 6, 900001, '2026-10-05 12:00:00', 30.0, 5.0, NULL, 'delivered', 40, 30.0);
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900002, 1, 6, NULL, '2026-10-06 12:00:00', 30.0, 5.0, NULL, 'cancelled', 40, NULL);

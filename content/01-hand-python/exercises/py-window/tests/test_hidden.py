@@ -30,3 +30,16 @@ def test_check_3():
     ns = _ns()
     got = eval('max_in_window([5])', ns)
     assert _close(got, eval('1', ns)), repr(got)
+
+def test_window_is_t_to_t_plus_59():
+    ns = _ns()
+    assert ns['max_in_window']([0, 60]) == 1
+    assert ns['max_in_window']([0, 59]) == 2
+
+def test_unsorted_input():
+    ns = _ns()
+    assert ns['max_in_window']([100, 0, 130]) == 2
+
+def test_same_minute_orders_all_count():
+    ns = _ns()
+    assert ns['max_in_window']([5, 5, 5]) == 3

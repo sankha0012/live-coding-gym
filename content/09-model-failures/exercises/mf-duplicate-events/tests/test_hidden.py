@@ -33,3 +33,10 @@ def test_input_not_modified():
 def test_same_id_different_type_is_different():
     unique, dups = dedupe_events([{"id": 1}, {"id": "1"}])
     assert len(unique) == 2 and dups == 0
+
+
+def test_falsy_ids_are_deduped_too():
+    ev = [{"id": 0, "v": 1}, {"id": "", "v": 2}, {"id": 0, "v": 3}, {"id": "", "v": 4}]
+    unique, dups = dedupe_events(ev)
+    assert unique == [{"id": 0, "v": 1}, {"id": "", "v": 2}]
+    assert dups == 2
