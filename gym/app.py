@@ -81,6 +81,17 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
         return {"review_id": row["id"], "status": row["status"], "scores": json.loads(row["scores_json"]),
                 "verdict": row["verdict"], "feedback": row["feedback"]}
 
+    def next_exercise(ex):
+        """Next exercise in the same step, else the first exercise of the next step."""
+        siblings = step_by_id[ex.step_id].exercises
+        i = siblings.index(ex)
+        if i + 1 < len(siblings):
+            nxt = siblings[i + 1]
+        else:
+            later = [s for s in steps if s.order > step_by_id[ex.step_id].order and s.exercises]
+            nxt = later[0].exercises[0] if later else None
+        return {"id": nxt.id, "title": nxt.title} if nxt else None
+
     def payload(ex, mode="blank"):
         st = status_of(ex)
         revealed = st["tests"] is True or st["review"] is True
@@ -94,7 +105,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
                 "hint": ex.hint, "say": ex.say if revealed else "",
                 "model_prompt": ex.model_prompt if revealed else "",
                 "quiz": [{"q": q["q"], "options": q["options"]} for q in ex.quiz],
-                "pass_ratio": ex.pass_ratio, "status": st,
+                "pass_ratio": ex.pass_ratio, "status": st, "next": next_exercise(ex),
                 "review": review_dict(db.latest_review(conn, ex.id, rk)) if rk else None}
 
     def grade(ex, code):

@@ -142,3 +142,10 @@ def test_journey_next_up_points_to_first_unfinished_exercise(client):
     post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION, "mode": "timed", "duration_s": 60})
     post(client, "/api/review", {"exercise_id": "count-words", "attempt_id": 1, "text": "x"})
     assert client.get("/api/journey").json()["next"]["exercise_id"] == "explain-count-words"
+
+
+def test_exercise_payload_points_to_the_next_exercise(client):
+    assert client.get("/api/exercise/count-words").json()["next"]["id"] == "explain-count-words"
+    # last exercise of step 1 leads to the first exercise of the next step
+    assert client.get("/api/exercise/explain-count-words").json()["next"]["id"] == "top-customers"
+    assert client.get("/api/exercise/top-customers").json()["next"] is None

@@ -2,5 +2,5 @@ title: Hand-coding SQL
 order: 3
 gate:
   min_score: 3
-  timed_required: true
+  timed_required: false
   pass_ratio: 0.7

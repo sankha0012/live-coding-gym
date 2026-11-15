@@ -61,8 +61,8 @@ const KIND_INFO = {
 const MODE_INFO = {
   retype: "Study the solution, then hide it and type it from memory.",
   gaps: "Fill in the blanks (____) of a half-written solution.",
-  blank: "Start from the bare function. This counts toward passing the step.",
-  timed: "Same as blank, against the clock. Needed for steps 1 to 3.",
+  blank: "Start from the bare function. Passing the hidden tests here counts toward the step.",
+  timed: "Same as blank, against the clock. Optional extra practice for interview pace.",
 };
 
 function kindBadge(kind) {
@@ -110,6 +110,15 @@ function extrasPanel(ex) {
   return wrap;
 }
 
+function nextBar(ex, passed) {
+  const bar = h("div", { class: "bar" });
+  if (passed) bar.append(h("strong", { class: "ok" }, "✓ Passed."));
+  bar.append(ex.next
+    ? h("a", { class: passed ? "button" : "", href: `#/ex/${ex.next.id}` }, "Next: " + ex.next.title + " →")
+    : h("a", { href: `#/step/${ex.step_id}` }, "Back to the step"));
+  return bar;
+}
+
 function quizView(ex) {
   const picks = ex.quiz.map(() => null);
   const note = h("div");
@@ -125,12 +134,19 @@ function quizView(ex) {
         (res.correct ? "✓ " : `✗ right answer: ${ex.quiz[i].options[res.answer]}. `) + res.why)));
       note.replaceChildren(h("p", {}, `${r.correct}/${r.total}. ` +
         (r.passed ? "Passed." : "Not yet: read the explanations, then try again."),
-        h("button", { onclick: route }, "Try again")));
+        " ", h("button", { onclick: route }, "Try again")), nextBar(ex, r.passed));
     } }, "Submit answers")), note);
 }
 
-function results(out, r) {
+function results(out, r, how) {
   out.textContent = "";
+  if (how === "run" && !r.tests.length) {
+    out.append(r.passed ? "✓ Ran without errors.\n" : "✗ Your code raised an error:\n");
+    if (r.passed && !r.output.trim()) {
+      out.append("Nothing was printed. Use print(...) to see values here, or press Submit to run the hidden tests.");
+      return;
+    }
+  }
   for (const t of r.tests) out.append(`${t.passed ? "PASS" : "FAIL"}  ${t.name}\n`);
   out.append((r.tests.length ? "\n" : "") + r.output);
 }
@@ -209,13 +225,15 @@ async function exView(id, mode = "blank") {
 
   const reviewSlot = h("div");
   const extras = h("div");
+  const nextSlot = h("div");
+  nextSlot.replaceChildren(nextBar(ex, false));
   const refreshExtras = async () => extras.replaceChildren(extrasPanel(await api(`/exercise/${id}?mode=${mode}`)));
   refreshExtras();
   const showReview = (rev) => {
     reviewSlot.replaceChildren(reviewBox(rev, async () => {
       showReview(await api(`/reviews/${rev.review_id}/retry`, {}));
     }) || "");
-    if (rev && rev.status === "done") refreshExtras();
+    if (rev && rev.status === "done") { refreshExtras(); nextSlot.replaceChildren(nextBar(ex, true)); }
   };
   const text = h("textarea", { placeholder: coded
     ? "Optional: explain your code as you would to the interviewer. It is sent with the AI review." : "Type your answer here, then press the button below." });
@@ -228,7 +246,7 @@ async function exView(id, mode = "blank") {
       catch (err) { reviewSlot.replaceChildren(h("pre", { class: "bad" }, String(err))); }
       e.target.textContent = "Submit for review";
       e.target.disabled = false;
-    } }, "Submit for review"), "An AI interviewer scores your answer 1 to 5 on each criterion and gives feedback. Takes a few seconds.")), reviewSlot, extras);
+    } }, "Submit for review"), "An AI interviewer scores your answer 1 to 5 on each criterion and gives feedback. Takes a few seconds.")), reviewSlot, nextSlot, extras);
     showReview(ex.review);
     return;
   }
@@ -269,15 +287,15 @@ async function exView(id, mode = "blank") {
     reviewBtn.disabled = false;
   });
   main.append(holder, h("div", { class: "bar" },
-    tip(h("button", { onclick: async () => cm && results(out, await api("/run", { exercise_id: id, code: cm.getValue() })) },
-      "Run"), "Try your code. Nothing is recorded."),
+    tip(h("button", { onclick: async () => cm && results(out, await api("/run", { exercise_id: id, code: cm.getValue() }), "run") },
+      "Run"), "Runs your code as a script so you can try it with print(...). Nothing is recorded. Submit runs the hidden tests."),
     tip(h("button", { class: "primary", onclick: async () => {
       if (!cm) return;
       const r = await api("/submit", { exercise_id: id, code: cm.getValue(), mode, duration_s: elapsed() });
       results(out, r);
       statusEl.replaceChildren(statusLine(r.status));
-      if (r.passed) { lastPassed = r.attempt_id; reviewBtn.disabled = false; refreshExtras(); }
-    } }, "Submit"), "Run the hidden tests and record the attempt. A pass counts toward the step.")), h("h2", {}, "Results"), out, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
+      if (r.passed) { lastPassed = r.attempt_id; reviewBtn.disabled = false; refreshExtras(); nextSlot.replaceChildren(nextBar(ex, true)); }
+    } }, "Submit"), "Run the hidden tests and record the attempt. A pass counts toward the step.")), nextSlot, h("h2", {}, "Results"), out, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
   showReview(ex.review);
 }
 
