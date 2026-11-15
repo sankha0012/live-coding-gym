@@ -43,3 +43,7 @@ uv run python -m tools.check_ids kb
 ## Optional tools
 
 MLflow (slim package) and the Prometheus client are an optional dependency group, used only to check the examples in the ML tools lessons. Install them with `uv sync --group tools`. The app does not need them.
+
+## AI provider
+
+Reviews, prompt grading and mock-round questions can use Gemini or Groq. Put the keys in `.env` (`GEMINI_API_KEY`, `GROQ_API_KEY`, and optionally `GEMINI_MODEL`, `GROQ_MODEL`) and pick the provider in the top bar. The choice is remembered.

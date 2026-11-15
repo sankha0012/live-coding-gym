@@ -494,6 +494,23 @@ fetch("/api/version").then((r) => r.json()).then((v) => {
   el.title = "Running from " + v.path;
 }).catch(() => {});
 
+async function setupProvider() {
+  const sel = document.getElementById("provider");
+  const draw = (s) => {
+    sel.replaceChildren(...s.providers.map((p) => h("option",
+      { value: p.id, ...(p.configured ? {} : { disabled: "" }), ...(p.id === s.provider ? { selected: "" } : {}) },
+      `${p.label} · ${p.model}${p.configured ? "" : " (no key in .env)"}`)));
+  };
+  try {
+    draw(await api("/settings"));
+    sel.addEventListener("change", async () => {
+      try { draw(await api("/settings", { provider: sel.value })); }
+      catch (e) { alert(e.message); draw(await api("/settings")); }
+    });
+  } catch (e) { sel.parentElement.hidden = true; }
+}
+setupProvider();
+
 document.getElementById("theme-toggle").addEventListener("click", () => {
   const root = document.documentElement;
   const dark = root.getAttribute("data-theme") === "dark" ||

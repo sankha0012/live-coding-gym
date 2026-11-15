@@ -57,6 +57,11 @@ def _read(path):
     return path.read_text() if path.exists() else ""
 
 
+def _rubric(items):
+    """Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text` as a one-key mapping."""
+    return [i if isinstance(i, str) else "; ".join(f"{k}: {v}" for k, v in i.items()) for i in items or []]
+
+
 def _existing(path):
     if not path.exists():
         raise ValueError(f"file not found: {path}")
@@ -80,7 +85,7 @@ def load_exercise(d, step_id):
         review=meta.get("review", False),
         mock=meta.get("mock", False),
         ordered=meta.get("ordered", False),
-        rubric=meta.get("rubric") or [],
+        rubric=_rubric(meta.get("rubric")),
         hint=_read(d / "hint.md"),
         say=_read(d / "say.md"),
         model_prompt=_read(d / "model_prompt.md"),

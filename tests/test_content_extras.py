@@ -97,3 +97,9 @@ def test_sql_extra_seed_wrong_and_alt_queries(tmp_path):
     ex, errors = load_one(tmp_path)
     assert errors == [] and "VALUES (5)" in ex.seed and "VALUES (1)" in ex.seed
     assert list(ex.wrong) == ["first"] and list(ex.alt) == ["order"]
+
+
+def test_rubric_items_with_a_colon_stay_strings(tmp_path):
+    build(tmp_path, "explain", {}, meta="rubric:\n  - Plain item\n  - Names a risk: not idempotent\n")
+    ex, errors = load_one(tmp_path)
+    assert errors == [] and ex.rubric == ["Plain item", "Names a risk: not idempotent"]

@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     created_at TEXT DEFAULT CURRENT_TIMESTAMP);
 CREATE TABLE IF NOT EXISTS cards (card_id TEXT PRIMARY KEY, box INTEGER, due TEXT);
 CREATE TABLE IF NOT EXISTS unlocks (step_id TEXT PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT);
 CREATE TABLE IF NOT EXISTS mocks (
     id INTEGER PRIMARY KEY, started_at TEXT DEFAULT CURRENT_TIMESTAMP,
     state_json TEXT, score_json TEXT);
@@ -104,6 +105,16 @@ def update_mock(conn, mock_id, state, score=None):
         "UPDATE mocks SET state_json = ?, score_json = ? WHERE id = ?",
         (json.dumps(state), json.dumps(score) if score is not None else None, mock_id),
     )
+    conn.commit()
+
+
+def get_setting(conn, key, default=None):
+    row = conn.execute("SELECT value FROM settings WHERE key = ?", (key,)).fetchone()
+    return row["value"] if row else default
+
+
+def set_setting(conn, key, value):
+    conn.execute("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value", (key, value))
     conn.commit()
 
 

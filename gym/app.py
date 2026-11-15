@@ -58,7 +58,7 @@ class MockAnswers(BaseModel):
     answers: list[str]
 
 
-def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=reviewer.call_gemini):
+def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None):
     steps, errors = load_content(content_dir)
     conn = db.connect(db_path)
     topics, kb_errors = load_kb(content_dir)
@@ -67,6 +67,13 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
     exercises = {ex.id: ex for s in steps for ex in s.exercises}
     all_cards = [c for s in steps for c in s.cards]
     app = FastAPI()
+
+    def ai_call(prompt):
+        """Send a prompt to the AI provider chosen in the settings menu. `call` replaces it in tests."""
+        if call is not None:
+            return call(prompt)
+        provider = db.get_setting(conn, "provider", "gemini")
+        return reviewer.PROVIDERS[provider][1](prompt)
 
     @app.middleware("http")
     async def no_cache(request, call_next):
@@ -131,7 +138,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
         return runner.check_sql(ex.seed, code, ex.solution, ex.ordered)
 
     def do_review(exercise_id, kind, rubric, material, attempt_id=None):
-        result = reviewer.review(kind, rubric, material, call)
+        result = reviewer.review(kind, rubric, material, ai_call)
         review_id = db.save_review(conn, exercise_id, kind, material, result, attempt_id)
         return {"review_id": review_id, **result}
 
@@ -158,6 +165,26 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
     def progress_reset():
         db.reset_progress(conn)
         return {"ok": True}
+
+    class SettingsBody(BaseModel):
+        provider: str
+
+    def settings_payload():
+        return {"provider": db.get_setting(conn, "provider", "gemini"), "providers": reviewer.provider_info()}
+
+    @app.get("/api/settings")
+    def settings():
+        return settings_payload()
+
+    @app.post("/api/settings")
+    def settings_save(body: SettingsBody):
+        info = {p["id"]: p for p in reviewer.provider_info()}
+        if body.provider not in info:
+            raise HTTPException(400, "unknown provider")
+        if not info[body.provider]["configured"]:
+            raise HTTPException(400, f"no API key for {info[body.provider]['label']} in .env")
+        db.set_setting(conn, "provider", body.provider)
+        return settings_payload()
 
     @app.get("/api/version")
     def version():
@@ -229,7 +256,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
         row = need(db.get_review(conn, review_id), "review")
         ex = exercises.get(row["exercise_id"])
         rubric = ex.rubric if ex and reviewer.REVIEW_KIND.get(ex.kind) == row["kind"] else None
-        result = reviewer.review(row["kind"], rubric, json.loads(row["material_json"]), call)
+        result = reviewer.review(row["kind"], rubric, json.loads(row["material_json"]), ai_call)
         db.update_review(conn, review_id, result)
         return {"review_id": review_id, **result}
 
@@ -283,7 +310,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
         state.update(
             python_code=body.python_code, prompt_text=body.prompt_text, duration_s=body.duration_s,
             python=asdict(grade(py, body.python_code)), sql=asdict(grade(sql, body.sql_code)),
-            questions=reviewer.followups(py.prompt, body.python_code, call))
+            questions=reviewer.followups(py.prompt, body.python_code, ai_call))
         db.update_mock(conn, mock_id, state)
         return {"python": state["python"], "sql": state["sql"], "questions": state["questions"]}
 

@@ -155,3 +155,7 @@ main li { margin: 3px 0; }
 
 button.danger { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, var(--border)); background: var(--bad-soft); }
 button.danger:hover { background: color-mix(in srgb, var(--bad) 18%, var(--surface)); border-color: var(--bad); }
+
+.provider { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; font-weight: 500; }
+.provider select { max-width: 230px; padding: 5px 26px 5px 10px; font-size: 13px; }
+@media (max-width: 1000px) { .provider span { display: none; } .provider select { max-width: 150px; } }

@@ -71,6 +71,37 @@ def call_gemini(prompt, timeout=60):
     return data["candidates"][0]["content"]["parts"][0]["text"]
 
 
+GROQ_API = "https://api.groq.com/openai/v1/chat/completions"
+
+
+def call_groq(prompt, timeout=60):
+    """Groq's OpenAI-compatible chat endpoint, asked for a JSON object."""
+    body = json.dumps({
+        "model": os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b"),
+        "messages": [{"role": "user", "content": prompt}],
+        "response_format": {"type": "json_object"},
+    }).encode()
+    req = urllib.request.Request(GROQ_API, data=body, headers={
+        "Content-Type": "application/json", "User-Agent": "live-coding-gym/1.0",
+        "Authorization": "Bearer " + os.environ["GROQ_API_KEY"]})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.load(r)["choices"][0]["message"]["content"]
+
+
+# id -> (label, function, env var holding the key, env var holding the model, default model)
+PROVIDERS = {
+    "gemini": ("Gemini", call_gemini, "GEMINI_API_KEY", "GEMINI_MODEL", "gemini-3.1-flash-lite"),
+    "groq": ("Groq", call_groq, "GROQ_API_KEY", "GROQ_MODEL", "openai/gpt-oss-120b"),
+}
+
+
+def provider_info():
+    """What the settings menu shows: label, model in use, and whether a key is configured."""
+    return [{"id": pid, "label": label, "model": os.environ.get(model_var, default),
+             "configured": bool(os.environ.get(key_var))}
+            for pid, (label, _, key_var, model_var, default) in PROVIDERS.items()]
+
+
 def _material(material):
     return "\n\n".join(f"## {k.upper()}\n{v}" for k, v in material.items() if v)
 
