@@ -1,5 +1,6 @@
 import json
 import math
+import subprocess
 from dataclasses import asdict
 from datetime import date
 
@@ -136,6 +137,16 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
                     if ex.required and not st["exercises"][ex.id]["done"]:
                         return {"step_id": s.id, "step_title": s.title, "exercise_id": ex.id, "title": ex.title}
         return None
+
+    @app.get("/api/version")
+    def version():
+        """Short git commit of the code that is running, so you can tell which copy you are using."""
+        try:
+            out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=config.ROOT,
+                                 capture_output=True, text=True, timeout=5)
+            return {"version": out.stdout.strip() or "unknown", "path": str(config.ROOT)}
+        except Exception:
+            return {"version": "unknown", "path": str(config.ROOT)}
 
     @app.get("/api/journey")
     def journey():

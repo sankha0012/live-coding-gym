@@ -154,3 +154,8 @@ def test_exercise_payload_points_to_the_next_exercise(client):
 def test_responses_are_never_cached(client):
     assert client.get("/api/journey").headers["cache-control"] == "no-store"
     assert client.get("/app.js").headers["cache-control"] == "no-store"
+
+
+def test_version_endpoint_reports_a_commit(client):
+    v = client.get("/api/version").json()
+    assert v["version"] and v["path"].endswith("live-coding-gym")

@@ -370,5 +370,11 @@ function route() {
   else render(journeyView);
 }
 
+fetch("/api/version").then((r) => r.json()).then((v) => {
+  const el = document.getElementById("version");
+  el.textContent = "version " + v.version;
+  el.title = "Running from " + v.path;
+}).catch(() => {});
+
 window.addEventListener("hashchange", route);
 route();
