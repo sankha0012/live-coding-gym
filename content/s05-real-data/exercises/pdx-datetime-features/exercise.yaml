@@ -1,0 +1,8 @@
+title: Hour and weekday features
+kind: python
+required: false
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-dtypes-datetime, pd-select-filter]
+serves: [C2, C6]

@@ -1,9 +1,0 @@
-title: "Explain: why an orchestrator, not cron?"
-kind: open
-required: true
-rubric:
-  - "Accurate: an orchestrator such as Airflow runs tasks as a graph with dependencies, retries, schedules and a record of every run."
-  - "Names the problem it solves: cron only starts commands at a time, with no dependencies, retries, alerts or history."
-  - "Gives a concrete example, such as a daily pipeline of ingest, validate, train and publish where train must not run if validation fails."
-  - "Is honest about limits: for one simple, independent job cron is enough, and an orchestrator adds setup and operating cost."
-kb: [tool-orchestration, prod-idempotency, prod-retry-backoff]

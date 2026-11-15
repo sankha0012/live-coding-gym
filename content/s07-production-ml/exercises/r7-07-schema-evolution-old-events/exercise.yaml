@@ -1,0 +1,10 @@
+title: Schema evolution breaking old events
+kind: read
+order: 7
+required: false
+serves: [C3, C5, C6]
+kb: [prod-schema-evolution, py-dicts]
+questions:
+  - "Why does the total come out as 1250 cents instead of the true total?"
+  - "What goes wrong in production when a producer renames a field and old events are replayed?"
+  - "How would you handle both versions, and what should happen to an event with an unknown version?"

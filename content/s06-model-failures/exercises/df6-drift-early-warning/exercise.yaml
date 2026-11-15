@@ -1,0 +1,9 @@
+title: "Defend: noticing drift before users do"
+kind: open
+required: true
+serves: [C7, C6, C9]
+rubric:
+  - Explains that drift can be silent, with no error and still-valid outputs, and that waiting for labels or user complaints is too slow, so the system monitors inputs and predictions, not only accuracy.
+  - Describes a concrete check, such as comparing live feature statistics (mean, spread, or a distribution measure like PSI) with a reference window from training, and watching the distribution of predicted scores.
+  - Adds a trade-off or follow-up, such as alert thresholds that balance false alarms against missed drift, a window size large enough to be stable, or what the on-call person does next (check upstream, compare with labels when they arrive, retrain or roll back).
+kb: [ml-psi-drift, prod-drift-alerts-hysteresis, prod-fallbacks, prod-train-serve-skew]

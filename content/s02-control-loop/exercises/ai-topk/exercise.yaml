@@ -1,0 +1,5 @@
+title: Top-k retrieval
+kind: python
+required: true
+kb: [ai-embeddings-topk, py-sorting, py-loops-enumerate-zip]
+serves: [C8, C2]

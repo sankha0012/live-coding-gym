@@ -1,0 +1,5 @@
+title: Save and load a fitted pipeline
+kind: python
+kb: [ml-joblib-persistence, ml-sklearn-pipeline]
+required: false
+serves: [C2, C4]

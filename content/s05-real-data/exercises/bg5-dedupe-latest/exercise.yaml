@@ -1,0 +1,10 @@
+title: Catch it - dedupe keeps the wrong row
+kind: python
+name_bug: true
+assistant: "off"
+required: true
+serves: [C2, C3, C6, C9]
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-sort-dedupe, prod-event-dedup-ordering, ai-verifying-ai-code]

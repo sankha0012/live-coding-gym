@@ -1,0 +1,5 @@
+title: Precision, recall, F1
+kind: python
+required: false
+kb: [ml-metrics-precision-recall-f1, py-loops-enumerate-zip]
+serves: [C7, C1]

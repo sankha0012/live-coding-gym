@@ -1,0 +1,5 @@
+title: Compress spaces
+kind: python
+required: false
+kb: [py-str-split-join, py-iterators-generators]
+serves: [C2]

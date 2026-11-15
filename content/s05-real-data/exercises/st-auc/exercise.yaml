@@ -1,0 +1,5 @@
+title: AUC by hand
+kind: python
+required: false
+kb: [ml-auc-ks, py-loops-enumerate-zip, py-list-comprehensions]
+serves: [C1, C7]

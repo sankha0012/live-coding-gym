@@ -1,0 +1,5 @@
+title: Rotate a list
+kind: python
+required: false
+kb: [py-slicing, py-lists]
+serves: [C2]

@@ -1,0 +1,6 @@
+title: "Quiz: monitoring, drift and CI/CD for ML"
+kind: quiz
+pass_ratio: 0.8
+kb: [tool-monitoring, tool-ci-cd-ml, ml-psi-drift, prod-canary-shadow-ab]
+required: false
+serves: [C7, C2]

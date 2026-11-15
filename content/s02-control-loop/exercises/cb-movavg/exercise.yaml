@@ -1,0 +1,6 @@
+title: Moving average
+kind: python
+required: false
+order: 10
+kb: [algo-sliding-window, py-f-strings, py-str-split-join, iv-coderbyte-format, py-input-print]
+serves: [C1, C2]

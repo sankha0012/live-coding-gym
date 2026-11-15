@@ -1,9 +1,0 @@
-title: Most frequent word
-kind: python
-required: true
-mock: false
-time_limit_s: 540
-order: 10
-kb: [py-counter-defaultdict, py-str-methods, py-lambda-map-filter, iv-coderbyte-format, py-input-print]
-plan_required: 2
-grade_prompts: true

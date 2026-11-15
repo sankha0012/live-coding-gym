@@ -1,8 +1,0 @@
-title: Fill missing subtotals
-kind: python
-time_limit_s: 720
-required: true
-files:
-  - ../../../_shared/orders.csv
-  - ../../../_shared/restaurants.csv
-kb: [pd-missing-values, pd-groupby-agg]

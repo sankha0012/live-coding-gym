@@ -1,0 +1,5 @@
+title: Alert on a broken input feed
+kind: python
+required: false
+kb: [py-math-nan, prod-drift-alerts-hysteresis, py-list-comprehensions]
+serves: [C6, C7]

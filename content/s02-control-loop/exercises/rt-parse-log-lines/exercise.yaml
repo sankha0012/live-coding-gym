@@ -1,0 +1,7 @@
+title: Parse log lines
+kind: python
+required: true
+kb: [py-str-split-join, py-dicts, py-tuples-unpacking, algo-hash-map-counting]
+plan_required: 2
+grade_prompts: true
+serves: [C1, C2]

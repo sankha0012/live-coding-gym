@@ -50,7 +50,7 @@ def test_exercise_payload_modes_are_blank_and_challenge(client):
     assert blank["code"].endswith("pass\n") and blank["assistant"] == "train"
     challenge = client.get("/api/exercise/count-words?mode=challenge").json()
     assert challenge["code"] == "" and challenge["mode"] == "challenge"
-    assert client.get("/api/exercise/count-words?mode=retype").json()["mode"] == "blank"  # the old modes are gone
+    assert client.get("/api/exercise/count-words?mode=retype").json()["mode"] == "blank"  # unknown modes fall back to blank
     sql = client.get("/api/exercise/top-customers").json()
     assert "CREATE TABLE" in sql["schema"]
     explain = client.get("/api/exercise/explain-count-words").json()
@@ -72,8 +72,8 @@ def test_run_does_not_record_an_attempt(client):
 
 def test_full_step_flow_passes_gate_and_unlocks_next(client):
     sub = post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION,
-                                       "mode": "timed", "duration_s": 120})
-    assert sub["passed"] and sub["status"]["tests"] and sub["status"]["timed"]
+                                       "mode": "blank", "duration_s": 120})
+    assert sub["passed"] and sub["status"]["tests"]
     rev = post(client, "/api/review", {"exercise_id": "count-words", "attempt_id": sub["attempt_id"],
                                        "text": "I count with dict.get."})
     assert rev["status"] == "done" and min(rev["scores"].values()) == 4
@@ -148,7 +148,7 @@ def test_mock_round(client):
 def test_journey_next_up_points_to_first_unfinished_exercise(client):
     j = client.get("/api/journey").json()
     assert j["next"]["exercise_id"] == "count-words" and j["next"]["step_id"] == "01-hand-python"
-    post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION, "mode": "timed", "duration_s": 60})
+    post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION, "mode": "blank", "duration_s": 60})
     post(client, "/api/review", {"exercise_id": "count-words", "attempt_id": 1, "text": "x"})
     assert client.get("/api/journey").json()["next"]["exercise_id"] == "explain-count-words"
 

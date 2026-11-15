@@ -1,0 +1,9 @@
+title: Read - CSV and JSON from strings
+kind: read
+order: 10
+kb: [py-json]
+questions:
+  - "Why is the value of 'clicks' in the first printed row the string '12' and not the number 12?"
+  - "What happens to the row for bo, and why does the program not crash?"
+  - "Why is back['PT'] an int, and what happens to numeric dict keys that go through json.dumps and json.loads?"
+serves: [C2, C9]

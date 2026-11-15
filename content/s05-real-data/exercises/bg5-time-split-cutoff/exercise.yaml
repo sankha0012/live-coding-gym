@@ -1,0 +1,9 @@
+title: Catch it - a row lands in both splits
+kind: python
+name_bug: true
+assistant: "off"
+required: false
+serves: [C3, C6, C7, C9]
+files:
+  - ../../../_shared/orders.csv
+kb: [pd-time-split-leakage, pd-dtypes-datetime, ml-train-test-split-leakage, ai-verifying-ai-code]

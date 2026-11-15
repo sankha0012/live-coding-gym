@@ -1,0 +1,9 @@
+INSERT INTO orders VALUES (900001, 5, 8, 1, '2026-09-15 12:00:00', 20.0, 5.0, NULL, 'delivered', 40, 30.0);
+INSERT INTO orders VALUES (900002, 2, 4, 1, '2026-09-15 12:02:00', 20.0, 5.0, NULL, 'delivered', 40, 30.0);
+INSERT INTO orders VALUES (900003, 3, 4, 1, '2026-09-15 12:03:00', 20.0, 5.0, NULL, 'delivered', 40, 30.0);
+INSERT INTO orders VALUES (900004, 4, 4, 1, '2026-09-15 12:04:00', 20.0, 5.0, NULL, 'delivered', 40, 30.0);
+INSERT INTO orders VALUES (900005, 5, 4, 1, '2026-09-15 12:05:00', 20.0, 5.0, NULL, 'delivered', 40, 30.0);
+INSERT INTO orders VALUES (900006, 6, 4, 1, '2026-09-15 12:06:00', 20.0, 5.0, NULL, 'delivered', 40, 30.0);
+INSERT INTO orders VALUES (900007, 7, 4, 1, '2026-09-15 12:07:00', 20.0, 5.0, NULL, 'delivered', 40, 30.0);
+INSERT INTO orders VALUES (900008, 8, 4, 1, '2026-09-15 12:08:00', 20.0, 5.0, NULL, 'delivered', 40, 30.0);
+INSERT INTO orders VALUES (900009, 9, 4, 1, '2026-09-15 12:09:00', 20.0, 5.0, NULL, 'delivered', 40, 30.0);

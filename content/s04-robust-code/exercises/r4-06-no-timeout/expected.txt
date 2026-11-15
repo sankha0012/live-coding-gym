@@ -1,0 +1,4 @@
+blocking: score=0.9 waited=45.0s
+with timeout: score=0.5 waited=2.0s
+100 users, blocking: 4500.0 s vs budget 100.0 s
+100 users, timeout: 200.0 s

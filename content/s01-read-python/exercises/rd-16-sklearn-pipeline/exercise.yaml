@@ -1,0 +1,10 @@
+title: Read - scaler and classifier in a Pipeline
+kind: read
+order: 16
+required: false
+serves: [C2, C9]
+kb: [ml-sklearn-pipeline, py-random-seeds]
+questions:
+  - "What does pipe.fit(X, y) do to each step, and what does pipe.predict do before the classifier sees the data?"
+  - "Why is a score of 1.0 not good evidence that this model is good?"
+  - "What is the printed mean_ and which data was it computed from?"

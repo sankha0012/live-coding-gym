@@ -1,0 +1,9 @@
+title: The shared default list
+kind: read
+order: 5
+kb: [py-functions-args, py-copy-mutability]
+questions:
+  - Why do first and second print the same list, and what does first is second tell you?
+  - Why does the call with an explicit [] behave differently?
+  - How does log_event_safe avoid the problem?
+serves: [C2, C9]

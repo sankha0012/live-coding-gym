@@ -1,0 +1,4 @@
+title: Validate a feature row
+kind: python
+kb: [prod-input-validation, py-math-nan, py-exceptions, py-dicts]
+serves: [C3, C6]

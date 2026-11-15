@@ -1,0 +1,11 @@
+title: "Prompt: precision, recall and F1"
+kind: prompt
+required: false
+rubric:
+  - "States the task, inputs, outputs and constraints precisely."
+  - "Asks for robustness: validation, edge cases, determinism."
+  - "Keeps the candidate in control: small scope, asks for tests or an explanation."
+  - "Would convince an observer the candidate understands the problem."
+  - "Says exactly what to return when a denominator is zero (0.0, not an error or NaN) and how inputs are validated."
+kb: [ai-prompt-anatomy, ml-metrics-precision-recall-f1, prod-input-validation]
+serves: [C8]

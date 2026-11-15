@@ -1,0 +1,5 @@
+title: Test normalize_scores
+kind: tests
+required: false
+kb: [test-what-to-test, test-pytest-basics, py-math-nan, py-copy-mutability]
+serves: [C3, C6]

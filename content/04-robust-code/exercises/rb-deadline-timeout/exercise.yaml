@@ -1,5 +1,0 @@
-title: Stop at the deadline
-kind: python
-time_limit_s: 600
-required: true
-kb: [prod-timeouts-deadlines, py-time-clock-injection, py-loops-enumerate-zip, py-slicing]

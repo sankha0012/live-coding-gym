@@ -1,0 +1,5 @@
+title: Validate with a dataclass
+kind: python
+required: false
+kb: [py-dataclasses, prod-input-validation, py-math-nan, py-exceptions]
+serves: [C2, C3]

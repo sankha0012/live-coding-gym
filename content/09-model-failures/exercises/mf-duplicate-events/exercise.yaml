@@ -1,6 +1,0 @@
-title: Drop duplicate events
-kind: python
-required: true
-mock: true
-time_limit_s: 600
-kb: [prod-event-dedup-ordering, py-sets, prod-idempotency]

@@ -1,0 +1,1 @@
+In the `except` branch the code records the error but never appends `None` to `scores`, so a bad row leaves no entry in the scores list. Every later score shifts one position to the left, and the list is shorter than the input. The error indexes still point at the original rows, but the scores no longer line up with them, so any later score is paired with the wrong row.

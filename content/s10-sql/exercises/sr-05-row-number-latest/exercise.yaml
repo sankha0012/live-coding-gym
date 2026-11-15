@@ -1,0 +1,9 @@
+title: "Read: ROW_NUMBER to keep the latest row"
+kind: explain
+required: false
+serves: [C6, C9]
+kb: [sql-row-number-rank, sql-dedupe, sql-window-functions]
+rubric:
+  - "Says what each clause does in order: the inner query numbers rows per courier by updated_at descending, the outer query keeps rn = 1, then orders."
+  - "Predicts the result shape: one row per courier, the latest status; courier 2 is offline and courier 1 is one of the two rows tied at 09:30."
+  - "Names the trap: the ORDER BY has a tie for courier 1, so which row gets rn = 1 is not guaranteed; add a tiebreaker such as id DESC."

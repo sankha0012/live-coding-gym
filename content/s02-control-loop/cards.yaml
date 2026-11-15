@@ -1,0 +1,300 @@
+- id: cl2-c-01
+  front: |-
+    ```python
+    print([x * 2 for x in range(5) if x % 2 == 0])
+    ```
+
+    What does this do?
+  back: 'The `if` filters first: only the even numbers 0, 2 and 4 pass, and each is doubled. It prints `[0, 4, 8]`. In a comprehension the order is: loop, then the filter, then the expression on the left is evaluated for the survivors.'
+- id: cl2-c-02
+  front: |-
+    ```python
+    words = ["a", "bb", "ccc"]
+    print({w: len(w) for w in words})
+    ```
+
+    What does this do?
+  back: 'A dict comprehension. It prints `{''a'': 1, ''bb'': 2, ''ccc'': 3}`: each word becomes a key and its length the value. If two items produced the same key, the later one would silently overwrite the earlier one.'
+- id: cl2-c-03
+  front: |-
+    ```python
+    s = "abcdef"
+    print(s[1:4], s[::-1], s[-2:])
+    ```
+
+    What does this do?
+  back: 'Slices are `start:stop:step`, where stop is excluded. It prints `bcd fedcba ef`: characters 1 to 3, the whole string reversed (step -1), and the last two characters.'
+- id: cl2-c-04
+  front: |-
+    ```python
+    a = [1, 2, 3]
+    b = a
+    c = a[:]
+    a.append(4)
+    print(b, c)
+    ```
+
+    What breaks here?
+  back: 'Nothing crashes, but `b = a` does not copy: both names point to the same list, so `b` also sees the append. It prints `[1, 2, 3, 4] [1, 2, 3]`. `a[:]` makes a shallow copy, so `c` is unaffected. For nested lists a shallow copy still shares the inner lists; use `copy.deepcopy`.'
+- id: cl2-c-05
+  front: |-
+    ```python
+    d = {"a": 1}
+    print(d.get("b"), d.get("b", 0))
+    print(d["b"])
+    ```
+
+    What breaks here?
+  back: 'The last line raises `KeyError: ''b''`. The first line works and prints `None 0`: `.get` returns None, or the default you pass, for a missing key. When an assistant writes `d[key]`, ask whether the key is guaranteed to exist.'
+- id: cl2-c-06
+  front: |-
+    ```python
+    d = {"b": 2, "a": 2, "c": 5}
+    print(sorted(d.items(), key=lambda kv: (-kv[1], kv[0])))
+    ```
+
+    What does this do?
+  back: It sorts the (key, value) pairs by value descending, then by key ascending for ties. It prints `[('c', 5), ('a', 2), ('b', 2)]`. The minus sign flips the order of a number; the tuple makes the key a tie-breaker. This is the usual way to get a deterministic ranking.
+- id: cl2-c-07
+  front: |-
+    ```python
+    print(sorted(["bb", "a", "ccc", "dd"], key=len))
+    ```
+
+    What does this do?
+  back: It sorts by length. It prints `['a', 'bb', 'dd', 'ccc']`. `sorted` is stable, so `bb` stays before `dd` because it came first in the input. `key` is called once per element and the results decide the order; the original elements are returned.
+- id: cl2-c-08
+  front: |-
+    ```python
+    from collections import Counter
+    print(Counter("banana").most_common(2))
+    ```
+
+    What does this do?
+  back: 'Counter counts occurrences of each item. It prints `[(''a'', 3), (''n'', 2)]`: the two most frequent characters with their counts. `most_common(k)` returns a list of pairs, not a dict.'
+- id: cl2-c-09
+  front: |-
+    ```python
+    from collections import Counter
+    print(Counter("abab").most_common(1))
+    ```
+
+    What breaks here?
+  back: Nothing crashes, but `a` and `b` are tied at 2 and only one is returned. It prints `[('a', 2)]` because ties come out in the order the items were first seen. If the task needs a specific tie rule (for example alphabetical), a bare `most_common` is not enough; sort explicitly with a key.
+- id: cl2-c-10
+  front: |-
+    ```python
+    from collections import defaultdict
+    g = defaultdict(list)
+    for word in ["tea", "eat", "ate", "cat"]:
+        g["".join(sorted(word))].append(word)
+    print(dict(g))
+    ```
+
+    What does this do?
+  back: 'It groups words by their sorted letters, so anagrams share a key. It prints `{''aet'': [''tea'', ''eat'', ''ate''], ''act'': [''cat'']}`. `defaultdict(list)` creates an empty list the first time a missing key is accessed, so no `if key not in g` check is needed.'
+- id: cl2-c-11
+  front: |-
+    ```python
+    from collections import defaultdict
+    d = defaultdict(int)
+    d["x"]
+    print(len(d), "y" in d)
+    ```
+
+    What breaks here?
+  back: Just reading a missing key inserts it. After `d["x"]` the dict has one entry with value 0, so it prints `1 False`. Looking up keys with `[]` on a defaultdict while only checking can grow it and corrupt counts or lengths. Use `in` or `.get` to check without inserting.
+- id: cl2-c-12
+  front: |-
+    ```python
+    for i, name in enumerate(["ana", "bo"], start=1):
+        print(i, name)
+    ```
+
+    What does this do?
+  back: '`enumerate` yields (index, item) pairs, and `start=1` makes the counter begin at 1 instead of 0. It prints `1 ana` and then `2 bo`. It replaces `range(len(items))` loops and avoids off-by-one mistakes.'
+- id: cl2-c-13
+  front: |-
+    ```python
+    a = [1, 2, 3]
+    b = ["x", "y"]
+    print(list(zip(a, b)))
+    print(list(zip(a, b, strict=True)))
+    ```
+
+    What breaks here?
+  back: '`zip` stops at the shortest input and silently drops the rest, so the first line prints `[(1, ''x''), (2, ''y'')]` and the 3 is lost. With `strict=True` (Python 3.10+) the second line raises `ValueError` because the lengths differ. Use `strict=True` when equal lengths are an assumption.'
+- id: cl2-c-14
+  front: |-
+    ```python
+    keys = ["a", "b"]
+    values = [1, 2]
+    print(dict(zip(keys, values)))
+    ```
+
+    What does this do?
+  back: 'It pairs each key with the value in the same position and builds a dict. It prints `{''a'': 1, ''b'': 2}`. If the lists have different lengths, the extra items are dropped without any error.'
+- id: cl2-c-15
+  front: |-
+    ```python
+    x = 3.14159
+    n = 42
+    r = 0.256
+    print(f"{x:.2f} {n:05d} {r:.1%}")
+    ```
+
+    What does this do?
+  back: Format specs after the colon. `.2f` is two decimals, `05d` pads an integer with zeros to width 5, and `.1%` multiplies by 100 and adds a percent sign. It prints `3.14 00042 25.6%`.
+- id: cl2-c-16
+  front: |-
+    ```python
+    def parse(s):
+        try:
+            return int(sx)
+        except:
+            return 0
+    print(parse("12"))
+    ```
+
+    What breaks here?
+  back: It prints `0`, not 12. The name `sx` is a typo, which raises NameError, and the bare `except:` swallows it and returns the fallback. A bare except hides real bugs (and even catches KeyboardInterrupt). Catch the specific error you expect, such as `except ValueError:`.
+- id: cl2-c-17
+  front: |-
+    ```python
+    def f():
+        try:
+            print("try")
+            return 1
+        except ValueError:
+            print("except")
+        else:
+            print("else")
+        finally:
+            print("finally")
+    print(f())
+    ```
+
+    What does this do?
+  back: It prints `try`, `finally`, then `1`. The `else` block is skipped because the `try` block returned before finishing, and `finally` always runs, even on return, before the caller receives the value. `else` only runs when the try block ends normally without an exception and without returning.
+- id: cl2-c-18
+  front: |-
+    ```python
+    nums = [3, 1, 2]
+    result = nums.sort()
+    print(result, nums)
+    ```
+
+    What breaks here?
+  back: '`list.sort()` sorts in place and returns `None`, so it prints `None [1, 2, 3]`. If the code then uses `result`, it is working with None. Use `sorted(nums)` when you need a new sorted list and want to keep the original.'
+- id: cl2-c-19
+  front: |-
+    ```python
+    import sys
+    print(len(sys.stdin.read().split()))
+    ```
+
+    What does this do?
+  back: It reads all of standard input, splits it on any whitespace (spaces and newlines) and prints how many tokens there are. With the input `3 4\n5` it prints `3`. Reading everything at once is a robust way to handle Coderbyte-style input whose line layout you are not sure about.
+- id: cl2-c-20
+  front: |-
+    ```python
+    n = int(input())
+    print(n * 2)
+    ```
+
+    What breaks here?
+  back: If standard input is empty, `input()` raises `EOFError`, and if the line is not a number `int` raises `ValueError`. Coderbyte feeds your program through stdin, so check what the input format really is (one line? several? a trailing blank line?) before trusting `input()`. With empty input this program ends with a traceback.
+- id: cl2-c-21
+  front: |-
+    ```python
+    print(" a  b ".split())
+    print(" a  b ".split(" "))
+    ```
+
+    What does this do?
+  back: 'With no argument `split()` splits on runs of whitespace and drops empty pieces: `[''a'', ''b'']`. `split(" ")` splits on every single space and keeps empty strings: `['''', ''a'', '''', ''b'', '''']`. Mixing them up is a common source of wrong token counts in input parsing.'
+- id: cl2-c-22
+  front: |-
+    ```python
+    print(round(2.5), round(3.5), 7 // 2, -7 // 2, 7 % 3)
+    ```
+
+    What does this do?
+  back: It prints `2 4 3 -4 1`. `round` uses banker's rounding (halves go to the nearest even number), `//` floors toward negative infinity so `-7 // 2` is -4, and `%` gives the remainder. Output on Coderbyte is compared exactly, so know which rounding the task wants.
+- id: cl2-c-23
+  front: |-
+    ```python
+    import sys
+    result = 42
+    print("debug:", result, file=sys.stderr)
+    print(result)
+    ```
+
+    What does this do?
+  back: The debug line goes to stderr and the answer to stdout. A grader that compares stdout sees only `42`. If debugging output is printed to stdout it becomes part of your answer and the comparison fails, so remove those prints or send them to stderr.
+- id: cl2-c-24
+  front: |-
+    ```python
+    items = ["a", "b", "c"]
+    print(*items, sep=",")
+    print(*items, end="!")
+    print()
+    ```
+
+    What does this do?
+  back: '`*items` unpacks the list into separate arguments. The first line prints `a,b,c` (separator chosen with `sep`). The second prints `a b c!` and, because `end="!"` replaces the newline, the following empty `print()` is what ends the line. Handy for matching an exact output format.'
+- id: cl2-c-25
+  front: 'This ask is too big: "Build me a full solution for this Coderbyte problem, with tests and error handling." How do you split it?'
+  back: 'Split it into steps you can check: first ask the assistant to restate the problem and list the edge cases; then ask for the simplest solution only; read it and run it on the sample; then ask for tests of the edge cases; last, ask for specific improvements one at a time. Small steps make each answer short enough to read line by line, and when something breaks you know which step caused it.'
+- id: cl2-c-26
+  front: Before asking the assistant for code, what should you put in the prompt?
+  back: The goal in one sentence, the exact input and output format with one or two examples, the constraints (Python 3.12, standard library only, no extra printing), the edge cases you care about, and anything it must not do. A prompt that states these is easier to grade and easy to check against, because you already know what correct output looks like.
+- id: cl2-c-27
+  front: The assistant returns 40 lines you do not fully understand. What do you do?
+  back: Do not run and submit it. Ask it to explain the code line by line, or to rewrite it more simply, then say each part back in your own words. If you cannot explain a line, ask what it does and why it is needed. In the interview you must be able to explain every line, so unexplained code is a liability.
+- id: cl2-c-28
+  front: The assistant says "this should work now." What is your next step?
+  back: Run it. Check the sample input first, then the edge cases (empty input, one element, duplicates, negative numbers, very large input). An assistant's confidence is not evidence; output you have seen is. If it fails, paste the exact error or the wrong output back into the prompt rather than describing it loosely.
+- id: cl2-c-29
+  front: You asked for one small fix and the assistant rewrote the whole function. What do you do?
+  back: 'Ask it to change only the lines needed and to show a diff, or compare the old and new versions yourself. Unrequested changes can introduce new bugs and make review harder. Tell it explicitly: change only X, keep everything else the same.'
+- id: cl2-c-30
+  front: Why give the assistant an example input and expected output in the prompt?
+  back: 'An example removes ambiguity in the written description and gives you something to check immediately: run the code on the example and compare. It also reveals misunderstandings early, for instance if the assistant interprets ties, case or ordering differently from what you meant.'
+- id: cl2-c-31
+  front: The assistant solved a different problem than the one you meant. What is the habit that prevents this?
+  back: Ask it to restate the problem and its assumptions before writing any code, and correct the restatement if it is off. Cheap to do, and it catches misread requirements before they become code you then have to read and throw away.
+- id: cl2-c-32
+  front: When the assistant's code fails, how should you report it back?
+  back: Give the exact input, the expected output, the actual output or full error message, and what you already tried. Specific evidence leads to a targeted fix; "it doesn't work" leads to a guess or a rewrite. Keep the failing case, because it becomes a test later.
+- id: cl2-c-33
+  front: A function takes a list of numbers. Which cases do you test first?
+  back: The empty list, a single element, duplicates, negative numbers and zero, an already sorted list and a reverse sorted one, and a large input. Edge cases are where assistant-written code most often breaks, and they are what interviewers check.
+- id: cl2-c-34
+  front: |-
+    ```python
+    assert 0.1 + 0.2 == 0.3, "sum was %r" % (0.1 + 0.2)
+    ```
+
+    What breaks here?
+  back: 'The assertion fails with `AssertionError: sum was 0.30000000000000004`, because binary floats cannot represent 0.1 and 0.2 exactly. Compare floats with `math.isclose(a, b)` or a tolerance, never with `==`.'
+- id: cl2-c-35
+  front: |-
+    ```python
+    cases = [([], 0), ([5], 5), ([1, 2, 3], 6)]
+    for args, expected in cases:
+        got = sum(args)
+        assert got == expected, f"{args}: got {got}, expected {expected}"
+    print("ok")
+    ```
+
+    What does this do?
+  back: 'A table of (input, expected) cases checked in a loop. Every case passes here, so it prints `ok`; if one failed, the assertion message would show which input and what was returned. This is the fastest way to test a function: add a row for each edge case.'
+- id: cl2-c-36
+  front: |-
+    ```bash
+    echo "3 4" | uv run python solve.py
+    ```
+
+    What does this do?
+  back: It pipes the text `3 4` into the program's standard input, the same way Coderbyte supplies input, and runs `solve.py` with the project's Python. It lets you test input handling quickly from the terminal without typing into a prompt. Add `< input.txt` or `printf` for multi-line input.

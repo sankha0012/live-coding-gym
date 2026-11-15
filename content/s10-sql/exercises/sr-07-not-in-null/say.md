@@ -1,0 +1,5 @@
+The inner query reads orders and returns the list of customer_id values: 1, 2 and NULL. The outer query reads customers and keeps a customer only if id NOT IN that list is true. ORDER BY name sorts the survivors. The intent is clearly to find customers who have never ordered, which should be Carla and Davi.
+
+I ran it and it returns zero rows. The reason is three-valued logic. id NOT IN (1, 2, NULL) means id <> 1 AND id <> 2 AND id <> NULL. For Carla (id 3) the first two parts are true, but 3 <> NULL is unknown, and true AND true AND unknown is unknown. WHERE only keeps rows where the condition is true, so the row is dropped. Ana and Bruno fail on the first two parts anyway. Every customer is rejected.
+
+The trap is that a single NULL in the subquery silently empties the result, with no error. The fix is NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id), which I ran and which returns Carla and Davi, or adding WHERE customer_id IS NOT NULL inside the subquery, or a LEFT JOIN with a check for NULL. The NULL itself is also a data quality finding: an order without a customer.

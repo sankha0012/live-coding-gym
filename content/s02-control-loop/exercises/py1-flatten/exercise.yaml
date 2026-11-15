@@ -1,0 +1,5 @@
+title: Flatten one level
+kind: python
+required: false
+kb: [py-list-comprehensions, py-lists]
+serves: [C2]

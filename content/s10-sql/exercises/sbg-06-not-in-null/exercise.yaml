@@ -1,0 +1,9 @@
+title: "Catch: the NOT IN that returned nothing"
+kind: sql
+name_bug: true
+assistant: "off"
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-subqueries, sql-left-join-anti-join, sql-select-where]
+serves: [C8, C9, C6]

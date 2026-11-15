@@ -1,0 +1,6 @@
+title: Drop duplicate events
+kind: python
+required: true
+kb: [prod-event-dedup-ordering, py-sets, prod-idempotency]
+serves: [C5, C6]
+mock: true

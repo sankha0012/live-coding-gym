@@ -1,0 +1,9 @@
+title: "Read: running total with PARTITION BY"
+kind: explain
+required: false
+serves: [C6, C9]
+kb: [sql-window-functions, sql-running-totals-frames]
+rubric:
+  - "Says what each clause does in order: SUM as a window, PARTITION BY store, ORDER BY paid_on inside the window, then the final ORDER BY."
+  - "Predicts the result: store A runs 10, 35, 35 and store B runs 7, 10, with the two same-day payments showing the same total."
+  - "Names the trap: with ORDER BY and no frame, the default frame is RANGE, so rows with the same paid_on are peers and share one running total; use ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW and a unique order."

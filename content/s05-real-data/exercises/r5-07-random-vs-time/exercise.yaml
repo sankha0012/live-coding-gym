@@ -1,0 +1,9 @@
+title: Random split versus time split
+kind: read
+serves: [C4, C6, C7, C9]
+required: false
+kb: [pd-time-split-leakage, ml-train-test-split-leakage, py-random-seeds]
+questions:
+  - Why is the gap between train mean and test mean small for the random split but large for the time split?
+  - What goes wrong if you report the random-split score for a model that will forecast next week?
+  - What does random_state=0 give you, and what does it not fix?

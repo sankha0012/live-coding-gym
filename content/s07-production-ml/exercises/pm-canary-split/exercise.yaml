@@ -1,0 +1,6 @@
+title: Stable canary split
+kind: python
+required: true
+kb: [prod-canary-shadow-ab, py-hashlib, prod-determinism]
+serves: [C4, C5]
+mock: true

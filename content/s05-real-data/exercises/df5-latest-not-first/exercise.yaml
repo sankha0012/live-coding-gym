@@ -1,0 +1,9 @@
+title: "Defend: why latest, not first, when deduping"
+kind: open
+required: true
+serves: [C6, C3, C9]
+rubric:
+  - States that the row to keep is chosen by a time column, because file order or arrival order is not time order, and "first" or "last in the file" can be an old version.
+  - Names a failure mode with a concrete effect, such as a stale address or status reaching a feature table or a model, with no error raised.
+  - Handles ties or missing timestamps with an explicit, deterministic rule, such as a stable sort or a tiebreaker column.
+kb: [pd-sort-dedupe, prod-event-dedup-ordering]

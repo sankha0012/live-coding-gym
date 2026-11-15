@@ -1,0 +1,1 @@
+The F1 score is computed as `(precision + recall) / 2`, the arithmetic mean, instead of the harmonic mean `2PR / (P + R)`. A model that predicts positive for everything on rare positives has perfect recall and tiny precision, and the plain average still reports about 0.5. The metric looks acceptable when the model is nearly useless, which is the exact case F1 exists to expose.

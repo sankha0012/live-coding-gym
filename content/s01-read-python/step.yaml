@@ -1,0 +1,6 @@
+title: Read Python fluently
+order: 1
+intro: You are not asked to memorise syntax. Read any short script and say what it does, line by line. Predict the output first, then check it. The assistant here explains but never writes code.
+gate:
+  min_score: 3
+  pass_ratio: 0.7

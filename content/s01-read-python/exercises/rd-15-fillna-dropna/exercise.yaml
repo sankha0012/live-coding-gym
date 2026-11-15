@@ -1,0 +1,10 @@
+title: Read - fillna and dropna
+kind: read
+order: 15
+required: false
+serves: [C2, C9]
+kb: [pd-missing-values]
+questions:
+  - "Which value does fillna insert, and where does it come from?"
+  - "Which column has a wrong fill in the printed table, and why?"
+  - "What does dropna(subset=['age']) keep, and what do the printed index labels tell you?"

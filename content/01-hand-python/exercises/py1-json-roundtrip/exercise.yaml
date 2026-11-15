@@ -1,5 +1,0 @@
-title: JSON round trip
-kind: python
-time_limit_s: 420
-required: true
-kb: [py-json, py-exceptions]

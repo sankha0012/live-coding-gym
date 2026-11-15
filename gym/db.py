@@ -149,7 +149,7 @@ def events(conn, scope, kind):
 
 def last_passed_attempt(conn, exercise_id):
     return conn.execute(
-        "SELECT * FROM attempts WHERE exercise_id = ? AND passed = 1 AND mode IN ('blank', 'timed', 'challenge') "
+        "SELECT * FROM attempts WHERE exercise_id = ? AND passed = 1 AND mode IN ('blank', 'challenge') "
         "ORDER BY id DESC LIMIT 1", (exercise_id,)).fetchone()
 
 

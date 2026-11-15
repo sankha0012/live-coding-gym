@@ -1,0 +1,7 @@
+title: 7-day moving average
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-running-totals-frames, sql-window-functions, sql-dates-sqlite, sql-group-by]
+serves: [C6]

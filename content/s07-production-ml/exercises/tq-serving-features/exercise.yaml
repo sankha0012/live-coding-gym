@@ -1,0 +1,6 @@
+title: "Quiz: serving, batch vs online, feature stores"
+kind: quiz
+pass_ratio: 0.8
+kb: [tool-model-serving, tool-feature-store, prod-train-serve-skew]
+required: false
+serves: [C2, C7]

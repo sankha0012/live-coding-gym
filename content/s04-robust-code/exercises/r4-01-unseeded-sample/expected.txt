@@ -1,0 +1,4 @@
+unseeded runs identical: False
+seeded runs identical: True
+sizes: 5 5
+all drawn from pool: True

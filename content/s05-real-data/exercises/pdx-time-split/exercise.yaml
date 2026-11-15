@@ -1,0 +1,9 @@
+title: Time-based train/test split
+kind: python
+required: true
+files:
+  - ../../../_shared/orders.csv
+
+kb: [pd-time-split-leakage, pd-dtypes-datetime, pd-select-filter, ml-train-test-split-leakage]
+serves: [C4, C6, C7]
+mock: true

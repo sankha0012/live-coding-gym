@@ -1,0 +1,11 @@
+title: Tell me about a project
+kind: open
+required: false
+serves: [C8, C9]
+rubric:
+  - States the problem and why it mattered, in one or two sentences, before any technology.
+  - Says clearly what the candidate personally did, separate from what the team did.
+  - Names at least one concrete decision or trade-off and the reason for it.
+  - Gives a result with a number or a clear before and after, and one thing learned or done differently next time.
+  - Stays under about two minutes spoken and is easy to follow.
+kb: [iv-explaining-code, ai-prompt-anatomy]

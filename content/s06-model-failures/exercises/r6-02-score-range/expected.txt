@@ -1,0 +1,5 @@
+flagged: [0.92, 1.3, 0.51]
+rate: 0.6
+mean: 0.602
+kept: 3 dropped: 2
+clean mean: 0.637

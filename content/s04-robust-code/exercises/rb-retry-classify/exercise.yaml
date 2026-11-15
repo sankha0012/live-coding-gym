@@ -1,0 +1,6 @@
+title: Retry only transient errors
+kind: python
+required: true
+kb: [prod-retry-backoff, py-exceptions, py-time-clock-injection]
+serves: [C5]
+mock: true

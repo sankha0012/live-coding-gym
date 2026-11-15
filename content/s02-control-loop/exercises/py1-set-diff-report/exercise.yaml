@@ -1,0 +1,5 @@
+title: Set diff report
+kind: python
+required: false
+kb: [py-sets, py-sorting]
+serves: [C2]

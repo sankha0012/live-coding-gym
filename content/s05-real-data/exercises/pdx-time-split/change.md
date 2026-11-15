@@ -1,0 +1,3 @@
+Add an optional third parameter `embargo_days`, default `0`. `test` stays exactly as before: orders created at the cutoff or later. `train` now holds only the orders created strictly before `cutoff` minus `embargo_days` days. Orders in the gap between the two are in neither frame. This keeps the end of training from leaking into the test period. With the default, nothing changes.
+
+Example: with `cutoff="2026-10-01"` and `embargo_days=2`, `train` takes orders strictly before `2026-09-29 00:00:00`, so an order at `2026-09-29 00:00:00` is dropped from both frames, and an order at `2026-09-28 23:59:59` is in `train`.

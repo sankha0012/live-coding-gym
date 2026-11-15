@@ -1,0 +1,6 @@
+title: Aggregate health checks
+kind: python
+required: true
+kb: [prod-health-checks, py-exceptions, py-tuples-unpacking]
+serves: [C5, C2]
+mock: true

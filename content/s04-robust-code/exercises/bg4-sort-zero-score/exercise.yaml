@@ -1,0 +1,7 @@
+title: Catch it - a zero score ranks as missing
+kind: python
+name_bug: true
+assistant: "off"
+required: true
+serves: [C2, C3, C4, C9]
+kb: [py-sorting, py-truthiness-none, prod-determinism, ai-verifying-ai-code]

@@ -1,0 +1,1 @@
+Read the code below without running it. Predict exactly what it prints, then answer the questions in your own words. The dictionary disk stands in for a real file system, and the OSError stands in for a crash or a full disk during the write; the text is written in chunks of 10 characters.

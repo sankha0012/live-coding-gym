@@ -1,0 +1,9 @@
+title: Missing feature filled with 0
+kind: read
+serves: [C6, C7]
+kb: [pd-missing-values, prod-train-serve-skew]
+required: true
+questions:
+  - What does fillna(0) do to the mean and to the low-income count?
+  - What goes wrong if the data has missing incomes that are not really zero?
+  - Why is the median fill a better default here, and what does it still hide?

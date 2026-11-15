@@ -1,0 +1,1 @@
+Add an optional fourth parameter `min_score=None`. When it is not `None`, skip every doc whose cosine similarity is below `min_score` (a similarity equal to `min_score` is kept). With the default, behaviour is unchanged. Example: `top_k([1, 0], {"a": [1, 0], "b": [0, 1], "c": [1, 1]}, 3, min_score=0.5)` returns `["a", "c"]`: `b` has similarity 0.0 and `c` about 0.707.

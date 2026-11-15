@@ -1,0 +1,5 @@
+title: ColumnTransformer for mixed columns
+kind: python
+kb: [ml-column-transformer, ml-sklearn-pipeline]
+required: false
+serves: [C2, C6]

@@ -1,9 +1,0 @@
-title: Month-over-month growth
-kind: sql
-required: true
-mock: true
-time_limit_s: 960
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-order: 60
-kb: [sql-lag-lead, sql-cte, sql-dates-sqlite, sql-window-functions]

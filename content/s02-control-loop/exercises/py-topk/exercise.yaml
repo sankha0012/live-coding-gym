@@ -1,0 +1,6 @@
+title: Top-k dishes
+kind: python
+required: false
+order: 60
+kb: [py-counter-defaultdict, py-sorting, py-lambda-map-filter, py-slicing]
+serves: [C2]

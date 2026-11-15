@@ -1,0 +1,9 @@
+title: "Catch: revenue that includes cancelled orders"
+kind: sql
+name_bug: true
+assistant: "off"
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-joins, sql-group-by, sql-order-limit]
+serves: [C8, C9, C6]

@@ -1,0 +1,8 @@
+title: 7-day rolling order count
+kind: python
+required: false
+files:
+  - ../../../_shared/orders.csv
+
+kb: [pd-rolling, pd-dtypes-datetime]
+serves: [C2, C6]

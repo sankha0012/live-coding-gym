@@ -1,7 +1,0 @@
-title: Nearest courier
-kind: python
-required: true
-mock: true
-time_limit_s: 1440
-order: 60
-kb: [py-sorting, py-lambda-map-filter, py-dicts, py-tuples-unpacking]

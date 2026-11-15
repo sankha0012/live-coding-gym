@@ -1,0 +1,8 @@
+title: Most frequent word
+kind: python
+required: true
+order: 10
+kb: [py-counter-defaultdict, py-str-methods, py-lambda-map-filter, iv-coderbyte-format, py-input-print]
+plan_required: 2
+grade_prompts: true
+serves: [C1, C2]

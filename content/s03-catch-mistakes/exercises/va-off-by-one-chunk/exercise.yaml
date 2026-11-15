@@ -1,0 +1,7 @@
+title: Verify AI code - chunking
+kind: python
+name_bug: true
+assistant: "off"
+required: true
+kb: [ai-verifying-ai-code, py-slicing, py-loops-enumerate-zip, prod-chunked-batch-processing]
+serves: [C7, C9]

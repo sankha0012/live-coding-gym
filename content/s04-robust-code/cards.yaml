@@ -1,0 +1,289 @@
+- id: rb4-c-01
+  front: |-
+    ```python
+    random.seed(0)
+    shuffle_helper(rows)        # some library code also calls random.random()
+    sample = random.sample(range(100), 5)
+    ```
+
+    What breaks here?
+  back: random.seed sets the one global generator that every piece of code shares. If the helper draws a different number of values from it, the sample changes even though the seed did not. Use a local generator, random.Random(seed), created from a seed the caller passes in.
+- id: rb4-c-02
+  front: |-
+    ```python
+    def bucket(user_id):
+        return hash(user_id) % 10
+    ```
+
+    What breaks here?
+  back: The built-in hash of a string is randomised per process, so the same user lands in a different bucket after every restart or deploy. Use hashlib (for example md5 of the encoded id) when the value must be stable.
+- id: rb4-c-03
+  front: |-
+    ```python
+    rng = random.Random(42)
+    rng.sample({"a", "b", "c"}, 2)
+    ```
+
+    What breaks here?
+  back: 'Since Python 3.11 random.sample raises TypeError for a set. Even before that, a set of strings has no fixed iteration order between processes. Sort first and sample the list: rng.sample(sorted(ids), 2).'
+- id: rb4-c-04
+  front: |-
+    ```python
+    top = sorted(rows, key=lambda r: r["score"], reverse=True)[:3]
+    ```
+
+    What breaks here?
+  back: Rows with equal scores keep their input order, because sorted is stable, even with reverse=True. If the input order changes between runs (database without ORDER BY, a set, threads), the top 3 changes. Add a unique tie-break to the key.
+- id: rb4-c-05
+  front: |-
+    ```python
+    sorted(rows, key=lambda r: (-r["score"], r["id"]))
+    ```
+
+    What does this do?
+  back: It sorts by score from highest to lowest, and rows with the same score by id ascending. Negating the score reverses one part of the key while the id stays ascending. Because the id is unique, the order is fully determined by the data.
+- id: rb4-c-06
+  front: |-
+    ```python
+    df.sort_values("score", ascending=False).head(3)
+    ```
+
+    What breaks here?
+  back: The default sort algorithm in pandas is quicksort, which is not stable, so rows with equal scores may come out in any order. Sort by several columns, such as ["score", "id"], or pass kind="stable" and still make sure the input order is fixed.
+- id: rb4-c-07
+  front: |-
+    ```python
+    def is_expired(created, ttl=60, now=time.time()):
+        return now - created > ttl
+    ```
+
+    What breaks here?
+  back: The default value now=time.time() is evaluated once, when the function is defined, so every call uses the same frozen time. Use now=None and read the clock inside, or pass the time in as an argument.
+- id: rb4-c-08
+  front: |-
+    ```python
+    def retry(fn, attempts, sleep=time.sleep):
+        ...
+        sleep(1)
+
+    retry(fn, 3, sleep=lambda s: None)
+    ```
+
+    What does this do?
+  back: The real sleep is a parameter with the real function as its default. The call passes a function that does nothing, so a test runs the retry loop instantly. Production code that does not pass sleep still waits for real.
+- id: rb4-c-09
+  front: |-
+    ```python
+    start = time.time()
+    run_job()
+    elapsed = time.time() - start
+    ```
+
+    What breaks here?
+  back: time.time() is the wall clock and can jump when the system clock is corrected, so elapsed can be wrong or even negative. Use time.monotonic() for durations and deadlines.
+- id: rb4-c-10
+  front: |-
+    ```python
+    def check_prob(p):
+        if p < 0 or p > 1:
+            raise ValueError("bad probability")
+        return p
+
+    check_prob(float("nan"))
+    ```
+
+    What breaks here?
+  back: Every comparison with NaN is false, so neither condition triggers and NaN is returned as a valid probability. Check math.isfinite(p) first, then the range.
+- id: rb4-c-11
+  front: |-
+    ```python
+    def is_valid_age(age):
+        return isinstance(age, int) and 0 <= age <= 120
+
+    is_valid_age(True)
+    ```
+
+    What breaks here?
+  back: bool is a subclass of int in Python, so True passes the isinstance check and counts as 1. Reject it explicitly with isinstance(age, bool), because a flag in a numeric column is almost always a data bug.
+- id: rb4-c-12
+  front: |-
+    ```python
+    @dataclass(frozen=True)
+    class Row:
+        user_id: str
+        age: int
+
+    r = Row("u1", "thirty")
+    r.age = 31
+    ```
+
+    What breaks here?
+  back: 'Row("u1", "thirty") works: type hints are not checked at run time, so a string is accepted for age. The assignment raises FrozenInstanceError because the dataclass is frozen. A typed contract still needs a validation function at the boundary.'
+- id: rb4-c-13
+  front: |-
+    ```python
+    for i in range(5):
+        try:
+            return call_model(x)
+        except Exception:
+            time.sleep(1)
+    ```
+
+    What breaks here?
+  back: It retries every error, including bugs and bad input that will fail again, waits a fixed second so that clients retry in step, and after the last attempt falls off the loop without raising. Catch only named transient errors, back off, and re-raise the last error.
+- id: rb4-c-14
+  front: |-
+    ```python
+    while True:
+        try:
+            return fetch(url)
+        except TimeoutError:
+            time.sleep(1)
+    ```
+
+    What breaks here?
+  back: There is no limit on attempts or on total time, so a dependency that stays down keeps this worker looping forever. Add a maximum number of attempts or a deadline, and raise when it is reached.
+- id: rb4-c-15
+  front: |-
+    ```python
+    delay = min(cap, base * 2 ** i)
+    sleep(delay * (0.5 + rng.random() / 2))
+    ```
+
+    What does this do?
+  back: It waits exponentially longer after each failed attempt, never more than cap, and multiplies the wait by a random factor between 0.5 and 1 (jitter) so many clients do not retry at the same moment. rng is a seeded generator passed in, so tests are deterministic.
+- id: rb4-c-16
+  front: |-
+    ```python
+    def get_score(x):
+        for _ in range(3):
+            try:
+                return call_model(x)
+            except TimeoutError:
+                pass
+        return None
+    ```
+
+    What breaks here?
+  back: After the third failure the function returns None instead of raising. The caller cannot tell a failure from a valid result, and a silent None usually ends up in a metric or a database. Re-raise the last error, or return an explicit fallback and count it.
+- id: rb4-c-17
+  front: |-
+    ```python
+    resp = requests.get(url)
+    ```
+
+    What breaks here?
+  back: requests applies no timeout by default, so a server that accepts the connection and never answers blocks this call forever. Always pass one, for example requests.get(url, timeout=2).
+- id: rb4-c-18
+  front: |-
+    ```python
+    for _ in range(3):
+        result = fn(timeout=10)   # the caller gave up after 5 seconds
+    ```
+
+    What breaks here?
+  back: 'Timeouts add up: three attempts of 10 seconds, plus any waits, can take over 30 seconds while the caller left after 5. Set one deadline from time.monotonic() and give each attempt only the time that remains.'
+- id: rb4-c-19
+  front: |-
+    ```python
+    future = pool.submit(slow_job)
+    future.result(timeout=1)
+    ```
+
+    What does this do?
+  back: Waits one second for the result and raises TimeoutError in the caller if it is not ready. The worker thread is not stopped and keeps running in the background, so the job must be safe to finish later or be cancellable.
+- id: rb4-c-20
+  front: |-
+    ```python
+    done.add(key)
+    charge(card, amount)
+    ```
+
+    What breaks here?
+  back: The key is recorded before the work. If charge fails or the process crashes, the retry sees the key and skips a charge that never happened. Record the key, with the result, only after the work succeeds.
+- id: rb4-c-21
+  front: When would you use an idempotency key and what is the catch?
+  back: 'Use it when a request may be repeated by retries, queues or double clicks and running it twice would do harm, such as a payment or an insert. The caller creates the key once and sends it on every retry. The catch: the lookup must be atomic (a unique constraint, not check then insert), and the same key with a different payload should raise an error instead of returning the old result.'
+- id: rb4-c-22
+  front: |-
+    ```python
+    conn.execute("INSERT OR IGNORE INTO events(id, payload) VALUES (?, ?)", (event_id, payload))
+    ```
+
+    What does this do?
+  back: With a primary key or unique constraint on id, inserting an event that already exists does nothing, so a replayed message cannot create a duplicate row. The catch is that a second event with the same id but a different payload is also ignored silently.
+- id: rb4-c-23
+  front: |-
+    ```python
+    with open("state.json", "w") as f:
+        json.dump(state, f)
+    ```
+
+    What breaks here?
+  back: open(..., "w") empties the file at once. If json.dump raises or the process dies halfway, state.json is left empty or half written, and the next job that loads it fails. Write to a temporary file and os.replace it into place.
+- id: rb4-c-24
+  front: |-
+    ```python
+    fd, tmp = tempfile.mkstemp(dir=folder)
+    with os.fdopen(fd, "w") as f:
+        f.write(text)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, path)
+    ```
+
+    What does this do?
+  back: Writes the full content to a temporary file in the target folder, forces the bytes to disk, and swaps the file into place in one atomic step. A reader or a crash sees either the old file or the new one, never a partial file. A full version also deletes the temporary file on error.
+- id: rb4-c-25
+  front: |-
+    ```python
+    fd, tmp = tempfile.mkstemp()          # temp folder
+    ...
+    os.replace(tmp, "/data/model.pkl")
+    ```
+
+    What breaks here?
+  back: The temporary file may be on a different filesystem from /data, and os.replace then fails with an OSError. Atomic replacement only works inside one filesystem, so create the temporary file in the same folder as the target.
+- id: rb4-c-26
+  front: |-
+    ```python
+    logger.warning(f"fallback used for user {uid}, reason: {reason}")
+    ```
+
+    What breaks here?
+  back: Each message has different text, so you cannot count or filter fallbacks reliably, and a metric or alert cannot be built from it. Log a stable event name with fields, for example a JSON line with event, user_id and reason, plus a per-batch count.
+- id: rb4-c-27
+  front: |-
+    ```python
+    log.info("batch_done", extra={"fields": {"rows": n, "fallbacks": k}})
+    ```
+
+    What does this do?
+  back: 'Emits one summary record per batch with named fields, which a JSON formatter turns into a line such as {"event": "batch_done", "rows": 100, "fallbacks": 3}. An alert can then fire when fallbacks divided by rows rises, which catches a silent fallback.'
+- id: rb4-c-28
+  front: |-
+    ```python
+    def test_slugify():
+        assert slugify("a b")
+    ```
+
+    What breaks here?
+  back: 'A non-empty string is always truthy, so this test passes for any result and can never fail. Compare with an expected value written by hand: assert slugify("a b") == "a-b".'
+- id: rb4-c-29
+  front: |-
+    ```python
+    with pytest.raises(Exception):
+        parse_row(row)
+    ```
+
+    What breaks here?
+  back: 'Exception is so broad that a typo in the code, such as a NameError, also passes. Name the exact type and match the message: pytest.raises(ValueError, match="age").'
+- id: rb4-c-30
+  front: |-
+    ```python
+    # app.py:  from time import sleep
+    monkeypatch.setattr(time, "sleep", lambda s: None)
+    ```
+
+    What breaks here?
+  back: app.py imported the name sleep into its own namespace, so replacing time.sleep does not affect it and the test still sleeps for real. Patch the name where it is used (app.sleep), or better, take sleep as a parameter.

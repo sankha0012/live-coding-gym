@@ -1,0 +1,10 @@
+title: Registry lookup for a missing model
+kind: read
+order: 8
+required: false
+serves: [C3, C5, C2]
+kb: [prod-fallbacks, prod-input-validation]
+questions:
+  - "What does load_model('churn', '1.2') return, and why is that surprising?"
+  - "What goes wrong in production if a missing model version silently resolves to latest?"
+  - "Why does the final KeyError name ('fraud', 'latest') and not ('fraud', '1.0'), and how would you fix the lookup?"

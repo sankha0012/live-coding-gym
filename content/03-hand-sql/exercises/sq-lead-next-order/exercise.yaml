@@ -1,7 +1,0 @@
-title: Days until the next order
-kind: sql
-time_limit_s: 900
-required: true
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-kb: [sql-lag-lead, sql-window-functions, sql-dates-sqlite]

@@ -1,0 +1,5 @@
+title: A tiny eval harness
+kind: python
+required: false
+kb: [ai-eval-harness, py-loops-enumerate-zip, py-dicts, py-str-methods]
+serves: [C5, C9]

@@ -1,0 +1,6 @@
+title: "Quiz: determinism, idempotency and retries"
+kind: quiz
+pass_ratio: 0.8
+kb: [prod-determinism, prod-idempotency, prod-retry-backoff, py-hashlib]
+required: false
+serves: [C4, C5]

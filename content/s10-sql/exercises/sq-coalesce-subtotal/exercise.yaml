@@ -1,0 +1,7 @@
+title: COALESCE the missing subtotal
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-nulls, sql-select-where]
+serves: [C6]

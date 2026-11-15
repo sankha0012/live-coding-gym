@@ -1,5 +1,0 @@
-title: Apply a function n times
-kind: python
-time_limit_s: 300
-required: true
-kb: [py-loops-enumerate-zip, py-functions-args]

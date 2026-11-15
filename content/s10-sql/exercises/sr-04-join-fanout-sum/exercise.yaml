@@ -1,0 +1,9 @@
+title: "Read: a join that multiplies rows before SUM"
+kind: explain
+required: true
+serves: [C6, C9]
+kb: [sql-joins, sql-group-by]
+rubric:
+  - "Says what each clause does in order: FROM orders, JOIN order_items, GROUP BY customer, SUM, ORDER BY."
+  - "Predicts the result: customer 100 gets 180.0 and customer 101 gets 40.0, not the true 80.0 and 20.0."
+  - "Names the trap: the join repeats each order once per item, so SUM(o.total) counts the order total several times; aggregate before joining or sum a column that lives at the item level."

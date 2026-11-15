@@ -1,7 +1,0 @@
-title: Data quality - orphan keys
-kind: sql
-required: true
-time_limit_s: 720
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-kb: [sql-left-join-anti-join, sql-data-quality-checks, sql-nulls]

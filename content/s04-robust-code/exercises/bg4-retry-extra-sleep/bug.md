@@ -1,0 +1,1 @@
+The `sleep` call sits inside the `except` block, so it runs after every failed attempt, including the last one. When all attempts fail, the function waits one more full delay and only then re-raises. A caller with a deadline loses that time for nothing, and with `retries=0` the function sleeps even though no retry will happen.

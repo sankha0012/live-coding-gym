@@ -1,5 +1,0 @@
-title: Validate a prediction request
-kind: python
-required: true
-time_limit_s: 780
-kb: [prod-input-validation, py-math-nan, py-dicts, py-truthiness-none]

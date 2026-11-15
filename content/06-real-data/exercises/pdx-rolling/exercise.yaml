@@ -1,8 +1,0 @@
-title: 7-day rolling order count
-kind: python
-time_limit_s: 900
-required: true
-files:
-  - ../../../_shared/orders.csv
-
-kb: [pd-rolling, pd-dtypes-datetime]

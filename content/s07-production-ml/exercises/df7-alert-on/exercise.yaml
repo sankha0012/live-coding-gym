@@ -1,0 +1,9 @@
+title: "Defend: what you alert on for a model in production"
+kind: open
+serves: [C7, C5, C9]
+rubric:
+  - Separates the layers of monitoring, namely service health such as errors and latency, data health such as schema, missing values and drift of inputs, and model quality such as prediction distribution and, when labels arrive, real performance.
+  - Explains that ground truth is often delayed, so input and prediction distributions are the early signal and the quality metric confirms later, and chooses alerts on actions someone can take.
+  - Mentions alert quality, such as sensible thresholds with a baseline, avoiding noisy alerts that get ignored, or a named owner and runbook for each alert.
+kb: [tool-monitoring, ml-psi-drift, prod-monitoring-percentiles, prod-drift-alerts-hysteresis]
+required: true

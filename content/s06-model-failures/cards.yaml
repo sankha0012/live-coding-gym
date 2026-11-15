@@ -1,0 +1,315 @@
+- id: mf6-c-01
+  front: |
+    ```python
+    score = model(row)
+    if score < 0 or score > 1:
+        score = min(1.0, max(0.0, score))
+    return score
+    ```
+
+    What breaks here?
+  back: |
+    A NaN score passes both comparisons, because every comparison with NaN is False, so it is returned unchanged and later breaks sorting and sums. Test math.isfinite(score) first, fall back, and count the repair.
+- id: mf6-c-02
+  front: |
+    ```python
+    p = float('nan')
+    print(max(0.0, min(1.0, p)))
+    ```
+
+    What does this do?
+  back: |
+    It prints 1.0. min(1.0, nan) returns 1.0 because nan < 1.0 is False, and max(0.0, 1.0) keeps it. Swap the order and the result is 0.0. Either way a NaN is silently turned into a valid-looking number, so check isfinite before clipping.
+- id: mf6-c-03
+  front: |
+    ```python
+    ranked = sorted(scores, reverse=True)
+    top = ranked[:10]
+    ```
+
+    What breaks here?
+  back: |
+    If scores contains NaN, the sort order is unreliable because NaN compares False with everything. The NaN can end up at the top of the list, even first. Remove or replace non-finite scores before sorting, and count them.
+- id: mf6-c-04
+  front: |
+    ```python
+    orders = row['orders_30d']
+    return model(orders)
+    ```
+
+    What breaks here?
+  back: |
+    If the upstream job was late or the column was renamed, the key is absent and the row raises KeyError, which can kill a whole batch. Use row.get with an explicit default, record a missing flag, and count the null rate per feature.
+- id: mf6-c-05
+  front: |
+    ```python
+    df['orders_30d'] = df['orders_30d'].fillna(0)
+    ```
+
+    What breaks here?
+  back: |
+    The fill makes unknown look like zero. A new user with no history becomes a customer with zero orders, and the model cannot tell the cases apart. Keep an explicit was_missing flag next to the default, and watch the null rate.
+- id: mf6-c-06
+  front: |
+    ```python
+    def predict(row):
+        try:
+            return model(row)
+        except Exception:
+            return rule(row)
+    ```
+
+    What breaks here?
+  back: |
+    The fallback itself can raise, for example if the rule needs the same missing feature, and nothing counts how often the fallback runs. End the chain with a constant that cannot fail, and increment a counter at each step so a rising fallback rate is visible.
+- id: mf6-c-07
+  front: |
+    ```python
+    # training
+    df['age'] = df['age'].fillna(df['age'].mean())
+    # serving
+    age = row.get('age', 0)
+    ```
+
+    What breaks here?
+  back: |
+    This is train and serving skew: training fills a missing age with the mean, serving fills it with 0. The model sees different values for the same situation. Use one shared feature function for both paths.
+- id: mf6-c-08
+  front: |
+    ```python
+    # training
+    gap = (end - start).total_seconds()
+    # serving
+    gap = (end - start).total_seconds() * 1000
+    ```
+
+    What breaks here?
+  back: |
+    The units differ: seconds in training, milliseconds in serving. Every serving value is 1000 times larger than the model expects, and no exception is raised. Share one function, and compare logged serving features with training features.
+- id: mf6-c-09
+  front: |
+    ```python
+    scaler = StandardScaler()
+    X = scaler.fit_transform(batch)
+    score = model.predict_proba(X)
+    ```
+
+    What breaks here?
+  back: |
+    At serving time the scaler is fitted again on the current batch, so it uses the batch mean and standard deviation instead of the training ones. Save the fitted scaler with the model and call transform only.
+- id: mf6-c-10
+  front: |
+    ```python
+    edges = np.quantile(baseline, np.linspace(0, 1, 11))
+    b = np.histogram(baseline, edges)[0]
+    c = np.histogram(current, edges)[0]
+    ```
+
+    What does this do?
+  back: |
+    It builds ten bins from the baseline's deciles and counts how many baseline and current values fall in each. Fixing the edges from the baseline is essential for PSI, because edges recomputed on new data would hide a shift. Values outside the baseline range are dropped unless the end edges are set to infinity.
+- id: mf6-c-11
+  front: |
+    ```python
+    b = np.array([0.5, 0.5, 0.0])
+    c = np.array([0.4, 0.4, 0.2])
+    psi = np.sum((c - b) * np.log(c / b))
+    ```
+
+    What breaks here?
+  back: |
+    The last baseline bin is empty, so c / b divides by zero and the PSI becomes infinity. Smooth the proportions by clipping them to a small minimum such as 1e-6 before taking the log.
+- id: mf6-c-12
+  front: |
+    ```python
+    if psi(base, today) > 0.25:
+        retrain_and_deploy()
+    ```
+
+    What breaks here?
+  back: |
+    One noisy window can trigger an automatic deploy. A PSI above about 0.25 is a convention for a large shift, not proof the model is worse. Alarm after several consecutive windows, investigate, and check actual quality before retraining.
+- id: mf6-c-13
+  front: |
+    ```python
+    from datetime import datetime, timezone
+    age = datetime.now(timezone.utc) - trained_at
+    # trained_at = datetime(2026, 1, 1)
+    ```
+
+    What breaks here?
+  back: |
+    Subtracting a naive datetime from an aware one raises TypeError. That is better than a silent error of several hours, but the fix is to store trained_at in UTC with its timezone. Also pass the clock in as an argument so the check is testable.
+- id: mf6-c-14
+  front: |
+    ```python
+    @app.get('/health')
+    def health():
+        return {'status': 'ok'}
+    ```
+
+    What breaks here?
+  back: |
+    It only shows that the process answers. A model that is three weeks old, or a feed that stopped an hour ago, still reports ok. A useful health check also compares model age and the newest event timestamp with limits.
+- id: mf6-c-15
+  front: |
+    ```python
+    newest = events['ts'].max()
+    if now - newest > timedelta(hours=1):
+        alarm('stale feed')
+    ```
+
+    What does this do?
+  back: |
+    It finds the newest event time and raises an alarm if the feed has been silent for more than an hour. This catches an upstream feed that stopped updating while the model and service still look healthy.
+- id: mf6-c-16
+  front: |
+    ```python
+    X = StandardScaler().fit_transform(X)
+    X_train, X_test = train_test_split(X, test_size=0.2)
+    ```
+
+    What breaks here?
+  back: |
+    The scaler is fitted on all rows before the split, so test-set statistics leak into training and the offline score is too optimistic. Split first, fit on the training part only, and apply transform to the test part.
+- id: mf6-c-17
+  front: |
+    ```python
+    train, test = train_test_split(orders, test_size=0.2)  # orders sorted by date
+    ```
+
+    What breaks here?
+  back: |
+    The split shuffles by default, so the training set contains rows from after some test rows and the model learns from the future. For time-ordered data split by a date cutoff, with all training rows strictly before the test rows.
+- id: mf6-c-18
+  front: |
+    ```python
+    features = [c for c in df.columns if c != 'churned']
+    # columns include 'cancellation_reason'
+    ```
+
+    What breaks here?
+  back: |
+    The cancellation reason is only filled in after a customer churns, so it is built from the answer. The model scores almost perfectly offline and fails live, where the column is empty. Ask of every feature whether it is known at prediction time.
+- id: mf6-c-19
+  front: |
+    ```python
+    y = [0] * 99 + [1]
+    print(accuracy_score(y, [0] * 100))
+    ```
+
+    What does this do?
+  back: |
+    It prints 0.99. A model that always predicts the majority class gets 99 percent accuracy while finding no positives. With a rare class, report precision and recall instead of accuracy.
+- id: mf6-c-20
+  front: |
+    ```python
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    ```
+
+    What breaks here?
+  back: |
+    If the model flags nothing, tp + fp is 0 and the first line raises ZeroDivisionError. Guard it, for example returning 0.0 when the denominator is 0, and make the choice explicit. Precision and recall should always be reported together.
+- id: mf6-c-21
+  front: |
+    ```python
+    auc = roc_auc_score([0, 0, 1, 1], [0.1, 0.4, 0.35, 0.8])
+    print(auc)
+    ```
+
+    What does this do?
+  back: |
+    It prints 0.75: of the four positive-negative pairs, three have the positive scored higher. AUC measures ranking across all thresholds, so it needs no threshold and says nothing about whether the scores are calibrated probabilities.
+- id: mf6-c-22
+  front: |
+    ```python
+    model = LogisticRegression(class_weight='balanced').fit(X, y)
+    flag = model.predict_proba(X_new)[:, 1] >= 0.5
+    ```
+
+    What breaks here?
+  back: |
+    Class weights shift the score scale, so the scores are no longer true probabilities and a 0.5 threshold flags far more cases than the base rate suggests. Check calibration on held-out data or choose the threshold from the cost and a precision-recall curve.
+- id: mf6-c-23
+  front: |
+    ```python
+    df['bin'] = pd.cut(df['score'], 5)
+    print(df.groupby('bin', observed=True)[['score', 'y']].mean())
+    ```
+
+    What does this do?
+  back: |
+    It groups scores into five equal-width bins and shows the mean score and the actual positive rate in each. If a bin averages 0.9 but only 60 percent are positive, the model is over-confident and needs recalibration.
+- id: mf6-c-24
+  front: |
+    ```python
+    cal = IsotonicRegression(out_of_bounds='clip')
+    cal.fit(model.predict_proba(X_train)[:, 1], y_train)
+    ```
+
+    What breaks here?
+  back: |
+    The calibrator is fitted on the same data the model was trained on, where the scores are already too good, so it learns little. Fit it on a separate held-out set and check calibration again after each retrain.
+- id: mf6-c-25
+  front: |
+    ```python
+    total = sum(e['amount'] for e in events)
+    ```
+
+    What breaks here?
+  back: |
+    With at-least-once delivery the same event can arrive twice, after a retry or a replay, so the total is inflated. Deduplicate by event id first, and count the duplicates removed.
+- id: mf6-c-26
+  front: |
+    ```python
+    df = df.drop_duplicates()
+    ```
+
+    What breaks here?
+  back: |
+    drop_duplicates() with no arguments removes only rows identical in every column. A retried event with a later updated_at is a different row and survives, so the metric is still inflated. Deduplicate on the event id.
+- id: mf6-c-27
+  front: |
+    ```python
+    clean = events.drop_duplicates('event_id')
+    ```
+
+    What breaks here?
+  back: |
+    It keeps the first row it sees for each id, so which copy survives depends on the current row order, and a later correction is discarded. Sort by update time first and choose keep='last' or keep='first' on purpose.
+- id: mf6-c-28
+  front: |
+    ```python
+    results = []
+    for row in rows:
+        results.append(score(row))
+    ```
+
+    What breaks here?
+  back: |
+    One malformed row raises and kills the whole job, so nothing or only part of the output is written. Wrap the per-row work in try/except Exception, record the failing id and error type, and fail the job only if the failure rate is above a limit.
+- id: mf6-c-29
+  front: |
+    ```python
+    for row in rows:
+        try:
+            out[row['id']] = score(row)
+        except:
+            pass
+    ```
+
+    What breaks here?
+  back: |
+    The bare except hides every failure, including programming errors and KeyboardInterrupt, and no one learns that 30 percent of rows were skipped. Catch Exception, record the id and error, and check the failure rate against a limit.
+- id: mf6-c-30
+  front: |
+    ```python
+    with open('scores.csv', 'a') as f:
+        for row in rows:
+            f.write(f"{row['id']},{score(row)}\n")
+    ```
+
+    What breaks here?
+  back: |
+    Opening in append mode means a rerun after a partial failure writes the successful rows again, producing duplicates. Write results keyed by row id, or write to a temporary file and replace it atomically, so reruns are idempotent.

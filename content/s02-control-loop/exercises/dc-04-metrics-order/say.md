@@ -1,0 +1,1 @@
+I read the docs: the helper takes y_pred first, the reverse of scikit-learn, and returns precision then recall. So I flip the arguments, unpack in that order, and guard the f1 division when precision and recall are both zero.

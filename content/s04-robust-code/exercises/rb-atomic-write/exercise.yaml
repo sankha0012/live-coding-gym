@@ -1,0 +1,4 @@
+title: Write a file atomically
+kind: python
+kb: [prod-atomic-write, py-tempfile-os, py-json, py-exceptions]
+serves: [C5, C3]

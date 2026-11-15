@@ -1,0 +1,7 @@
+title: "Catch it - dedupe keeps the wrong event"
+kind: python
+name_bug: true
+assistant: "off"
+required: false
+serves: [C5, C6, C9]
+kb: [prod-event-dedup-ordering, prod-idempotency, ai-verifying-ai-code]

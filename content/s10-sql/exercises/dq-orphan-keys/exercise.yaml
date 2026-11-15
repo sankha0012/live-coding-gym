@@ -1,0 +1,7 @@
+title: Data quality - orphan keys
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-left-join-anti-join, sql-data-quality-checks, sql-nulls]
+serves: [C6]

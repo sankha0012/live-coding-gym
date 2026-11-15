@@ -1,0 +1,8 @@
+title: Month-over-month growth
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+order: 60
+kb: [sql-lag-lead, sql-cte, sql-dates-sqlite, sql-window-functions]
+serves: [C6]

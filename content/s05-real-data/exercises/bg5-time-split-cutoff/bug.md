@@ -1,0 +1,1 @@
+The code uses `<=` for train and `>=` for test, so an order created exactly at the cutoff is in both sets. The two boundaries must be complementary: one side strictly before, the other at or after. An order in both train and test is leakage, because the model is evaluated on a row it was trained on, and the row counts no longer add up.

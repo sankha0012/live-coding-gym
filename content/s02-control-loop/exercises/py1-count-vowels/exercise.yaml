@@ -1,0 +1,6 @@
+title: Count the vowels
+kind: python
+required: false
+order: 2
+kb: [py-str-methods, py-iterators-generators, py-strings-basics]
+serves: [C2]

@@ -1,0 +1,5 @@
+title: Test slugify
+kind: tests
+required: false
+kb: [test-pytest-basics, test-what-to-test, py-str-split-join, py-str-methods]
+serves: [C3]

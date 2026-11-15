@@ -1,0 +1,9 @@
+title: Late events and ordering
+kind: read
+serves: [C3, C5, C6, C9]
+required: false
+kb: [prod-event-dedup-ordering, pd-sort-dedupe]
+questions:
+  - Why does 'arrival' end with u1 shipped while 'event time' ends with u1 paid?
+  - What goes wrong if events from a mobile app or queue can arrive minutes late?
+  - What does the event-time version do with the late event, and what would you also want to do with it?

@@ -1,0 +1,9 @@
+title: "Defend: how a retry stays safe with idempotency keys"
+kind: open
+required: true
+serves: [C5, C3, C9]
+rubric:
+  - Explains the risk: when a call times out the caller does not know whether the server processed it, so a blind retry can run the action twice, for example a double charge or a duplicate order.
+  - Describes the mechanism: the client sends one stable idempotency key per logical operation, reused on every retry, and the server stores the key with the result and returns that stored result instead of repeating the work.
+  - Adds a limit or trade-off, such as retrying only transient errors with backoff, the key being generated once before the first attempt and not per attempt, how long keys are stored, or that the server must check and store the key atomically.
+kb: [prod-idempotency, prod-retry-backoff, prod-fallbacks]

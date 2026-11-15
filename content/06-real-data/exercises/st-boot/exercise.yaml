@@ -1,6 +1,0 @@
-title: Bootstrap of the mean delivery time
-kind: python
-required: true
-mock: true
-time_limit_s: 900
-kb: [ml-bootstrap, py-random-seeds, py-sorting]

@@ -1,0 +1,3 @@
+kept: 3 mean: 6.9
+strict: 2 of 5 rows invalid: ['abc', '']
+strict, clean input: [1.0, 2.0, 3.0]

@@ -1,7 +1,0 @@
-title: Real data behaviour and statistics
-order: 106
-shelf: true
-gate:
-  min_score: 3
-  timed_required: false
-  pass_ratio: 0.7

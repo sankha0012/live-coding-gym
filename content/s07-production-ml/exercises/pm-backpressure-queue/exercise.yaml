@@ -1,0 +1,4 @@
+title: Bounded queue with backpressure
+kind: python
+kb: [py-collections-deque, py-classes, py-exceptions]
+serves: [C5, C3]

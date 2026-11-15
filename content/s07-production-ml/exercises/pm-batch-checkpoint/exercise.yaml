@@ -1,0 +1,5 @@
+title: Batch job with checkpoint and resume
+kind: python
+required: true
+kb: [prod-checkpointing, prod-idempotency, py-dicts]
+serves: [C5, C2]

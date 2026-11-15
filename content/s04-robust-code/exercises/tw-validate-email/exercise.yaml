@@ -1,0 +1,5 @@
+title: Test validate_email
+kind: tests
+required: false
+kb: [test-what-to-test, test-pytest-basics, py-str-methods, py-str-split-join]
+serves: [C3, C6]

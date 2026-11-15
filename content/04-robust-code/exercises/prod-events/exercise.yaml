@@ -1,6 +1,0 @@
-title: Idempotent event processing
-kind: python
-required: true
-mock: false
-time_limit_s: 900
-kb: [prod-event-dedup-ordering, prod-idempotency, py-sets, py-tuples-unpacking]

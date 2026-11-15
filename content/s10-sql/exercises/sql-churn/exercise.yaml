@@ -1,0 +1,8 @@
+title: Customers who disappeared
+kind: sql
+required: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+order: 60
+kb: [sql-subqueries, sql-distinct, sql-dates-sqlite]
+serves: [C2, C6]

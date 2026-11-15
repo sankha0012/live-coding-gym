@@ -1,0 +1,7 @@
+title: Days since signup
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-dates-sqlite, sql-select-where]
+serves: [C6]

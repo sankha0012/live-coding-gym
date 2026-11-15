@@ -1,0 +1,1 @@
+I read the docs: absent ids are omitted from the dict rather than mapped to None, and default is keyword-only. So I pass default=fallback and index by key in the original order, which keeps duplicates, alignment and a real stored 0.0.

@@ -1,0 +1,5 @@
+title: Test batch_split
+kind: tests
+required: false
+kb: [test-what-to-test, test-raises, test-pytest-basics, py-slicing, py-copy-mutability]
+serves: [C3, C1]

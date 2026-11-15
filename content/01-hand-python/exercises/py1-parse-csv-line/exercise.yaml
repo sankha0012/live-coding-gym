@@ -1,6 +1,0 @@
-title: Parse one CSV line
-kind: python
-mock: true
-time_limit_s: 420
-required: true
-kb: [py-csv, py-lists]

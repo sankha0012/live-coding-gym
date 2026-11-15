@@ -1,0 +1,7 @@
+title: Distinct and count
+kind: sql
+required: false
+seed_file: ../../../_shared/delivery.sql
+order: 5
+kb: [sql-distinct, sql-joins, sql-select-where]
+serves: [C6]

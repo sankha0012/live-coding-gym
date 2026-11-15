@@ -1,0 +1,11 @@
+title: "Explain: a circuit breaker"
+kind: explain
+required: true
+serves: [C9, C5]
+rubric:
+  - States that after a number of failures the breaker opens and fails fast, protecting a struggling dependency and the caller.
+  - Explains the recovery path: after the reset time one trial call goes through and success closes the circuit.
+  - Notes that the clock is injected so time can be controlled in tests.
+  - Names a risk: it is not thread safe, and in the half-open state many concurrent calls can all pass as trials.
+  - Notes that it counts every Exception, including bugs, not only dependency failures.
+kb: [iv-explaining-code, prod-circuit-breaker, py-time-clock-injection, py-exceptions]

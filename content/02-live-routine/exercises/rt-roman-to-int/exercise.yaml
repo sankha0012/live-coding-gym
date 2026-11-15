@@ -1,6 +1,0 @@
-title: Roman numeral to integer
-kind: python
-required: true
-mock: true
-time_limit_s: 720
-kb: [py-dicts, py-loops-enumerate-zip, py-strings-basics]

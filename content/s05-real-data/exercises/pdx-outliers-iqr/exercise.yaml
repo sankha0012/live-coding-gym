@@ -1,0 +1,8 @@
+title: Flag subtotal outliers with IQR
+kind: python
+required: false
+files:
+  - ../../../_shared/orders.csv
+
+kb: [pd-outliers, pd-select-filter, pd-missing-values]
+serves: [C6, C7]

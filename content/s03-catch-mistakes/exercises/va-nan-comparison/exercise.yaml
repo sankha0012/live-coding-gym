@@ -1,0 +1,7 @@
+title: Verify AI code - NaN check
+kind: python
+name_bug: true
+assistant: "off"
+required: true
+kb: [ai-verifying-ai-code, py-math-nan, py-truthiness-none]
+serves: [C7, C9]

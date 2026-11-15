@@ -1,0 +1,7 @@
+title: Three-table join
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-joins, sql-select-where]
+serves: [C6]

@@ -1,0 +1,10 @@
+title: Percentile off by one
+kind: read
+order: 2
+required: true
+serves: [C2, C3, C6]
+kb: [prod-monitoring-percentiles, py-math-nan]
+questions:
+  - "Why does p95_naive return 400 while p95_nearest_rank returns 19 for the same 20 values?"
+  - "What goes wrong in production if the p95 latency on the dashboard is computed this way?"
+  - "Which index would the naive code use for 20 values at p50, and is it right?"

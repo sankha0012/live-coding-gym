@@ -1,4 +1,0 @@
-title: "Quiz: model failure modes and their defences"
-kind: quiz
-pass_ratio: 0.8
-kb: [py-math-nan, ml-metrics-precision-recall-f1, ml-train-test-split-leakage, ml-calibration, prod-fallbacks]

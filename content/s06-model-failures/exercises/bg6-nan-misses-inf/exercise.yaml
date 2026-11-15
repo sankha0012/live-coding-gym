@@ -1,0 +1,7 @@
+title: "Catch it - infinity passes the NaN guard"
+kind: python
+name_bug: true
+assistant: "off"
+required: true
+serves: [C7, C3, C9]
+kb: [py-math-nan, prod-input-validation, ai-verifying-ai-code]

@@ -1,0 +1,7 @@
+title: Catch it - average counts cancelled orders
+kind: python
+name_bug: true
+assistant: "off"
+required: false
+serves: [C3, C6, C9]
+kb: [py-truthiness-none, py-list-comprehensions, test-what-to-test, ai-verifying-ai-code]

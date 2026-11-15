@@ -1,0 +1,10 @@
+title: Your weaknesses, said well
+kind: open
+required: false
+serves: [C8, C9]
+rubric:
+  - Names one real, specific weakness in plain words and does not hide it behind a disguised strength.
+  - Gives evidence that the candidate is already working on it, with concrete actions and a time frame.
+  - Connects the weakness to the job honestly, saying what the candidate does to limit the risk while it improves.
+  - Sounds calm and factual, with no apology and no exaggeration.
+kb: [iv-explaining-code, ai-prompt-anatomy]

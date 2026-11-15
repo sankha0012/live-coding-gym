@@ -1,0 +1,7 @@
+title: "Docs: metrics argument order"
+kind: python
+required: false
+kb: [ml-metrics-precision-recall-f1, py-functions-args]
+serves: [C10, C2]
+files:
+  - quickmetrics.py

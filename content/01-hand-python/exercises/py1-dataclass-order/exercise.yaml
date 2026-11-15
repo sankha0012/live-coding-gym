@@ -1,5 +1,0 @@
-title: Ordered frozen dataclass
-kind: python
-time_limit_s: 420
-required: true
-kb: [py-dataclasses, py-sorting]

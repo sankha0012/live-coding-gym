@@ -1,0 +1,10 @@
+title: Read - precision, recall and AUC from sklearn
+kind: read
+order: 18
+required: false
+serves: [C2, C7, C9]
+kb: [ml-metrics-precision-recall-f1, ml-auc-ks]
+questions:
+  - "How many true positives, false positives and false negatives are there, and what do they give for precision and recall?"
+  - "Why do the last two prints differ, and which one is the right way to compute AUC?"
+  - "What does the 0.5 threshold decide, and which metrics depend on it?"

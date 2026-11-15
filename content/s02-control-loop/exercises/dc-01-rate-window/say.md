@@ -1,0 +1,1 @@
+I read the docs first: the helper's window is half-open, start inclusive and end exclusive. So the window ending at now is start = now - window and end = now, which matches the task, and I compare the count with `>=` limit. I checked the boundary cases at now - window and at now.

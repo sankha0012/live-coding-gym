@@ -1,0 +1,5 @@
+title: Counter class
+kind: python
+required: false
+kb: [py-classes, py-dicts, py-sorting, algo-hash-map-counting]
+serves: [C2]

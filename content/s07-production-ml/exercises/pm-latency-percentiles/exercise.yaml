@@ -1,0 +1,6 @@
+title: Latency percentiles (nearest rank)
+kind: python
+required: true
+kb: [prod-monitoring-percentiles, py-sorting, py-f-strings]
+serves: [C2, C1]
+mock: true

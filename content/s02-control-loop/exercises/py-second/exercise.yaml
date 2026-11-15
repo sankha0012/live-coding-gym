@@ -1,0 +1,6 @@
+title: Second highest value
+kind: python
+required: false
+order: 60
+kb: [py-sets, py-sorting, py-truthiness-none]
+serves: [C2]

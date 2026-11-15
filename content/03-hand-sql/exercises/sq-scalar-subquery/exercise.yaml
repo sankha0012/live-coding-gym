@@ -1,7 +1,0 @@
-title: Orders far above average
-kind: sql
-required: true
-time_limit_s: 420
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-kb: [sql-subqueries, sql-select-where]

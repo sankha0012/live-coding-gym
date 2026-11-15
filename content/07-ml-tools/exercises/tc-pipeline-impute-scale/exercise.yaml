@@ -1,4 +1,0 @@
-title: Pipeline with impute and scale
-kind: python
-time_limit_s: 600
-kb: [ml-sklearn-pipeline, ml-train-test-split-leakage, pd-missing-values]

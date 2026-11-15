@@ -1,0 +1,4 @@
+title: Accept old and new payload versions
+kind: python
+kb: [prod-schema-evolution, prod-input-validation, py-exceptions, py-dicts]
+serves: [C3, C6]

@@ -1,0 +1,9 @@
+title: A score outside [0, 1]
+kind: read
+serves: [C3, C7]
+kb: [prod-input-validation, ml-calibration]
+required: true
+questions:
+  - Which scores pass the threshold check, and is every one of them a valid probability?
+  - What goes wrong if the data contains a score of 1.3 or -0.2?
+  - What did the clean list change in the mean and why does it matter?

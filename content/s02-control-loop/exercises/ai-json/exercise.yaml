@@ -1,0 +1,5 @@
+title: Parse JSON from an LLM reply
+kind: python
+required: true
+kb: [ai-llm-json-parsing, py-json, py-exceptions, py-slicing]
+serves: [C8, C2]

@@ -1,0 +1,9 @@
+title: "Read: COUNT(*) versus COUNT(column)"
+kind: explain
+required: true
+serves: [C6, C9]
+kb: [sql-nulls, sql-group-by]
+rubric:
+  - "Says what each clause does in order: FROM, GROUP BY courier, then each aggregate per group, then ORDER BY."
+  - "Predicts the result rows: Lia 2, 1, 1, 3.0 and Rui 3, 2, 2, 4.5."
+  - "Names the trap: COUNT(*) counts rows while COUNT(column) and AVG skip NULLs, so the average rating ignores unrated deliveries."

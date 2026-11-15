@@ -1,0 +1,1 @@
+Add an optional second parameter `required=()`, a list of keys. After parsing, if any required key is missing from the dict, return `None`. With the default, behaviour is unchanged. Example: `extract_json('{"intent": "refund"}', ["intent", "confidence"])` returns `None`, while `extract_json('{"intent": "refund", "confidence": 0.9}', ["intent", "confidence"])` returns the dict.

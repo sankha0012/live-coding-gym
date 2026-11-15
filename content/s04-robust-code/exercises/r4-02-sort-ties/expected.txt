@@ -1,0 +1,6 @@
+naive a: ['m_b', 'm_a']
+naive b: ['m_d', 'm_a']
+fixed a: ['m_a', 'm_b']
+fixed b: ['m_a', 'm_b']
+naive stable across orders: False
+fixed stable across orders: True

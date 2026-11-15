@@ -1,0 +1,7 @@
+title: "Dedupe, keep the latest"
+kind: sql
+required: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-dedupe, sql-row-number-rank, sql-window-functions, sql-subqueries]
+serves: [C1, C9]

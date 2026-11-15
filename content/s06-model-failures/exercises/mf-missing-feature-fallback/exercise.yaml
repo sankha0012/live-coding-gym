@@ -1,0 +1,6 @@
+title: Fill missing features from defaults
+kind: python
+required: true
+kb: [prod-fallbacks, py-dicts, py-truthiness-none, py-copy-mutability]
+serves: [C3, C6]
+mock: true

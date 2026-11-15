@@ -1,0 +1,9 @@
+title: A failure hidden by a bare except
+kind: read
+serves: [C3, C5]
+kb: [py-exceptions, prod-chunked-batch-processing]
+required: false
+questions:
+  - Which rows fail, and why does the first status line still say ok?
+  - What goes wrong if the data has a row with a zero or a missing field?
+  - How does the second loop make the failures visible, and what else would you do with them?

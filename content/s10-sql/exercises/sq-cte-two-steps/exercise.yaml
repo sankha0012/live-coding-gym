@@ -1,0 +1,7 @@
+title: Above-average restaurants
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-cte, sql-subqueries, sql-group-by]
+serves: [C6]

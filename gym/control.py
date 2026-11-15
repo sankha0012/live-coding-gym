@@ -2,7 +2,7 @@
 import random
 import re
 
-SKIP = re.compile(r"^(#|import |from |@|\"\"\"|'''|else:|try:|finally:|pass$|return$|\)|\]|\})")
+SKIP = re.compile(r"^(#|--|import |from |def |class |@|\"\"\"|'''|else:|try:|finally:|pass$|return$|\)|\]|\})")
 
 
 def candidate_lines(code):

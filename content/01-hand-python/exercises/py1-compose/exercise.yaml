@@ -1,5 +1,0 @@
-title: Compose functions
-kind: python
-time_limit_s: 360
-required: true
-kb: [py-closures-decorators, py-functions-args]

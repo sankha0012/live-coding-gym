@@ -1,0 +1,11 @@
+title: "Explain: a window function query"
+kind: explain
+required: false
+serves: [C9, C6]
+rubric:
+  - States that it finds each customer's latest delivered order and the customer's lifetime delivered total, then returns the top five by lifetime total.
+  - Explains PARTITION BY customer_id, ROW_NUMBER with descending date to pick the latest row, and SUM OVER without ORDER BY for a total per customer.
+  - Notes that a window function cannot be used in WHERE, so the filter on rn = 1 needs a CTE or subquery.
+  - Names a risk: ties on created_at make ROW_NUMBER pick an arbitrary row, and a NULL subtotal makes total NULL so the sum skips that order.
+  - Mentions cost: a sort per partition, about O(n log n).
+kb: [iv-explaining-code, sql-window-functions, sql-row-number-rank, sql-cte, sql-nulls]

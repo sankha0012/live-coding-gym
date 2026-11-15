@@ -1,0 +1,7 @@
+title: Revenue by cuisine
+kind: sql
+required: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-joins, sql-group-by, sql-order-limit]
+serves: [C1, C9]

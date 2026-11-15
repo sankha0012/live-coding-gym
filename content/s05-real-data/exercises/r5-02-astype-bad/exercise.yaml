@@ -1,0 +1,8 @@
+title: astype on a column with a bad value
+kind: read
+serves: [C3, C6, C9]
+kb: [pd-dtypes-datetime, pd-missing-values, prod-input-validation]
+questions:
+  - Why does astype(int) fail, and what does the error tell you about the row?
+  - What goes wrong if the data is a nightly feed that sometimes contains 'n/a' and the job uses astype(int) with no handling?
+  - Why is the dtype printed as float64 after to_numeric, and what does that do to the mean?

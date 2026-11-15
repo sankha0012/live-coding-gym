@@ -1,0 +1,10 @@
+title: Read - merge with suffixes
+kind: read
+order: 14
+required: false
+serves: [C2, C9]
+kb: [pd-merge]
+questions:
+  - "Why does the result have 4 rows when users has only 3?"
+  - "Why is score_true 1.0 and 0.0 instead of 1 and 0, and where does NaN come from?"
+  - "What happens to the row with id 4 in labels, and what would change with how='inner'?"

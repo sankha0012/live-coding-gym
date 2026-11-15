@@ -1,8 +1,0 @@
-title: "Dedupe, keep the latest"
-kind: sql
-required: true
-mock: true
-time_limit_s: 720
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-kb: [sql-dedupe, sql-row-number-rank, sql-window-functions, sql-subqueries]

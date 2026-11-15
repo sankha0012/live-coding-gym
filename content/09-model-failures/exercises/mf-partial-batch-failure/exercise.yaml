@@ -1,6 +1,0 @@
-title: One bad row must not sink the batch
-kind: python
-required: true
-mock: true
-time_limit_s: 780
-kb: [prod-chunked-batch-processing, py-exceptions, py-loops-enumerate-zip]

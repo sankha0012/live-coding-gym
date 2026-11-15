@@ -1,6 +1,0 @@
-title: Stable canary split
-kind: python
-required: true
-mock: true
-time_limit_s: 720
-kb: [prod-canary-shadow-ab, py-hashlib, prod-determinism]

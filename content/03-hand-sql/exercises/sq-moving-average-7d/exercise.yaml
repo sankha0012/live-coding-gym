@@ -1,7 +1,0 @@
-title: 7-day moving average
-kind: sql
-time_limit_s: 900
-required: true
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-kb: [sql-running-totals-frames, sql-window-functions, sql-dates-sqlite, sql-group-by]

@@ -1,0 +1,7 @@
+title: SQL for data work (optional)
+order: 10
+intro: 'Not in the iFood email, but common in other interviews. Same four moves: read a query, build one with the assistant, catch a wrong one, defend it.'
+gate:
+  min_score: 3
+  pass_ratio: 0.7
+optional: true

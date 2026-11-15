@@ -1,0 +1,6 @@
+title: Common model failures
+order: 6
+intro: 'How models fail in production and what a defensive system does about it: NaN scores, skew, drift, stale models, leakage, imbalance.'
+gate:
+  min_score: 3
+  pass_ratio: 0.7

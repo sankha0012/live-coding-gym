@@ -1,0 +1,8 @@
+title: GMV by city
+kind: python
+required: false
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-groupby-agg, pd-merge, pd-missing-values, pd-select-filter]
+serves: [C2, C6]

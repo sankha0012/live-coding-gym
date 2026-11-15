@@ -1,0 +1,6 @@
+title: Guard against NaN scores
+kind: python
+required: true
+kb: [py-math-nan, prod-input-validation, prod-fallbacks]
+serves: [C3, C7]
+mock: true

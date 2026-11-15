@@ -1,0 +1,1 @@
+The query has no `WHERE status = 'delivered'`, so it counts every order, cancelled ones included, and calls the total `delivered_orders`. For example restaurant 8 has 100 delivered and 10 cancelled orders, so it shows up with 110 and passes the threshold, although it has no more than 100 delivered orders. The symptom is extra restaurants in the list and inflated counts.

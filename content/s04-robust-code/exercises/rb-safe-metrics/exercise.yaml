@@ -1,0 +1,6 @@
+title: Safe mean and rate
+kind: python
+required: true
+kb: [py-math-nan, py-truthiness-none, prod-input-validation]
+serves: [C3, C6]
+mock: true

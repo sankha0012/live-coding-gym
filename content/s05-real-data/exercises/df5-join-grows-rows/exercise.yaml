@@ -1,0 +1,9 @@
+title: "Defend: what a join that grows the row count tells you"
+kind: open
+required: true
+serves: [C3, C6, C9]
+rubric:
+  - Explains that more rows after a left join means the key is not unique on the right side, so each left row matched several right rows.
+  - Names the consequence for a model or a report, such as duplicated orders, inflated sums and counts, or a leaked label counted twice.
+  - Proposes a guard that fails loudly, such as comparing row counts before and after or using the merge validate option, and explains why silently dropping duplicates is the wrong fix.
+kb: [pd-merge, pd-read-inspect, py-exceptions]

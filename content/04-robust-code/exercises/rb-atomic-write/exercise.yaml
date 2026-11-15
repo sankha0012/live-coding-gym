@@ -1,6 +1,0 @@
-title: Write a file atomically
-kind: python
-required: true
-mock: false
-time_limit_s: 720
-kb: [prod-atomic-write, py-tempfile-os, py-json, py-exceptions]

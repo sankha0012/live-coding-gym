@@ -1,0 +1,1 @@
+Add an optional parameter `eps=0.0001`: the value that zero (or smaller) proportions are replaced with. For example `psi([0.5, 0.5], [1.0, 0.0], eps=0.01)` clamps the 0.0 to 0.01 instead of 0.0001, so the result is about 2.2635 instead of about 4.604. With the default nothing changes.

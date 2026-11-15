@@ -1,0 +1,6 @@
+title: Token bucket limiter
+kind: python
+required: true
+kb: [prod-rate-limiter-token-bucket, py-time-clock-injection, py-classes]
+serves: [C5]
+mock: true

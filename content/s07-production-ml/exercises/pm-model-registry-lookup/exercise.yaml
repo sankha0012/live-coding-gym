@@ -1,0 +1,4 @@
+title: Latest model version in a stage
+kind: python
+kb: [py-tuples-unpacking, py-str-split-join, py-str-methods, py-dicts, py-exceptions]
+serves: [C2, C10]

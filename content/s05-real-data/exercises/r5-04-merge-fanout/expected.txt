@@ -1,0 +1,5 @@
+3 5
+total before: 230.0
+total after: 380.0
+safe total: 230.0
+validate caught duplicate keys

@@ -1,0 +1,5 @@
+title: Detect a stale model
+kind: python
+required: false
+kb: [py-datetime, py-exceptions]
+serves: [C5, C7]

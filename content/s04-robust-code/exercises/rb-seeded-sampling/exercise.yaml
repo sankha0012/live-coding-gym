@@ -1,0 +1,5 @@
+title: Reproducible sample
+kind: python
+kb: [py-random-seeds, prod-determinism, py-sets]
+serves: [C4]
+mock: true

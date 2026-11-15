@@ -1,0 +1,8 @@
+title: Orders by city and cuisine
+kind: python
+required: false
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-groupby-agg, pd-merge, pd-sort-dedupe]
+serves: [C2, C6]

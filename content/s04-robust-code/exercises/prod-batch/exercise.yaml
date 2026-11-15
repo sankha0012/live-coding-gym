@@ -1,0 +1,5 @@
+title: Batch predictions that don't fall over
+kind: python
+required: false
+kb: [prod-fallbacks, prod-chunked-batch-processing, py-math-nan, py-exceptions]
+serves: [C5, C3, C7]

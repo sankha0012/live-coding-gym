@@ -1,0 +1,5 @@
+title: Bank account class
+kind: python
+required: false
+kb: [py-classes, py-exceptions]
+serves: [C2]

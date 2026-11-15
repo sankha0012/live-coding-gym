@@ -1,0 +1,8 @@
+title: City dashboard
+kind: python
+required: false
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-groupby-agg, pd-merge, pd-select-filter]
+serves: [C2, C6]

@@ -16,7 +16,6 @@ from .kb import load_kb
 CODED = ("python", "sql", "tests")
 # "challenge" starts from an empty editor: it counts like any pass but never gates anything
 MODES = {"python": ["blank", "challenge"], "sql": ["blank", "challenge"], "tests": ["blank", "challenge"]}
-PASS_MODES = ("blank", "timed", "challenge")
 
 
 class RunBody(BaseModel):
@@ -91,7 +90,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     errors = errors + kb_errors
     step_by_id = {s.id: s for s in steps}
     exercises = {ex.id: ex for s in steps for ex in s.exercises}
-    all_cards = [c for s in steps if not s.shelf for c in s.cards]  # the daily deck is the track's cards
+    all_cards = [c for s in steps if not s.optional for c in s.cards]  # the daily deck: required steps only
     app = FastAPI()
 
     def ai_call(prompt, json_mode=True):
@@ -133,9 +132,17 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         if i + 1 < len(siblings):
             nxt = siblings[i + 1]
         else:
-            later = [s for s in steps if s.shelf == here.shelf and s.order > here.order and s.exercises]
+            later = [s for s in steps if not s.optional and s.order > here.order and s.exercises]
             nxt = later[0].exercises[0] if later else None
         return {"id": nxt.id, "title": nxt.title} if nxt else None
+
+    def group_of(ex):
+        """Which of the four moves an exercise practises: read it, build it, catch the bug, defend it."""
+        if ex.kind == "read":
+            return "Read"
+        if ex.kind == "triage" or ex.name_bug:
+            return "Catch"
+        return "Build" if ex.kind in ("python", "sql", "tests", "prompt") else "Defend"
 
     def control_info(ex):
         if not ex.change_dir:
@@ -157,7 +164,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         schema = "\n".join(l for l in ex.seed.splitlines() if not l.startswith("INSERT"))
         shown_output = ex.kind == "read" and (st["tests"] is True or db.get_setting(conn, f"revealed:{ex.id}") == "1")
         return {"id": ex.id, "step_id": ex.step_id, "title": ex.title, "kind": ex.kind, "prompt": ex.prompt,
-                "time_limit_s": ex.time_limit_s, "modes": MODES.get(ex.kind, []), "mode": mode, "code": code,
+                "serves": ex.serves, "docs": ex.docs, "modes": MODES.get(ex.kind, []), "mode": mode, "code": code,
                 "schema": schema, "assistant": ex.assistant, "plan_required": ex.plan_required,
                 "grade_prompts": ex.grade_prompts, "name_bug": ex.name_bug,
                 "snippet": ex.snippet, "questions": ex.questions, "expected": ex.expected if shown_output else "",
@@ -188,7 +195,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def next_up(rows):
         """First required exercise not yet done, in the first unlocked step that has not passed."""
         for s, row in zip(steps, rows):
-            if not s.shelf and row["unlocked"] and not row["passed"]:
+            if not s.optional and row["unlocked"] and not row["passed"]:
                 st = gates.step_status(conn, s)
                 for ex in s.exercises:
                     if ex.required and not st["exercises"][ex.id]["done"]:
@@ -326,18 +333,18 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         mocks = [{"id": r["id"], "started_at": r["started_at"],
                   "total": json.loads(r["score_json"])["total"]} for r in db.finished_mocks(conn)]
         rows = gates.journey(conn, steps)
-        return {"steps": [r for r in rows if not r["shelf"]], "library": [r for r in rows if r["shelf"]],
-                "next": next_up(rows), "readiness": mock.readiness(conn), "mocks": mocks,
+        return {"steps": rows, "next": next_up(rows), "readiness": mock.readiness(conn), "mocks": mocks,
                 "due_cards": len(cards.due(conn, all_cards, date.today())), "errors": errors}
 
     @app.get("/api/step/{step_id}")
     def step(step_id: str):
         s = need(step_by_id.get(step_id), "step")
         st = gates.step_status(conn, s)
-        gate = {"min_score": s.min_score, "pass_ratio": s.pass_ratio, "timed_required": s.timed_required,
+        gate = {"min_score": s.min_score, "pass_ratio": s.pass_ratio,
                 "total": st["total"], "done": st["done"], "needed": math.ceil(s.pass_ratio * st["total"])}
-        return {"id": s.id, "title": s.title, "lessons": s.lessons, "gate": gate, "shelf": s.shelf, "intro": s.intro,
+        return {"id": s.id, "title": s.title, "lessons": s.lessons, "gate": gate, "optional": s.optional, "intro": s.intro,
                 "exercises": [{"id": ex.id, "title": ex.title, "kind": ex.kind, "required": ex.required,
+                               "group": group_of(ex), "serves": ex.serves,
                                "status": st["exercises"][ex.id]} for ex in s.exercises]}
 
     @app.get("/api/exercise/{exercise_id}")
@@ -506,7 +513,10 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         row = db.get_control(conn, ex.id)
         if row is None:
             raise HTTPException(400, "Start the control check first.")
-        result = runner.run_python_tests(body.code, ex.change_dir, files=ex.files)
+        if ex.kind == "sql":
+            result = runner.check_sql(ex.seed, body.code, ex.change_solution, ex.ordered)
+        else:
+            result = runner.run_python_tests(body.code, ex.change_dir, files=ex.files)
         db.record_attempt(conn, ex.id, "change", body.code, result.passed, 0, result.output)
         db.set_control_part(conn, ex.id, "b", result.passed)
         return {**asdict(result), "control": control_info(ex), "status": status_of(ex)}

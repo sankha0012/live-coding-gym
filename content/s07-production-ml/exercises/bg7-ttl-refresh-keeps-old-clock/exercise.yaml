@@ -1,0 +1,7 @@
+title: "Verify AI code - refresh does not restart TTL"
+kind: python
+name_bug: true
+assistant: "off"
+serves: [C5, C3, C8]
+kb: [ai-verifying-ai-code, prod-ttl-cache, py-time-clock-injection]
+required: true

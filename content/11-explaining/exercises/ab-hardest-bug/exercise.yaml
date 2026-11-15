@@ -1,9 +1,0 @@
-title: The hardest bug you fixed
-kind: open
-required: true
-rubric:
-  - Describes the symptom as someone saw it (a wrong number, a crash, a slow job) before explaining the cause.
-  - Explains how the candidate narrowed it down, with at least two concrete steps such as reproducing it, bisecting, logging or checking the data.
-  - States the root cause in plain words and the fix, and says why it was hard to see.
-  - Mentions what was added so it cannot silently return, such as a test, a check or an alert.
-kb: [iv-explaining-code, test-what-to-test]

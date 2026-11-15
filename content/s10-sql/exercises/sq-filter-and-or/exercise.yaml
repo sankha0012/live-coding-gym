@@ -1,0 +1,7 @@
+title: Combine AND with OR
+kind: sql
+required: false
+seed_file: ../../../_shared/delivery.sql
+order: 2
+kb: [sql-select-where, sql-nulls]
+serves: [C6]

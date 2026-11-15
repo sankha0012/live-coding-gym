@@ -1,6 +1,0 @@
-title: 6. Mock rounds
-order: 6
-intro: 'Two coding tasks with the assistant on, then follow-up questions. Scored on control, not just on passing tests.'
-gate:
-  min_score: 3
-  pass_ratio: 0.7

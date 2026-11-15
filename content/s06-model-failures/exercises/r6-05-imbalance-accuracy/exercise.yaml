@@ -1,0 +1,9 @@
+title: Accuracy on imbalanced data
+kind: read
+serves: [C2, C7]
+kb: [ml-metrics-precision-recall-f1]
+required: false
+questions:
+  - Why is the accuracy 0.95 even though the model does nothing useful?
+  - What goes wrong if the data is 95 percent one class?
+  - Why does the code guard the precision division?

@@ -1,5 +1,0 @@
-title: Caesar cipher
-kind: python
-required: true
-time_limit_s: 540
-kb: [py-str-methods, py-strings-basics, py-str-split-join]

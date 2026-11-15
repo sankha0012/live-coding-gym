@@ -1,0 +1,6 @@
+def rank(records, limit=None):
+    ranked = sorted(
+        records,
+        key=lambda r: (r["score"] is None, -(r["score"] or 0), r["id"]),
+    )
+    return ranked[:limit]

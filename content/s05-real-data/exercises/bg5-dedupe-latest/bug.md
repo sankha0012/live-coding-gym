@@ -1,0 +1,1 @@
+The code calls `drop_duplicates(key, keep="last")` without sorting by `time_col` first, so it keeps the last row of each key in the file, not the newest one. The assistant read "latest" as "last row", which is only true when the file happens to be in time order. When an older version is stored after a newer one, the stale record wins and the `time_col` argument is never used.

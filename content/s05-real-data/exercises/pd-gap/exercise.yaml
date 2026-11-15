@@ -1,0 +1,8 @@
+title: Time between orders
+kind: python
+required: false
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-dtypes-datetime, pd-sort-dedupe, pd-groupby-agg]
+serves: [C6, C2]

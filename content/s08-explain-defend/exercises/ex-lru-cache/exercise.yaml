@@ -1,0 +1,11 @@
+title: "Explain: an LRU cache"
+kind: explain
+required: true
+serves: [C9, C2]
+rubric:
+  - States that it keeps at most capacity items and evicts the least recently used one, using an ordered dictionary.
+  - Explains that get and put move the key to the end, so the oldest key is always at the front.
+  - Gives get and put as O(1) time and O(capacity) space.
+  - Names a risk: the cached decorator uses None as the miss marker, so a function that returns None is never cached.
+  - Mentions a fix, such as a sentinel object, or a lock for thread safety.
+kb: [iv-explaining-code, algo-lru-cache, py-collections-deque, py-closures-decorators]

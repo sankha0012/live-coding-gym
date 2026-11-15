@@ -1,0 +1,5 @@
+The table has two columns with missing values: age is missing at rows 1 and 3, income at row 2. df["age"].mean() ignores NaN and equals (30 + 50) / 2 = 40.0. df.fillna(40.0) fills every missing cell in the whole frame with that single number and returns a new frame; df itself is unchanged. dropna(subset=["age"]) removes only rows where age is missing, so rows 1 and 3 go. The script prints the filled frame, then the number of kept rows with their index labels, then the number of missing ages in the original df.
+
+Answers. fillna inserts 40.0, the mean of the known ages, computed once. The income column gets a wrong fill: row 2 income becomes 40.0 although incomes are 100 to 400; passing a scalar to fillna on a whole DataFrame fills all columns with it. The safe form is a per-column dict such as df.fillna({"age": 40.0}). dropna keeps rows 0 and 2, and the printed index [0, 2] shows that the original labels are kept, not renumbered.
+
+The trap. The last line prints 2, not 0, because fillna did not modify df: it returned a copy. An assistant often writes df.fillna(...) without assigning the result and expects df to change.

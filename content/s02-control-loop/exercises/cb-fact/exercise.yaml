@@ -1,0 +1,6 @@
+title: Factorial (the warm-up)
+kind: python
+required: false
+order: 1
+kb: [iv-coderbyte-format, py-input-print, py-loops-enumerate-zip]
+serves: [C1, C2]

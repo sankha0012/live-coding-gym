@@ -1,0 +1,7 @@
+title: Merge intervals
+kind: python
+required: true
+kb: [algo-intervals, py-sorting, py-lists]
+plan_required: 2
+grade_prompts: true
+serves: [C1, C2]

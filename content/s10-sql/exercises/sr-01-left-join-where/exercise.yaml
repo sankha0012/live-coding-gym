@@ -1,0 +1,9 @@
+title: "Read: LEFT JOIN filtered by WHERE"
+kind: explain
+required: true
+serves: [C6, C9]
+kb: [sql-left-join-anti-join, sql-joins, sql-nulls]
+rubric:
+  - "Says what each clause does in order: FROM and LEFT JOIN, then WHERE, then GROUP BY and COUNT, then ORDER BY."
+  - "Predicts the result: only Ana and Bruno, one delivered order each, and Carla and Davi are missing."
+  - "Names the trap: the WHERE on o.status removes the NULL-extended rows, so the LEFT JOIN behaves like an inner join; the fix is to move the condition into ON."

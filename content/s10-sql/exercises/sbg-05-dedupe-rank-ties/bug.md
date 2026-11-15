@@ -1,0 +1,1 @@
+The assistant used `RANK()` ordered only by `created_at`, and RANK gives the same rank 1 to rows that tie on created_at, so both rows survive the `rn = 1` filter. There is also no order_id tie-break as the prompt requires. The symptom is more than one row for a (customer_id, restaurant_id) pair, so the "deduplicated" result still has duplicates.

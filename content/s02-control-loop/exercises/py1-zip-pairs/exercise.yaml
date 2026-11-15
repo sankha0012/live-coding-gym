@@ -1,0 +1,5 @@
+title: Adjacent pairs
+kind: python
+required: false
+kb: [py-loops-enumerate-zip, py-slicing, py-itertools]
+serves: [C2]

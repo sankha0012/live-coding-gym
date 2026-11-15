@@ -1,0 +1,5 @@
+title: 'Bug: average delivery time'
+kind: python
+required: true
+kb: [py-truthiness-none, py-list-comprehensions, test-what-to-test]
+serves: [C3, C6, C9]

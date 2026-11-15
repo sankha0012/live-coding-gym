@@ -1,0 +1,5 @@
+title: Test withdraw
+kind: tests
+required: false
+kb: [test-raises, test-pytest-basics, test-what-to-test, py-exceptions]
+serves: [C3]

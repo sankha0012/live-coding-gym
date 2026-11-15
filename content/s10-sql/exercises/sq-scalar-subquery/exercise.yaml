@@ -1,0 +1,7 @@
+title: Orders far above average
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-subqueries, sql-select-where]
+serves: [C6]

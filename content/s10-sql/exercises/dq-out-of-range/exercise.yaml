@@ -1,0 +1,7 @@
+title: Data quality - values out of range
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-data-quality-checks, sql-select-where]
+serves: [C6]

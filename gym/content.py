@@ -18,9 +18,7 @@ class Exercise:
     dir: Path
     starter: str = ""
     solution: str = ""
-    gaps: str = ""
     seed: str = ""
-    time_limit_s: int = 600
     required: bool = True
     review: bool = False
     mock: bool = False
@@ -39,6 +37,8 @@ class Exercise:
     kb: list = field(default_factory=list)
     impl_good: str = ""
     impls_bad: dict = field(default_factory=dict)
+    serves: list = field(default_factory=list)   # competencies C1..C10 from the recruiter email
+    docs: str = ""                # documentation page the learner may consult (docs.md)
     assistant: str = "train"      # train | explain | off | free: what the assistant may do on this exercise
     plan_required: int = 0        # at least this many comment lines (the plan) in a submission
     grade_prompts: bool = False   # the learner's prompts to the assistant must pass the prompt review
@@ -60,12 +60,10 @@ class Step:
     order: int
     min_score: int = 3
     pass_ratio: float = 0.7
-    timed_required: bool = False
     lessons: list = field(default_factory=list)
     exercises: list = field(default_factory=list)
     cards: list = field(default_factory=list)
-    shelf: bool = False           # Library step: always unlocked, never gates anything
-    includes: list = field(default_factory=list)   # ids of exercises moved into this step from other steps
+    optional: bool = False        # always open, never blocks the next step, not part of readiness
     sequence: list = field(default_factory=list)   # explicit exercise order
     intro: str = ""
 
@@ -97,7 +95,6 @@ def load_exercise(d, step_id):
         kind=kind,
         prompt=(d / "prompt.md").read_text(),
         dir=d,
-        time_limit_s=meta.get("time_limit_s", 600),
         required=meta.get("required", True),
         review=meta.get("review", False),
         mock=meta.get("mock", False),
@@ -117,6 +114,8 @@ def load_exercise(d, step_id):
         bug=_read(d / "bug.md"),
         change=_read(d / "change.md"),
         questions=meta.get("questions") or [],
+        serves=meta.get("serves") or [],
+        docs=_read(d / "docs.md"),
     )
     policy = meta.get("assistant")
     if policy is False:  # YAML reads an unquoted `off` as a boolean
@@ -128,14 +127,16 @@ def load_exercise(d, step_id):
         raise ValueError("name_bug needs bug.md")
     if ex.change:
         ex.change_dir = d / "change_tests"
-        if not (ex.change_dir / "test_change.py").exists():
-            raise ValueError("change.md needs change_tests/test_change.py")
-        ex.change_solution = (d / "change_solution.py").read_text()
+        if kind == "sql":  # the changed query is compared with change_solution.sql on the exercise's data
+            ex.change_solution = (d / "change_solution.sql").read_text()
+        else:
+            if not (ex.change_dir / "test_change.py").exists():
+                raise ValueError("change.md needs change_tests/test_change.py")
+            ex.change_solution = (d / "change_solution.py").read_text()
     ext = EXT.get(kind)
     if ext:
         ex.starter = _read(d / f"starter.{ext}")
         ex.solution = (d / f"solution.{ext}").read_text()
-        ex.gaps = _read(d / f"gaps.{ext}")
     if kind == "python":
         if not (d / "tests" / "test_hidden.py").exists():
             raise ValueError("missing tests/test_hidden.py")
@@ -183,10 +184,8 @@ def load_content(content_dir):
             order=meta["order"],
             min_score=gate.get("min_score", 3),
             pass_ratio=gate.get("pass_ratio", 0.7),
-            timed_required=gate.get("timed_required", False),
             cards=yaml.safe_load(_read(sd / "cards.yaml")) or [],
-            shelf=meta.get("shelf", False),
-            includes=meta.get("includes") or [],
+            optional=meta.get("optional", False),
             sequence=meta.get("sequence") or [],
             intro=meta.get("intro", ""),
         )
@@ -201,19 +200,6 @@ def load_content(content_dir):
             except Exception as e:  # one broken exercise must not stop the app
                 errors.append(f"{ed}: {e}")
         steps.append(step)
-    # includes: exercises are moved (in the view only; their files stay where they are) into the including step
-    home = {ex.id: (s, ex) for s in steps for ex in s.exercises}
-    for step in steps:
-        for xid in step.includes:
-            if xid not in home:
-                errors.append(f"{step.id}: includes unknown exercise {xid}")
-                continue
-            old, ex = home[xid]
-            if old is not step:
-                old.exercises.remove(ex)
-                ex.step_id = step.id
-                step.exercises.append(ex)
-                home[xid] = (step, ex)
     for step in steps:
         rank = {xid: i for i, xid in enumerate(step.sequence)}
         step.exercises.sort(key=lambda e: (rank.get(e.id, 10_000), e.order, e.id))

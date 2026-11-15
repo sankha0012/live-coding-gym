@@ -1,0 +1,5 @@
+FROM orders o JOIN order_items i ON i.order_id = o.id pairs each order with each of its items, so the joined table has one row per item: six rows. GROUP BY o.customer_id makes one group per customer, SUM(o.total) adds the order total in every row of the group, and ORDER BY sorts by customer.
+
+I ran it. It returns customer 100 with revenue 180.0 and customer 101 with 40.0. Those numbers are wrong. Customer 100 really spent 50 + 30 = 80, and customer 101 spent 20. Order 1 has three items, so its 50.0 is added three times (150), order 2 has one item (30), giving 180; order 3 has two items, so its 20.0 is added twice (40).
+
+The trap is row multiplication, sometimes called fan-out. A one-to-many join repeats the parent row once per child, and any parent-level column summed afterwards is inflated by the number of children. Nothing errors and the totals look plausible. The fix is to not join at all when you only need order totals (SUM(total) from orders gives 80.0 and 20.0), or to aggregate the items in a subquery first and join that result, or to use COUNT(DISTINCT) style checks. A good habit is to compare the row count before and after every join.

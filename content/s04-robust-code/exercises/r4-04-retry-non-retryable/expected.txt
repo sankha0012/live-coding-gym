@@ -1,0 +1,4 @@
+gave up: missing field: user_id
+calls: 3 delays: [0.5, 1.0]
+raised at once: missing field: user_id
+calls: 1

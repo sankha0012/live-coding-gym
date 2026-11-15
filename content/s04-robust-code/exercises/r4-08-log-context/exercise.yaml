@@ -1,0 +1,14 @@
+title: A log line that loses context
+kind: read
+required: false
+order: 8
+serves:
+- C5
+- C3
+kb:
+- prod-structured-logging
+- py-exceptions
+questions:
+- What information does each ERROR line in the bad section carry, and what does each line in the good section carry in addition?
+- What goes wrong in production if the error log says only 'failed to parse quantity'?
+- Why do both functions return the same list even though their log output differs, and is that a problem?

@@ -1,0 +1,13 @@
+title: Sorting with tied scores
+kind: read
+order: 2
+serves:
+- C4
+- C3
+kb:
+- py-sorting
+- prod-determinism
+questions:
+- Why does naive a pick m_b and m_a while naive b picks m_d and m_a?
+- What goes wrong in production if ranking ties are broken only by arrival order?
+- What does the key (-r[1], r[0]) do, and why is the result the same for both arrival orders?

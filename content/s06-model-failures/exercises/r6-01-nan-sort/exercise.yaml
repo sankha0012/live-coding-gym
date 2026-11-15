@@ -1,0 +1,9 @@
+title: A NaN score in a ranking
+kind: read
+serves: [C3, C7]
+kb: [py-math-nan, py-sorting]
+required: true
+questions:
+  - Why can a comparison involving nan never be trusted, and what does that do to sorted()?
+  - What goes wrong if the data is a score table where one model output is nan?
+  - How does the last line defend against it?

@@ -1,0 +1,10 @@
+title: "Explain: what is a feature store?"
+kind: open
+required: false
+rubric:
+  - Explains it correctly as a shared place to define, compute, store and serve features, usually with an offline store for training and an online store for low-latency lookup.
+  - Names the problem it solves, which is training-serving skew and teams rebuilding the same features in different ways, plus point-in-time correct training data.
+  - Gives a concrete example, such as a customer's orders in the last 30 days computed once and used by training and by the live API.
+  - Is honest about limits and says when you do not need one, such as a single model, a small team or batch-only scoring where a table and a tested function are enough.
+kb: [tool-feature-store, prod-train-serve-skew, pd-time-split-leakage]
+serves: [C7, C9]

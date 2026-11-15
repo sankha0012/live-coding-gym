@@ -1,0 +1,6 @@
+title: Reverse the words
+kind: python
+required: false
+order: 1
+kb: [py-str-split-join, py-slicing]
+serves: [C2]

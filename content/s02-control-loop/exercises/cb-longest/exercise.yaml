@@ -1,0 +1,6 @@
+title: Longest word
+kind: python
+required: false
+order: 10
+kb: [py-str-split-join, py-str-methods, iv-coderbyte-format, py-input-print]
+serves: [C1, C2]

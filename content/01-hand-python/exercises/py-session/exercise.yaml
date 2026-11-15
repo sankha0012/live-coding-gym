@@ -1,7 +1,0 @@
-title: App sessions
-kind: python
-required: true
-mock: true
-time_limit_s: 1200
-order: 60
-kb: [py-sorting, py-lists, py-slicing]

@@ -1,5 +1,0 @@
-title: Merge dicts and sum
-kind: python
-required: true
-time_limit_s: 420
-kb: [py-dicts, algo-hash-map-counting]

@@ -1,6 +1,5 @@
 title: Count words
 kind: python
-time_limit_s: 300
 required: true
 review: true
 mock: true

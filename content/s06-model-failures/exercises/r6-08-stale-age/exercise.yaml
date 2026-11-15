@@ -1,0 +1,9 @@
+title: A stale model detected by age
+kind: read
+serves: [C5, C7]
+kb: [py-time-clock-injection, prod-health-checks]
+required: false
+questions:
+  - What is the difference between timedelta.days and comparing timedeltas?
+  - What goes wrong if the data is a model trained 7 days and 23 hours ago?
+  - What does the m4 line show about a trained_at in the future?

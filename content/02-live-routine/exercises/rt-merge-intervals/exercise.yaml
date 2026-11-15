@@ -1,8 +1,0 @@
-title: Merge intervals
-kind: python
-required: true
-mock: true
-time_limit_s: 780
-kb: [algo-intervals, py-sorting, py-lists]
-plan_required: 2
-grade_prompts: true

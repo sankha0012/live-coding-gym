@@ -1,0 +1,5 @@
+title: 'Bug hunt: a flaky pipeline'
+kind: python
+required: false
+kb: [prod-determinism, py-sorting, py-truthiness-none, py-list-comprehensions]
+serves: [C4, C3, C9]

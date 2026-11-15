@@ -1,0 +1,9 @@
+title: Fill missing subtotals
+kind: python
+required: true
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-missing-values, pd-groupby-agg]
+serves: [C3, C6, C7]
+mock: true

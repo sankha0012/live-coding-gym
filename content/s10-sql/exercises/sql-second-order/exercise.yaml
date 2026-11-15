@@ -1,0 +1,8 @@
+title: Days to the 2nd order
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+order: 60
+kb: [sql-row-number-rank, sql-self-join, sql-cte, sql-dates-sqlite]
+serves: [C6]

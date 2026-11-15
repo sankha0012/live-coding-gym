@@ -1,6 +1,0 @@
-title: Coupon A/B test
-kind: python
-required: true
-mock: true
-time_limit_s: 720
-kb: [ml-ab-test-z, py-math-nan]

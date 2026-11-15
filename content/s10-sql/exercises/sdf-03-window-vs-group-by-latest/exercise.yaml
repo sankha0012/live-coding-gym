@@ -1,0 +1,9 @@
+title: "Defend: window function or GROUP BY for the latest order per customer"
+kind: open
+required: false
+serves: [C6, C4, C9]
+rubric:
+  - Explains that GROUP BY with MAX(created_at) returns the latest date but not the other columns of that row, so it needs a join back, while ROW_NUMBER over a partition keeps the whole row.
+  - Handles ties explicitly, such as a second ORDER BY column like order_id, and says that a join back on the date can return two rows for a tie.
+  - Gives a trade-off or limit, such as the window needing a subquery to filter on the rank, the sort cost per partition, or that GROUP BY is enough when only the date or an aggregate is needed.
+kb: [sql-dedupe, sql-row-number-rank, sql-window-functions, sql-group-by]

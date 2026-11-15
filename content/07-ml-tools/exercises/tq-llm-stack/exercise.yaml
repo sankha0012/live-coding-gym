@@ -1,4 +1,0 @@
-title: "Quiz: embeddings, vector search and RAG"
-kind: quiz
-pass_ratio: 0.8
-kb: [tool-rag-llm-stack, ai-embeddings-topk, ai-chunking, ai-eval-harness]

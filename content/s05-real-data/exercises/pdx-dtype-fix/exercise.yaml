@@ -1,0 +1,8 @@
+title: Fix the column types
+kind: python
+required: false
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-dtypes-datetime, pd-missing-values, pd-read-inspect]
+serves: [C6, C3]

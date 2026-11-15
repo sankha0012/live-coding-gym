@@ -1,8 +1,0 @@
-title: 4. Robust ML systems, assisted
-order: 4
-intro: 'Build production-style pieces with the assistant, one function at a time. Then show control: explain two lines and change one thing by hand.'
-gate:
-  min_score: 3
-  pass_ratio: 0.7
-includes: [rb-parse-config, rb-retry-classify, rb-rate-limiter, rb-safe-metrics, rb-idempotency-key, rb-late-events, pm-drift-alert, pm-canary-split, pm-ttl-cache, pm-latency-percentiles, pm-health-check, pm-timeout-fallback, pm-input-contract, pm-ab-assignment, rb-chunked-stream, pm-batch-checkpoint]
-sequence: [rb-parse-config, rb-retry-classify, rb-rate-limiter, rb-safe-metrics, rb-idempotency-key, rb-late-events, pm-drift-alert, pm-canary-split, pm-ttl-cache, pm-latency-percentiles, pm-health-check, pm-timeout-fallback, pm-input-contract, pm-ab-assignment, rb-chunked-stream, pm-batch-checkpoint]

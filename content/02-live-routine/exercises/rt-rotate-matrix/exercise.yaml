@@ -1,6 +1,0 @@
-title: Rotate a matrix 90 degrees
-kind: python
-required: true
-mock: true
-time_limit_s: 780
-kb: [algo-matrix, py-loops-enumerate-zip, py-slicing, py-list-comprehensions]

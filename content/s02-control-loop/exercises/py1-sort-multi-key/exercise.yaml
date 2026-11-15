@@ -1,0 +1,5 @@
+title: Sort by score then name
+kind: python
+required: false
+kb: [py-sorting, py-lambda-map-filter, py-tuples-unpacking]
+serves: [C2]

@@ -1,6 +1,0 @@
-title: LRU cache
-kind: python
-required: true
-mock: true
-time_limit_s: 900
-kb: [algo-lru-cache, py-collections-deque, py-classes]

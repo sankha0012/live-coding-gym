@@ -1,0 +1,7 @@
+title: "Verify AI code - percentile rank rounded down"
+kind: python
+name_bug: true
+assistant: "off"
+serves: [C2, C3, C8]
+kb: [ai-verifying-ai-code, prod-monitoring-percentiles, py-sorting]
+required: false

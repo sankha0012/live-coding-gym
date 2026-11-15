@@ -1,9 +1,0 @@
-title: Slow restaurants
-kind: sql
-required: true
-mock: true
-time_limit_s: 720
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-order: 60
-kb: [sql-having, sql-group-by, sql-order-limit]

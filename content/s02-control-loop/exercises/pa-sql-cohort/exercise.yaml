@@ -1,0 +1,11 @@
+title: "Prompt: monthly signup cohort retention SQL"
+kind: prompt
+required: false
+rubric:
+  - "States the task, inputs, outputs and constraints precisely"
+  - "Asks for robustness: validation, edge cases, determinism"
+  - "Keeps the candidate in control: small scope, asks for tests or explanation"
+  - "Would convince an observer the candidate understands the problem"
+  - "Gives the table and column names and defines retention precisely"
+kb: [ai-prompt-anatomy, sql-dates-sqlite, sql-left-join-anti-join, sql-group-by, sql-cte]
+serves: [C8]

@@ -1,0 +1,8 @@
+title: Top 23 orders
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+order: 4
+kb: [sql-order-limit, sql-select-where]
+serves: [C6]

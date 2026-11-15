@@ -1,0 +1,5 @@
+title: Cross-validated accuracy without leakage
+kind: python
+kb: [ml-cross-validation, ml-sklearn-pipeline, ml-train-test-split-leakage]
+required: false
+serves: [C2, C7]

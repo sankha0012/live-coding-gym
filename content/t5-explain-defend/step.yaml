@@ -1,8 +1,0 @@
-title: 5. Explain and defend
-order: 5
-intro: 'Follow-up questions decide interviews. Explain your code, defend design choices and talk about your experience.'
-gate:
-  min_score: 3
-  pass_ratio: 0.7
-includes: [ex-ab-bucketing, ex-batch-chunking, ex-circuit-breaker, ex-idempotent-consumer, ex-lru-cache, ex-pipeline-leak, ex-psi, ex-retry-backoff, ab-ai-usage-philosophy, ab-hardest-bug, ab-tell-me-about-a-project, ab-weaknesses]
-sequence: [ex-ab-bucketing, ex-batch-chunking, ex-circuit-breaker, ex-idempotent-consumer, ex-lru-cache, ex-pipeline-leak, ex-psi, ex-retry-backoff, ab-ai-usage-philosophy, ab-hardest-bug, ab-tell-me-about-a-project, ab-weaknesses]

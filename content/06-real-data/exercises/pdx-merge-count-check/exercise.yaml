@@ -1,9 +1,0 @@
-title: Merge and check the row count
-kind: python
-time_limit_s: 720
-required: true
-mock: true
-files:
-  - ../../../_shared/orders.csv
-  - ../../../_shared/restaurants.csv
-kb: [pd-merge, pd-read-inspect, py-exceptions]

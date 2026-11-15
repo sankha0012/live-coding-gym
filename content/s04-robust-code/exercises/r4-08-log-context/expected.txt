@@ -1,0 +1,8 @@
+--- bad ---
+ERROR failed to parse quantity
+ERROR failed to parse quantity
+[3, None, None]
+--- good ---
+ERROR failed to parse quantity order_id=A-18 qty='three' error=invalid literal for int() with base 10: 'three'
+ERROR failed to parse quantity order_id=A-19 qty=None error=int() argument must be a string, a bytes-like object or a real number, not 'NoneType'
+[3, None, None]

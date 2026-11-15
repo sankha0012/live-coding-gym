@@ -1,7 +1,0 @@
-title: Longest word
-kind: python
-required: true
-mock: true
-time_limit_s: 540
-order: 10
-kb: [py-str-split-join, py-str-methods, iv-coderbyte-format, py-input-print]

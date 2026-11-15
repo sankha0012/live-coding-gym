@@ -1,5 +1,0 @@
-title: "Debug: rolling mean off by one"
-kind: python
-required: true
-time_limit_s: 720
-kb: [algo-sliding-window, py-slicing, py-loops-enumerate-zip]

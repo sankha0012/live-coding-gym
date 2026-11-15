@@ -1,0 +1,5 @@
+title: Test retry
+kind: tests
+required: false
+kb: [test-fakes-monkeypatch, test-raises, prod-retry-backoff, py-time-clock-injection, py-closures-decorators]
+serves: [C5, C3]

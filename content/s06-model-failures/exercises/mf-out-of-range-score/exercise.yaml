@@ -1,0 +1,5 @@
+title: Clip scores to the probability range
+kind: python
+required: true
+kb: [prod-input-validation, py-list-comprehensions]
+serves: [C3, C7]

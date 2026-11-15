@@ -1,9 +1,0 @@
-title: Days to the 2nd order
-kind: sql
-required: true
-mock: true
-time_limit_s: 1200
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-order: 60
-kb: [sql-row-number-rank, sql-self-join, sql-cte, sql-dates-sqlite]

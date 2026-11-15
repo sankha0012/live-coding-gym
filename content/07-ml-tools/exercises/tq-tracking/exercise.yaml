@@ -1,4 +1,0 @@
-title: "Quiz: experiment tracking and the model registry"
-kind: quiz
-pass_ratio: 0.8
-kb: [tool-experiment-tracking, tool-data-versioning, prod-determinism]

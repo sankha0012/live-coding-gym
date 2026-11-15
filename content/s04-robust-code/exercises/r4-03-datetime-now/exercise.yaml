@@ -1,0 +1,13 @@
+title: datetime.now() inside a function
+kind: read
+order: 3
+serves:
+- C4
+- C3
+kb:
+- py-datetime
+- py-time-clock-injection
+questions:
+- Why is the first line 0 while the second line is 3?
+- What goes wrong in production if a function reads datetime.now() itself?
+- How does passing now as a parameter fix both the test problem and the reproducibility problem?

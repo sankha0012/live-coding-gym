@@ -1,6 +1,0 @@
-title: Cache with TTL and max size
-kind: python
-required: true
-mock: true
-time_limit_s: 900
-kb: [prod-ttl-cache, py-time-clock-injection, py-classes, py-dicts]

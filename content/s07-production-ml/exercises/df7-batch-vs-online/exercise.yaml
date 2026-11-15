@@ -1,0 +1,9 @@
+title: "Defend: batch or online serving for this use case"
+kind: open
+serves: [C2, C9]
+rubric:
+  - Ties the choice to the use case, not to taste. It asks how fresh the prediction must be and whether the input exists before the user asks, so a score that can be computed ahead of time suggests batch and one that depends on the live request needs online.
+  - Names the operational consequences of each option, such as batch being cheaper, simpler to retry and easy to backfill but stale between runs, and online needing latency limits, timeouts, fallbacks and capacity for peak traffic.
+  - Adds a trade-off or failure mode, for example a batch job failing silently so yesterday's scores stay in use, or a hybrid with precomputed batch scores plus a fallback or a live path for new users.
+kb: [tool-model-serving, prod-chunked-batch-processing, prod-timeouts-deadlines, prod-idempotency]
+required: true

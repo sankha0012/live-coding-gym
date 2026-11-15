@@ -1,0 +1,5 @@
+title: Ordered frozen dataclass
+kind: python
+required: false
+kb: [py-dataclasses, py-sorting]
+serves: [C2]

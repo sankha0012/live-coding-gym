@@ -1,0 +1,6 @@
+title: GMV by city
+kind: python
+required: false
+order: 60
+kb: [py-dicts, py-truthiness-none, py-dict-comprehensions, py-math-nan]
+serves: [C2]

@@ -1,0 +1,8 @@
+title: Orders with names
+kind: sql
+required: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+order: 6
+kb: [sql-joins, sql-select-where, sql-order-limit]
+serves: [C1, C9]

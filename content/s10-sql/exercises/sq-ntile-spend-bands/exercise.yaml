@@ -1,0 +1,7 @@
+title: Customer spend bands
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-ntile-first-value, sql-window-functions, sql-cte, sql-group-by]
+serves: [C6]

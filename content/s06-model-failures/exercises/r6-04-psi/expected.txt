@@ -1,0 +1,4 @@
+expected share: [0.3, 0.3, 0.3, 0.1]
+actual share: [0.0, 0.0, 0.3, 0.7]
+psi: 5.97
+drift: high

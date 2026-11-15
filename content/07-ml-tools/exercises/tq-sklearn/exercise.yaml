@@ -1,4 +1,0 @@
-title: "Quiz: scikit-learn pipelines, leakage and persistence"
-kind: quiz
-pass_ratio: 0.8
-kb: [ml-sklearn-pipeline, ml-train-test-split-leakage, ml-column-transformer, ml-joblib-persistence]

@@ -1,0 +1,6 @@
+title: 'Bug: late rate'
+kind: python
+required: true
+kb: [py-list-comprehensions, test-what-to-test]
+serves: [C3, C6, C9]
+mock: true

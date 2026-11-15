@@ -1,0 +1,7 @@
+title: First order amount per customer
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-ntile-first-value, sql-window-functions, sql-select-where]
+serves: [C6]

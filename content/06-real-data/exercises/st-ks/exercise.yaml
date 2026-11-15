@@ -1,6 +1,0 @@
-title: KS of a credit model
-kind: python
-required: true
-mock: true
-time_limit_s: 900
-kb: [ml-auc-ks, py-loops-enumerate-zip, py-sets]

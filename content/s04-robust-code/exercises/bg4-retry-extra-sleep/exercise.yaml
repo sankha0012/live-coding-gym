@@ -1,0 +1,7 @@
+title: Catch it - retry sleeps after the last try
+kind: python
+name_bug: true
+assistant: "off"
+required: true
+serves: [C2, C5, C9]
+kb: [prod-retry-backoff, py-time-clock-injection, ai-verifying-ai-code]

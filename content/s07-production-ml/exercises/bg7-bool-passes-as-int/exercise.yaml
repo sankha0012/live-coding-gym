@@ -1,0 +1,7 @@
+title: "Verify AI code - bool and NaN slip through validation"
+kind: python
+name_bug: true
+assistant: "off"
+serves: [C3, C6, C8]
+kb: [ai-verifying-ai-code, prod-input-validation, py-math-nan]
+required: false

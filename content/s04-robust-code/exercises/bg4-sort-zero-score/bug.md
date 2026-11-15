@@ -1,0 +1,1 @@
+The sort key starts with `not r["score"]`, which is `True` for `None` but also for `0` and `0.0`, because zero is falsy. A record with a real score of zero is therefore ranked together with the missing ones, behind records with negative scores. In a ranking job this silently demotes every record that legitimately scored zero.

@@ -1,0 +1,5 @@
+title: Group anagrams
+kind: python
+required: false
+kb: [py-dicts, py-sorting, py-str-split-join, algo-hash-map-counting]
+serves: [C1, C2]

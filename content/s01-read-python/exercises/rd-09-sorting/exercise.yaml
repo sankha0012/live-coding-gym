@@ -1,0 +1,9 @@
+title: Read - sorted, key, zip, enumerate
+kind: read
+order: 9
+kb: [py-sorting]
+questions:
+  - "What does the key lambda in the first sorted call put first, and what breaks ties?"
+  - "Which of svm and logreg gets rank 2, and why?"
+  - "Does sorted change the models list? Point at the output that shows it."
+serves: [C2, C9]

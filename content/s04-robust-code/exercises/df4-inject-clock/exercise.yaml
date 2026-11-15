@@ -1,0 +1,9 @@
+title: "Defend: why inject the clock instead of calling now()"
+kind: open
+required: true
+serves: [C4, C5, C9]
+rubric:
+  - States that a function that reads the real time inside itself has a hidden input, so the same call gives different results at different moments and cannot be tested or replayed deterministically.
+  - Explains the design, such as passing a clock function or a timestamp as an argument, so a test can use a fake clock and a replay can use the original time.
+  - Names a concrete failure or test it enables, such as a rate limiter or expiry check at a boundary, a clock that goes backwards, or a backfill that must use the event time and not the run time.
+kb: [py-time-clock-injection, prod-determinism, prod-rate-limiter-token-bucket]

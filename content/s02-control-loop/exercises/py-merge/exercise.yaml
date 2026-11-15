@@ -1,0 +1,6 @@
+title: Merge courier shifts
+kind: python
+required: false
+order: 60
+kb: [algo-intervals, py-sorting, py-lists]
+serves: [C2]

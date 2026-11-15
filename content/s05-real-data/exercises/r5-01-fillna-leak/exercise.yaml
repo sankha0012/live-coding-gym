@@ -1,0 +1,8 @@
+title: Mean fill that leaks test data
+kind: read
+serves: [C3, C6, C7, C9]
+kb: [pd-missing-values, ml-train-test-split-leakage, prod-train-serve-skew]
+questions:
+  - Which rows does the mean used in the first fill come from, and why is that a problem?
+  - What goes wrong if the test set contains an extreme value like 90.0 and you fill with a statistic computed over all rows?
+  - Which number should be used to fill both sets, and where should it be stored for serving?

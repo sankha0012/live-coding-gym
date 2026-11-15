@@ -1,0 +1,9 @@
+title: Mean of a zero-row input
+kind: read
+serves: [C3, C6, C7, C9]
+required: false
+kb: [pd-missing-values, py-math-nan, prod-input-validation]
+questions:
+  - What does avg_ticket return for a city with no rows, and why does it not raise?
+  - What goes wrong if that value is used in a threshold check like rio > 50 inside an alert or a router?
+  - How does safe_avg change the behaviour, and what must the caller still decide?

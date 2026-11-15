@@ -1,0 +1,9 @@
+title: "Catch: the status that vanished from the counts"
+kind: sql
+name_bug: true
+assistant: "off"
+required: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-nulls, sql-group-by]
+serves: [C8, C9, C6]

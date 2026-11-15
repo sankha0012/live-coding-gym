@@ -1,0 +1,5 @@
+title: Sort with ties and None
+kind: python
+kb: [py-sorting, py-truthiness-none, py-lambda-map-filter, prod-determinism]
+serves: [C4, C6]
+mock: true

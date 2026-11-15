@@ -1,5 +1,0 @@
-title: Latest model version in a stage
-kind: python
-required: true
-time_limit_s: 600
-kb: [py-tuples-unpacking, py-str-split-join, py-str-methods, py-dicts, py-exceptions]

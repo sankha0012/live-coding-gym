@@ -1,0 +1,248 @@
+- id: pm7-c-01
+  front: |
+    ```python
+    def run_batch(rows, path):
+        with open(path, "a") as f:
+            for r in rows:
+                f.write(f"{r['id']},{score(r)}\n")
+    ```
+    What breaks here?
+  back: |
+    The job appends, so it is not idempotent. If it crashes and is rerun, or the scheduler runs it twice, every row that was already written appears again. A safer batch job writes to a table keyed by id (an upsert) or overwrites the partition for the run date, so a rerun gives the same final result.
+- id: pm7-c-02
+  front: |
+    ```python
+    def handle_request(payload):
+        return {"score": min(1.0, payload["distance_km"] / 10)}
+    ```
+    What breaks here?
+  back: |
+    An online handler must not trust the caller. A missing key raises KeyError, and a string raises TypeError, so the client gets a 500 and a stack trace. Validate type and range first and answer with a clear 4xx error, and log the rejected request so data problems become visible.
+- id: pm7-c-03
+  front: |
+    ```python
+    for event in consumer:
+        emit(event["id"], score(event))
+    ```
+    What breaks here?
+  back: |
+    One poison event, for example a missing field, raises inside the loop and stops the whole consumer, and the same event is then redelivered again and again. Wrap the body in try/except, send the bad event to a dead-letter queue with the reason, and keep going. Because delivery is usually at least once, emit must also be idempotent.
+- id: pm7-c-04
+  front: |
+    ```python
+    def valid_distance(d):
+        return isinstance(d, (int, float)) and 0 <= d <= 100
+
+    print(valid_distance(True))
+    ```
+    What breaks here?
+  back: |
+    It prints True. In Python bool is a subclass of int, so True passes as the number 1. A contract check for a real number must also exclude bool, with `and not isinstance(d, bool)`. Types alone are also not enough, which is why the range check is there.
+- id: pm7-c-05
+  front: |
+    ```python
+    df["distance_km"] = df["distance_km"].fillna(0)
+    model.predict(df)
+    ```
+    What breaks here?
+  back: |
+    This is a silent repair. Every missing distance becomes 0, the pipeline stays green, and the model scores nonsense without anyone noticing. If you impute, flag the row, count how often it happens and alert when the rate rises. Otherwise reject online or quarantine the row in a batch job.
+- id: pm7-c-06
+  front: |
+    ```python
+    latencies = [20, 22, 25, 30, 31, 35, 40, 45, 300, 2000]
+    print(sum(latencies) / len(latencies))
+    ```
+    What does this do?
+  back: |
+    It prints the mean latency, 254.8 ms. No request took anything like that: most took 20 to 45 ms and one took 2000 ms. The mean hides the tail, so a service should report p50, p95 and p99. Here p50 is 31 ms and p99 is 2000 ms, which describes what users feel.
+- id: pm7-c-07
+  front: |
+    ```python
+    def percentile(values, p):
+        ordered = sorted(values)
+        return ordered[int(p / 100 * len(ordered))]
+    ```
+    What breaks here?
+  back: |
+    For p=100 the index is len(values), one past the end, so it raises IndexError. An empty list fails too, with a less clear error. The nearest-rank method uses `ceil(p / 100 * n) - 1` (at least 0) and an explicit ValueError for an empty input. Also remember that a p99 from ten samples is just the maximum.
+- id: pm7-c-08
+  front: |
+    ```python
+    @app.get("/live")
+    def live():
+        db.execute("SELECT 1")
+        return {"status": "ok"}
+    ```
+    What breaks here?
+  back: |
+    The liveness check depends on the database. When the database is slow, every instance fails the check, the platform restarts all of them, and a small dependency problem becomes a full outage. Liveness should only say the process is up. Dependencies and the loaded model belong in a separate readiness check, which removes the instance from routing but does not restart it.
+- id: pm7-c-09
+  front: |
+    ```python
+    def get(key):
+        if key in cache and cache[key][0] > time.time():
+            return cache[key][1]
+        try:
+            value = load(key)
+        except Exception:
+            value = None
+        cache[key] = (time.time() + 3600, value)
+        return value
+    ```
+    What breaks here?
+  back: |
+    A failed load is cached as None for an hour, so a one-second outage of the source becomes an hour of missing data. Errors must not be cached, or only for a very short time. The code also uses the wall clock, which can jump, so a monotonic clock is better, and the clock should be injected so a test can move time without sleeping. There is no size limit either.
+- id: pm7-c-10
+  front: |
+    ```python
+    def allow(self):
+        now = self.clock()
+        self.tokens += (now - self.last) * self.rate
+        self.last = now
+        if self.tokens >= 1:
+            self.tokens -= 1
+            return True
+        return False
+    ```
+    What breaks here?
+  back: |
+    The tokens are never capped at the bucket capacity. After a quiet hour the bucket holds thousands of tokens, so a client can send a huge burst, which defeats the limit. The refill needs `min(capacity, ...)`. It is also worth guarding against a clock that steps backwards, which would give a negative refill.
+- id: pm7-c-11
+  front: |
+    ```python
+    queue = []
+
+    def handle(req):
+        queue.append(req)
+        return {"status": 202}
+    ```
+    What breaks here?
+  back: |
+    The queue is unbounded and the service always accepts. Under overload memory grows, every item waits behind thousands of others so latency climbs, and when the process dies all queued work is lost. Use a bounded queue and shed load with a 429 or 503 when it is full. This is backpressure: the producer finds out early that the system is full.
+- id: pm7-c-12
+  front: |
+    ```python
+    def predict(row):
+        while True:
+            try:
+                return requests.post(MODEL_URL, json=row).json()
+            except Exception:
+                continue
+    ```
+    What breaks here?
+  back: |
+    There is no timeout, no retry limit and no backoff. requests has no default timeout, so a hung server blocks the worker forever, and when the server is failing every caller hammers it in a tight loop. Set a timeout from the request deadline, limit the retries, wait with backoff and jitter, and put a circuit breaker with a fallback in front of the call.
+- id: pm7-c-13
+  front: |
+    ```python
+    try:
+        return fraud_model.score(tx)
+    except Exception:
+        return 0.0
+    ```
+    What breaks here?
+  back: |
+    The fallback is unsafe and invisible. A fraud score of zero means "safe", so when the model server is down every transaction passes, and nobody sees it because there is no log or counter. A fallback must be safe for the use case (for example route to manual review), and its rate must be counted and alerted.
+- id: pm7-c-14
+  front: |
+    ```python
+    def in_canary(user_id: str) -> bool:
+        return hash(user_id) % 100 < 5
+    ```
+    What breaks here?
+  back: |
+    Python randomises the hash of strings for each process unless PYTHONHASHSEED is set, so the same user falls in the canary on one server and outside it on another, or after a restart. The assignment must be stable. Use hashlib, for example `int(sha256(f"{salt}:{user_id}".encode()).hexdigest(), 16) % 100`, and change the salt for a new experiment.
+- id: pm7-c-15
+  front: |
+    ```python
+    def predict(x):
+        old = model_v1.predict(x)
+        new = model_v2.predict(x)      # shadow
+        log_pair(old, new)
+        return old
+    ```
+    What does this do, and what breaks here?
+  back: |
+    It is a shadow deployment: the new model sees live input, both answers are logged, and users only get the old one. But the shadow call runs inside the request, so it adds its latency and any exception from model_v2 breaks real users. Run the shadow call asynchronously or off the request path, with its own timeout, and catch its errors.
+- id: pm7-c-16
+  front: |
+    ```python
+    versions = ["1.9.0", "1.10.0", "1.2.0"]
+    print(max(versions))
+    ```
+    What breaks here?
+  back: |
+    It prints 1.9.0, because strings compare character by character and "9" is greater than "1". The registry lookup would serve an older model than the newest one. Parse each version into a tuple of integers, such as (1, 10, 0), and compare tuples. Skip versions that do not parse, and raise a LookupError when nothing matches.
+- id: pm7-c-17
+  front: |
+    ```python
+    for start in range(0, len(rows), 1000):
+        save_checkpoint({"next": start + 1000})
+        write_output(score_chunk(rows[start:start + 1000]))
+    ```
+    What breaks here?
+  back: |
+    The checkpoint is saved before the output is written. If the job crashes between the two lines, the restart skips that chunk and its results are lost for good. Write the output first, idempotently by key, and save the checkpoint after it. A crash can then repeat a chunk but never skip one. The checkpoint file itself should be written to a temporary file and renamed, so it is atomic.
+- id: pm7-c-18
+  front: |
+    ```python
+    def psi(ref, cur):
+        return float(np.sum((cur - ref) * np.log(cur / ref)))
+    ```
+    What breaks here?
+  back: |
+    ref and cur are the share of rows per bin. If a bin is empty in either one, the division gives infinity or the log gives minus infinity, so the score is inf or nan. Clip the shares to a small epsilon such as 1e-6 before the log. The usual reading is below 0.1 stable and above 0.25 a large shift, but that is a rule of thumb to check on your own data.
+- id: pm7-c-19
+  front: |
+    ```python
+    if psi_value > 0.25:
+        page_oncall("drift")
+    ```
+    What breaks here?
+  back: |
+    A value hovering around 0.25 fires, recovers and fires again all night, a flapping alert, and people learn to ignore it. Use hysteresis (raise above 0.25, clear only below 0.20) or require the breach to last several windows. Drift also deserves a ticket more often than a page, since it does not prove the model is wrong.
+- id: pm7-c-20
+  front: When would you use MLflow experiment tracking, and what is the catch?
+  back: |
+    Use it when several runs differ in parameters, data or code and you must compare them and reproduce the one that produced a model. It logs params, metrics, artifacts and a model registry. The catch is that tracking is not reproducibility: you must also log the code commit, data version and seed, and pin the environment. Metrics must come from held-out data, not training data.
+- id: pm7-c-21
+  front: When would you use FastAPI to serve a model, and what is the catch?
+  back: |
+    Use it for online serving: pydantic types validate requests, it produces API docs, and it is easy to test. The catch is that FastAPI only handles HTTP and does not make a model fast. Load the model once at startup, not inside the handler, expose health and readiness endpoints, and version the route and the model.
+- id: pm7-c-22
+  front: When would you use Docker for an ML service, and what is the catch?
+  back: |
+    Use it so the Python version, libraries and system packages are identical in development, CI and production, which matters because a model can fail to load under a different scikit-learn version. The catch is that a container fixes the software environment, not the results: seeds and data version still matter. Pin dependencies, tag images by version, keep secrets out of the image, and copy requirements first so the install layer is cached.
+- id: pm7-c-23
+  front: When would you use Airflow, and what is the catch?
+  back: |
+    Use it when a pipeline has dependent steps that need a schedule, retries, alerts, history and backfills. Cron is fine for one small independent job. The catch is that Airflow schedules work and does not do the heavy computation, and its retries and backfills run tasks more than once. Tasks must be idempotent and take the logical run date, never the current time.
+- id: pm7-c-24
+  front: When would you use a feature store, and what is the catch?
+  back: |
+    Use it when many models or teams share features, to define each feature once, avoid training-serving skew, and serve it from an offline store for training and an online store for fast lookups. The catch is point-in-time correctness: a training set must use the value known at each label time (an as-of join), or the future leaks in. For a single model it is usually not worth the cost, and a stale online store serves old values.
+- id: pm7-c-25
+  front: When would you use DVC, and what is the catch?
+  back: |
+    Use it to version large data files and pipelines next to git: git holds a small pointer with the hash, and the data lives in remote storage, so a commit identifies the exact data. The catch is that versioning data alone does not make a run reproducible, because code, parameters and seeds also count, and it does not replace data quality checks. It is also not an experiment tracker like MLflow.
+- id: pm7-c-26
+  front: When would you use Evidently and Prometheus, and what is the catch?
+  back: |
+    Prometheus collects numeric service metrics such as request rate, errors and latency and fires alerts. Evidently builds data drift and model reports from a reference dataframe and a current one. The catch is that drift is a signal to investigate, not proof the model is wrong, and without labels you can only estimate risk. Alert thresholds need hysteresis and an owner, and logs are still needed to see why.
+- id: pm7-c-27
+  front: When would you use a scikit-learn Pipeline, and what is the catch?
+  back: |
+    Use it to chain preprocessing and the model into one object, so every step is fitted on training data only (no leakage), cross-validation refits the whole chain per fold, and a single file is saved and served. The catch is that it does not improve the model. Set handle_unknown="ignore" on the encoder or an unseen category crashes the service, and pin the library version, because joblib files are pickles.
+- id: pm7-c-28
+  front: When would you use CI/CD for ML, and what is the catch?
+  back: |
+    Use it whenever models are retrained and released, with three kinds of checks: code tests, data tests (schema, nulls, ranges, row counts) and a model gate that requires a minimum score and no regression against production on a fixed holdout. The catch is that CI only catches the failure types you wrote checks for, and an average can improve while one segment gets worse, so the gate should check key segments. Keep the previous model for rollback.
+- id: pm7-c-29
+  front: When would you use a managed cloud ML platform (SageMaker, Vertex AI, Databricks), and what is the catch?
+  back: |
+    Use it when the team is small and time to production matters more than fine control: managed training jobs, a registry and endpoints remove operations work. The catch is lock-in to one vendor's APIs and cost, since idle endpoints still bill. Keep the training script plain and parameterised, use batch when latency does not matter, and say honestly which platform you have really used.
+- id: pm7-c-30
+  front: When would you use RAG with embeddings and a vector index, and what is the catch?
+  back: |
+    Use it when a language model must answer from your own, changing documents: chunk and embed the text offline, retrieve the top-k chunks for a question, put them in the prompt and answer from them with sources. It is cheaper and easier to update than fine-tuning. The catch is that retrieval limits quality, since a missed chunk cannot be fixed by a prompt, and RAG reduces hallucination but does not remove it. Evaluate retrieval (recall at k) and answers separately on a fixed test set.

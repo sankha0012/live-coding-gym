@@ -1,0 +1,1 @@
+The assistant used `NOT IN` against a subquery that contains a NULL customer_id. With a NULL in the list, `x NOT IN (...)` evaluates to unknown for every x that is not in the list, so WHERE rejects every row. The symptom is an empty result, with no error, instead of the Rio de Janeiro customers who have no delivered order.

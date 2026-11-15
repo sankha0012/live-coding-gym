@@ -1,0 +1,9 @@
+title: "Defend: why a time-based split, not a random one"
+kind: open
+required: false
+serves: [C7, C6, C4, C9]
+rubric:
+  - Explains that production predicts the future from the past, so the test set must be later than the training set, and a random split lets the model see the future and neighbours of the test rows.
+  - Names the failure mode, which is an optimistic offline metric that drops after launch because of leakage, drift or seasonality.
+  - Gives a trade-off or a detail, such as the cutoff boundary belonging to exactly one side, a fixed cutoff for determinism, or a random split still being fine for data without time structure.
+kb: [pd-time-split-leakage, ml-train-test-split-leakage]

@@ -1,0 +1,7 @@
+title: "Docs: rate limit check"
+kind: python
+required: true
+kb: [prod-rate-limiter-token-bucket, algo-sliding-window, py-functions-args]
+serves: [C10, C2]
+files:
+  - eventwin.py

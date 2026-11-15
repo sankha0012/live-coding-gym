@@ -1,0 +1,7 @@
+title: Orders by city and cuisine
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-group-by, sql-joins]
+serves: [C6]

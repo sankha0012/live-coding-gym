@@ -1,0 +1,7 @@
+title: Second latest order per customer
+kind: sql
+required: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-row-number-rank, sql-window-functions, sql-subqueries, sql-joins]
+serves: [C1, C9]

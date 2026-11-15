@@ -1,8 +1,0 @@
-title: Normalising values
-kind: read
-order: 4
-kb: [py-functions-args, py-truthiness-none]
-questions:
-  - What does normalise return for an empty list, and how does the code get there?
-  - What is the difference between normalise([2, 4, 8]) and normalise([2, 4, 8], 100)?
-  - Why does describe check result is None instead of just if not result?

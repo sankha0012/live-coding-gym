@@ -1,0 +1,5 @@
+astype failed: invalid literal for int() with base 10: 'n/a'
+[12.0, 7.0, nan, 30.0]
+bad rows: 1
+float64
+mean: 16.333333333333332

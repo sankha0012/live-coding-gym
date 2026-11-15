@@ -1,6 +1,0 @@
-title: Retry with backoff
-kind: python
-required: true
-mock: true
-time_limit_s: 720
-kb: [prod-retry-backoff, py-time-clock-injection, py-exceptions]

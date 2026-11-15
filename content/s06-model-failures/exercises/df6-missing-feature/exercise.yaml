@@ -1,0 +1,9 @@
+title: "Defend: a feature is missing at serving time"
+kind: open
+required: true
+serves: [C5, C3, C9]
+rubric:
+  - Names the failure mode: a missing feature at serving time must not crash the request or silently feed the model a wrong value, and the system decides explicitly between a default, a fallback model and a refusal.
+  - Describes a concrete mechanism, such as filling from defaults saved at training time (for example the training median), telling a missing value apart from a real zero, and recording which features were filled.
+  - Adds a trade-off or limit, such as monitoring the fill rate and alerting when it rises, falling back to a simpler model or rule when too many features are missing, or the risk that a default hides an upstream outage.
+kb: [prod-fallbacks, prod-input-validation, prod-train-serve-skew]

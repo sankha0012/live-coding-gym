@@ -1,0 +1,10 @@
+title: Read - groupby with named aggregation
+kind: read
+order: 13
+required: false
+serves: [C2, C9]
+kb: [pd-groupby-agg, pd-missing-values]
+questions:
+  - "What is the difference between size and count here, and why do they disagree for RJ?"
+  - "Why is the order of the rows BH, RJ, SP, and what does reset_index do?"
+  - "What would an assistant get wrong if it said RJ's average is 20.0?"

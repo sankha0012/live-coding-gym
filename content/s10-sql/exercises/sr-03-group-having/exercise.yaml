@@ -1,0 +1,9 @@
+title: "Read: GROUP BY with HAVING"
+kind: explain
+required: true
+serves: [C6, C9]
+kb: [sql-group-by, sql-having]
+rubric:
+  - "Says what each clause does in order: FROM, WHERE, GROUP BY, HAVING, then SELECT and ORDER BY."
+  - "Predicts the result rows: restaurant 9 with 3 orders and 140.0, then restaurant 7 with 2 orders and 120.0."
+  - "Names the trap: WHERE filters rows before grouping and HAVING filters groups after aggregation, so cancelled orders never reach the counts and sums."

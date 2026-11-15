@@ -1,5 +1,0 @@
-title: Sort with ties and None
-kind: python
-time_limit_s: 600
-required: true
-kb: [py-sorting, py-truthiness-none, py-lambda-map-filter, prod-determinism]

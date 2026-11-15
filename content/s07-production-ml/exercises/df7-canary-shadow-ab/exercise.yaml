@@ -1,0 +1,9 @@
+title: "Defend: canary, shadow or A/B for a new model"
+kind: open
+serves: [C5, C7, C9]
+rubric:
+  - Gives the purpose of each method correctly, namely shadow to compare outputs and measure latency with no user impact, canary to limit the blast radius of a real rollout and watch health, and A/B to measure a business effect with a proper comparison.
+  - Picks an order or a method for the scenario and justifies it, for example shadow first, then a small canary with a rollback condition, then an A/B test only if the business effect needs to be proven.
+  - Adds a concrete detail or limit, such as stable hashing by user for assignment, a pre-set rollback threshold, the need for enough traffic and time for A/B, or that shadow cannot show how users react.
+kb: [prod-canary-shadow-ab, prod-determinism, prod-train-serve-skew]
+required: false

@@ -1,0 +1,1 @@
+The query joins and groups correctly but never filters on `status`, so cancelled orders are counted and their subtotals are added to revenue. The prompt asks for delivered orders only. The symptom is order counts and revenue per cuisine that are too high, and a different ranking.

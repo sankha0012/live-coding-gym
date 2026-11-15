@@ -1,0 +1,6 @@
+title: Model call with deadline and fallback
+kind: python
+required: true
+kb: [prod-timeouts-deadlines, prod-fallbacks, py-time-clock-injection, py-exceptions]
+serves: [C5, C3]
+mock: true

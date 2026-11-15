@@ -1,0 +1,5 @@
+title: Group words by length
+kind: python
+required: false
+kb: [py-dicts, py-counter-defaultdict]
+serves: [C2]

@@ -1,0 +1,5 @@
+SUM(amount) OVER (...) is a window function: it does not collapse rows, it adds a column to every row. PARTITION BY store restarts the total for each store, and ORDER BY paid_on inside the window sorts each store's rows by date so the sum accumulates from the first date up to the current one. The final ORDER BY store, paid_on, id only controls the display order.
+
+I ran it. Store A returns 10, 35, 35 and store B returns 7, 10. Concretely: A on 03-01 has 10; A on 03-02 has two payments, 20 and 5, and both rows show 35; B on 03-01 shows 7 and B on 03-03 shows 10.
+
+The trap is the default frame. When a window has an ORDER BY and no explicit frame, the frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, and RANGE treats rows with an equal ordering value as peers that are all included at once. So both rows of 03-02 show 35 instead of 30 then 35. That is not a bug in the engine, but if you expect a row-by-row running total it is wrong. Using ORDER BY paid_on, id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW gives 10, 30, 35 for store A; I ran that version too.

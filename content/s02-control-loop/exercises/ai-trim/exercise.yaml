@@ -1,0 +1,5 @@
+title: Fit chat history in a budget
+kind: python
+required: true
+kb: [ai-context-budget, py-slicing, py-tuples-unpacking, py-str-split-join]
+serves: [C8, C2]

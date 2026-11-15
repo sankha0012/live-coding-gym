@@ -1,0 +1,1 @@
+The missing-value check only tests `v is None`. `float('nan')` is not `None`, converts to a float without error, and every comparison with it is false, so the range check `v < lo or v > hi` never fires. The NaN goes into the clean row unchanged and no issue is recorded, so the model later receives a NaN that the validator was supposed to remove.

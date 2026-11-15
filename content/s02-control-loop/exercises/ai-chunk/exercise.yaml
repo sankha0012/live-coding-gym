@@ -1,0 +1,5 @@
+title: Chunk text with overlap
+kind: python
+required: true
+kb: [ai-chunking, py-str-split-join, py-slicing, py-loops-enumerate-zip]
+serves: [C8, C2]

@@ -1,0 +1,6 @@
+title: Is it a palindrome?
+kind: python
+required: false
+order: 3
+kb: [py-slicing, py-str-methods, py-list-comprehensions]
+serves: [C2]

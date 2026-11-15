@@ -1,0 +1,19 @@
+title: Explain and defend
+order: 8
+intro: Follow-up questions decide interviews. Explain your code line by line, defend design choices, and talk about your experience honestly.
+gate:
+  min_score: 3
+  pass_ratio: 0.7
+sequence:
+- ex-ab-bucketing
+- ex-batch-chunking
+- ex-circuit-breaker
+- ex-idempotent-consumer
+- ex-lru-cache
+- ex-pipeline-leak
+- ex-psi
+- ex-retry-backoff
+- ab-ai-usage-philosophy
+- ab-hardest-bug
+- ab-tell-me-about-a-project
+- ab-weaknesses

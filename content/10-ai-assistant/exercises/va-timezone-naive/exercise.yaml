@@ -1,7 +1,0 @@
-title: Verify AI code - time zones
-kind: python
-name_bug: true
-assistant: "off"
-required: true
-time_limit_s: 720
-kb: [ai-verifying-ai-code, py-datetime]

@@ -1,0 +1,7 @@
+title: "Verify AI code - biased canary share"
+kind: python
+name_bug: true
+assistant: "off"
+serves: [C4, C5, C8]
+kb: [ai-verifying-ai-code, prod-canary-shadow-ab, py-hashlib]
+required: true

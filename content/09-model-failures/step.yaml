@@ -1,7 +1,0 @@
-title: Common model failures
-order: 109
-shelf: true
-gate:
-  min_score: 3
-  timed_required: false
-  pass_ratio: 0.7

@@ -1,0 +1,5 @@
+title: "Debug: rolling mean off by one"
+kind: python
+required: false
+kb: [algo-sliding-window, py-slicing, py-loops-enumerate-zip]
+serves: [C3, C9]

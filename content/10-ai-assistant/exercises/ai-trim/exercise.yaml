@@ -1,6 +1,0 @@
-title: Fit chat history in a budget
-kind: python
-required: true
-mock: false
-time_limit_s: 900
-kb: [ai-context-budget, py-slicing, py-tuples-unpacking, py-str-split-join]

@@ -1,0 +1,5 @@
+title: Sticky A/B assignment
+kind: python
+required: true
+kb: [prod-canary-shadow-ab, py-hashlib, prod-determinism, algo-prefix-sums, py-exceptions]
+serves: [C4, C2]

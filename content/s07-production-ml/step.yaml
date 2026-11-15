@@ -1,0 +1,16 @@
+title: ML systems in production
+order: 7
+intro: Serving, data contracts, health checks, caching, rate limits, fallbacks, rollouts, and the tools an ML engineer is expected to know.
+gate:
+  min_score: 3
+  pass_ratio: 0.7
+sequence:
+- pm-drift-alert
+- pm-canary-split
+- pm-ttl-cache
+- pm-latency-percentiles
+- pm-health-check
+- pm-timeout-fallback
+- pm-input-contract
+- pm-ab-assignment
+- pm-batch-checkpoint

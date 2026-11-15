@@ -1,0 +1,9 @@
+title: "Read: NOT IN with a NULL in the subquery"
+kind: explain
+required: false
+serves: [C6, C9]
+kb: [sql-subqueries, sql-nulls, sql-left-join-anti-join]
+rubric:
+  - "Says what each clause does in order: the subquery collects customer_id values from orders, and the outer query keeps customers whose id is not in that list."
+  - "Predicts the result: zero rows, even though Carla and Davi never ordered."
+  - "Names the trap: one NULL in the list makes id NOT IN (...) evaluate to NULL instead of true, so every row is rejected; use NOT EXISTS or filter out NULLs."

@@ -1,0 +1,5 @@
+title: KS of a credit model
+kind: python
+required: false
+kb: [ml-auc-ks, py-loops-enumerate-zip, py-sets]
+serves: [C1, C7]

@@ -1,0 +1,8 @@
+title: Pivot orders by city and cuisine
+kind: python
+required: false
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-pivot, pd-merge]
+serves: [C2, C6]

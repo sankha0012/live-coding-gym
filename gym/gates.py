@@ -5,7 +5,7 @@ from . import db
 from .reviewer import REVIEW_KIND
 
 TESTED = ("python", "sql", "quiz", "tests", "read", "triage")
-PASS_MODES = ("blank", "timed", "challenge")
+PASS_MODES = ("blank", "challenge")
 
 
 def _review_ok(conn, exercise_id, kind, min_score):
@@ -21,13 +21,10 @@ def exercise_status(conn, ex, step):
     rows = db.passed_attempts(conn, ex.id) if coded else []
     code_kind = ex.kind in ("python", "sql", "tests")
     assisted = code_kind and ex.assistant != "off" and db.is_assisted(conn, ex.id)
-    status = {"tests": None, "timed": None, "review": None, "explain": None,
+    status = {"tests": None, "review": None, "explain": None,
               "control": None, "bug": None, "prompts": None}
     if coded:
         status["tests"] = any(r["mode"] in PASS_MODES for r in rows)
-        if step.timed_required:
-            status["timed"] = any(
-                r["mode"] == "timed" and r["duration_s"] <= ex.time_limit_s for r in rows)
     if ex.review or not coded or ex.kind in ("read", "triage"):
         status["review"] = _review_ok(conn, ex.id, REVIEW_KIND[ex.kind], step.min_score)
     if assisted:  # the assistant wrote code here: it only counts once the learner explains it
@@ -53,16 +50,16 @@ def step_status(conn, step):
 
 
 def journey(conn, steps):
-    """One row per step. Track steps unlock in order; Library (shelf) steps are always open."""
+    """One row per step. Steps unlock in order; an optional step is always open and never blocks the next one."""
     manual = db.unlocked(conn)
     out, previous_passed = [], True
     for step in steps:
         st = step_status(conn, step)
-        row = {"id": step.id, "title": step.title, "order": step.order, "shelf": step.shelf,
+        row = {"id": step.id, "title": step.title, "order": step.order, "optional": step.optional,
                "passed": st["passed"], "done": st["done"], "total": st["total"],
                "pass_ratio": step.pass_ratio, "needed": math.ceil(step.pass_ratio * st["total"]),
-               "unlocked": step.shelf or previous_passed or step.id in manual}
+               "unlocked": step.optional or previous_passed or step.id in manual}
         out.append(row)
-        if not step.shelf:
+        if not step.optional:
             previous_passed = st["passed"]
     return out

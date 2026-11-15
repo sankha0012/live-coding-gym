@@ -1,0 +1,6 @@
+title: Invert a dict
+kind: python
+required: false
+order: 6
+kb: [py-dicts, py-dict-comprehensions, py-sorting]
+serves: [C2]

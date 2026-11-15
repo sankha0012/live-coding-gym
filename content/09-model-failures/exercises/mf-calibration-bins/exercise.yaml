@@ -1,5 +1,0 @@
-title: Calibration bins
-kind: python
-required: true
-time_limit_s: 900
-kb: [ml-calibration, py-dicts, py-loops-enumerate-zip, py-exceptions]

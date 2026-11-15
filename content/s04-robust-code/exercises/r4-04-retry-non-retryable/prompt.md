@@ -1,0 +1,1 @@
+Read the code below without running it. Predict exactly what it prints, then answer the questions in your own words. Trace the exception path carefully: pay attention to which exceptions the retry loop catches, what happens on the last attempt, and which of them reaches the caller.

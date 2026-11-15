@@ -1,0 +1,9 @@
+title: "Catch: the LEFT JOIN that forgot cancelled orders"
+kind: sql
+name_bug: true
+assistant: "off"
+required: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-left-join-anti-join, sql-nulls]
+serves: [C8, C9, C6]

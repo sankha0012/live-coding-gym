@@ -1,0 +1,7 @@
+title: Catch it - the limiter loses tokens when the clock steps back
+kind: python
+name_bug: true
+assistant: "off"
+required: false
+serves: [C3, C5, C9]
+kb: [prod-rate-limiter-token-bucket, py-time-clock-injection, ai-verifying-ai-code]

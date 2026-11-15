@@ -1,0 +1,14 @@
+title: Deterministic and robust code
+order: 4
+intro: 'Same input, same output, no silent failures: seeds, stable ordering, injected clocks, validation, retries, timeouts, idempotency, and proving it with tests.'
+gate:
+  min_score: 3
+  pass_ratio: 0.7
+sequence:
+- rb-parse-config
+- rb-retry-classify
+- rb-rate-limiter
+- rb-safe-metrics
+- rb-idempotency-key
+- rb-late-events
+- rb-chunked-stream

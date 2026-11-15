@@ -1,0 +1,5 @@
+title: Title case by hand
+kind: python
+required: false
+kb: [py-str-split-join, py-slicing, py-str-methods]
+serves: [C2]

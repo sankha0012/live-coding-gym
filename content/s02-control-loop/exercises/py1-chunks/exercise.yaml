@@ -1,0 +1,5 @@
+title: Split into chunks
+kind: python
+required: false
+kb: [py-slicing, py-list-comprehensions, py-loops-enumerate-zip, py-exceptions]
+serves: [C2]

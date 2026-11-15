@@ -1,0 +1,7 @@
+title: Top k most frequent items
+kind: python
+required: true
+kb: [py-counter-defaultdict, py-sorting, py-lambda-map-filter, py-slicing]
+plan_required: 2
+grade_prompts: true
+serves: [C1, C2]

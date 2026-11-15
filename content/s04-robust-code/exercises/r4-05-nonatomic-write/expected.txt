@@ -1,0 +1,5 @@
+atomic=False save failed: disk full
+atomic=False after crash, readers see: corrupt
+atomic=True save failed: disk full
+atomic=True after crash, readers see: 1
+atomic after success, readers see: 2

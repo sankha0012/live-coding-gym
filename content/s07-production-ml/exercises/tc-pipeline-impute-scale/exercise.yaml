@@ -1,0 +1,5 @@
+title: Pipeline with impute and scale
+kind: python
+kb: [ml-sklearn-pipeline, ml-train-test-split-leakage, pd-missing-values]
+required: false
+serves: [C2, C6]

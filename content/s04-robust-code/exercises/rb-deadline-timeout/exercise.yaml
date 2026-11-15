@@ -1,0 +1,4 @@
+title: Stop at the deadline
+kind: python
+kb: [prod-timeouts-deadlines, py-time-clock-injection, py-loops-enumerate-zip, py-slicing]
+serves: [C5]

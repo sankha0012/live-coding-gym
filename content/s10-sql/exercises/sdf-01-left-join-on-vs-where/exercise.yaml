@@ -1,0 +1,9 @@
+title: "Defend: LEFT JOIN filter in ON or in WHERE"
+kind: open
+required: true
+serves: [C6, C9, C1]
+rubric:
+  - States the rule that a condition on the right-hand table in WHERE is evaluated after the join and removes the NULL-extended rows, so it turns the LEFT JOIN into an inner join, while the same condition in ON only restricts which rows match.
+  - Ties the choice to the question being asked, for example "customers and their delivered orders" needs the condition in ON, and "customers with no order" needs the NULL test in WHERE after the join.
+  - Describes how to verify it, for example comparing the row count with the left table's count or checking one customer who has no matching rows.
+kb: [sql-left-join-anti-join, sql-joins, sql-nulls]

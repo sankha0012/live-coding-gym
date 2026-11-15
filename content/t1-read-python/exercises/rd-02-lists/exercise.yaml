@@ -1,8 +1,0 @@
-title: Scores and labels
-kind: read
-order: 2
-kb: [py-lists, py-slicing, py-list-comprehensions]
-questions:
-  - What does scores[-2:] select, and what does scores[::2] select?
-  - What does zip do in the positives line, and which items does the if filter keep?
-  - Why can sum(flags) be used to count, and what would len(flags) be if scores were empty?

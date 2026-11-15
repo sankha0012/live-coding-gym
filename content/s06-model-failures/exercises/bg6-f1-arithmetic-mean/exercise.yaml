@@ -1,0 +1,7 @@
+title: "Catch it - F1 computed as a plain average"
+kind: python
+name_bug: true
+assistant: "off"
+required: false
+serves: [C7, C6, C9]
+kb: [ml-metrics-precision-recall-f1, ai-verifying-ai-code]

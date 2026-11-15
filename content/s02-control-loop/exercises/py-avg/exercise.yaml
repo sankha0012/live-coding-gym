@@ -1,0 +1,6 @@
+title: Average order value per customer
+kind: python
+required: false
+order: 60
+kb: [py-counter-defaultdict, py-truthiness-none, py-dict-comprehensions, py-sets]
+serves: [C2]

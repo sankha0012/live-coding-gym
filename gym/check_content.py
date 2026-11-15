@@ -7,6 +7,9 @@ from .kb import load_kb
 from .runner import check_sql, run_python_free, run_python_tests, run_test_writing
 
 
+COMPETENCIES = {f"C{i}" for i in range(1, 11)}
+
+
 def check_exercise(ex):
     p = []
     if ex.kind != "quiz" and not ex.say:
@@ -38,7 +41,7 @@ def check_exercise(ex):
         if ex.starter and run_test_writing(ex.starter, ex.impl_good, ex.impls_bad).passed:
             p.append(f"{ex.id}: starter already passes")
     if ex.kind == "read":
-        r = run_python_free(ex.snippet)
+        r = run_python_free(ex.snippet, timeout=60)
         norm = lambda t: "\n".join(x.rstrip() for x in t.strip().splitlines())
         if not r.passed or norm(r.output) != norm(ex.expected):
             p.append(f"{ex.id}: snippet output differs from expected.txt")
@@ -50,9 +53,20 @@ def check_exercise(ex):
             p.append(f"{ex.id}: triage needs 3+ proposals with both accept and reject")
         if any(not x.get("why") for x in ex.proposals):
             p.append(f"{ex.id}: every proposal needs a why")
-    if ex.name_bug and ex.starter and run_python_tests(ex.starter, ex.dir / "tests", files=ex.files).passed:
-        p.append(f"{ex.id}: buggy starter passes the tests")
-    if ex.change:
+    if ex.name_bug and ex.starter:
+        if ex.kind == "sql":
+            if check_sql(ex.seed, ex.starter, ex.solution, ex.ordered).passed:
+                p.append(f"{ex.id}: buggy starter query already gives the reference result")
+        elif run_python_tests(ex.starter, ex.dir / "tests", files=ex.files).passed:
+            p.append(f"{ex.id}: buggy starter passes the tests")
+    if ex.serves and not set(ex.serves) <= COMPETENCIES:
+        p.append(f"{ex.id}: serves must be from C1..C10, got {ex.serves}")
+    if ex.change and ex.kind == "sql":
+        if not check_sql(ex.seed, ex.change_solution, ex.change_solution, ex.ordered).passed:
+            p.append(f"{ex.id}: change_solution.sql fails to run")
+        if check_sql(ex.seed, ex.solution, ex.change_solution, ex.ordered).passed:
+            p.append(f"{ex.id}: the unchanged solution already gives the change_solution result")
+    elif ex.change:
         if not run_python_tests(ex.change_solution, ex.change_dir, files=ex.files).passed:
             p.append(f"{ex.id}: change_solution fails change_tests")
         if run_python_tests(ex.solution, ex.change_dir, files=ex.files).passed:
@@ -83,6 +97,22 @@ def check_kb(content_dir, steps):
     return problems
 
 
+def check_curriculum(steps):
+    """Rules for the real curriculum (not for tiny test fixtures): every exercise names the competencies it
+    serves, every core build proves control, every mock task ships its documentation page."""
+    p = []
+    for step in steps:
+        for ex in step.exercises:
+            if not ex.serves:
+                p.append(f"{ex.id}: missing serves (competency tags)")
+            if ex.mock and not ex.docs:
+                p.append(f"{ex.id}: a mock task needs docs.md")
+            if (ex.required and not step.optional and ex.kind == "python" and not ex.change and not ex.name_bug
+                    and ex.assistant != "off"):
+                p.append(f"{ex.id}: a core build needs a control check (change.md)")
+    return p
+
+
 def check(content_dir):
     steps, problems = load_content(content_dir)
     problems = list(problems)
@@ -101,6 +131,6 @@ def check(content_dir):
 
 
 if __name__ == "__main__":
-    found = check(config.CONTENT_DIR)
+    found = check(config.CONTENT_DIR) + check_curriculum(load_content(config.CONTENT_DIR)[0])
     print("\n".join(found) if found else "content ok")
     sys.exit(1 if found else 0)

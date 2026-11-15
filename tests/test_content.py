@@ -4,8 +4,6 @@ from gym.content import load_content
 def test_steps_load_in_order(steps):
     assert [s.id for s in steps] == ["01-hand-python", "03-hand-sql"]
     assert steps[0].min_score == 4
-    assert steps[0].timed_required is True
-    assert steps[1].timed_required is False
 
 
 def test_python_exercise_fields(steps):
@@ -13,7 +11,6 @@ def test_python_exercise_fields(steps):
     assert ex.id == "count-words"
     assert ex.kind == "python"
     assert "def count_words" in ex.solution
-    assert "____" in ex.gaps
     assert ex.review and ex.mock
     assert len(ex.rubric) == 3
 

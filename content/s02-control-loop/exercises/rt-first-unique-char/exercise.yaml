@@ -1,0 +1,5 @@
+title: First non-repeating character
+kind: python
+required: false
+kb: [py-counter-defaultdict, algo-hash-map-counting, py-loops-enumerate-zip]
+serves: [C1, C2]

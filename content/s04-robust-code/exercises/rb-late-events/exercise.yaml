@@ -1,0 +1,6 @@
+title: Out-of-order and duplicate events
+kind: python
+required: true
+kb: [prod-event-dedup-ordering, py-sets, py-dicts]
+serves: [C6, C5]
+mock: true

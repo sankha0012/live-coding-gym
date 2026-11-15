@@ -1,0 +1,8 @@
+title: Pair with a target sum
+kind: python
+required: true
+order: 10
+kb: [algo-hash-map-counting, py-sets, py-str-split-join, iv-coderbyte-format, py-input-print]
+plan_required: 2
+grade_prompts: true
+serves: [C1, C2]

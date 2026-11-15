@@ -1,8 +1,0 @@
-title: Top k most frequent items
-kind: python
-required: true
-mock: true
-time_limit_s: 720
-kb: [py-counter-defaultdict, py-sorting, py-lambda-map-filter, py-slicing]
-plan_required: 2
-grade_prompts: true

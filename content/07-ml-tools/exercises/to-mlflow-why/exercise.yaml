@@ -1,9 +1,0 @@
-title: "Explain: why track experiments?"
-kind: open
-required: true
-rubric:
-  - "Accurate: a tracker records parameters, metrics, artifacts and code version for each run in one searchable place."
-  - "Names the problem it solves: results in a spreadsheet are manual, easy to get wrong, and cannot be tied back to the exact model and data."
-  - "Gives a concrete example, such as finding which run produced the production model, or comparing learning rate runs."
-  - "Is honest about limits: a tracker does not make results better by itself, and it needs the team to log consistently."
-kb: [tool-experiment-tracking, tool-data-versioning, prod-determinism]

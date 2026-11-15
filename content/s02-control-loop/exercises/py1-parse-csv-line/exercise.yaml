@@ -1,0 +1,5 @@
+title: Parse one CSV line
+kind: python
+required: false
+kb: [py-csv, py-lists]
+serves: [C2]

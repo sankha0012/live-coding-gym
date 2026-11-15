@@ -1,0 +1,5 @@
+mean raw: 4666.7
+mean filled: 2800.0
+low income: 2
+low income (median fill): 0
+missing: 2

@@ -1,0 +1,5 @@
+title: Compare live and shadow models
+kind: python
+required: false
+kb: [prod-canary-shadow-ab, py-exceptions, py-sorting, py-slicing]
+serves: [C7, C2]

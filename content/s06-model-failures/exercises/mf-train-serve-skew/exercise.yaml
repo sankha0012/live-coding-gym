@@ -1,0 +1,6 @@
+title: "Debug: train and serve features disagree"
+kind: python
+required: false
+kb: [prod-train-serve-skew, py-str-methods, py-truthiness-none]
+serves: [C7, C2]
+mock: true

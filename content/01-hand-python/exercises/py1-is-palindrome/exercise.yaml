@@ -1,7 +1,0 @@
-title: Is it a palindrome?
-kind: python
-required: true
-mock: true
-time_limit_s: 480
-order: 3
-kb: [py-slicing, py-str-methods, py-list-comprehensions]

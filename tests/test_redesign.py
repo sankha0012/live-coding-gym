@@ -16,18 +16,18 @@ CHANGED = "def total(xs, start=0):\n    result = start\n    for x in xs:\n      
 
 def files():
     f = {
-        "t1/step.yaml": "title: Track 1\norder: 1\nincludes: [lib1]\nsequence: [r1, p1, lib1, b1, tr1]\n",
+        "t1/step.yaml": "title: Track 1\norder: 1\nsequence: [r1, p1, lib1, b1, tr1, q1]\n",
         "t2/step.yaml": "title: Track 2\norder: 2\n",
         "t2/exercises/t2x/exercise.yaml": "title: T2x\nkind: open\n",
         "t2/exercises/t2x/prompt.md": "p",
         "t2/cards.yaml": "- id: c-track\n  front: What does this do?\n  back: x\n",
-        "lib/step.yaml": "title: Library\norder: 101\nshelf: true\n",
+        "lib/step.yaml": "title: Extra\norder: 101\noptional: true\n",
         "lib/cards.yaml": "- id: c-lib\n  front: type this\n  back: y\n",
-        "lib/exercises/lib1/exercise.yaml": "title: Lib1\nkind: python\n",
-        "lib/exercises/lib1/prompt.md": "Return the total of a list.",
-        "lib/exercises/lib1/solution.py": SOLUTION,
-        "lib/exercises/lib1/starter.py": "def total(xs):\n    pass\n",
-        "lib/exercises/lib1/tests/test_hidden.py": TOTAL_TESTS,
+        "t1/exercises/lib1/exercise.yaml": "title: Lib1\nkind: python\n",
+        "t1/exercises/lib1/prompt.md": "Return the total of a list.",
+        "t1/exercises/lib1/solution.py": SOLUTION,
+        "t1/exercises/lib1/starter.py": "def total(xs):\n    pass\n",
+        "t1/exercises/lib1/tests/test_hidden.py": TOTAL_TESTS,
         "lib/exercises/lib2/exercise.yaml": "title: Lib2\nkind: open\n",
         "lib/exercises/lib2/prompt.md": "p",
         # a reading exercise
@@ -52,6 +52,14 @@ def files():
         "t1/exercises/b1/starter.py": "def total(xs):\n    result = 0\n    for x in xs[1:]:\n        result += x\n    return result\n",
         "t1/exercises/b1/tests/test_hidden.py": TOTAL_TESTS,
         "t1/exercises/b1/bug.md": "The loop skips the first element (xs[1:]).",
+        # a SQL exercise with a control check and a documentation page
+        "t1/exercises/q1/exercise.yaml": "title: Count\nkind: sql\nserves: [C6]\n",
+        "t1/exercises/q1/prompt.md": "Count the orders.",
+        "t1/exercises/q1/seed.sql": "CREATE TABLE orders (id INTEGER, city TEXT);\nINSERT INTO orders VALUES (1,'SP'),(2,'SP'),(3,'RJ');\n",
+        "t1/exercises/q1/solution.sql": "SELECT COUNT(*) AS n\nFROM orders\nWHERE id > 0;\n",
+        "t1/exercises/q1/docs.md": "COUNT(*) counts rows.",
+        "t1/exercises/q1/change.md": "Count only the orders in SP.",
+        "t1/exercises/q1/change_solution.sql": "SELECT COUNT(*) AS n FROM orders WHERE city = 'SP';\n",
         # accept or reject
         "t1/exercises/tr1/exercise.yaml": "title: Triage\nkind: triage\npass_ratio: 0.5\n",
         "t1/exercises/tr1/prompt.md": "The assistant proposed these changes.",
@@ -86,32 +94,39 @@ def post(client, path, body=None, status=200):
     return r.json()
 
 
-def test_includes_move_exercises_and_sequence_orders_them(env):
+def test_sequence_orders_exercises(env):
     _, _, root = env
     steps, errors = load_content(root)
     by = {s.id: s for s in steps}
     assert errors == []
-    assert [e.id for e in by["t1"].exercises] == ["r1", "p1", "lib1", "b1", "tr1"]
-    assert [e.id for e in by["lib"].exercises] == ["lib2"] and by["lib"].shelf
-    assert next(e for e in by["t1"].exercises if e.id == "lib1").step_id == "t1"
+    assert [e.id for e in by["t1"].exercises] == ["r1", "p1", "lib1", "b1", "tr1", "q1"]
+    assert [e.id for e in by["lib"].exercises] == ["lib2"] and by["lib"].optional
 
 
-def test_unknown_include_or_sequence_entries_are_reported(tmp_path):
+def test_unknown_sequence_entries_are_reported(tmp_path):
     root = tmp_path / "c"
     (root / "a").mkdir(parents=True)
-    (root / "a" / "step.yaml").write_text("title: A\norder: 1\nincludes: [nope]\nsequence: [also-nope]\n")
+    (root / "a" / "step.yaml").write_text("title: A\norder: 1\nsequence: [also-nope]\n")
     _, errors = load_content(root)
-    assert any("includes unknown exercise nope" in e for e in errors) and any("unknown exercise also-nope" in e for e in errors)
+    assert any("unknown exercise also-nope" in e for e in errors)
 
 
-def test_library_is_open_and_off_the_track(env):
+def test_optional_step_is_open_and_never_blocks_or_feeds_the_deck(env):
     client, _, _ = env
     j = client.get("/api/journey").json()
-    assert [s["id"] for s in j["steps"]] == ["t1", "t2"] and [s["id"] for s in j["library"]] == ["lib"]
-    assert j["steps"][1]["unlocked"] is False and j["library"][0]["unlocked"] is True
+    rows = {s["id"]: s for s in j["steps"]}
+    assert [s["id"] for s in j["steps"]] == ["t1", "t2", "lib"]
+    assert rows["t2"]["unlocked"] is False and rows["lib"]["unlocked"] is True and rows["lib"]["optional"]
     assert j["next"]["exercise_id"] == "r1"
-    assert [c["id"] for c in client.get("/api/cards/due").json()] == ["c-track"]  # the daily deck is the track's cards
-    assert client.get("/api/exercise/lib2").json()["next"] is None  # the shelf does not lead into the track
+    assert [c["id"] for c in client.get("/api/cards/due").json()] == ["c-track"]
+    assert client.get("/api/exercise/lib2").json()["next"] is None
+
+
+def test_step_page_groups_exercises_into_the_four_moves(env):
+    client, _, _ = env
+    groups = {e["id"]: e["group"] for e in client.get("/api/step/t1").json()["exercises"]}
+    assert groups == {"r1": "Read", "p1": "Build", "lib1": "Build", "b1": "Catch", "tr1": "Catch", "q1": "Build"}
+    assert client.get("/api/step/t2").json()["exercises"][0]["group"] == "Defend"
 
 
 def test_reading_exercise_prediction_reveal_and_review(env):
@@ -224,3 +239,18 @@ def test_a_low_line_explanation_review_does_not_open_the_change(tmp_path):
     post(client, "/api/control/start", {"exercise_id": "p1"})
     a = post(client, "/api/control/explain", {"exercise_id": "p1", "explanations": ["x", "y"]})
     assert a["a_ok"] is False and a["control"]["a_ok"] is False
+
+
+def test_sql_control_check_compares_the_changed_query_with_the_reference_result(env):
+    client, _, _ = env
+    ex = client.get("/api/exercise/q1").json()
+    assert ex["serves"] == ["C6"] and ex["docs"] == "COUNT(*) counts rows."
+    solution = "SELECT COUNT(*) AS n\nFROM orders\nWHERE id > 0;\n"
+    post(client, "/api/submit", {"exercise_id": "q1", "code": solution, "mode": "blank"})
+    ctl = post(client, "/api/control/start", {"exercise_id": "q1"})["control"]
+    assert ctl["started"] and "SP" in ctl["change"] and all(not l["text"].lstrip().startswith("--") for l in ctl["lines"])
+    post(client, "/api/control/explain", {"exercise_id": "q1", "explanations": ["a", "b"][:len(ctl["lines"])]})
+    wrong = post(client, "/api/control/change", {"exercise_id": "q1", "code": solution})
+    assert wrong["passed"] is False
+    right = post(client, "/api/control/change", {"exercise_id": "q1", "code": "SELECT COUNT(*) AS n FROM orders WHERE city = 'SP'"})
+    assert right["passed"] and right["control"]["b_ok"] and right["status"]["control"] is True

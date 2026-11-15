@@ -1,0 +1,8 @@
+title: drop_duplicates without sorting
+kind: read
+serves: [C3, C4, C6, C9]
+kb: [pd-sort-dedupe, prod-event-dedup-ordering]
+questions:
+  - Which row does keep='last' keep, and what decides 'last'?
+  - What goes wrong if the data arrives in a different row order tomorrow?
+  - How does the second block make the answer independent of row order?

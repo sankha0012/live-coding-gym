@@ -1,0 +1,5 @@
+  city  orders  known   avg  total
+0   BH       1      1  50.0   50.0
+1   RJ       3      2  30.0   60.0
+2   SP       2      2  20.0   40.0
+6 5

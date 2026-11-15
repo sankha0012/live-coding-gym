@@ -1,0 +1,5 @@
+title: Binary search, first match
+kind: python
+required: false
+kb: [algo-binary-search, py-bisect, py-complexity]
+serves: [C1, C2]

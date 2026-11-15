@@ -1,0 +1,7 @@
+title: Data quality - reconcile counts
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-subqueries, sql-joins, sql-group-by, sql-data-quality-checks]
+serves: [C6]

@@ -1,0 +1,1 @@
+Read the code below without running it. Predict exactly what it prints, including the exact text of every log line, then answer the questions in your own words. The logger writes to standard output with the format level name, a space, then the message. Check what int() does with the string 'three' and with None, and read the error messages Python gives for each.

@@ -1,0 +1,5 @@
+FROM deliveries reads the five rows. GROUP BY courier puts them into two groups, Lia and Rui. For each group the SELECT list computes five things: the courier name, COUNT(*) which counts every row in the group, COUNT(delivered_at) and COUNT(rating) which count only rows where that column is not NULL, and AVG(rating) which averages the non-NULL ratings. ORDER BY courier sorts the groups alphabetically.
+
+I ran it. The result is two rows: Lia with n_rows 2, n_delivered 1, n_rated 1, avg_rating 3.0, and Rui with n_rows 3, n_delivered 2, n_rated 2, avg_rating 4.5.
+
+The trap is NULL handling. COUNT(*) counts rows regardless of content, while COUNT(column) silently skips NULLs, so the three counts differ for the same group. AVG also skips NULLs: Rui's average is (5 + 4) / 2 = 4.5, not (5 + 4) / 3, because the NULL rating on delivery 2 is left out of both the sum and the count. If NULL means unrated, that is usually what you want, but you must say so; if NULL means a bad rating it hides a problem. Note too that row 3 has a rating but no delivery time, which is itself a data quality smell.

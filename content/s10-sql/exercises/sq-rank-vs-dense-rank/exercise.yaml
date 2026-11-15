@@ -1,0 +1,7 @@
+title: RANK and DENSE_RANK
+kind: sql
+required: false
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-row-number-rank, sql-window-functions, sql-cte]
+serves: [C6]

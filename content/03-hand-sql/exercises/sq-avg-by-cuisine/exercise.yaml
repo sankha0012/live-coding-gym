@@ -1,7 +1,0 @@
-title: Average subtotal by cuisine
-kind: sql
-time_limit_s: 420
-required: true
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-kb: [sql-group-by, sql-joins, sql-select-where]

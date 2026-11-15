@@ -1,0 +1,7 @@
+title: "Catch it - bad rows vanish from the batch"
+kind: python
+name_bug: true
+assistant: "off"
+required: true
+serves: [C5, C3, C9]
+kb: [prod-chunked-batch-processing, py-exceptions, ai-verifying-ai-code]

@@ -1,0 +1,9 @@
+title: "Defend: how you prove a pipeline is deterministic"
+kind: open
+required: false
+serves: [C4, C3, C9]
+rubric:
+  - Names concrete sources of nondeterminism, such as unseeded random numbers, set or dict iteration assumptions, unstable or tie-dependent sorting, the current time, parallel execution order, and unordered database results.
+  - Describes a test that proves it, such as running the pipeline twice on the same input with the same seed and comparing outputs exactly or by hash, ideally also with the input rows shuffled.
+  - Explains the limits or trade-off, such as that two equal runs on one machine do not prove it for other library versions or hardware, floating point differences, or that seeds belong in config and the code should not touch global state.
+kb: [prod-determinism, py-random-seeds, py-sorting]

@@ -1,0 +1,7 @@
+title: "Docs: feature store lookup"
+kind: python
+required: false
+kb: [tool-feature-store, py-dicts, py-functions-args]
+serves: [C10, C2]
+files:
+  - featurestore.py

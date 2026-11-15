@@ -49,6 +49,19 @@ function startTimer(el, limit) {
 // tip(el, text): hover tooltip (also read by screen readers).
 function tip(el, text) { el.setAttribute("data-tip", text); el.setAttribute("title", text); el.classList.add("tip"); return el; }
 
+const COMPETENCY = {
+  C1: "Work comfortably on Coderbyte: stdin, stdout, run, test", C2: "Production-quality Python for ML systems",
+  C3: "Robust code: validate input, handle failure", C4: "Deterministic code: same input, same output",
+  C5: "Reliable code: retries, timeouts, fallbacks, idempotency", C6: "Real data behaviour: nulls, duplicates, joins, time",
+  C7: "Common model failures in production", C8: "Steer the assistant with good prompts", C9: "Explain every line afterwards",
+  C10: "Find answers in the documentation you are given",
+};
+const GROUP_INFO = {
+  Read: "Understand code before you touch it: predict, then explain.",
+  Build: "Plan, ask the assistant for small pieces, run, then prove control.",
+  Catch: "Find what the assistant got wrong.",
+  Defend: "Answer the follow-up questions an interviewer asks.",
+};
 const KIND_INFO = {
   python: ["Python", "Write a function in Python. Hidden tests check it, like Coderbyte."],
   sql: ["SQL", "Write a SQL query. Its result is compared with a reference result."],
@@ -370,12 +383,12 @@ function stepRow(s, j) {
   const pct = s.total ? Math.round(100 * s.done / s.total) : 0;
   const need = s.total ? Math.round(100 * s.needed / s.total) : 0;
   const bar = tip(h("div", { class: "progress" }, h("div", { class: "fill", style: `width:${pct}%` }),
-    s.shelf ? null : h("div", { class: "needed", style: `left:${need}%` })),
-    s.total ? `${s.done} of ${s.total} done.` + (s.shelf ? "" : ` The marker shows the ${s.needed} needed to pass.`) : "No exercises here.");
-  const label = s.shelf ? h("span", { class: "muted" }, `${s.done}/${s.total}`)
+    s.optional ? null : h("div", { class: "needed", style: `left:${need}%` })),
+    s.total ? `${s.done} of ${s.total} done.` + (s.optional ? "" : ` The marker shows the ${s.needed} needed to pass.`) : "No exercises here.");
+  const label = s.optional ? h("span", { class: "muted" }, `optional · ${s.done}/${s.total}`)
     : s.passed ? tip(h("span", { class: "ok" }, "passed ✓"), "You finished enough of this step.")
     : s.total ? h("span", { class: "muted" }, `${s.done}/${s.total} (need ${s.needed})`) : h("span", { class: "muted" }, "mock rounds");
-  const name = s.shelf ? s.title : `${s.order}. ${s.title}`;
+  const name = `${s.order}. ${s.title}`;
   const title = s.unlocked ? h("a", { href: `#/step/${s.id}` }, name)
     : tip(h("span", {}, `🔒 ${name}`), "Opens when you finish the step above, or unlock it yourself.");
   const row = h("div", { class: "row" + (s.unlocked ? "" : " locked") }, h("span", { class: "grow" }, title), bar, label);
@@ -400,11 +413,6 @@ async function journeyView() {
       "Average score of your last three mock rounds. It is an estimate, not a promise."),
     "   ", h("a", { href: "#/cards" }, `Flashcards due today: ${j.due_cards}`)));
   for (const s of j.steps) main.append(stepRow(s, j));
-  if (j.library && j.library.length) {
-    main.append(h("details", { class: "library" }, h("summary", {}, h("strong", {}, "Library"),
-      h("span", { class: "muted" }, "  optional: the old hand-coding drills, SQL and extra practice. Always open.")),
-      ...j.library.map((s) => stepRow(s, j))));
-  }
   if (j.mocks.length) {
     main.append(h("h2", {}, "Mock round history"));
     for (const m of j.mocks) main.append(h("div", { class: "row" }, `${m.started_at}  score ${m.total}/100`));
@@ -423,7 +431,7 @@ async function stepView(id) {
   const g = s.gate;
   main.append(h("p", {}, h("a", { href: "#/" }, "← Track")), h("h1", {}, s.title));
   if (s.intro) main.append(h("p", {}, s.intro));
-  if (g.total && !s.shelf) {
+  if (g.total && !s.optional) {
     main.append(h("p", { class: "muted" },
       `Pass this step by finishing ${g.needed} of its ${g.total} required exercises (${g.done} done). ` +
       "Hover a badge or tick for what it means."));
@@ -436,13 +444,17 @@ async function stepView(id) {
     main.append(h("p", {}, "This step is practised with ", h("a", { href: "#/mock" }, "mock rounds"), "; your last three scores give the readiness estimate."));
     return;
   }
-  main.append(h("h2", {}, "Exercises"));
-  for (const ex of s.exercises) {
-    main.append(h("div", { class: "row" },
-      h("a", { class: "grow", href: `#/ex/${ex.id}` }, ex.title),
-      kindBadge(ex.kind),
-      ex.required ? null : tip(h("span", { class: "badge" }, "optional"), "Does not count toward passing the step."),
-      statusLine(ex.status)));
+  const row = (ex) => h("div", { class: "row" },
+    h("a", { class: "grow", href: `#/ex/${ex.id}` }, ex.title),
+    kindBadge(ex.kind),
+    ...(ex.serves || []).map((c) => tip(h("span", { class: "badge" }, c), COMPETENCY[c] || "")),
+    statusLine(ex.status));
+  for (const group of ["Read", "Build", "Catch", "Defend"]) {
+    const here = s.exercises.filter((ex) => ex.group === group);
+    if (!here.length) continue;
+    const core = here.filter((ex) => ex.required), extra = here.filter((ex) => !ex.required);
+    main.append(h("h2", {}, tip(h("span", {}, group), GROUP_INFO[group])), ...core.map(row));
+    if (extra.length) main.append(h("details", {}, h("summary", { class: "muted" }, `Extra practice (${extra.length})`), ...extra.map(row)));
   }
 }
 
@@ -551,7 +563,7 @@ function controlPanel(ex, id, ctx, afterChange) {
         e.target.disabled = false;
       } }, info.a_ok ? "✓ Explained (check again)" : "Check my explanations")), revSlot);
     const holder = h("div"), out = h("pre");
-    const cm = editor(holder, "python", code || "");
+    const cm = editor(holder, ex.kind, code || "");
     cm.on("change", () => { last = cm.getValue(); });
     setTimeout(() => cm.refresh(), 0);
     el.append(h("h3", {}, "B. Make this change by hand"), md(info.change), holder,
@@ -584,6 +596,7 @@ async function exView(id, mode = "blank") {
   if (ex.kind === "quiz") { main.append(md(ex.prompt)); return quizView(ex); }
   main.append(md(ex.prompt));
   if (ex.schema) main.append(h("details", {}, h("summary", {}, "Tables"), h("pre", {}, ex.schema)));
+  if (ex.docs) main.append(h("details", { open: "" }, h("summary", {}, "Documentation (you may consult it, like in the interview)"), md(ex.docs)));
   const progress = h("div", { class: "bar" }, h("span", { class: "muted" }, "Progress (hover a tick):"), statusEl);
   applyStatus(ex.status);
 
@@ -737,7 +750,8 @@ async function mockView() {
     main.append(h("div", { class: "bar" }, h("strong", {}, "Mock round"), clock));
     const editors = m.tasks.map((t, i) => {
       const holder = h("div"), out = h("pre");
-      main.append(h("h2", {}, `Task ${i + 1}: ${t.title}`), md(t.prompt), holder,
+      main.append(h("h2", {}, `Task ${i + 1}: ${t.title}`), md(t.prompt),
+        t.docs ? h("details", { open: "" }, h("summary", {}, "Documentation"), md(t.docs)) : null, holder,
         h("div", { class: "bar" }, h("button", { onclick: async () => results(out, await api("/run", { exercise_id: t.id, code: cm.getValue(), scope }), "run") }, "Run")), out);
       const cm = editor(holder, "python", t.code);
       setTimeout(() => cm.refresh(), 0);

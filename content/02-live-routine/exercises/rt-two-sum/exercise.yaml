@@ -1,6 +1,0 @@
-title: Two sum
-kind: python
-required: true
-mock: true
-time_limit_s: 720
-kb: [algo-hash-map-counting, py-dicts, py-loops-enumerate-zip, py-complexity]

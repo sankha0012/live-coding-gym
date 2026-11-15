@@ -1,0 +1,5 @@
+title: Idempotent event processing
+kind: python
+required: false
+kb: [prod-event-dedup-ordering, prod-idempotency, py-sets, py-tuples-unpacking]
+serves: [C5, C6]

@@ -1,0 +1,10 @@
+title: Catch it - the merge hides duplicate keys
+kind: python
+name_bug: true
+assistant: "off"
+required: true
+serves: [C2, C3, C6, C9]
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-merge, pd-read-inspect, py-exceptions, ai-verifying-ai-code]

@@ -1,6 +1,0 @@
-title: Binary search, first match
-kind: python
-required: true
-mock: true
-time_limit_s: 720
-kb: [algo-binary-search, py-bisect, py-complexity]

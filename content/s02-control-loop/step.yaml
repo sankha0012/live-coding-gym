@@ -1,0 +1,13 @@
+title: The control loop on Coderbyte
+order: 2
+intro: Plan in comments, ask the assistant for one small piece, read every line, run it, then explain two lines and change one thing by hand. The first six exercises are the core; the rest is extra practice with the same habit.
+gate:
+  min_score: 3
+  pass_ratio: 0.7
+sequence:
+- cb-pairsum
+- cb-brackets
+- cb-wordfreq
+- rt-top-k-frequent
+- rt-parse-log-lines
+- rt-merge-intervals

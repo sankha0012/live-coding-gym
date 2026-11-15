@@ -1,9 +1,0 @@
-title: Cancellations by city
-kind: sql
-required: true
-mock: false
-time_limit_s: 720
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-order: 60
-kb: [sql-conditional-aggregation, sql-group-by, sql-joins]

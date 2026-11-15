@@ -1,0 +1,11 @@
+title: "Explain: a training script"
+kind: explain
+required: true
+serves: [C9, C7]
+rubric:
+  - States that it scales the features, splits into train and test, fits a logistic regression and reports the test ROC AUC.
+  - Explains that stratify keeps the class ratio and random_state makes the split reproducible.
+  - Names the main risk: the scaler is fit on all rows before the split, so test data leaks into the preprocessing, so the score can be optimistic (small for plain scaling, larger with imputers, target encoding or feature selection).
+  - Gives the fix: split first, fit the scaler on train only, or use a Pipeline so fitting happens inside each fold.
+  - Notes that the metric is only computed on one split, so it is noisy.
+kb: [iv-explaining-code, ml-train-test-split-leakage, ml-sklearn-pipeline, ml-auc-ks]

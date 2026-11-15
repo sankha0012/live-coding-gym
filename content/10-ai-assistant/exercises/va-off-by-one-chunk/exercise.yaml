@@ -1,7 +1,0 @@
-title: Verify AI code - chunking
-kind: python
-name_bug: true
-assistant: "off"
-required: true
-time_limit_s: 600
-kb: [ai-verifying-ai-code, py-slicing, py-loops-enumerate-zip, prod-chunked-batch-processing]

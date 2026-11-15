@@ -1,8 +1,0 @@
-title: Time between orders
-kind: python
-time_limit_s: 900
-required: true
-files:
-  - ../../../_shared/orders.csv
-  - ../../../_shared/restaurants.csv
-kb: [pd-dtypes-datetime, pd-sort-dedupe, pd-groupby-agg]

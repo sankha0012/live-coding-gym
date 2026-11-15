@@ -1,7 +1,0 @@
-title: GMV by city
-kind: python
-required: true
-mock: false
-time_limit_s: 720
-order: 60
-kb: [py-dicts, py-truthiness-none, py-dict-comprehensions, py-math-nan]

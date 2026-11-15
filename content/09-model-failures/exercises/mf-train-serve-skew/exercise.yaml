@@ -1,6 +1,0 @@
-title: "Debug: train and serve features disagree"
-kind: python
-required: true
-mock: true
-time_limit_s: 900
-kb: [prod-train-serve-skew, py-str-methods, py-truthiness-none]

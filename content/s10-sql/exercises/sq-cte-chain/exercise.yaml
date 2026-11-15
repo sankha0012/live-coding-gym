@@ -1,0 +1,7 @@
+title: Dominant restaurants in a city
+kind: sql
+required: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-cte, sql-group-by, sql-joins]
+serves: [C1, C2]

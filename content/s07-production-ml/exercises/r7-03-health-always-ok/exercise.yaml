@@ -1,0 +1,10 @@
+title: Health check that always says ok
+kind: read
+order: 3
+required: true
+serves: [C2, C5, C3]
+kb: [prod-health-checks, py-exceptions]
+questions:
+  - "Why does health() return ok even though predict fails?"
+  - "What goes wrong in production if the load balancer trusts this health check?"
+  - "What would a better check do, and what is the difference between liveness and readiness?"

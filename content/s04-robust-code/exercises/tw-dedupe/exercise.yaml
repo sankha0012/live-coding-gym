@@ -1,0 +1,5 @@
+title: Test dedupe
+kind: tests
+required: false
+kb: [test-what-to-test, test-pytest-basics, py-copy-mutability, py-sets]
+serves: [C1, C3]

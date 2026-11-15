@@ -1,0 +1,286 @@
+- id: rd5-c-01
+  front: |-
+    ```python
+    s = pd.Series([30.0, None, 45.0, None])
+    print(s.mean(), s.count(), len(s))
+    ```
+
+    What does this do?
+  back: It prints `37.5 2 4`. `mean()` skips the missing values, so the average comes from only 2 of the 4 rows, and `count()` counts only non-missing cells while `len()` counts all rows. When I report a mean I print the count next to it, because the mean alone hides how many rows were silently ignored.
+- id: rd5-c-02
+  front: |-
+    ```python
+    s = pd.Series([1.0, np.nan, 3.0])
+    print((s == np.nan).sum(), s.isna().sum())
+    ```
+
+    What breaks here?
+  back: The comparison never matches. `NaN` is not equal to anything, not even itself, so `s == np.nan` is `False` everywhere and the first number is `0`. The right test is `isna()`, which finds the one missing value and gives `1`.
+- id: rd5-c-03
+  front: |-
+    ```python
+    df = pd.DataFrame({"minutes": [30.0, 45.0, np.nan, np.nan]})
+    print(df["minutes"].fillna(0).mean(), df["minutes"].mean())
+    ```
+
+    What breaks here?
+  back: Filling a missing delivery time with 0 says that those orders arrived instantly. The mean drops from `37.5` to `18.75`, and a model would learn that fast orders exist. If the orders were cancelled, there is no delivery time at all. A fill value must not look like real data. Use a missing flag, or leave `NaN` for a model that accepts it.
+- id: rd5-c-04
+  front: |-
+    ```python
+    s = pd.Series(["12.5", "1,200", "n/a"])
+    print(pd.to_numeric(s, errors="coerce").tolist())
+    ```
+
+    What does this do?
+  back: It prints `[12.5, nan, nan]`. With `errors="coerce"` a value that cannot be parsed becomes `NaN` instead of raising. Note that `"1,200"` also fails, because the thousands separator is not accepted, so a real price was lost along with the junk. I remove the comma first, and I count the coerced rows so a broken feed does not pass unnoticed.
+- id: rd5-c-05
+  front: |-
+    ```python
+    print(pd.to_datetime("01/03/2026"))
+    ```
+
+    What breaks here?
+  back: It prints `2026-01-03`, that is 3 January, because pandas reads the ambiguous text as month first. A Brazilian source probably meant 1 March. Nothing fails, so the error is silent. Give the parser an explicit `format="%d/%m/%Y"` or `dayfirst=True`, and use `errors="coerce"` plus a failure count.
+- id: rd5-c-06
+  front: |-
+    ```python
+    import io
+    df = pd.read_csv(io.StringIO("id,amount\n007,5\n012,6"))
+    print(df["id"].tolist())
+    ```
+
+    What breaks here?
+  back: 'It prints `[7, 12]`. The ids look numeric, so pandas parses them as integers and the leading zeros are gone. They will no longer match the ids in another system that keeps them as text. Read identifiers as strings with `dtype={"id": str}`.'
+- id: rd5-c-07
+  front: |-
+    ```python
+    ev = pd.DataFrame({"id": [1, 1], "updated_at": ["2026-01-02", "2026-01-05"], "plan": ["free", "pro"]})
+    print(ev.sort_values("updated_at", ascending=False).drop_duplicates("id")["plan"].tolist())
+    ```
+
+    What does this do?
+  back: It prints `['pro']`. Sorting with the newest first and then calling `drop_duplicates`, which keeps the first row per key, keeps the latest version. The same idea is sorting ascending and using `keep="last"`. Without the sort the winner would depend on the row order, which is not a rule. If two versions can have the same timestamp, add a tiebreaker column.
+- id: rd5-c-08
+  front: |-
+    ```python
+    ev = pd.DataFrame({"id": [1, 1], "updated_at": ["2026-01-02", "2026-01-05"], "plan": ["free", "pro"]})
+    print(ev.drop_duplicates("id")["plan"].tolist())
+    ```
+
+    What breaks here?
+  back: It prints `['free']`, the stale version, because `drop_duplicates` keeps the first row in the current order and the older record happens to come first. The data was never sorted by time, so the result depends on how the file was written. Sort by the timestamp first and keep the last row per key.
+- id: rd5-c-09
+  front: |-
+    ```python
+    o = pd.DataFrame({"order_id": [1, 1], "status": ["placed", "delivered"]})
+    print(len(o.drop_duplicates()))
+    ```
+
+    What breaks here?
+  back: It prints `2`, so nothing is removed. `drop_duplicates()` with no arguments compares whole rows, and these two rows differ in `status`, although they are two versions of the same order. To collapse versions I must name the key, `drop_duplicates("order_id")`, after sorting so the latest status wins.
+- id: rd5-c-10
+  front: |-
+    ```python
+    orders = pd.DataFrame({"order_id": [1, 2], "restaurant_id": [10, 20], "gmv": [100.0, 80.0]})
+    rest = pd.DataFrame({"restaurant_id": [10, 20, 20], "city": ["SP", "RJ", "RJ"]})
+    print(len(orders.merge(rest, on="restaurant_id", how="left")), orders["gmv"].sum())
+    ```
+
+    What breaks here?
+  back: The merge returns 3 rows from 2 orders, because restaurant 20 is listed twice in the lookup and order 2 is matched twice. Any sum taken after the join would count its 80 twice (here the total would be 260 instead of 180). Nothing raises an error. I make the lookup unique first and check that the row count is unchanged.
+- id: rd5-c-11
+  front: |-
+    ```python
+    orders = pd.DataFrame({"restaurant_id": [10, 20], "total": [50, 80]})
+    rest = pd.DataFrame({"restaurant_id": [10, 20], "city": ["SP", "RJ"]})
+    orders.merge(rest, on="restaurant_id", how="left", validate="many_to_one")
+    ```
+
+    What does this do?
+  back: It runs the same left join but first checks the assumption that each order matches at most one restaurant, so the right-hand table must have unique keys. If `rest` has a repeated `restaurant_id`, pandas raises `MergeError` instead of silently multiplying rows. It turns a silent bug into a loud one and documents the expectation in code.
+- id: rd5-c-12
+  front: |-
+    ```python
+    a = pd.DataFrame({"k": [1, 2], "x": [10, 20]})
+    b = pd.DataFrame({"k": [1, 1, 1], "y": [1, 2, 3]})
+    print(len(a.merge(b, on="k")), len(a.merge(b, on="k", how="left")))
+    ```
+
+    What does this do?
+  back: It prints `3 4`. Key 1 matches three rows on the right and produces three rows. Key 2 has no match, so the inner join drops it and the left join keeps it with `NaN`. A left join never loses left rows, but one-to-many keys still multiply them. I compare the row counts before and after, and look at unmatched keys with `indicator=True`.
+- id: rd5-c-13
+  front: |-
+    ```python
+    a = pd.DataFrame({"k": [np.nan]})
+    b = pd.DataFrame({"k": [np.nan], "v": [1]})
+    print(len(a.merge(b, on="k")))
+    ```
+
+    What breaks here?
+  back: 'It prints `1`: pandas matches a missing key on the left with a missing key on the right, which SQL would never do. Rows with no real key pair up with each other and add wrong data. I drop or fill null keys before the merge, and check that the key dtypes on both sides are the same.'
+- id: rd5-c-14
+  front: |-
+    ```python
+    x = pd.Series([20, 25, 30, 28, 22, 26, 24, 500.0])
+    print(round(x.mean(), 1), x.median())
+    ```
+
+    What does this do?
+  back: It prints `84.4 25.5`. The single extreme value drags the mean far from where most values sit, while the median hardly moves. That is why I prefer the median for skewed money and time data, and why I check the median next to the mean before trusting either.
+- id: rd5-c-15
+  front: |-
+    ```python
+    x = pd.Series([20, 25, 30, 28, 22, 26, 24, 500.0])
+    q1, q3 = x.quantile([0.25, 0.75])
+    print(x[x > q3 + 1.5 * (q3 - q1)].tolist())
+    ```
+
+    What does this do?
+  back: It prints `[500.0]`. The interquartile range (IQR) is the distance between the 25th and 75th percentiles. Values more than 1.5 IQR above the third quartile are flagged as outliers. The quartiles are not dragged by the extreme value, so the fence is stable. Here the upper fence is 36. I flag the rows and look at them instead of deleting them.
+- id: rd5-c-16
+  front: |-
+    ```python
+    x = pd.Series([20, 25, 30, 28, 22, 26, 24, 500.0])
+    print(((x - x.mean()) / x.std()).abs().gt(3).sum())
+    ```
+
+    What breaks here?
+  back: 'It prints `0`: the rule "flag values with a z-score above 3" finds nothing. The outlier inflates the mean and the standard deviation, so its own z-score is only about 2.47. In small samples the maximum possible z-score is limited. A rule based on the median and the IQR is more robust here.'
+- id: rd5-c-17
+  front: |-
+    ```python
+    t = pd.Timestamp("2026-03-08 02:30", tz="UTC")
+    print(t - pd.Timestamp("2026-03-08"))
+    ```
+
+    What breaks here?
+  back: 'It raises `TypeError: Cannot subtract tz-naive and tz-aware datetime-like objects`. The first timestamp is aware (UTC) and the second is naive. The error is the good outcome, because guessing would be silent. I decide which zone the naive value was written in, localize it, and then subtract.'
+- id: rd5-c-18
+  front: |-
+    ```python
+    t = pd.Timestamp("2026-03-08 02:30", tz="UTC")
+    print(t.tz_convert("America/Sao_Paulo"))
+    ```
+
+    What does this do?
+  back: It converts the same instant to Sao Paulo time and prints `2026-03-07 23:30:00-03:00`. The clock shows the previous calendar day, so a daily total grouped by the local date would count this event on 7 March, while a total by UTC date counts it on 8 March. I decide which day definition the business uses before grouping.
+- id: rd5-c-19
+  front: |-
+    ```python
+    t = pd.Timestamp("2026-11-01 01:30")
+    t.tz_localize("America/New_York")
+    ```
+
+    What breaks here?
+  back: 'It raises `ValueError: Cannot infer dst time`. On 1 November 2026 clocks in New York go back one hour, so 01:30 happens twice and the naive text does not say which one was meant. pandas refuses to guess. I pass `ambiguous=` on purpose, or better, store UTC timestamps and avoid local wall-clock text.'
+- id: rd5-c-20
+  front: |-
+    ```python
+    ev = pd.DataFrame({"user": [1, 1], "ts": pd.to_datetime(["2026-05-01 10:05", "2026-05-01 10:01"])})
+    print(ev.groupby("user")["ts"].diff().dt.total_seconds().tolist())
+    ```
+
+    What breaks here?
+  back: It prints `[nan, -240.0]`. The rows are in arrival order, and the second event happened four minutes before the first, so the gap is negative. A feature like "time since the previous event" is wrong unless the events are sorted by event time first. Never assume the input arrives in the order things happened.
+- id: rd5-c-21
+  front: |-
+    ```python
+    ev = pd.DataFrame({
+        "ts": pd.to_datetime(["2026-03-01 10:00", "2026-03-01 10:05"]),
+        "arrived": pd.to_datetime(["2026-03-01 10:01", "2026-03-01 13:00"]),
+    })
+    late = (ev["arrived"] - ev["ts"]) > pd.Timedelta(minutes=60)
+    ok, side = ev[~late], ev[late]
+    ```
+
+    What does this do?
+  back: It separates events that arrived more than 60 minutes after they happened, a watermark rule. Late events go to a side table instead of changing results that were already published. It uses the difference between arrival time and event time, so the table needs both columns. The 60 minutes is a business decision about how long to wait.
+- id: rd5-c-22
+  front: |-
+    ```python
+    import numpy as np
+    from sklearn.model_selection import train_test_split
+    days = np.arange(100)
+    tr, te = train_test_split(days, test_size=0.2, random_state=0)
+    print(tr.max() > te.min())
+    ```
+
+    What breaks here?
+  back: 'It prints `True`: the training set contains days that come after some test days. A random split on time-ordered data lets the model see the future, and neighbouring days from the same period end up on both sides, so the score is too good. Split by date: train before a cut and test after it.'
+- id: rd5-c-23
+  front: |-
+    ```python
+    from sklearn.preprocessing import StandardScaler
+    X = np.array([[1.0], [2.0], [3.0], [100.0]])
+    Xs = StandardScaler().fit_transform(X)
+    train, test = Xs[:3], Xs[3:]
+    ```
+
+    What breaks here?
+  back: The scaler was fitted on all rows before the split, so the mean and standard deviation include the test row 100. The training features are shaped by data from the test period. That is a leak. I fit the scaler on the training rows only and call `transform` on the test rows, or put the scaler in a `Pipeline` so each fold does it correctly.
+- id: rd5-c-24
+  front: |-
+    ```python
+    d = pd.DataFrame({"y": [0, 1, 0, 1], "x": [1.0, 5.0, 2.0, 6.0]})
+    d["feat"] = d.groupby("y")["x"].transform("mean")
+    print(d["feat"].corr(d["y"]))
+    ```
+
+    What breaks here?
+  back: 'It prints `1.0`: the feature is built from the target, so it contains the answer. A correlation of exactly 1.0 is the signature of a leak. This is how a feature like "average spend of customers who churned" quietly gives a perfect validation score and a useless live model. For each feature I ask whether I would know it at prediction time.'
+- id: rd5-c-25
+  front: |-
+    ```python
+    late = []
+    print(sum(late) / len(late))
+    ```
+
+    What breaks here?
+  back: 'It raises `ZeroDivisionError`. A day with no orders gives an empty list, and the average divides by zero. I decide what an empty input means: return `None`, a default or a clear error, and I check that case in a test. In NumPy the same mistake gives `nan` and only a warning, which is worse because it passes quietly.'
+- id: rd5-c-26
+  front: |-
+    ```python
+    s = pd.Series([], dtype=float)
+    print(s.sum(), s.mean())
+    ```
+
+    What does this do?
+  back: It prints `0.0 nan`. The sum of nothing is zero, which looks like a real measurement, while the mean of nothing is `NaN`. An empty day can therefore show zero revenue and a missing rate. I report the row count as well, so that zero rows is not mistaken for zero revenue.
+- id: rd5-c-27
+  front: |-
+    ```python
+    n, late = 3, 3
+    print(late / n)
+    ```
+
+    What breaks here?
+  back: A restaurant with 3 orders, all late, shows a late rate of `1.0` and tops any ranking of the worst restaurants, but 3 orders say almost nothing. Small groups produce extreme rates by chance. I show the count with the rate and set a minimum number of rows before a rate is shown or ranked.
+- id: rd5-c-28
+  front: |-
+    ```python
+    v = [2, 4, 4, 4, 5, 5, 7, 9]
+    print(np.std(v), round(pd.Series(v).std(), 2))
+    ```
+
+    What does this do?
+  back: It prints `2.0 2.14`. NumPy divides by n (population standard deviation) and pandas divides by n minus 1 (sample standard deviation) by default. I say which one I use. With few values the difference is large, and it matters when the result feeds a z-score.
+- id: rd5-c-29
+  front: |-
+    ```python
+    pos, neg = np.array([0.35, 0.8]), np.array([0.1, 0.4])
+    wins = (pos[:, None] > neg).sum() + 0.5 * (pos[:, None] == neg).sum()
+    print(wins / (len(pos) * len(neg)))
+    ```
+
+    What does this do?
+  back: It computes AUC by hand and prints `0.75`. It compares every positive score with every negative score and counts a win when the positive is higher and half a win for a tie, then divides by the number of pairs. Three of the four pairs are won. It is the probability that a random positive ranks above a random negative. It needs O(positives times negatives) work.
+- id: rd5-c-30
+  front: |-
+    ```python
+    v = [2, 4, 4, 4, 5, 5, 7, 9]
+    print(np.percentile(v, 90), sorted(v)[int(0.9 * len(v))])
+    ```
+
+    What does this do?
+  back: It prints `7.6 9`. `np.percentile` interpolates between the two nearest sorted values, while indexing the sorted list picks one existing value, and the two answers differ. Percentile definitions vary between libraries, so in an interview I say which one I use, and that a small sample makes the high percentiles unstable.

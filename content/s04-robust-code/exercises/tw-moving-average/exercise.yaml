@@ -1,0 +1,5 @@
+title: Test moving_average
+kind: tests
+required: false
+kb: [test-raises, test-what-to-test, test-pytest-basics, py-slicing, algo-sliding-window]
+serves: [C1, C3]

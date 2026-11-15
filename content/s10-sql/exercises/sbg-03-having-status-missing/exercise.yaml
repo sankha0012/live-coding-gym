@@ -1,0 +1,9 @@
+title: "Catch: busy restaurants that count cancelled orders"
+kind: sql
+name_bug: true
+assistant: "off"
+required: true
+ordered: true
+seed_file: ../../../_shared/delivery.sql
+kb: [sql-having, sql-group-by, sql-order-limit]
+serves: [C8, C9, C6]

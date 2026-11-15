@@ -1,0 +1,7 @@
+title: Verify AI code - swallowed error
+kind: python
+name_bug: true
+assistant: "off"
+required: true
+kb: [ai-verifying-ai-code, py-exceptions, py-str-methods]
+serves: [C7, C9]

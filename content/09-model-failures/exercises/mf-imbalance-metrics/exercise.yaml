@@ -1,5 +1,0 @@
-title: Metrics that survive class imbalance
-kind: python
-required: true
-time_limit_s: 720
-kb: [ml-metrics-precision-recall-f1, py-loops-enumerate-zip, py-exceptions]

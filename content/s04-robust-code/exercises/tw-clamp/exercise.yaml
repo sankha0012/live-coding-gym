@@ -1,0 +1,5 @@
+title: Test clamp
+kind: tests
+required: false
+kb: [test-pytest-basics, test-raises, test-what-to-test, py-exceptions]
+serves: [C3]

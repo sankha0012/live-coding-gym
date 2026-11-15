@@ -1,0 +1,1 @@
+`allow` adds `(now - self.last) * self.rate` without clamping the elapsed time at zero. If the clock steps backwards (an NTP correction, a daylight or manual change), the difference is negative, so tokens are removed and the bucket can even go below zero. Legitimate callers are then denied for a long time after the clock recovers.

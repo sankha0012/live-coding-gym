@@ -1,0 +1,6 @@
+title: Validate a prediction request
+kind: python
+required: true
+kb: [prod-input-validation, py-math-nan, py-dicts, py-truthiness-none]
+serves: [C3, C6]
+mock: true

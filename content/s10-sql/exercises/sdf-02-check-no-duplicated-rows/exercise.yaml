@@ -1,0 +1,9 @@
+title: "Defend: how do you know the join did not duplicate rows"
+kind: open
+required: true
+serves: [C6, C3, C9]
+rubric:
+  - Explains the mechanism, that a join on a key that is not unique on the other side returns one row per match, so a one-to-many join multiplies the rows of the left table and inflates sums and counts.
+  - Describes concrete checks, such as comparing the row count before and after the join, counting distinct keys, or grouping the right-hand table by the join key and looking for counts above 1.
+  - Names a fix or defence, such as aggregating the right-hand table to one row per key first, deduplicating it, or using COUNT(DISTINCT) only where it is meaningful, and notes that no error is raised when it goes wrong.
+kb: [sql-joins, sql-dedupe, sql-group-by]

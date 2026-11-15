@@ -1,0 +1,13 @@
+title: Catch the assistant's mistakes
+order: 3
+intro: Assistant-written code looks right and is often wrong. Find the bug without help, fix it by hand, name it in one sentence. Then decide which proposed changes to accept.
+gate:
+  min_score: 3
+  pass_ratio: 0.7
+sequence:
+- va-mutable-default
+- va-off-by-one-chunk
+- va-nan-comparison
+- va-swallowed-exception
+- va-leaky-scaler
+- va-timezone-naive

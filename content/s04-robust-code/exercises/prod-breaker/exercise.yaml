@@ -1,0 +1,5 @@
+title: Circuit breaker around a model call
+kind: python
+required: false
+kb: [prod-circuit-breaker, py-time-clock-injection, prod-fallbacks, py-classes]
+serves: [C5, C2]

@@ -1,0 +1,9 @@
+title: Keep the latest row per key
+kind: python
+required: true
+files:
+  - ../../../_shared/orders.csv
+  - ../../../_shared/restaurants.csv
+kb: [pd-sort-dedupe, prod-event-dedup-ordering]
+serves: [C3, C4, C6]
+mock: true

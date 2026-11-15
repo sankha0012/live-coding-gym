@@ -1,0 +1,6 @@
+title: Safe int
+kind: python
+required: false
+order: 7
+kb: [py-exceptions, py-functions-args, py-math-nan]
+serves: [C2]

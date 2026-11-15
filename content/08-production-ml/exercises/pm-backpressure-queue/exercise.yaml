@@ -1,5 +1,0 @@
-title: Bounded queue with backpressure
-kind: python
-time_limit_s: 720
-required: true
-kb: [py-collections-deque, py-classes, py-exceptions]

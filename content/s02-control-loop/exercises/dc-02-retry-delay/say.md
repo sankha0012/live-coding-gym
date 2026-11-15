@@ -1,0 +1,1 @@
+I read the docs: the helper takes milliseconds and returns seconds, and attempts count from 1. So I pass the attempt number and the millisecond values in, and hand the result straight to sleep. I re-raise the last exception and skip the sleep after the final failure.

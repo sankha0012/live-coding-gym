@@ -1,0 +1,1 @@
+INSERT INTO orders (order_id, customer_id, restaurant_id, courier_id, created_at, subtotal, delivery_fee, coupon_code, status, promised_minutes, actual_minutes) VALUES (900001, NULL, 1, 1, '2026-10-30 12:00:00', 40.0, 5.0, NULL, 'delivered', 30, 25.0);

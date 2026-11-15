@@ -1,0 +1,10 @@
+title: Cache without expiry
+kind: read
+order: 1
+required: true
+serves: [C2, C5, C6]
+kb: [prod-ttl-cache, py-copy-mutability]
+questions:
+  - "Why does the second call print 42.0 although the feature store now holds 55.5?"
+  - "What goes wrong in production if this cache has no expiry and the process runs for weeks?"
+  - "How would you add a time to live, and how would you keep the clock testable?"

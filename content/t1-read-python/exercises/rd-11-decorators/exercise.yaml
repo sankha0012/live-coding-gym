@@ -1,8 +1,0 @@
-title: Read - a retry decorator
-kind: read
-order: 11
-kb: [py-closures-decorators]
-questions:
-  - "What does @retry(3) do to fetch when the module is loaded?"
-  - "Why does the program print two failure lines and then ok?"
-  - "What would happen if fetch had failed on all three attempts, and what does functools.wraps change?"

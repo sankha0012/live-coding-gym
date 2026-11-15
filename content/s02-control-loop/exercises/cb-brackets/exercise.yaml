@@ -1,0 +1,8 @@
+title: Balanced brackets
+kind: python
+required: true
+order: 10
+kb: [algo-stack, py-dicts, iv-coderbyte-format, py-input-print]
+plan_required: 2
+grade_prompts: true
+serves: [C1, C2]

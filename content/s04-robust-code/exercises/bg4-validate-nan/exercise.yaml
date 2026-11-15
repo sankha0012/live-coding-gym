@@ -1,0 +1,7 @@
+title: Catch it - NaN slips through validation
+kind: python
+name_bug: true
+assistant: "off"
+required: false
+serves: [C3, C6, C9]
+kb: [prod-input-validation, py-math-nan, ai-verifying-ai-code]

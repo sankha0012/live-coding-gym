@@ -1,0 +1,6 @@
+title: Running sum
+kind: python
+required: false
+order: 5
+kb: [algo-prefix-sums, py-lists, py-itertools]
+serves: [C2]

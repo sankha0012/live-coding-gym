@@ -1,0 +1,10 @@
+title: Fallback that hides every failure
+kind: read
+order: 6
+required: false
+serves: [C3, C5, C7]
+kb: [prod-fallbacks, py-exceptions]
+questions:
+  - "Which orders hit the fallback, and what exception does each one raise?"
+  - "What goes wrong in production if a fallback swallows every exception and reports nothing?"
+  - "What would you add so the fallback stays but the failures become visible?"

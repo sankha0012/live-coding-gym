@@ -1,6 +1,0 @@
-title: 'Bug: shared tags'
-kind: python
-required: true
-mock: true
-time_limit_s: 540
-kb: [py-functions-args, py-copy-mutability, py-sorting]

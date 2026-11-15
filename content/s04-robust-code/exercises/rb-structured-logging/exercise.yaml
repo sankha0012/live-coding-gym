@@ -1,0 +1,5 @@
+title: Structured log records
+kind: python
+required: false
+kb: [prod-structured-logging, py-time-clock-injection, prod-input-validation, py-dicts]
+serves: [C2, C5]

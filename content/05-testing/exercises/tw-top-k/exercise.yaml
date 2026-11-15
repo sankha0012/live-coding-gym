@@ -1,5 +1,0 @@
-title: Test top_k
-kind: tests
-time_limit_s: 900
-required: true
-kb: [test-what-to-test, test-pytest-basics, py-sorting, py-copy-mutability]

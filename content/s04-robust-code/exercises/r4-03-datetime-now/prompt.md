@@ -1,0 +1,1 @@
+Read the code below without running it. Predict exactly what it prints, then answer the questions in your own words. Assume you run it today, well after March 2024. The events are fixed timestamps; think about what the window looks like in each of the three calls.

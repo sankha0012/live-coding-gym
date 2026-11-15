@@ -1,0 +1,11 @@
+title: "Prompt: score a large file in chunks"
+kind: prompt
+required: false
+rubric:
+  - "States the task, inputs, outputs and constraints precisely"
+  - "Asks for robustness: validation, edge cases, determinism"
+  - "Keeps the candidate in control: small scope, asks for tests or explanation"
+  - "Would convince an observer the candidate understands the problem"
+  - "Says what happens when the model fails on a chunk and how results map back to input rows"
+kb: [ai-prompt-anatomy, prod-chunked-batch-processing, py-csv, prod-checkpointing, py-iterators-generators]
+serves: [C8]

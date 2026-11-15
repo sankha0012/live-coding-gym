@@ -1,0 +1,5 @@
+title: Compose functions
+kind: python
+required: false
+kb: [py-closures-decorators, py-functions-args]
+serves: [C2]

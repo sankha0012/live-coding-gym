@@ -1,0 +1,9 @@
+title: "Defend: why accuracy fails on imbalanced data"
+kind: open
+required: false
+serves: [C7, C6, C9]
+rubric:
+  - Gives the core reason with a number: when one class is rare, a model that always predicts the majority class gets high accuracy and catches none of the rare cases.
+  - Names better metrics and what they measure, such as precision (how many alerts are real), recall (how many real cases are caught) and F1 as their harmonic mean.
+  - Connects the choice to the business cost, for example choosing the decision threshold by the cost of a missed fraud against the cost of a false alert, or adds a limit such as the metric being undefined when there are no positives.
+kb: [ml-metrics-precision-recall-f1, ai-verifying-ai-code]

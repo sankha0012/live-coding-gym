@@ -1,0 +1,6 @@
+50.0
+nan
+Rio ticket: nan
+False False
+False
+0.0

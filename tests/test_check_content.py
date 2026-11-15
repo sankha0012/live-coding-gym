@@ -82,3 +82,12 @@ def test_sql_wrong_and_alt_queries_are_checked(tmp_path):
     problems = check(tmp_path / "c")
     assert any("wrong query same gives the reference result" in p for p in problems)
     assert any("alternative query bad does not match" in p for p in problems) and len(problems) == 2
+
+
+def test_curriculum_rules(steps):
+    from gym.check_content import check_curriculum
+    problems = check_curriculum(steps)
+    assert any("missing serves" in p for p in problems) and any("mock task needs docs.md" in p for p in problems)
+    ex = steps[0].exercises[0]
+    ex.serves, ex.docs, ex.change = ["C2"], "docs", "change"
+    assert not [p for p in check_curriculum(steps) if p.startswith(ex.id)]

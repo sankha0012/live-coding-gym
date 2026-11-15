@@ -1,0 +1,6 @@
+title: Process each key once
+kind: python
+required: true
+kb: [prod-idempotency, py-dicts, py-exceptions, py-classes]
+serves: [C5]
+mock: true

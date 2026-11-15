@@ -1,5 +1,0 @@
-title: Compress spaces
-kind: python
-required: true
-time_limit_s: 300
-kb: [py-str-split-join, py-iterators-generators]

@@ -1,4 +1,0 @@
-title: Cross-validated accuracy without leakage
-kind: python
-time_limit_s: 780
-kb: [ml-cross-validation, ml-sklearn-pipeline, ml-train-test-split-leakage]

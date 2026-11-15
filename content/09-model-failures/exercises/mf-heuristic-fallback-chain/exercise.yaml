@@ -1,6 +1,0 @@
-title: "Fallback chain: model, rule, constant"
-kind: python
-required: true
-mock: true
-time_limit_s: 720
-kb: [prod-fallbacks, py-exceptions, py-truthiness-none]

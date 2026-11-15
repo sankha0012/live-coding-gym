@@ -1,6 +1,6 @@
 # Live Coding Gym: working rules
 
-Local interview-training app. Spec: `docs/superpowers/specs/2026-11-14-live-coding-gym-design.md`. Plan: `docs/superpowers/plans/`. Run commands from this folder with `uv` (Python 3.12; the system Python 3.9 must not be used).
+Local interview-training app. Design: `docs/design.md`. Run commands from this folder with `uv` (Python 3.12; the system Python 3.9 must not be used).
 
 ## Mandatory workflow tools
 

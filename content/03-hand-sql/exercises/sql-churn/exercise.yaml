@@ -1,9 +1,0 @@
-title: Customers who disappeared
-kind: sql
-required: true
-mock: true
-time_limit_s: 960
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-order: 60
-kb: [sql-subqueries, sql-distinct, sql-dates-sqlite]

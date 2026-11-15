@@ -1,0 +1,6 @@
+title: Real data behaviour
+order: 5
+intro: Real data has nulls, duplicates, wrong types, late events and leaks. Learn to expect them and defend against them, in plain Python and pandas.
+gate:
+  min_score: 3
+  pass_ratio: 0.7

@@ -1,0 +1,5 @@
+title: Test parse_duration
+kind: tests
+required: false
+kb: [test-parametrize, test-raises, test-what-to-test, py-regex-basics]
+serves: [C3]

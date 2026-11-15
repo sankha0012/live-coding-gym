@@ -1,0 +1,10 @@
+title: Read - train_test_split with a seed
+kind: read
+order: 17
+required: false
+serves: [C2, C4, C9]
+kb: [ml-train-test-split-leakage, py-random-seeds]
+questions:
+  - "Why are the sizes 7 and 3, and what does the seed guarantee?"
+  - "What does stratify=y change, and why does it matter for a rare positive class?"
+  - "What does the last line check, and why is it useful?"

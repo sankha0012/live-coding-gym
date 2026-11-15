@@ -1,6 +1,0 @@
-title: Top-k retrieval
-kind: python
-required: true
-mock: true
-time_limit_s: 900
-kb: [ai-embeddings-topk, py-sorting, py-loops-enumerate-zip]

@@ -1,7 +1,0 @@
-title: Data quality - reconcile counts
-kind: sql
-required: true
-time_limit_s: 720
-ordered: true
-seed_file: ../../../_shared/delivery.sql
-kb: [sql-subqueries, sql-joins, sql-group-by, sql-data-quality-checks]

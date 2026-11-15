@@ -1,0 +1,6 @@
+title: Drift alert with hysteresis
+kind: python
+required: true
+kb: [prod-drift-alerts-hysteresis, py-classes, ml-psi-drift]
+serves: [C7, C6]
+mock: true

@@ -1,0 +1,7 @@
+title: Verify AI code - shared default
+kind: python
+name_bug: true
+assistant: "off"
+required: true
+kb: [ai-verifying-ai-code, py-functions-args, py-copy-mutability]
+serves: [C7, C9]

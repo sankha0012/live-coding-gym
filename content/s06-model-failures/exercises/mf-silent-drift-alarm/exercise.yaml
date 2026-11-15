@@ -1,0 +1,5 @@
+title: Silent drift alarm
+kind: python
+required: false
+kb: [ml-psi-drift, prod-drift-alerts-hysteresis]
+serves: [C7, C5]

@@ -1,0 +1,10 @@
+title: "Explain: population stability index"
+kind: explain
+required: true
+serves: [C9, C7]
+rubric:
+  - "It says what the code does: measures how much a feature distribution has drifted from a baseline."
+  - "It explains how: bin edges come from baseline quantiles, both samples are turned into bin shares, and the sum of (a - e) * ln(a / e) is returned."
+  - "It gives complexity: O(n log n) for the sort plus O(n * bins) for counting."
+  - "It names a risk: many ties collapse bins, eps hides empty bins, and the result depends on the bin count."
+kb: [iv-explaining-code, ml-psi-drift, py-complexity]

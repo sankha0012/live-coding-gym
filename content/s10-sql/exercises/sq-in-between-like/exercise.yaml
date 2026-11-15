@@ -1,0 +1,7 @@
+title: IN, BETWEEN and LIKE
+kind: sql
+required: false
+seed_file: ../../../_shared/delivery.sql
+order: 3
+kb: [sql-select-where, sql-dates-sqlite]
+serves: [C6]

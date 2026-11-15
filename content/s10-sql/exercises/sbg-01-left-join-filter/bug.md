@@ -1,0 +1,1 @@
+The assistant put `o.status = 'delivered'` in the ON clause of the LEFT JOIN, so the join only matches delivered orders and a customer whose only orders are cancelled looks like a customer with no match. The `o.order_id IS NULL` test then keeps them. The symptom is that customers who did place an order (a cancelled one) appear in the list of customers with no orders at all.
