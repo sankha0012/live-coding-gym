@@ -114,6 +114,8 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
                 "time_limit_s": ex.time_limit_s, "modes": modes, "mode": mode, "code": code,
                 "solution": ex.solution if mode == "retype" else "", "schema": schema,
                 "hint": ex.hint, "say": ex.say if revealed else "",
+                "guide": ex.guide if revealed else "",
+                "reference": ex.solution if revealed and ex.kind in CODED else "",
                 "model_prompt": ex.model_prompt if revealed else "",
                 "quiz": [{"q": q["q"], "options": q["options"]} for q in ex.quiz],
                 "pass_ratio": ex.pass_ratio, "status": st, "next": next_exercise(ex),

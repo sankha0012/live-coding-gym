@@ -29,7 +29,7 @@ def client(tmp_path):
         "t1/exercise.yaml": "title: T\nkind: tests\n", "t1/prompt.md": "Test slugify.",
         "t1/starter.py": "from solution import slugify\n", "t1/solution.py": TESTS,
         "t1/impl_good.py": GOOD, "t1/impl_bad_1.py": BAD,
-        "p1/exercise.yaml": "title: P\nkind: python\n", "p1/prompt.md": "p", "p1/solution.py": "x = 1\n",
+        "p1/guide.md": "GUIDE", "p1/exercise.yaml": "title: P\nkind: python\n", "p1/prompt.md": "p", "p1/solution.py": "x = 1\n",
         "p1/starter.py": "pass\n", "p1/hint.md": "HINT", "p1/say.md": "SAY", "p1/model_prompt.md": "MP",
         "p1/tests/test_hidden.py": "def test_ok():\n    import solution\n    assert solution.x == 1\n",
     }
@@ -73,6 +73,19 @@ def test_hint_always_say_and_model_prompt_after_pass(client):
     client.post("/api/submit", json={"exercise_id": "p1", "code": "x = 1\n", "mode": "blank"})
     after = client.get("/api/exercise/p1").json()
     assert after["say"] == "SAY" and after["model_prompt"] == "MP"
+    assert after["guide"] == "GUIDE" and after["reference"] == "x = 1\n"
+
+
+def test_guide_and_reference_stay_hidden_until_passed(client):
+    before = client.get("/api/exercise/p1").json()
+    assert before["guide"] == "" and before["reference"] == ""
+    client.post("/api/submit", json={"exercise_id": "p1", "code": "x = 2\n", "mode": "blank"})  # fails its test
+    assert client.get("/api/exercise/p1").json()["reference"] == ""
+
+
+def test_reference_for_tests_kind_is_the_reference_test_file(client):
+    client.post("/api/submit", json={"exercise_id": "t1", "code": TESTS, "mode": "blank"})
+    assert client.get("/api/exercise/t1").json()["reference"] == TESTS
 
 
 def test_sql_schema_hides_insert_lines(tmp_path):

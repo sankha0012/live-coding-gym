@@ -28,6 +28,7 @@ class Exercise:
     hint: str = ""
     say: str = ""
     model_prompt: str = ""
+    guide: str = ""
     files: list = field(default_factory=list)
     wrong: dict = field(default_factory=dict)
     quiz: list = field(default_factory=list)
@@ -82,6 +83,7 @@ def load_exercise(d, step_id):
         hint=_read(d / "hint.md"),
         say=_read(d / "say.md"),
         model_prompt=_read(d / "model_prompt.md"),
+        guide=_read(d / "guide.md"),
         pass_ratio=meta.get("pass_ratio", 0.8),
         order=meta.get("order", 50),
         kb=meta.get("kb") or [],

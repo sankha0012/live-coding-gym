@@ -53,7 +53,7 @@ def test_tests_kind_checks(tmp_path):
     ex = step / "exercises" / "t1"
     ex.mkdir(parents=True)
     (step / "step.yaml").write_text("title: S\norder: 1\n")
-    files = {"exercise.yaml": "title: T\nkind: tests\n", "prompt.md": "p", "hint.md": "h", "say.md": "s",
+    files = {"exercise.yaml": "title: T\nkind: tests\n", "prompt.md": "p", "hint.md": "h", "say.md": "s", "guide.md": "g",
              "starter.py": "from solution import f\n",
              "solution.py": "from solution import f\n\ndef test_f():\n    assert f() == 1\n",
              "impl_good.py": "def f(): return 1\n", "impl_bad_1.py": "def f(): return 2\n"}

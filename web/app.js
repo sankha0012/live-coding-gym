@@ -105,6 +105,12 @@ function reviewBox(rev, onRetry) {
 function extrasPanel(ex) {
   const wrap = h("div");
   if (ex.hint) wrap.append(h("details", {}, h("summary", {}, "Hint"), md(ex.hint)));
+  if (ex.guide) wrap.append(h("details", { class: "reveal" }, h("summary", {}, "Walkthrough: how to think about it"), md(ex.guide)));
+  if (ex.reference) {
+    const kind = ex.kind === "sql" ? "sql" : "python";
+    wrap.append(h("details", { class: "reveal" }, h("summary", {}, ex.kind === "tests" ? "Reference tests" : "Reference solution"),
+      h("pre", {}, ex.reference), h("p", { class: "muted" }, kind === "sql" ? "Other correct queries exist." : "Other correct solutions exist. Yours does not have to match.")));
+  }
   if (ex.say) wrap.append(h("details", {}, h("summary", {}, "How to say it out loud"), md(ex.say)));
   if (ex.model_prompt) wrap.append(h("details", {}, h("summary", {}, "A good prompt for an AI assistant"), md(ex.model_prompt)));
   return wrap;

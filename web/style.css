@@ -36,3 +36,5 @@ body.help-open #help-toggle { right: 400px; }
 .kb-card summary { cursor: pointer; }
 .kb-hit { padding: 6px 0; border-bottom: 1px solid #eee; }
 #help pre { white-space: pre; overflow-x: auto; }
+details.reveal { border: 1px solid #cfe8d5; background: #f4fbf6; border-radius: 4px; padding: 8px 12px; margin: 8px 0; }
+details.reveal summary { cursor: pointer; font-weight: 600; }

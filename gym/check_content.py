@@ -13,6 +13,8 @@ def check_exercise(ex):
         p.append(f"{ex.id}: missing say.md")
     if ex.kind in ("python", "sql", "tests") and not ex.hint:
         p.append(f"{ex.id}: missing hint.md")
+    if ex.kind in ("python", "sql", "tests") and not ex.guide:
+        p.append(f"{ex.id}: missing guide.md")
     if ex.kind == "python":
         if not run_python_tests(ex.solution, ex.dir / "tests", files=ex.files).passed:
             p.append(f"{ex.id}: reference solution fails its own tests")
