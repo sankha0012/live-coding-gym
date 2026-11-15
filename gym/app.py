@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from . import cards, config, db, gates, mock, reviewer, runner
 from .content import load_content
+from .kb import load_kb
 
 CODED = ("python", "sql", "tests")
 MODES = {"python": ["retype", "gaps", "blank", "timed"], "sql": ["retype", "gaps", "blank", "timed"],
@@ -60,6 +61,8 @@ class MockAnswers(BaseModel):
 def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=reviewer.call_gemini):
     steps, errors = load_content(content_dir)
     conn = db.connect(db_path)
+    topics, kb_errors = load_kb(content_dir)
+    errors = errors + kb_errors
     step_by_id = {s.id: s for s in steps}
     exercises = {ex.id: ex for s in steps for ex in s.exercises}
     all_cards = [c for s in steps for c in s.cards]
@@ -114,6 +117,8 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
                 "model_prompt": ex.model_prompt if revealed else "",
                 "quiz": [{"q": q["q"], "options": q["options"]} for q in ex.quiz],
                 "pass_ratio": ex.pass_ratio, "status": st, "next": next_exercise(ex),
+                "kb": [{"id": t.id, "title": t.title, "summary": t.summary, "brief": t.brief}
+                       for t in (topics.get(i) for i in ex.kb) if t],
                 "review": review_dict(db.latest_review(conn, ex.id, rk)) if rk else None}
 
     def grade(ex, code):
@@ -137,6 +142,15 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
                     if ex.required and not st["exercises"][ex.id]["done"]:
                         return {"step_id": s.id, "step_title": s.title, "exercise_id": ex.id, "title": ex.title}
         return None
+
+    @app.get("/api/kb")
+    def kb_index():
+        return [{"id": t.id, "title": t.title, "summary": t.summary, "tags": t.tags} for t in topics.values()]
+
+    @app.get("/api/kb/{topic_id}")
+    def kb_topic(topic_id: str):
+        t = need(topics.get(topic_id), "topic")
+        return {"id": t.id, "title": t.title, "summary": t.summary, "tags": t.tags, "brief": t.brief, "body": t.body}
 
     @app.get("/api/version")
     def version():

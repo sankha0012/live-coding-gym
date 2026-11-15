@@ -1,7 +1,9 @@
+import re
 import sys
 
 from . import config
 from .content import load_content
+from .kb import load_kb
 from .runner import check_sql, run_python_tests, run_test_writing
 
 
@@ -30,6 +32,27 @@ def check_exercise(ex):
     return p
 
 
+KB_LINK = re.compile(r"#/kb/([a-z0-9-]+)")
+
+
+def check_kb(content_dir, steps):
+    """Knowledge-base problems: broken articles, links to missing topics, exercises naming missing topics."""
+    topics, problems = load_kb(content_dir)
+    problems = list(problems)
+    texts = [(f"kb {t.id}", t.body) for t in topics.values()]
+    texts += [(f"{s.id} lesson {l['id']}", l["body"]) for s in steps for l in s.lessons]
+    for where, text in texts:
+        for target in sorted(set(KB_LINK.findall(text))):
+            if target not in topics:
+                problems.append(f"{where}: link to missing kb topic {target}")
+    for s in steps:
+        for ex in s.exercises:
+            for i in ex.kb:
+                if i not in topics:
+                    problems.append(f"{ex.id}: unknown kb topic {i}")
+    return problems
+
+
 def check(content_dir):
     steps, problems = load_content(content_dir)
     problems = list(problems)
@@ -44,7 +67,7 @@ def check(content_dir):
                 problems.append(f"{ex.id}: duplicate exercise id (also in {seen_ex[ex.id]})")
             seen_ex[ex.id] = step.id
             problems += check_exercise(ex)
-    return problems
+    return problems + check_kb(content_dir, steps)
 
 
 if __name__ == "__main__":

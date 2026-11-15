@@ -2,18 +2,21 @@
 
   uv run python -m tools.check_ids ex-id-1 ex-id-2     # run the full checks for those exercises
   uv run python -m tools.check_ids step:03-hand-sql    # lessons and cards of a step load and are well-formed
+  uv run python -m tools.check_ids kb                  # knowledge-base articles, their links, and exercise kb ids
 """
 import sys
 
 from gym import config
-from gym.check_content import check_exercise
+from gym.check_content import check_exercise, check_kb
 from gym.content import load_content
 
 
 def main(args):
     steps, errors = load_content(config.CONTENT_DIR)
     problems, found = [], set()
-    ids = {a for a in args if not a.startswith("step:")}
+    ids = {a for a in args if not a.startswith("step:") and a != "kb"}
+    if "kb" in args:
+        problems += check_kb(config.CONTENT_DIR, steps)
     for s in steps:
         if f"step:{s.id}" in args:
             ids_cards = [c.get("id") for c in s.cards]

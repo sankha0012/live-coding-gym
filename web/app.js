@@ -151,6 +151,96 @@ function results(out, r, how) {
   out.append((r.tests.length ? "\n" : "") + r.output);
 }
 
+// ---------------- knowledge base: Reference pages and the exercise help sidebar ----------------
+const helpPane = document.getElementById("help");
+const helpToggle = document.getElementById("help-toggle");
+let kbIndex = null;
+async function kbList() { return kbIndex || (kbIndex = await api("/kb")); }
+
+function setHelpOpen(open) {
+  document.body.classList.toggle("help-open", open);
+  helpToggle.textContent = open ? "Hide help ›" : "‹ Help";
+  try { localStorage.setItem("helpOpen", open ? "1" : "0"); } catch (e) { /* private mode: just do not remember */ }
+}
+helpToggle.addEventListener("click", () => setHelpOpen(!document.body.classList.contains("help-open")));
+
+function hideHelp() {
+  helpPane.hidden = true;
+  helpToggle.hidden = true;
+  document.body.classList.remove("help-open");
+}
+
+function kbMatches(list, query) {
+  const q = query.trim().toLowerCase();
+  return list.filter((t) => (t.title + " " + t.summary + " " + t.tags.join(" ")).toLowerCase().includes(q));
+}
+
+// The sidebar for one exercise: its relevant topics, a search over everything, and articles opened in place.
+function helpSidebar(ex) {
+  const body = h("div");
+  const search = h("input", { type: "search", placeholder: "Search the reference (e.g. join, sorted, window)" });
+  const showArticle = async (id) => {
+    const t = await api(`/kb/${id}`);
+    body.replaceChildren(h("p", {}, h("button", { onclick: showTopics }, "← Back to this exercise's help")),
+      h("h2", {}, t.title), md(t.body));
+    helpPane.scrollTop = 0;
+  };
+  const topicLink = (t) => h("div", { class: "kb-hit" }, h("a", { href: `#/kb/${t.id}` }, t.title),
+    h("div", { class: "muted" }, t.summary));
+  function showTopics() {
+    search.value = "";
+    body.replaceChildren(ex.kb.length
+      ? h("p", { class: "muted" }, "Concepts this exercise uses. Open one for syntax and examples. They explain the tools, not the answer.")
+      : h("p", { class: "muted" }, "No topics are linked to this exercise yet. Use the search box above."),
+      ...ex.kb.map((t) => h("details", { class: "kb-card" }, h("summary", {}, h("strong", {}, t.title),
+        h("div", { class: "muted" }, t.summary)), md(t.brief),
+        h("p", {}, h("a", { href: `#/kb/${t.id}` }, "Learn more →")))));
+  }
+  search.addEventListener("input", async () => {
+    if (!search.value.trim()) return showTopics();
+    const hits = kbMatches(await kbList(), search.value);
+    body.replaceChildren(h("p", { class: "muted" }, `${hits.length} topic(s)`), ...hits.slice(0, 30).map(topicLink));
+  });
+  // Links to other articles open inside the sidebar, so the editor is never lost.
+  body.onclick = (e) => {
+    const a = e.target.closest("a");
+    const href = a && a.getAttribute("href");
+    if (href && href.startsWith("#/kb/")) { e.preventDefault(); showArticle(href.slice(5)); }
+    else if (a) a.target = "_blank";
+  };
+  helpPane.replaceChildren(h("h2", {}, "Help"), search, body);
+  showTopics();
+  helpPane.hidden = false;
+  helpToggle.hidden = false;
+  let open = true;
+  try { open = localStorage.getItem("helpOpen") !== "0"; } catch (e) { /* keep default */ }
+  setHelpOpen(open);
+}
+
+async function kbView(id) {
+  if (id) {
+    const t = await api(`/kb/${id}`);
+    main.append(h("p", {}, h("a", { href: "#/kb" }, "← Reference")), h("h1", {}, t.title),
+      h("p", { class: "muted" }, t.summary), md(t.body));
+    return;
+  }
+  const list = await kbList();
+  const results = h("div");
+  const draw = (items) => {
+    const groups = {};
+    for (const t of items) (groups[t.tags[0] || "other"] = groups[t.tags[0] || "other"] || []).push(t);
+    results.replaceChildren(...Object.keys(groups).sort().flatMap((g) => [h("h2", {}, g),
+      ...groups[g].map((t) => h("div", { class: "row" }, h("a", { class: "grow", href: `#/kb/${t.id}` }, t.title),
+        h("span", { class: "muted" }, t.summary)))]));
+  };
+  const search = h("input", { type: "search", placeholder: "Search " + list.length + " topics" });
+  search.addEventListener("input", () => draw(kbMatches(list, search.value)));
+  main.append(h("h1", {}, "Reference"),
+    h("p", { class: "muted" }, "Short articles on the syntax and ideas the exercises use. The same articles open in the Help sidebar next to every exercise."),
+    search, results);
+  draw(list);
+}
+
 async function journeyView() {
   const j = await api("/journey");
   main.append(h("h1", {}, "Your journey"),
@@ -219,6 +309,7 @@ async function exView(id, mode = "blank") {
   const coded = ex.modes.length > 0;
   const back = h("p", {}, h("a", { href: `#/step/${ex.step_id}` }, "← Back to the step"));
   main.append(back, h("h1", {}, ex.title, " ", kindBadge(ex.kind)));
+  helpSidebar(ex);
   if (ex.kind === "quiz") { main.append(md(ex.prompt)); return quizView(ex); }
   main.append(md(ex.prompt));
   if (ex.schema) main.append(h("details", {}, h("summary", {}, "Tables"), h("pre", {}, ex.schema)));
@@ -357,6 +448,7 @@ async function mockView() {
 
 async function render(view) {
   clearInterval(tick);
+  hideHelp();
   main.replaceChildren();
   try { await view(); } catch (e) { main.append(h("pre", { class: "bad" }, String(e))); }
 }
@@ -367,6 +459,7 @@ function route() {
   else if (name === "ex") render(() => exView(id));
   else if (name === "cards") render(cardsView);
   else if (name === "mock") render(mockView);
+  else if (name === "kb") render(() => kbView(id));
   else render(journeyView);
 }
 

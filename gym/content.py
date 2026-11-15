@@ -33,6 +33,7 @@ class Exercise:
     quiz: list = field(default_factory=list)
     pass_ratio: float = 0.8
     order: int = 50
+    kb: list = field(default_factory=list)
     impl_good: str = ""
     impls_bad: dict = field(default_factory=dict)
 
@@ -83,6 +84,7 @@ def load_exercise(d, step_id):
         model_prompt=_read(d / "model_prompt.md"),
         pass_ratio=meta.get("pass_ratio", 0.8),
         order=meta.get("order", 50),
+        kb=meta.get("kb") or [],
         files=[_existing((d / f).resolve()) for f in meta.get("files", [])],
     )
     ext = EXT.get(kind)
