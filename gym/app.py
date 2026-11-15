@@ -64,6 +64,13 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=revi
     all_cards = [c for s in steps for c in s.cards]
     app = FastAPI()
 
+    @app.middleware("http")
+    async def no_cache(request, call_next):
+        # The page files change while the app is being built; never let the browser reuse an old copy.
+        response = await call_next(request)
+        response.headers["Cache-Control"] = "no-store"
+        return response
+
     def need(found, what):
         if found is None:
             raise HTTPException(404, f"{what} not found")

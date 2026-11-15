@@ -149,3 +149,8 @@ def test_exercise_payload_points_to_the_next_exercise(client):
     # last exercise of step 1 leads to the first exercise of the next step
     assert client.get("/api/exercise/explain-count-words").json()["next"]["id"] == "top-customers"
     assert client.get("/api/exercise/top-customers").json()["next"] is None
+
+
+def test_responses_are_never_cached(client):
+    assert client.get("/api/journey").headers["cache-control"] == "no-store"
+    assert client.get("/app.js").headers["cache-control"] == "no-store"

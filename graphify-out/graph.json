@@ -485,6 +485,110 @@
       "norm_label": "version"
     },
     {
+      "label": "CardBody",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L39",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "gym_app_cardbody",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "cardbody"
+    },
+    {
+      "label": "MockAnswers",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L55",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "gym_app_mockanswers",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "mockanswers"
+    },
+    {
+      "label": "MockSubmit",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L48",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "gym_app_mocksubmit",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "mocksubmit"
+    },
+    {
+      "label": "QuizBody",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L34",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "gym_app_quizbody",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "quizbody"
+    },
+    {
+      "label": "ReviewBody",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L28",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "gym_app_reviewbody",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "reviewbody"
+    },
+    {
+      "label": "RunBody",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L18",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "gym_app_runbody",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "runbody"
+    },
+    {
+      "label": "SubmitBody",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L23",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "gym_app_submitbody",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "submitbody"
+    },
+    {
+      "label": "UnlockBody",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L44",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "gym_app_unlockbody",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "unlockbody"
+    },
+    {
       "label": "CircuitBreaker",
       "file_type": "code",
       "source_file": "content/04-robust-code/exercises/prod-breaker/starter.py",
@@ -613,110 +717,6 @@
       "community": 788,
       "community_name": "Handler",
       "norm_label": "handler"
-    },
-    {
-      "label": "CardBody",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L39",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "gym_app_cardbody",
-      "community": 799,
-      "community_name": "app.py",
-      "norm_label": "cardbody"
-    },
-    {
-      "label": "MockAnswers",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L55",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "gym_app_mockanswers",
-      "community": 799,
-      "community_name": "app.py",
-      "norm_label": "mockanswers"
-    },
-    {
-      "label": "MockSubmit",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L48",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "gym_app_mocksubmit",
-      "community": 799,
-      "community_name": "app.py",
-      "norm_label": "mocksubmit"
-    },
-    {
-      "label": "QuizBody",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L34",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "gym_app_quizbody",
-      "community": 799,
-      "community_name": "app.py",
-      "norm_label": "quizbody"
-    },
-    {
-      "label": "ReviewBody",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L28",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "gym_app_reviewbody",
-      "community": 799,
-      "community_name": "app.py",
-      "norm_label": "reviewbody"
-    },
-    {
-      "label": "RunBody",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L18",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "gym_app_runbody",
-      "community": 799,
-      "community_name": "app.py",
-      "norm_label": "runbody"
-    },
-    {
-      "label": "SubmitBody",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L23",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "gym_app_submitbody",
-      "community": 799,
-      "community_name": "app.py",
-      "norm_label": "submitbody"
-    },
-    {
-      "label": "UnlockBody",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L44",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "gym_app_unlockbody",
-      "community": 799,
-      "community_name": "app.py",
-      "norm_label": "unlockbody"
     },
     {
       "label": "Order",
@@ -1135,220 +1135,100 @@
       "norm_label": "order"
     },
     {
-      "label": "create_mock()",
+      "label": "_pytest()",
       "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L94",
+      "source_file": "gym/runner.py",
+      "source_location": "L105",
       "_callable": true,
       "_origin": "ast",
-      "id": "gym_db_create_mock",
+      "id": "gym_runner_pytest",
       "community": 0,
-      "community_name": "db.py",
-      "norm_label": "create_mock()"
+      "community_name": "run_test_writing",
+      "norm_label": "_pytest()"
     },
     {
-      "label": "finished_mocks()",
+      "label": "run_test_writing()",
       "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L110",
+      "source_file": "gym/runner.py",
+      "source_location": "L118",
       "_callable": true,
       "_origin": "ast",
-      "id": "gym_db_finished_mocks",
+      "id": "gym_runner_run_test_writing",
       "community": 0,
-      "community_name": "db.py",
-      "norm_label": "finished_mocks()"
+      "community_name": "run_test_writing",
+      "norm_label": "run_test_writing()"
     },
     {
-      "label": "get_attempt()",
+      "label": "names()",
       "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L46",
+      "source_file": "tests/test_runner_tests_kind.py",
+      "source_location": "L15",
       "_callable": true,
       "_origin": "ast",
-      "id": "gym_db_get_attempt",
+      "id": "tests_test_runner_tests_kind_names",
       "community": 0,
-      "community_name": "db.py",
-      "norm_label": "get_attempt()"
+      "community_name": "run_test_writing",
+      "norm_label": "names()"
     },
     {
-      "label": "get_mock()",
+      "label": "test_complete_tests_catch_every_bug()",
       "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L98",
+      "source_file": "tests/test_runner_tests_kind.py",
+      "source_location": "L19",
       "_callable": true,
       "_origin": "ast",
-      "id": "gym_db_get_mock",
+      "id": "tests_test_runner_tests_kind_test_complete_tests_catch_every_bug",
       "community": 0,
-      "community_name": "db.py",
-      "norm_label": "get_mock()"
+      "community_name": "run_test_writing",
+      "norm_label": "test_complete_tests_catch_every_bug()"
     },
     {
-      "label": "get_review()",
+      "label": "test_empty_or_broken_test_files_fail()",
       "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L74",
+      "source_file": "tests/test_runner_tests_kind.py",
+      "source_location": "L37",
       "_callable": true,
       "_origin": "ast",
-      "id": "gym_db_get_review",
+      "id": "tests_test_runner_tests_kind_test_empty_or_broken_test_files_fail",
       "community": 0,
-      "community_name": "db.py",
-      "norm_label": "get_review()"
+      "community_name": "run_test_writing",
+      "norm_label": "test_empty_or_broken_test_files_fail()"
     },
     {
-      "label": "_insert()",
+      "label": "test_hanging_test_times_out()",
       "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L32",
+      "source_file": "tests/test_runner_tests_kind.py",
+      "source_location": "L42",
       "_callable": true,
       "_origin": "ast",
-      "id": "gym_db_insert",
+      "id": "tests_test_runner_tests_kind_test_hanging_test_times_out",
       "community": 0,
-      "community_name": "db.py",
-      "norm_label": "_insert()"
+      "community_name": "run_test_writing",
+      "norm_label": "test_hanging_test_times_out()"
     },
     {
-      "label": "passed_attempts()",
+      "label": "test_tests_that_fail_on_the_good_implementation_earn_nothing()",
       "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L50",
+      "source_file": "tests/test_runner_tests_kind.py",
+      "source_location": "L31",
       "_callable": true,
       "_origin": "ast",
-      "id": "gym_db_passed_attempts",
+      "id": "tests_test_runner_tests_kind_test_tests_that_fail_on_the_good_implementation_earn_nothing",
       "community": 0,
-      "community_name": "db.py",
-      "norm_label": "passed_attempts()"
+      "community_name": "run_test_writing",
+      "norm_label": "test_tests_that_fail_on_the_good_implementation_earn_nothing()"
     },
     {
-      "label": "unlock()",
+      "label": "test_weak_tests_miss_a_bug()",
       "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L85",
+      "source_file": "tests/test_runner_tests_kind.py",
+      "source_location": "L25",
       "_callable": true,
       "_origin": "ast",
-      "id": "gym_db_unlock",
+      "id": "tests_test_runner_tests_kind_test_weak_tests_miss_a_bug",
       "community": 0,
-      "community_name": "db.py",
-      "norm_label": "unlock()"
-    },
-    {
-      "label": "unlocked()",
-      "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L90",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_db_unlocked",
-      "community": 0,
-      "community_name": "db.py",
-      "norm_label": "unlocked()"
-    },
-    {
-      "label": "update_mock()",
-      "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L102",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_db_update_mock",
-      "community": 0,
-      "community_name": "db.py",
-      "norm_label": "update_mock()"
-    },
-    {
-      "label": "update_review()",
-      "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L66",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_db_update_review",
-      "community": 0,
-      "community_name": "db.py",
-      "norm_label": "update_review()"
-    },
-    {
-      "label": "readiness()",
-      "file_type": "code",
-      "source_file": "gym/mock.py",
-      "source_location": "L28",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_mock_readiness",
-      "community": 0,
-      "community_name": "db.py",
-      "norm_label": "readiness()"
-    },
-    {
-      "label": "test_attempts_round_trip()",
-      "file_type": "code",
-      "source_file": "tests/test_db.py",
-      "source_location": "L9",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_db_test_attempts_round_trip",
-      "community": 0,
-      "community_name": "db.py",
-      "norm_label": "test_attempts_round_trip()"
-    },
-    {
-      "label": "test_mocks()",
-      "file_type": "code",
-      "source_file": "tests/test_db.py",
-      "source_location": "L39",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_db_test_mocks",
-      "community": 0,
-      "community_name": "db.py",
-      "norm_label": "test_mocks()"
-    },
-    {
-      "label": "test_unlocks()",
-      "file_type": "code",
-      "source_file": "tests/test_db.py",
-      "source_location": "L33",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_db_test_unlocks",
-      "community": 0,
-      "community_name": "db.py",
-      "norm_label": "test_unlocks()"
-    },
-    {
-      "label": "test_update_review()",
-      "file_type": "code",
-      "source_file": "tests/test_db.py",
-      "source_location": "L26",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_db_test_update_review",
-      "community": 0,
-      "community_name": "db.py",
-      "norm_label": "test_update_review()"
-    },
-    {
-      "label": "test_manual_unlock()",
-      "file_type": "code",
-      "source_file": "tests/test_gates.py",
-      "source_location": "L70",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_gates_test_manual_unlock",
-      "community": 0,
-      "community_name": "db.py",
-      "norm_label": "test_manual_unlock()"
-    },
-    {
-      "label": "test_readiness_needs_three_mocks_and_uses_last_three()",
-      "file_type": "code",
-      "source_file": "tests/test_mock.py",
-      "source_location": "L35",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_mock_test_readiness_needs_three_mocks_and_uses_last_three",
-      "community": 0,
-      "community_name": "db.py",
-      "norm_label": "test_readiness_needs_three_mocks_and_uses_last_three()"
+      "community_name": "run_test_writing",
+      "norm_label": "test_weak_tests_miss_a_bug()"
     },
     {
       "label": "check_sql()",
@@ -1361,18 +1241,6 @@
       "community": 1,
       "community_name": "runner.py",
       "norm_label": "check_sql()"
-    },
-    {
-      "label": "_pytest()",
-      "file_type": "code",
-      "source_file": "gym/runner.py",
-      "source_location": "L105",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_runner_pytest",
-      "community": 1,
-      "community_name": "runner.py",
-      "norm_label": "_pytest()"
     },
     {
       "label": "_query()",
@@ -2023,6 +1891,78 @@
       "norm_label": "apply_events()"
     },
     {
+      "label": "create_mock()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L94",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_create_mock",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "create_mock()"
+    },
+    {
+      "label": "finished_mocks()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L110",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_finished_mocks",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "finished_mocks()"
+    },
+    {
+      "label": "get_attempt()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L46",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_get_attempt",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "get_attempt()"
+    },
+    {
+      "label": "get_mock()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L98",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_get_mock",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "get_mock()"
+    },
+    {
+      "label": "get_review()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L74",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_get_review",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "get_review()"
+    },
+    {
+      "label": "_insert()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L32",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_insert",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "_insert()"
+    },
+    {
       "label": "latest_review()",
       "file_type": "code",
       "source_file": "gym/db.py",
@@ -2031,8 +1971,20 @@
       "_origin": "ast",
       "id": "gym_db_latest_review",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "latest_review()"
+    },
+    {
+      "label": "passed_attempts()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L50",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_passed_attempts",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "passed_attempts()"
     },
     {
       "label": "record_attempt()",
@@ -2043,7 +1995,7 @@
       "_origin": "ast",
       "id": "gym_db_record_attempt",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "record_attempt()"
     },
     {
@@ -2055,8 +2007,56 @@
       "_origin": "ast",
       "id": "gym_db_save_review",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "save_review()"
+    },
+    {
+      "label": "unlock()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L85",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_unlock",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "unlock()"
+    },
+    {
+      "label": "unlocked()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L90",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_unlocked",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "unlocked()"
+    },
+    {
+      "label": "update_mock()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L102",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_update_mock",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "update_mock()"
+    },
+    {
+      "label": "update_review()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L66",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_update_review",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "update_review()"
     },
     {
       "label": "exercise_status()",
@@ -2067,7 +2067,7 @@
       "_origin": "ast",
       "id": "gym_gates_exercise_status",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "exercise_status()"
     },
     {
@@ -2079,7 +2079,7 @@
       "_origin": "ast",
       "id": "gym_gates_journey",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "journey()"
     },
     {
@@ -2091,7 +2091,7 @@
       "_origin": "ast",
       "id": "gym_gates_review_ok",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "_review_ok()"
     },
     {
@@ -2103,8 +2103,56 @@
       "_origin": "ast",
       "id": "gym_gates_step_status",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "step_status()"
+    },
+    {
+      "label": "pick()",
+      "file_type": "code",
+      "source_file": "gym/mock.py",
+      "source_location": "L9",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_mock_pick",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "pick()"
+    },
+    {
+      "label": "readiness()",
+      "file_type": "code",
+      "source_file": "gym/mock.py",
+      "source_location": "L28",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_mock_readiness",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "readiness()"
+    },
+    {
+      "label": "score()",
+      "file_type": "code",
+      "source_file": "gym/mock.py",
+      "source_location": "L18",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_mock_score",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "score()"
+    },
+    {
+      "label": "test_attempts_round_trip()",
+      "file_type": "code",
+      "source_file": "tests/test_db.py",
+      "source_location": "L9",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_db_test_attempts_round_trip",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_attempts_round_trip()"
     },
     {
       "label": "test_latest_review_is_per_kind()",
@@ -2115,8 +2163,56 @@
       "_origin": "ast",
       "id": "tests_test_db_test_latest_review_is_per_kind",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_latest_review_is_per_kind()"
+    },
+    {
+      "label": "test_mocks()",
+      "file_type": "code",
+      "source_file": "tests/test_db.py",
+      "source_location": "L39",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_db_test_mocks",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_mocks()"
+    },
+    {
+      "label": "test_unlocks()",
+      "file_type": "code",
+      "source_file": "tests/test_db.py",
+      "source_location": "L33",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_db_test_unlocks",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_unlocks()"
+    },
+    {
+      "label": "test_update_review()",
+      "file_type": "code",
+      "source_file": "tests/test_db.py",
+      "source_location": "L26",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_db_test_update_review",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_update_review()"
+    },
+    {
+      "label": "test_dataset_shape_and_determinism()",
+      "file_type": "code",
+      "source_file": "tests/test_delivery_data.py",
+      "source_location": "L10",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_delivery_data_test_dataset_shape_and_determinism",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_dataset_shape_and_determinism()"
     },
     {
       "label": "good()",
@@ -2127,7 +2223,7 @@
       "_origin": "ast",
       "id": "tests_test_gates_good",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "good()"
     },
     {
@@ -2139,7 +2235,7 @@
       "_origin": "ast",
       "id": "tests_test_gates_test_fresh_journey_only_first_step_unlocked",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_fresh_journey_only_first_step_unlocked()"
     },
     {
@@ -2151,8 +2247,20 @@
       "_origin": "ast",
       "id": "tests_test_gates_test_journey_reports_needed_count",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_journey_reports_needed_count()"
+    },
+    {
+      "label": "test_manual_unlock()",
+      "file_type": "code",
+      "source_file": "tests/test_gates.py",
+      "source_location": "L70",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_gates_test_manual_unlock",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_manual_unlock()"
     },
     {
       "label": "test_retype_and_gaps_passes_do_not_count()",
@@ -2163,7 +2271,7 @@
       "_origin": "ast",
       "id": "tests_test_gates_test_retype_and_gaps_passes_do_not_count",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_retype_and_gaps_passes_do_not_count()"
     },
     {
@@ -2175,7 +2283,7 @@
       "_origin": "ast",
       "id": "tests_test_gates_test_review_must_be_done_and_meet_min_score",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_review_must_be_done_and_meet_min_score()"
     },
     {
@@ -2187,7 +2295,7 @@
       "_origin": "ast",
       "id": "tests_test_gates_test_sql_step_without_timed_or_review",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_sql_step_without_timed_or_review()"
     },
     {
@@ -2199,7 +2307,7 @@
       "_origin": "ast",
       "id": "tests_test_gates_test_step_passes_and_unlocks_next",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_step_passes_and_unlocks_next()"
     },
     {
@@ -2211,7 +2319,7 @@
       "_origin": "ast",
       "id": "tests_test_gates_test_step_passes_at_the_pass_ratio",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_step_passes_at_the_pass_ratio()"
     },
     {
@@ -2223,7 +2331,7 @@
       "_origin": "ast",
       "id": "tests_test_gates_test_step_with_no_required_exercises_never_passes",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_step_with_no_required_exercises_never_passes()"
     },
     {
@@ -2235,7 +2343,7 @@
       "_origin": "ast",
       "id": "tests_test_gates_test_timed_requirement",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_timed_requirement()"
     },
     {
@@ -2247,8 +2355,104 @@
       "_origin": "ast",
       "id": "tests_test_gates_test_uncoded_exercise_needs_only_review",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_uncoded_exercise_needs_only_review()"
+    },
+    {
+      "label": "test_pick_fails_without_mock_exercises()",
+      "file_type": "code",
+      "source_file": "tests/test_mock.py",
+      "source_location": "L16",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_mock_test_pick_fails_without_mock_exercises",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_pick_fails_without_mock_exercises()"
+    },
+    {
+      "label": "test_pick_returns_one_python_and_one_sql()",
+      "file_type": "code",
+      "source_file": "tests/test_mock.py",
+      "source_location": "L11",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_mock_test_pick_returns_one_python_and_one_sql",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_pick_returns_one_python_and_one_sql()"
+    },
+    {
+      "label": "test_readiness_needs_three_mocks_and_uses_last_three()",
+      "file_type": "code",
+      "source_file": "tests/test_mock.py",
+      "source_location": "L35",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_mock_test_readiness_needs_three_mocks_and_uses_last_three",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_readiness_needs_three_mocks_and_uses_last_three()"
+    },
+    {
+      "label": "test_score_formula()",
+      "file_type": "code",
+      "source_file": "tests/test_mock.py",
+      "source_location": "L22",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_mock_test_score_formula",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_score_formula()"
+    },
+    {
+      "label": "test_score_over_time_and_no_reviews()",
+      "file_type": "code",
+      "source_file": "tests/test_mock.py",
+      "source_location": "L30",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_mock_test_score_over_time_and_no_reviews",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_score_over_time_and_no_reviews()"
+    },
+    {
+      "label": "build_rows()",
+      "file_type": "code",
+      "source_file": "tools/make_delivery_data.py",
+      "source_location": "L33",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tools_make_delivery_data_build_rows",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "build_rows()"
+    },
+    {
+      "label": "generate()",
+      "file_type": "code",
+      "source_file": "tools/make_delivery_data.py",
+      "source_location": "L69",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tools_make_delivery_data_generate",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "generate()"
+    },
+    {
+      "label": "sql_value()",
+      "file_type": "code",
+      "source_file": "tools/make_delivery_data.py",
+      "source_location": "L61",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tools_make_delivery_data_sql_value",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "sql_value()"
     },
     {
       "label": "iqr_outliers()",
@@ -2503,18 +2707,6 @@
       "norm_label": "run_python_tests()"
     },
     {
-      "label": "run_test_writing()",
-      "file_type": "code",
-      "source_file": "gym/runner.py",
-      "source_location": "L118",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_runner_run_test_writing",
-      "community": 1215,
-      "community_name": "run_python_tests",
-      "norm_label": "run_test_writing()"
-    },
-    {
       "label": "test_free_run_captures_output()",
       "file_type": "code",
       "source_file": "tests/test_runner_python.py",
@@ -2587,30 +2779,6 @@
       "norm_label": "test_wrong_solution_reports_each_test()"
     },
     {
-      "label": "names()",
-      "file_type": "code",
-      "source_file": "tests/test_runner_tests_kind.py",
-      "source_location": "L15",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_runner_tests_kind_names",
-      "community": 1215,
-      "community_name": "run_python_tests",
-      "norm_label": "names()"
-    },
-    {
-      "label": "test_complete_tests_catch_every_bug()",
-      "file_type": "code",
-      "source_file": "tests/test_runner_tests_kind.py",
-      "source_location": "L19",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_runner_tests_kind_test_complete_tests_catch_every_bug",
-      "community": 1215,
-      "community_name": "run_python_tests",
-      "norm_label": "test_complete_tests_catch_every_bug()"
-    },
-    {
       "label": "test_data_files_are_copied_beside_the_solution()",
       "file_type": "code",
       "source_file": "tests/test_runner_tests_kind.py",
@@ -2621,54 +2789,6 @@
       "community": 1215,
       "community_name": "run_python_tests",
       "norm_label": "test_data_files_are_copied_beside_the_solution()"
-    },
-    {
-      "label": "test_empty_or_broken_test_files_fail()",
-      "file_type": "code",
-      "source_file": "tests/test_runner_tests_kind.py",
-      "source_location": "L37",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_runner_tests_kind_test_empty_or_broken_test_files_fail",
-      "community": 1215,
-      "community_name": "run_python_tests",
-      "norm_label": "test_empty_or_broken_test_files_fail()"
-    },
-    {
-      "label": "test_hanging_test_times_out()",
-      "file_type": "code",
-      "source_file": "tests/test_runner_tests_kind.py",
-      "source_location": "L42",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_runner_tests_kind_test_hanging_test_times_out",
-      "community": 1215,
-      "community_name": "run_python_tests",
-      "norm_label": "test_hanging_test_times_out()"
-    },
-    {
-      "label": "test_tests_that_fail_on_the_good_implementation_earn_nothing()",
-      "file_type": "code",
-      "source_file": "tests/test_runner_tests_kind.py",
-      "source_location": "L31",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_runner_tests_kind_test_tests_that_fail_on_the_good_implementation_earn_nothing",
-      "community": 1215,
-      "community_name": "run_python_tests",
-      "norm_label": "test_tests_that_fail_on_the_good_implementation_earn_nothing()"
-    },
-    {
-      "label": "test_weak_tests_miss_a_bug()",
-      "file_type": "code",
-      "source_file": "tests/test_runner_tests_kind.py",
-      "source_location": "L25",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_runner_tests_kind_test_weak_tests_miss_a_bug",
-      "community": 1215,
-      "community_name": "run_python_tests",
-      "norm_label": "test_weak_tests_miss_a_bug()"
     },
     {
       "label": "city_dashboard()",
@@ -4111,78 +4231,6 @@
       "norm_label": "assign_split()"
     },
     {
-      "label": "pick()",
-      "file_type": "code",
-      "source_file": "gym/mock.py",
-      "source_location": "L9",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_mock_pick",
-      "community": 1244,
-      "community_name": "mock.py",
-      "norm_label": "pick()"
-    },
-    {
-      "label": "score()",
-      "file_type": "code",
-      "source_file": "gym/mock.py",
-      "source_location": "L18",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_mock_score",
-      "community": 1244,
-      "community_name": "mock.py",
-      "norm_label": "score()"
-    },
-    {
-      "label": "test_pick_fails_without_mock_exercises()",
-      "file_type": "code",
-      "source_file": "tests/test_mock.py",
-      "source_location": "L16",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_mock_test_pick_fails_without_mock_exercises",
-      "community": 1244,
-      "community_name": "mock.py",
-      "norm_label": "test_pick_fails_without_mock_exercises()"
-    },
-    {
-      "label": "test_pick_returns_one_python_and_one_sql()",
-      "file_type": "code",
-      "source_file": "tests/test_mock.py",
-      "source_location": "L11",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_mock_test_pick_returns_one_python_and_one_sql",
-      "community": 1244,
-      "community_name": "mock.py",
-      "norm_label": "test_pick_returns_one_python_and_one_sql()"
-    },
-    {
-      "label": "test_score_formula()",
-      "file_type": "code",
-      "source_file": "tests/test_mock.py",
-      "source_location": "L22",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_mock_test_score_formula",
-      "community": 1244,
-      "community_name": "mock.py",
-      "norm_label": "test_score_formula()"
-    },
-    {
-      "label": "test_score_over_time_and_no_reviews()",
-      "file_type": "code",
-      "source_file": "tests/test_mock.py",
-      "source_location": "L30",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_mock_test_score_over_time_and_no_reviews",
-      "community": 1244,
-      "community_name": "mock.py",
-      "norm_label": "test_score_over_time_and_no_reviews()"
-    },
-    {
       "label": "make_flaky()",
       "file_type": "code",
       "source_file": "content/05-testing/exercises/tw-retry/solution.py",
@@ -4781,54 +4829,6 @@
       "community": 1260,
       "community_name": "tw-parse-duration/solution.py",
       "norm_label": "test_single_units()"
-    },
-    {
-      "label": "test_dataset_shape_and_determinism()",
-      "file_type": "code",
-      "source_file": "tests/test_delivery_data.py",
-      "source_location": "L10",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_delivery_data_test_dataset_shape_and_determinism",
-      "community": 1262,
-      "community_name": "make_delivery_data.py",
-      "norm_label": "test_dataset_shape_and_determinism()"
-    },
-    {
-      "label": "build_rows()",
-      "file_type": "code",
-      "source_file": "tools/make_delivery_data.py",
-      "source_location": "L33",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tools_make_delivery_data_build_rows",
-      "community": 1262,
-      "community_name": "make_delivery_data.py",
-      "norm_label": "build_rows()"
-    },
-    {
-      "label": "generate()",
-      "file_type": "code",
-      "source_file": "tools/make_delivery_data.py",
-      "source_location": "L69",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tools_make_delivery_data_generate",
-      "community": 1262,
-      "community_name": "make_delivery_data.py",
-      "norm_label": "generate()"
-    },
-    {
-      "label": "sql_value()",
-      "file_type": "code",
-      "source_file": "tools/make_delivery_data.py",
-      "source_location": "L61",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tools_make_delivery_data_sql_value",
-      "community": 1262,
-      "community_name": "make_delivery_data.py",
-      "norm_label": "sql_value()"
     },
     {
       "label": "test_negative_amount_raises()",
@@ -7435,18 +7435,6 @@
       "norm_label": "count_words()"
     },
     {
-      "label": "check_exercise()",
-      "file_type": "code",
-      "source_file": "gym/check_content.py",
-      "source_location": "L8",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_check_content_check_exercise",
-      "community": 2,
-      "community_name": "load_content",
-      "norm_label": "check_exercise()"
-    },
-    {
       "label": "_existing()",
       "file_type": "code",
       "source_file": "gym/content.py",
@@ -7493,6 +7481,42 @@
       "community": 2,
       "community_name": "load_content",
       "norm_label": "_read()"
+    },
+    {
+      "label": "connect()",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L22",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_db_connect",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "connect()"
+    },
+    {
+      "label": "conn()",
+      "file_type": "code",
+      "source_file": "tests/conftest.py",
+      "source_location": "L16",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_conftest_conn",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "conn()"
+    },
+    {
+      "label": "steps()",
+      "file_type": "code",
+      "source_file": "tests/conftest.py",
+      "source_location": "L11",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_conftest_steps",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "steps()"
     },
     {
       "label": "test_broken_exercise_is_reported_and_skipped()",
@@ -7555,16 +7579,16 @@
       "norm_label": "test_steps_load_in_order()"
     },
     {
-      "label": "main()",
+      "label": "test_migrate_writes_a_checkable_journey()",
       "file_type": "code",
-      "source_file": "tools/check_ids.py",
-      "source_location": "L13",
+      "source_file": "tests/test_migrate.py",
+      "source_location": "L32",
       "_callable": true,
       "_origin": "ast",
-      "id": "tools_check_ids_main",
+      "id": "tests_test_migrate_test_migrate_writes_a_checkable_journey",
       "community": 2,
       "community_name": "load_content",
-      "norm_label": "main()"
+      "norm_label": "test_migrate_writes_a_checkable_journey()"
     },
     {
       "label": "_close()",
@@ -10447,88 +10471,28 @@
       "norm_label": "test_check_3()"
     },
     {
-      "label": "due()",
+      "label": "check_exercise()",
       "file_type": "code",
-      "source_file": "gym/cards.py",
-      "source_location": "L6",
+      "source_file": "gym/check_content.py",
+      "source_location": "L8",
       "_callable": true,
       "_origin": "ast",
-      "id": "gym_cards_due",
+      "id": "gym_check_content_check_exercise",
       "community": 351,
-      "community_name": "test_cards.py",
-      "norm_label": "due()"
+      "community_name": "check_content.py",
+      "norm_label": "check_exercise()"
     },
     {
-      "label": "record()",
+      "label": "main()",
       "file_type": "code",
-      "source_file": "gym/cards.py",
-      "source_location": "L11",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_cards_record",
-      "community": 351,
-      "community_name": "test_cards.py",
-      "norm_label": "record()"
-    },
-    {
-      "label": "test_box_is_capped_at_five()",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
-      "source_location": "L19",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_cards_test_box_is_capped_at_five",
-      "community": 351,
-      "community_name": "test_cards.py",
-      "norm_label": "test_box_is_capped_at_five()"
-    },
-    {
-      "label": "test_card_returns_on_its_due_date()",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
-      "source_location": "L32",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_cards_test_card_returns_on_its_due_date",
-      "community": 351,
-      "community_name": "test_cards.py",
-      "norm_label": "test_card_returns_on_its_due_date()"
-    },
-    {
-      "label": "test_correct_answers_climb_boxes()",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
+      "source_file": "tools/check_ids.py",
       "source_location": "L13",
       "_callable": true,
       "_origin": "ast",
-      "id": "tests_test_cards_test_correct_answers_climb_boxes",
+      "id": "tools_check_ids_main",
       "community": 351,
-      "community_name": "test_cards.py",
-      "norm_label": "test_correct_answers_climb_boxes()"
-    },
-    {
-      "label": "test_unseen_cards_are_due()",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
-      "source_location": "L9",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_cards_test_unseen_cards_are_due",
-      "community": 351,
-      "community_name": "test_cards.py",
-      "norm_label": "test_unseen_cards_are_due()"
-    },
-    {
-      "label": "test_wrong_answer_resets_and_stays_due()",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
-      "source_location": "L25",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_cards_test_wrong_answer_resets_and_stays_due",
-      "community": 351,
-      "community_name": "test_cards.py",
-      "norm_label": "test_wrong_answer_resets_and_stays_due()"
+      "community_name": "check_content.py",
+      "norm_label": "main()"
     },
     {
       "label": "common_keys()",
@@ -14863,6 +14827,66 @@
       "norm_label": "first_index()"
     },
     {
+      "label": "create_app()",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L59",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_app_create_app",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "create_app()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L282",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_app_main",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "main()"
+    },
+    {
+      "label": "due()",
+      "file_type": "code",
+      "source_file": "gym/cards.py",
+      "source_location": "L6",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_cards_due",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "due()"
+    },
+    {
+      "label": "record()",
+      "file_type": "code",
+      "source_file": "gym/cards.py",
+      "source_location": "L11",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_cards_record",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "record()"
+    },
+    {
+      "label": "load_env()",
+      "file_type": "code",
+      "source_file": "gym/config.py",
+      "source_location": "L10",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_config_load_env",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "load_env()"
+    },
+    {
       "label": "client()",
       "file_type": "code",
       "source_file": "tests/test_app.py",
@@ -14871,7 +14895,7 @@
       "_origin": "ast",
       "id": "tests_test_app_client",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "client()"
     },
     {
@@ -14883,8 +14907,92 @@
       "_origin": "ast",
       "id": "tests_test_app_fake_gemini",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "fake_gemini()"
+    },
+    {
+      "label": "client()",
+      "file_type": "code",
+      "source_file": "tests/test_app_kinds.py",
+      "source_location": "L22",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_app_kinds_client",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "client()"
+    },
+    {
+      "label": "fake_gemini()",
+      "file_type": "code",
+      "source_file": "tests/test_app_kinds.py",
+      "source_location": "L16",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_app_kinds_fake_gemini",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "fake_gemini()"
+    },
+    {
+      "label": "test_hint_always_say_and_model_prompt_after_pass()",
+      "file_type": "code",
+      "source_file": "tests/test_app_kinds.py",
+      "source_location": "L70",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_app_kinds_test_hint_always_say_and_model_prompt_after_pass",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_hint_always_say_and_model_prompt_after_pass()"
+    },
+    {
+      "label": "test_quiz_bad_requests()",
+      "file_type": "code",
+      "source_file": "tests/test_app_kinds.py",
+      "source_location": "L53",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_app_kinds_test_quiz_bad_requests",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_quiz_bad_requests()"
+    },
+    {
+      "label": "test_quiz_payload_hides_answers_and_grades()",
+      "file_type": "code",
+      "source_file": "tests/test_app_kinds.py",
+      "source_location": "L43",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_app_kinds_test_quiz_payload_hides_answers_and_grades",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_quiz_payload_hides_answers_and_grades()"
+    },
+    {
+      "label": "test_sql_schema_hides_insert_lines()",
+      "file_type": "code",
+      "source_file": "tests/test_app_kinds.py",
+      "source_location": "L78",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_app_kinds_test_sql_schema_hides_insert_lines",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_sql_schema_hides_insert_lines()"
+    },
+    {
+      "label": "test_tests_kind_flow()",
+      "file_type": "code",
+      "source_file": "tests/test_app_kinds.py",
+      "source_location": "L59",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_app_kinds_test_tests_kind_flow",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_tests_kind_flow()"
     },
     {
       "label": "post()",
@@ -14895,7 +15003,7 @@
       "_origin": "ast",
       "id": "tests_test_app_post",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "post()"
     },
     {
@@ -14907,7 +15015,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_bad_requests",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_bad_requests()"
     },
     {
@@ -14919,7 +15027,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_cards_and_unlock",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_cards_and_unlock()"
     },
     {
@@ -14931,7 +15039,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_exercise_payload_depends_on_mode",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_exercise_payload_depends_on_mode()"
     },
     {
@@ -14943,7 +15051,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_exercise_payload_points_to_the_next_exercise",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_exercise_payload_points_to_the_next_exercise()"
     },
     {
@@ -14955,7 +15063,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_failed_submission_is_recorded_but_not_passed",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_failed_submission_is_recorded_but_not_passed()"
     },
     {
@@ -14967,7 +15075,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_full_step_flow_passes_gate_and_unlocks_next",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_full_step_flow_passes_gate_and_unlocks_next()"
     },
     {
@@ -14979,7 +15087,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_journey_next_up_points_to_first_unfinished_exercise",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_journey_next_up_points_to_first_unfinished_exercise()"
     },
     {
@@ -14991,7 +15099,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_journey_starts_locked_after_first_step",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_journey_starts_locked_after_first_step()"
     },
     {
@@ -15003,7 +15111,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_mock_round",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_mock_round()"
     },
     {
@@ -15015,8 +15123,20 @@
       "_origin": "ast",
       "id": "tests_test_app_test_pending_review_can_be_retried",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_pending_review_can_be_retried()"
+    },
+    {
+      "label": "test_responses_are_never_cached()",
+      "file_type": "code",
+      "source_file": "tests/test_app.py",
+      "source_location": "L154",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_app_test_responses_are_never_cached",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_responses_are_never_cached()"
     },
     {
       "label": "test_run_does_not_record_an_attempt()",
@@ -15027,7 +15147,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_run_does_not_record_an_attempt",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_run_does_not_record_an_attempt()"
     },
     {
@@ -15039,7 +15159,7 @@
       "_origin": "ast",
       "id": "tests_test_app_test_sql_submit",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_sql_submit()"
     },
     {
@@ -15051,8 +15171,68 @@
       "_origin": "ast",
       "id": "tests_test_app_test_step_lists_lessons_and_exercises",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_step_lists_lessons_and_exercises()"
+    },
+    {
+      "label": "test_box_is_capped_at_five()",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L19",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_cards_test_box_is_capped_at_five",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_box_is_capped_at_five()"
+    },
+    {
+      "label": "test_card_returns_on_its_due_date()",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L32",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_cards_test_card_returns_on_its_due_date",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_card_returns_on_its_due_date()"
+    },
+    {
+      "label": "test_correct_answers_climb_boxes()",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L13",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_cards_test_correct_answers_climb_boxes",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_correct_answers_climb_boxes()"
+    },
+    {
+      "label": "test_unseen_cards_are_due()",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L9",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_cards_test_unseen_cards_are_due",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_unseen_cards_are_due()"
+    },
+    {
+      "label": "test_wrong_answer_resets_and_stays_due()",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L25",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_cards_test_wrong_answer_resets_and_stays_due",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_wrong_answer_resets_and_stays_due()"
     },
     {
       "label": "_close()",
@@ -18115,126 +18295,6 @@
       "norm_label": "test_train_reference_unchanged()"
     },
     {
-      "label": "create_app()",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L59",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_app_create_app",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "create_app()"
-    },
-    {
-      "label": "main()",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L275",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_app_main",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "main()"
-    },
-    {
-      "label": "load_env()",
-      "file_type": "code",
-      "source_file": "gym/config.py",
-      "source_location": "L10",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_config_load_env",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "load_env()"
-    },
-    {
-      "label": "client()",
-      "file_type": "code",
-      "source_file": "tests/test_app_kinds.py",
-      "source_location": "L22",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_app_kinds_client",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "client()"
-    },
-    {
-      "label": "fake_gemini()",
-      "file_type": "code",
-      "source_file": "tests/test_app_kinds.py",
-      "source_location": "L16",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_app_kinds_fake_gemini",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "fake_gemini()"
-    },
-    {
-      "label": "test_hint_always_say_and_model_prompt_after_pass()",
-      "file_type": "code",
-      "source_file": "tests/test_app_kinds.py",
-      "source_location": "L70",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_app_kinds_test_hint_always_say_and_model_prompt_after_pass",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "test_hint_always_say_and_model_prompt_after_pass()"
-    },
-    {
-      "label": "test_quiz_bad_requests()",
-      "file_type": "code",
-      "source_file": "tests/test_app_kinds.py",
-      "source_location": "L53",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_app_kinds_test_quiz_bad_requests",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "test_quiz_bad_requests()"
-    },
-    {
-      "label": "test_quiz_payload_hides_answers_and_grades()",
-      "file_type": "code",
-      "source_file": "tests/test_app_kinds.py",
-      "source_location": "L43",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_app_kinds_test_quiz_payload_hides_answers_and_grades",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "test_quiz_payload_hides_answers_and_grades()"
-    },
-    {
-      "label": "test_sql_schema_hides_insert_lines()",
-      "file_type": "code",
-      "source_file": "tests/test_app_kinds.py",
-      "source_location": "L78",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_app_kinds_test_sql_schema_hides_insert_lines",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "test_sql_schema_hides_insert_lines()"
-    },
-    {
-      "label": "test_tests_kind_flow()",
-      "file_type": "code",
-      "source_file": "tests/test_app_kinds.py",
-      "source_location": "L59",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_app_kinds_test_tests_kind_flow",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "test_tests_kind_flow()"
-    },
-    {
       "label": "test_migrate_does_not_overwrite_existing_work()",
       "file_type": "code",
       "source_file": "tests/test_migrate.py",
@@ -18245,18 +18305,6 @@
       "community": 784,
       "community_name": "migrate_old_gym.py",
       "norm_label": "test_migrate_does_not_overwrite_existing_work()"
-    },
-    {
-      "label": "test_migrate_writes_a_checkable_journey()",
-      "file_type": "code",
-      "source_file": "tests/test_migrate.py",
-      "source_location": "L32",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_migrate_test_migrate_writes_a_checkable_journey",
-      "community": 784,
-      "community_name": "migrate_old_gym.py",
-      "norm_label": "test_migrate_writes_a_checkable_journey()"
     },
     {
       "label": "checks_tests()",
@@ -19745,42 +19793,6 @@
       "community": 797,
       "community_name": "daily_counts",
       "norm_label": "test_naive_same_local_day()"
-    },
-    {
-      "label": "connect()",
-      "file_type": "code",
-      "source_file": "gym/db.py",
-      "source_location": "L22",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_db_connect",
-      "community": 798,
-      "community_name": "conftest.py",
-      "norm_label": "connect()"
-    },
-    {
-      "label": "conn()",
-      "file_type": "code",
-      "source_file": "tests/conftest.py",
-      "source_location": "L16",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_conftest_conn",
-      "community": 798,
-      "community_name": "conftest.py",
-      "norm_label": "conn()"
-    },
-    {
-      "label": "steps()",
-      "file_type": "code",
-      "source_file": "tests/conftest.py",
-      "source_location": "L11",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_conftest_steps",
-      "community": 798,
-      "community_name": "conftest.py",
-      "norm_label": "steps()"
     },
     {
       "label": "avg_by_customer()",
@@ -24379,26 +24391,37 @@
       "norm_label": "parse_quantity()"
     },
     {
-      "label": "db.py",
+      "label": "test_runner_tests_kind.py",
       "file_type": "code",
-      "source_file": "gym/db.py",
+      "source_file": "tests/test_runner_tests_kind.py",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "gym_db",
+      "id": "tests_test_runner_tests_kind",
       "community": 0,
-      "community_name": "db.py",
-      "norm_label": "db.py"
+      "community_name": "run_test_writing",
+      "norm_label": "test_runner_tests_kind.py"
     },
     {
-      "label": "test_db.py",
-      "file_type": "code",
-      "source_file": "tests/test_db.py",
-      "source_location": "L1",
+      "label": "Run pytest on test_candidate.py in a temp dir holding `files` (name -> text).",
+      "file_type": "rationale",
+      "source_file": "gym/runner.py",
+      "source_location": "L106",
       "_origin": "ast",
-      "id": "tests_test_db",
+      "id": "gym_runner_rationale_106",
       "community": 0,
-      "community_name": "db.py",
-      "norm_label": "test_db.py"
+      "community_name": "run_test_writing",
+      "norm_label": "run pytest on test_candidate.py in a temp dir holding `files` (name -> text)."
+    },
+    {
+      "label": "Grade a learner's test file: it must pass on `good` and fail on every `bads`\u2026",
+      "file_type": "rationale",
+      "source_file": "gym/runner.py",
+      "source_location": "L119",
+      "_origin": "ast",
+      "id": "gym_runner_rationale_119",
+      "community": 0,
+      "community_name": "run_test_writing",
+      "norm_label": "grade a learner's test file: it must pass on `good` and fail on every `bads`..."
     },
     {
       "label": "runner.py",
@@ -24421,17 +24444,6 @@
       "community": 1,
       "community_name": "runner.py",
       "norm_label": "test_runner_sql.py"
-    },
-    {
-      "label": "Run pytest on test_candidate.py in a temp dir holding `files` (name -> text).",
-      "file_type": "rationale",
-      "source_file": "gym/runner.py",
-      "source_location": "L106",
-      "_origin": "ast",
-      "id": "gym_runner_rationale_106",
-      "community": 1,
-      "community_name": "runner.py",
-      "norm_label": "run pytest on test_candidate.py in a temp dir holding `files` (name -> text)."
     },
     {
       "label": "CLAUDE.md",
@@ -27206,6 +27218,17 @@
       "norm_label": "ex-validate-row/say.md"
     },
     {
+      "label": "db.py",
+      "file_type": "code",
+      "source_file": "gym/db.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "gym_db",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "db.py"
+    },
+    {
       "label": "gates.py",
       "file_type": "code",
       "source_file": "gym/gates.py",
@@ -27213,7 +27236,7 @@
       "_origin": "ast",
       "id": "gym_gates",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "gates.py"
     },
     {
@@ -27224,8 +27247,41 @@
       "_origin": "ast",
       "id": "gym_init",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "gym/__init__.py"
+    },
+    {
+      "label": "mock.py",
+      "file_type": "code",
+      "source_file": "gym/mock.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "gym_mock",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "mock.py"
+    },
+    {
+      "label": "test_db.py",
+      "file_type": "code",
+      "source_file": "tests/test_db.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_db",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_db.py"
+    },
+    {
+      "label": "test_delivery_data.py",
+      "file_type": "code",
+      "source_file": "tests/test_delivery_data.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_delivery_data",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_delivery_data.py"
     },
     {
       "label": "test_gates.py",
@@ -27235,8 +27291,41 @@
       "_origin": "ast",
       "id": "tests_test_gates",
       "community": 1212,
-      "community_name": "test_gates.py",
+      "community_name": "db.py",
       "norm_label": "test_gates.py"
+    },
+    {
+      "label": "test_mock.py",
+      "file_type": "code",
+      "source_file": "tests/test_mock.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_mock",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "test_mock.py"
+    },
+    {
+      "label": "make_delivery_data.py",
+      "file_type": "code",
+      "source_file": "tools/make_delivery_data.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tools_make_delivery_data",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "make_delivery_data.py"
+    },
+    {
+      "label": "Generate the shared food-delivery dataset used by SQL and pandas exercises.\u2026",
+      "file_type": "rationale",
+      "source_file": "tools/make_delivery_data.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tools_make_delivery_data_rationale_1",
+      "community": 1212,
+      "community_name": "db.py",
+      "norm_label": "generate the shared food-delivery dataset used by sql and pandas exercises...."
     },
     {
       "label": "pdx-outliers-iqr/solution.py",
@@ -27303,28 +27392,6 @@
       "community": 1215,
       "community_name": "run_python_tests",
       "norm_label": "test_runner_python.py"
-    },
-    {
-      "label": "test_runner_tests_kind.py",
-      "file_type": "code",
-      "source_file": "tests/test_runner_tests_kind.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_test_runner_tests_kind",
-      "community": 1215,
-      "community_name": "run_python_tests",
-      "norm_label": "test_runner_tests_kind.py"
-    },
-    {
-      "label": "Grade a learner's test file: it must pass on `good` and fail on every `bads`\u2026",
-      "file_type": "rationale",
-      "source_file": "gym/runner.py",
-      "source_location": "L119",
-      "_origin": "ast",
-      "id": "gym_runner_rationale_119",
-      "community": 1215,
-      "community_name": "run_python_tests",
-      "norm_label": "grade a learner's test file: it must pass on `good` and fail on every `bads`..."
     },
     {
       "label": "Run hidden pytest tests against a submission saved as solution.py.",
@@ -29087,28 +29154,6 @@
       "norm_label": "where it sits in an ml pipeline"
     },
     {
-      "label": "mock.py",
-      "file_type": "code",
-      "source_file": "gym/mock.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "gym_mock",
-      "community": 1244,
-      "community_name": "mock.py",
-      "norm_label": "mock.py"
-    },
-    {
-      "label": "test_mock.py",
-      "file_type": "code",
-      "source_file": "tests/test_mock.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_test_mock",
-      "community": 1244,
-      "community_name": "mock.py",
-      "norm_label": "test_mock.py"
-    },
-    {
       "label": "tw-retry/solution.py",
       "file_type": "code",
       "source_file": "content/05-testing/exercises/tw-retry/solution.py",
@@ -30031,39 +30076,6 @@
       "community": 1261,
       "community_name": "CI/CD for ML",
       "norm_label": "where it sits in an ml pipeline"
-    },
-    {
-      "label": "test_delivery_data.py",
-      "file_type": "code",
-      "source_file": "tests/test_delivery_data.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_test_delivery_data",
-      "community": 1262,
-      "community_name": "make_delivery_data.py",
-      "norm_label": "test_delivery_data.py"
-    },
-    {
-      "label": "make_delivery_data.py",
-      "file_type": "code",
-      "source_file": "tools/make_delivery_data.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tools_make_delivery_data",
-      "community": 1262,
-      "community_name": "make_delivery_data.py",
-      "norm_label": "make_delivery_data.py"
-    },
-    {
-      "label": "Generate the shared food-delivery dataset used by SQL and pandas exercises.\u2026",
-      "file_type": "rationale",
-      "source_file": "tools/make_delivery_data.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tools_make_delivery_data_rationale_1",
-      "community": 1262,
-      "community_name": "make_delivery_data.py",
-      "norm_label": "generate the shared food-delivery dataset used by sql and pandas exercises...."
     },
     {
       "label": "tw-bank-withdraw/solution.py",
@@ -34895,28 +34907,6 @@
       "norm_label": "cb-longest/hint.md"
     },
     {
-      "label": "check_content.py",
-      "file_type": "code",
-      "source_file": "gym/check_content.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "gym_check_content",
-      "community": 2,
-      "community_name": "load_content",
-      "norm_label": "check_content.py"
-    },
-    {
-      "label": "config.py",
-      "file_type": "code",
-      "source_file": "gym/config.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "gym_config",
-      "community": 2,
-      "community_name": "load_content",
-      "norm_label": "config.py"
-    },
-    {
       "label": "content.py",
       "file_type": "code",
       "source_file": "gym/content.py",
@@ -34926,6 +34916,28 @@
       "community": 2,
       "community_name": "load_content",
       "norm_label": "content.py"
+    },
+    {
+      "label": "conftest.py",
+      "file_type": "code",
+      "source_file": "tests/conftest.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_conftest",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "conftest.py"
+    },
+    {
+      "label": "fixture",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "tests_conftest_py_fixture",
+      "community": 2,
+      "community_name": "load_content",
+      "norm_label": "fixture"
     },
     {
       "label": "test_content.py",
@@ -34939,26 +34951,15 @@
       "norm_label": "test_content.py"
     },
     {
-      "label": "check_ids.py",
+      "label": "test_migrate.py",
       "file_type": "code",
-      "source_file": "tools/check_ids.py",
+      "source_file": "tests/test_migrate.py",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "tools_check_ids",
+      "id": "tests_test_migrate",
       "community": 2,
       "community_name": "load_content",
-      "norm_label": "check_ids.py"
-    },
-    {
-      "label": "Check only some content while authoring. uv run python -m tools.check_ids ex-\u2026",
-      "file_type": "rationale",
-      "source_file": "tools/check_ids.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tools_check_ids_rationale_1",
-      "community": 2,
-      "community_name": "load_content",
-      "norm_label": "check only some content while authoring. uv run python -m tools.check_ids ex-..."
+      "norm_label": "test_migrate.py"
     },
     {
       "label": "ai-chunk/tests/test_hidden.py",
@@ -38572,26 +38573,48 @@
       "norm_label": "the three traps"
     },
     {
-      "label": "cards.py",
+      "label": "check_content.py",
       "file_type": "code",
-      "source_file": "gym/cards.py",
+      "source_file": "gym/check_content.py",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "gym_cards",
+      "id": "gym_check_content",
       "community": 351,
-      "community_name": "test_cards.py",
-      "norm_label": "cards.py"
+      "community_name": "check_content.py",
+      "norm_label": "check_content.py"
     },
     {
-      "label": "test_cards.py",
+      "label": "config.py",
       "file_type": "code",
-      "source_file": "tests/test_cards.py",
+      "source_file": "gym/config.py",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "tests_test_cards",
+      "id": "gym_config",
       "community": 351,
-      "community_name": "test_cards.py",
-      "norm_label": "test_cards.py"
+      "community_name": "check_content.py",
+      "norm_label": "config.py"
+    },
+    {
+      "label": "check_ids.py",
+      "file_type": "code",
+      "source_file": "tools/check_ids.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tools_check_ids",
+      "community": 351,
+      "community_name": "check_content.py",
+      "norm_label": "check_ids.py"
+    },
+    {
+      "label": "Check only some content while authoring. uv run python -m tools.check_ids ex-\u2026",
+      "file_type": "rationale",
+      "source_file": "tools/check_ids.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tools_check_ids_rationale_1",
+      "community": 351,
+      "community_name": "check_content.py",
+      "norm_label": "check only some content while authoring. uv run python -m tools.check_ids ex-..."
     },
     {
       "label": "py1-common-keys/solution.py",
@@ -41212,6 +41235,39 @@
       "norm_label": "any_match.py"
     },
     {
+      "label": "BaseModel",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "basemodel",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "basemodel"
+    },
+    {
+      "label": "app.py",
+      "file_type": "code",
+      "source_file": "gym/app.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "gym_app",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "app.py"
+    },
+    {
+      "label": "cards.py",
+      "file_type": "code",
+      "source_file": "gym/cards.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "gym_cards",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "cards.py"
+    },
+    {
       "label": "test_app.py",
       "file_type": "code",
       "source_file": "tests/test_app.py",
@@ -41219,8 +41275,30 @@
       "_origin": "ast",
       "id": "tests_test_app",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "test_app.py"
+    },
+    {
+      "label": "test_app_kinds.py",
+      "file_type": "code",
+      "source_file": "tests/test_app_kinds.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_app_kinds",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_app_kinds.py"
+    },
+    {
+      "label": "fixture",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "tests_test_app_kinds_py_fixture",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "fixture"
     },
     {
       "label": "fixture",
@@ -41230,8 +41308,30 @@
       "_origin": "ast",
       "id": "tests_test_app_py_fixture",
       "community": 5,
-      "community_name": "test_app.py",
+      "community_name": "app.py",
       "norm_label": "fixture"
+    },
+    {
+      "label": "test_cards.py",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_cards",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "test_cards.py"
+    },
+    {
+      "label": "Read KEY=VALUE lines into os.environ without overriding existing values.",
+      "file_type": "rationale",
+      "source_file": "gym/config.py",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "gym_config_rationale_11",
+      "community": 5,
+      "community_name": "app.py",
+      "norm_label": "read key=value lines into os.environ without overriding existing values."
     },
     {
       "label": "py-city/tests/test_hidden.py",
@@ -45194,50 +45294,6 @@
       "norm_label": "reference implementation used at training time. do not change it. amount: a..."
     },
     {
-      "label": "test_app_kinds.py",
-      "file_type": "code",
-      "source_file": "tests/test_app_kinds.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_test_app_kinds",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "test_app_kinds.py"
-    },
-    {
-      "label": "fixture",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "tests_test_app_kinds_py_fixture",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "fixture"
-    },
-    {
-      "label": "Read KEY=VALUE lines into os.environ without overriding existing values.",
-      "file_type": "rationale",
-      "source_file": "gym/config.py",
-      "source_location": "L11",
-      "_origin": "ast",
-      "id": "gym_config_rationale_11",
-      "community": 783,
-      "community_name": "create_app",
-      "norm_label": "read key=value lines into os.environ without overriding existing values."
-    },
-    {
-      "label": "test_migrate.py",
-      "file_type": "code",
-      "source_file": "tests/test_migrate.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_test_migrate",
-      "community": 784,
-      "community_name": "migrate_old_gym.py",
-      "norm_label": "test_migrate.py"
-    },
-    {
       "label": "migrate_old_gym.py",
       "file_type": "code",
       "source_file": "tools/migrate_old_gym.py",
@@ -45632,50 +45688,6 @@
       "community": 797,
       "community_name": "daily_counts",
       "norm_label": "count events per local calendar day in the timezone `tz_name`. aware timestamps..."
-    },
-    {
-      "label": "conftest.py",
-      "file_type": "code",
-      "source_file": "tests/conftest.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_conftest",
-      "community": 798,
-      "community_name": "conftest.py",
-      "norm_label": "conftest.py"
-    },
-    {
-      "label": "fixture",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "tests_conftest_py_fixture",
-      "community": 798,
-      "community_name": "conftest.py",
-      "norm_label": "fixture"
-    },
-    {
-      "label": "BaseModel",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "basemodel",
-      "community": 799,
-      "community_name": "app.py",
-      "norm_label": "basemodel"
-    },
-    {
-      "label": "app.py",
-      "file_type": "code",
-      "source_file": "gym/app.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "gym_app",
-      "community": 799,
-      "community_name": "app.py",
-      "norm_label": "app.py"
     },
     {
       "label": "2026-11-14-live-coding-gym-design.md",
@@ -62082,7 +62094,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "gym/app.py",
-      "source_location": "L278",
+      "source_location": "L285",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_app_main",
@@ -62093,7 +62105,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "gym/app.py",
-      "source_location": "L279",
+      "source_location": "L286",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_app_main",
@@ -91550,22 +91562,22 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "gym/app.py",
-      "source_location": "L275",
+      "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_app",
-      "target": "gym_app_main",
+      "target": "gym_app_reviewbody",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "gym/app.py",
-      "source_location": "L28",
+      "source_location": "L282",
       "weight": 1.0,
       "_origin": "ast",
       "source": "gym_app",
-      "target": "gym_app_reviewbody",
+      "target": "gym_app_main",
       "confidence_score": 1.0
     },
     {
@@ -92380,6 +92392,17 @@
       "_origin": "ast",
       "source": "tests_test_app",
       "target": "tests_test_app_test_exercise_payload_points_to_the_next_exercise",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_app.py",
+      "source_location": "L154",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_app",
+      "target": "tests_test_app_test_responses_are_never_cached",
       "confidence_score": 1.0
     },
     {
@@ -97682,5 +97705,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "db4007024b67f129047e59e2f273251d3a710132"
+  "built_at_commit": "93451a4a042d032839e145b7b2bf0418eea2a686"
 }
