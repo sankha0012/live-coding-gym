@@ -9,4 +9,4 @@
 
 **Check it.** Zero couriers gives `None` for every order. Each order scans all free couriers, so the cost is O(n * m).
 
-**Watch out.** Forgetting to remove the chosen courier, or leaving the id out of the key, gives repeated couriers or unstable tie-breaking.
+**Watch out.** Forgetting to remove the chosen courier, or leaving the id out of the key, gives repeated couriers, or lets ties go to whichever courier was inserted first instead of the smaller id.

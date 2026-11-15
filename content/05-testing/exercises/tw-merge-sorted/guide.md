@@ -9,4 +9,4 @@
 
 **Check it.** The correct merge walks both lists once with two indexes, so it is linear in the total length.
 
-**Watch out.** Picking labels that happen to be in sorted order makes the stability bug invisible.
+**Watch out.** Labels already in sorted order hide the version that sorts by label too.

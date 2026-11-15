@@ -8,4 +8,4 @@
 
 **Check it.** An empty list gives `[]`, and an `n` larger than the list gives one chunk with everything. The check for `n` comes before anything else, so even `chunks([], 0)` raises. It is O(len(items)), and slices copy, so the input is not changed.
 
-**Watch out.** Skipping the validation, or looping only over full chunks, drops the short last chunk.
+**Watch out.** Skipping the validation lets `n = 0` crash with an obscure `range` error, and looping only over full chunks drops the short last chunk.

@@ -6,6 +6,6 @@
 3. At each `t`, compute the share of goods at or below it, `sum(g <= t for g in goods) / len(goods)`. Do the same for the bads. Dividing by each group's own size makes these cumulative proportions.
 4. Take the absolute difference of the two shares and keep the largest in `best`, starting from 0.0.
 
-**Check it.** Fully separated groups give 1.0, and groups that interleave evenly give a small value such as 0.5 for alternating scores. Each threshold scans every score, so this is O(n^2). With sorted lists and `bisect` it becomes O(n log n).
+**Check it.** Fully separated groups give 1.0, and alternating groups give less, such as 0.5 for labels `[0, 1, 0, 1]` at scores 0.1 to 0.4. Each threshold scans every score, so this is O(n^2).
 
-**Watch out.** Using raw counts instead of shares compares groups of different sizes unfairly.
+**Watch out.** Using raw counts instead of shares compares groups of different sizes unfairly: 8 goods against 2 fully separated bads gives 8, not 1.0.

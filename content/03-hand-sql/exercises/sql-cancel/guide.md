@@ -9,4 +9,4 @@
 
 **Check it.** We count all orders, delivered and cancelled, because the rate is out of everything. The cost is one scan and a group.
 
-**Watch out.** Writing the indicator as `1` and `0` only: some databases then divide integers and round the rate down to 0. The `1.0` avoids that.
+**Watch out.** Computing the rate as `SUM(...) / COUNT(*)` with integers, which in SQLite divides as integers and gives 0 for any rate below 1. `AVG` of an indicator avoids that; here it returns a decimal either way, and the `1.0` keeps it safe in other engines.

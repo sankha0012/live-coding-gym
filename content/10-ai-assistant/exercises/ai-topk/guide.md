@@ -9,4 +9,4 @@
 
 **Check it.** If fewer than `k` documents qualify, we return them all. Cost is `n * d` to score plus `n log n` to sort.
 
-**Watch out.** Sorting by score alone leaves ties in arbitrary order, and skipping the zero-vector check crashes on an empty embedding.
+**Watch out.** Sorting by score alone leaves ties in the dict's insertion order, not by id, and skipping the zero-vector check crashes on an empty embedding.

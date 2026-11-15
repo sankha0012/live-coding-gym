@@ -1,4 +1,4 @@
-**Why this matters.** A wrong average on a dashboard looks plausible, so nobody questions it. This function is wrong in three quiet ways, and each one pulls the number somewhere believable.
+**Why this matters.** A wrong average looks plausible, so nobody questions it. This function is wrong in three ways, and the first two give a believable number, not a crash.
 
 **How we get there.**
 1. Reproduce. Delivered 25 and 35 plus one cancelled should give 30, but the code gives 20.

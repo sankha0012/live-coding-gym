@@ -1,4 +1,4 @@
-**Why this matters.** A scoring service caches feature lookups to save time, but old values go stale and memory is limited. So entries need an expiry and a size cap. Time comes from an injected `clock`, never the real one.
+**Why this matters.** A scoring service caches feature lookups, but old values go stale and memory is limited, so entries need an expiry and a size cap. Time comes from an injected `clock`.
 
 **How we get there.**
 1. Store `key -> (value, stored_at)` in a dict; insertion order makes the first key the oldest set.
@@ -9,4 +9,4 @@
 
 **Check it.** `get` does not refresh the age. A cached `None` is still a hit. Each call purges in O(n), fine for a small cache.
 
-**Watch out.** Evicting a live entry before dropping expired ones, or reading the real time instead of `clock`, are the mistakes this is built to catch.
+**Watch out.** Expiring with `>` instead of `>=`, keeping the old timestamp when a key is replaced, or reading the real time instead of `clock` are the mistakes this is built to catch.

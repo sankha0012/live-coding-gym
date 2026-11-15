@@ -8,4 +8,4 @@
 
 **Check it.** Each `n` from 2 up is computed once, so time and memory are linear, and a second call with the same dict stores nothing new. Recursion goes `n` deep, which is fine for 90.
 
-**Watch out.** Forgetting to pass `cache` into the recursive calls makes each level use its own default or a fresh dict, so the memo is not shared. A mutable default like `{}` is a trap in most code; here it is deliberate.
+**Watch out.** Resetting `cache = {}` inside the function, or leaving `cache` out of the recursive calls while doing so, throws the memory away, and the run goes back to exponential time: `fib(90)` never finishes. A mutable default like `{}` is a trap in most code; here it is deliberate.

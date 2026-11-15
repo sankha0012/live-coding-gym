@@ -7,6 +7,6 @@
 4. We only want keys that appear more than once. `WHERE` runs before grouping, so it cannot see the count. We use `HAVING COUNT(*) > 1` instead.
 5. Sort with `ORDER BY n DESC, customer_id, restaurant_id, order_date`, so the worst offenders come first and ties are stable.
 
-**Check it.** A key with one order never shows up, because `HAVING` removes it. One scan plus a grouping, so linear.
+**Check it.** A key with one order never shows up, because `HAVING` removes it. It is one pass over `orders` plus a grouping.
 
 **Watch out.** Putting `COUNT(*) > 1` in `WHERE` fails. Also, two real orders on one day can share the key, so these rows are suspects, not deletions.

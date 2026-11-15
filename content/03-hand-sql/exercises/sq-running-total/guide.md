@@ -9,4 +9,4 @@
 
 **Check it.** Summing the raw orders in the window would give a running total per order, not per day. The cost is one group and one sort.
 
-**Watch out.** Rounding the daily revenue before the running sum, or comparing `created_at` to `'2026-10-07'` directly, which loses that day's orders.
+**Watch out.** Comparing `created_at` to `'2026-10-07'` directly, which loses that day's orders (the timestamps are all later than the bare date text). Rounding the daily revenue before the running sum can also let cent errors pile up.

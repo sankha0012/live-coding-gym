@@ -5,4 +5,4 @@
 3. We walk the input in order and append, so each group keeps input order and duplicates.
 4. The dict values are the groups. The prompt wants them ordered by their first word, so `sorted(groups.values(), key=lambda g: g[0])`.
 **Check it.** An empty list gives an empty dict and `[]`. Sorting each word of length k costs O(k log k), so n words cost O(n k log k), plus the final sort of the groups.
-**Watch out.** Sorting the groups by their key, or sorting the words inside each group, changes the order the prompt specifies, and the first group is the one that gives it away.
+**Watch out.** Sorting the groups by their key, or the words inside each group, breaks the order the prompt specifies: by key, the `tea` group would come before the `tan` group.

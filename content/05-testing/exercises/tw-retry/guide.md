@@ -10,4 +10,4 @@
 
 **Check it.** The correct version loops `tries` times, so it never makes more calls than allowed.
 
-**Watch out.** Each buggy version breaks one count: an extra sleep after the end, one attempt too few, or the final error swallowed so the function returns `None`.
+**Watch out.** Each buggy version gets a count wrong: an extra sleep after the end, one attempt too few, or the final error swallowed so the function returns `None`.

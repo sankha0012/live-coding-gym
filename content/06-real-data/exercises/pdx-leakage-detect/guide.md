@@ -10,4 +10,4 @@ A constant column has an undefined correlation, which comes out as NaN. NaN is n
 
 **Check it.** No columns gives an empty list, and so does a case where nothing passes. The cost is proportional to rows times columns.
 
-**Watch out.** Forgetting `abs()` misses strong negative leaks, and using `>=` instead of `>` flags columns that sit exactly on the threshold.
+**Watch out.** Forgetting `abs()` misses strong negative leaks, and hard-coding `0.95` instead of using the `threshold` argument breaks every custom threshold.

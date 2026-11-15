@@ -1,4 +1,4 @@
-**Why this matters.** Batching shows up everywhere, from API calls to training loops. Loops like this break at the edges, so the tests live there too.
+**Why this matters.** Batching shows up in API calls and training loops. Loops like this break at the edges, so the tests live there too.
 
 **How we get there.**
 1. Start with an uneven length, `[1, 2, 3, 4, 5]` with size 2. The last batch must be the short `[5]`, so a version that drops the remainder fails.

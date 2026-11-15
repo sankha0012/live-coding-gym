@@ -7,6 +7,6 @@
 4. Test `k = 0` and `k = -1`. A guard for only `k == 0` lets `-1` through, and a negative slice then returns the wrong pairs.
 5. Test the empty list, then check the input list is the same afterwards. Sorting it in place changes data somewhere else.
 
-**Check it.** `sorted` is stable and costs `n log n`. For one small `k` a heap would be cheaper, but the tests only care about results.
+**Check it.** `sorted` is stable and costs `n log n`.
 
 **Watch out.** Ties with names already in alphabetical order will not reveal an extra sort by name.

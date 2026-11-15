@@ -5,4 +5,4 @@
 3. Return the index `i` of the first character whose count is exactly 1.
 4. If the loop ends without a hit, nothing is unique, so return `-1`.
 **Check it.** `"aabb"` returns `-1`, and so does an empty string because both loops do nothing. Case matters because `"a"` and `"A"` are different keys. Two passes over n characters give O(n) time, and the counter holds at most one entry per distinct character.
-**Watch out.** Returning `s.index(ch)` or a fallback of `0` or `len(s) - 1` looks plausible, but the answer must be the earliest unique position, and a wrong fallback reports an index when none exists.
+**Watch out.** Ending the function with a fallback of `0` or `len(s) - 1` looks plausible, but it reports an index when no character is unique, so `"aabb"` fails.

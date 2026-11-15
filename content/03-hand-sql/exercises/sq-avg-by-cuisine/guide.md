@@ -9,4 +9,4 @@
 
 **Check it.** A NULL subtotal is left out of both the sum and the count, so the average is over the orders that have a value. The cost is a single pass over the orders plus the grouping.
 
-**Watch out.** Writing `AVG(COALESCE(subtotal, 0))` feels safe but drags every average down.
+**Watch out.** Writing `AVG(COALESCE(subtotal, 0))` feels safe but pulls the average down in every cuisine that has a missing subtotal (for example arabic drops from 77.14 to 76.83).

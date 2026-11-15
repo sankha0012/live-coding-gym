@@ -1,7 +1,7 @@
 **Why this matters.** Removing duplicates sounds easy, but the spec makes three promises at once: first occurrence wins, order is kept, and the caller's list is left alone. Each easy implementation breaks one of them.
 
 **How we get there.**
-1. Test that duplicates go away, `[1, 1, 1]` becomes `[1]`. This is the easy part and everything passes it.
+1. Test that duplicates go away, `[1, 1, 1]` becomes `[1]`.
 2. Test order with an unsorted input with scattered repeats, `[3, 1, 2, 3, 1]` giving `[3, 1, 2]`. `list(set(items))` does not promise any order, so it can fail here.
 3. The same test catches a version that keeps the last occurrence, because it would produce `[2, 3, 1]`.
 4. Test that the input is not mutated. Copy the data into a variable, call the function, then compare the variable. A version that pops items out of the input fails.

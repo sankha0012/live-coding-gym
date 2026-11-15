@@ -2,7 +2,7 @@
 
 **How we get there.**
 1. Put the steps in one `Pipeline`: `StandardScaler` then `LogisticRegression(max_iter=1000, random_state=0)`. The scaler now belongs to the model.
-2. Build the splitter, `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)`. Stratified keeps the class ratio in each fold, and the fixed seed makes the result repeat. Without shuffling, a sorted dataset gives folds with different classes.
+2. Build the splitter, `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)`. Stratified keeps the class ratio in each fold, shuffling picks rows at random instead of in consecutive blocks, and the fixed seed makes the result repeat. Changing any of these gives different folds, hence a different score.
 3. Hand the whole pipeline to `cross_val_score` with that splitter and `scoring="accuracy"`. For every fold it refits the scaler on the training part only.
 4. Take the mean and wrap it in `float(...)`, because `scores.mean()` is a numpy float and the spec wants a plain one.
 

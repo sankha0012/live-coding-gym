@@ -7,4 +7,4 @@
 5. If the level is `"ERROR"`, append the message to `errors`. We append in loop order, so input order is kept.
 6. Return `counts, errors`.
 **Check it.** An empty list returns `({}, [])`. One pass gives O(n) time in the total length of the lines.
-**Watch out.** Plain `line.split()` keeps only the first word of the message, and unpacking without the length check crashes on a bad line.
+**Watch out.** Plain `line.split()` cuts the message into separate words, so taking `parts[2]` keeps only the first one, and unpacking without the length check crashes on a bad line.

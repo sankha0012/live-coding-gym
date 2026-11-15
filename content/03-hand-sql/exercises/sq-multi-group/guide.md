@@ -9,4 +9,4 @@
 
 **Check it.** A pair with no delivered orders never has rows, so it cannot show up, which is what the problem wants. Every selected column is either in the `GROUP BY` or inside an aggregate. The cost is linear in the orders.
 
-**Watch out.** Grouping by only one of the two columns, or selecting a column that is not in the `GROUP BY`.
+**Watch out.** Grouping by only one of the two columns, or selecting a column that is neither grouped nor aggregated. SQLite does not raise an error for that; it silently returns the value from an arbitrary row of the group, which is worse.

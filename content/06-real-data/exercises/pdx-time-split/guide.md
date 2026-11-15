@@ -6,6 +6,6 @@
 3. Build one mask: `before = ts < cutoff`. The strict sign means an order exactly at midnight is not before the cutoff.
 4. Return `orders[before]` as train and `orders[~before]` as test, each with `.copy()`. Using the mask and its negation means every row lands in exactly one side, with no overlap and nothing lost.
 
-**Check it.** Boolean selection keeps the original order and all columns,. The cost is linear.
+**Check it.** Boolean selection keeps the original order and all columns. The cost is linear.
 
-**Watch out.** Writing two separate conditions, one with `<` and one with `>`, can drop the order that sits exactly on the cutoff.
+**Watch out.** Writing two separate conditions can go wrong at the cutoff: `<` with `>` drops the order sitting exactly on it, and `<=` with `>=` puts it on both sides.

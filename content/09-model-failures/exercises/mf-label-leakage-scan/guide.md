@@ -1,7 +1,7 @@
 **Why this matters.** A feature that almost equals the label usually carries information from after the prediction moment. It makes validation look great and then fails in production. A correlation scan is a cheap first alarm.
 
 **How we get there.**
-1. Write a small `_corr` helper for Pearson correlation. Centre both lists by subtracting their means.
+1. Write a `_corr` helper for Pearson correlation. Centre both lists by subtracting their means.
 2. Sum the squared deviations of each list and the sum of centred products. Correlation is `sxy / sqrt(sxx * syy)`.
 3. Guard the denominator: if either list has zero variance, return 0.0. A constant feature, or constant labels, then never counts as leaky and nothing divides by zero.
 4. In the main function, check each feature's length against `labels` and raise `ValueError` on a mismatch.

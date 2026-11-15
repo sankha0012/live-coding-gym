@@ -7,4 +7,4 @@
 
 **Check it.** The strict `<` is what makes ties harmless, since every copy of the top value is removed. If there is only one distinct value, the result is NULL. The cost is two scans. `DENSE_RANK() = 2` does the same and also works for the third, fourth and so on.
 
-**Watch out.** Using `ORDER BY subtotal DESC LIMIT 1 OFFSET 1`, which returns the second row, and so the top value again when it is tied.
+**Watch out.** Using `ORDER BY subtotal DESC LIMIT 1 OFFSET 1`, which returns the second row, and so the top value again when it is tied. Here the maximum is unique, so it happens to give the same number, but it is wrong in general.

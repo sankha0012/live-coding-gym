@@ -7,6 +7,6 @@
 4. Build one mask: `(s < low) | (s > high)`. The strict signs mean a value exactly on a fence is not flagged.
 5. Take `order_id` where the mask is true, convert each to `int`, and sort.
 
-**Check it.** A missing subtotal compares as False on both sides, so it is never flagged. The cost is O(n log n) for the quantiles.
+**Check it.** A missing subtotal compares as False on both sides, so it is never flagged.
 
-**Watch out.** Dropping the missing rows from the frame before taking ids, or using `<=`, changes which orders get flagged.
+**Watch out.** Using `<=` and `>=` flags values sitting exactly on a fence, and a mean plus three standard deviations rule is a different test.

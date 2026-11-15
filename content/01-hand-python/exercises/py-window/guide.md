@@ -8,4 +8,4 @@
 
 **Check it.** An empty list gives 0, and one timestamp gives 1. In `[0, 10, 59, 60, 61, 200]` the best window is 10 to 69, with 4 orders. Each index enters and leaves once, so after the sort it is O(n).
 
-**Watch out.** Using `> w` instead of `>= w` lets a window span 61 minutes and overcounts.
+**Watch out.** Using `> w` instead of `>= w` lets a window span 61 minutes, so `[0, 60]` counts 2 instead of 1.

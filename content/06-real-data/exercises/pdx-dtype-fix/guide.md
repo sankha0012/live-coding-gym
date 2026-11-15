@@ -9,4 +9,4 @@
 
 **Check it.** Zero rows still work, and every step is linear in the rows.
 
-**Watch out.** Casting `courier_id` straight to `int64` fails on the empty cells, and casting through float quietly turns ids into floats with NaN.
+**Watch out.** Casting `courier_id` straight to `int64` fails on the empty cells, and stopping after `pd.to_numeric` leaves a `float64` column (ids with NaN) instead of the nullable `Int64`.

@@ -9,4 +9,4 @@
 
 **Check it.** If the count does not divide by 4, the first bands each get one extra customer. The cost is one group and one sort.
 
-**Watch out.** Leaving the tie-break out of the window, so equal spenders can fall on either side of a band boundary.
+**Watch out.** Leaving the tie-break out of the window. In this data no two customers have the same spend, so it would not change the answer here, but with equal spenders the band at a boundary would be left to chance.

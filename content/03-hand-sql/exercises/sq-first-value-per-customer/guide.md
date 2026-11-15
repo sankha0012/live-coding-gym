@@ -9,4 +9,4 @@
 
 **Check it.** The first order of each customer has a diff of 0. Cost is one sort per partition.
 
-**Watch out.** Forgetting `order_id` in the window order leaves ties in an arbitrary order, so the "first" row may change.
+**Watch out.** Forgetting `order_id` in the window order leaves orders with the same `created_at` in an arbitrary order, so the "first" row may change. This data has no such ties, but real data does.

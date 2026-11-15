@@ -6,6 +6,6 @@
 3. Names: `name LIKE 'Customer 1%'`. The `%` stands for any run of characters, so this means starts with 'Customer 1'.
 4. Join the three tests with AND and select `customer_id, name`.
 
-**Check it.** Both boundary dates are inside the range. A pattern with a trailing `%` can use an index; one with a leading `%` cannot.
+**Check it.** Both boundary dates are inside the range. A leading `%` (as in `'%1'`) cannot use an index; SQLite also scans for a trailing `%` here, since its LIKE ignores case.
 
 **Watch out.** Using `<` and `>` instead of BETWEEN drops the two boundary days, and `LIKE 'Customer 1'` without `%` matches only that exact name.

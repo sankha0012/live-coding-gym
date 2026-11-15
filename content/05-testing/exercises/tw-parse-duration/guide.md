@@ -5,7 +5,7 @@
 2. Test combinations, `"1h30m"`, `"1h5s"`, `"1h2m3s"`, plus big numbers like `"90m"`. This proves skipped units and values above 59 work.
 3. Check the result is an `int`, since the spec says whole seconds. A version returning `float` still equals the number, so only `isinstance` catches it.
 4. Test the empty string by itself. The pattern with every part optional matches `""`, so the correct code needs an explicit check for it.
-5. Parametrize the bad inputs: no digits, a number with no unit, unknown unit, junk at the end, wrong order, repeated unit. A parser that scans with `findall` and ignores what it cannot read accepts the junk and the wrong order.
+5. Parametrize the bad inputs: no digits, a number with no unit, unknown unit, junk at the end, wrong order, repeated unit. A parser that scans with `findall` and ignores what it cannot read accepts the trailing junk, the wrong order and the repeated unit.
 
 **Check it.** Each bad input is its own test case, so a failure names the case.
 

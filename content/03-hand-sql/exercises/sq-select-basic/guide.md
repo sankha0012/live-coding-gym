@@ -7,4 +7,4 @@
 
 **Check it.** SQL runs `FROM` and `WHERE` first and `SELECT` last, even though we write `SELECT` first. If no restaurant matches, we get zero rows, not an error. The cost is a single scan of the table, linear in its size.
 
-**Watch out.** Double quotes around the city, or a slightly different spelling such as a missing accent. Some databases compare text case-sensitively, so the value must match exactly.
+**Watch out.** A slightly different spelling: SQLite compares text case-sensitively, so `'belo horizonte'` returns zero rows. Also keep to single quotes for text; double quotes are for identifiers in standard SQL, and some engines reject them as values.

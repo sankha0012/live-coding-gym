@@ -7,6 +7,6 @@
 4. Group by `city` and sum the value column.
 5. Sort descending with `sort_values(ascending=False)` to get the largest city first.
 
-**Check it.** The result is a Series indexed by city. The sort dominates the cost, so O(n log n). The input frames are untouched because we worked on a copy.
+**Check it.** The result is a Series indexed by city. The merge and sum pass over the orders, and the final sort only touches the few cities. The input frames are untouched because we worked on a copy.
 
 **Watch out.** Adding without `fillna` makes orders with a missing subtotal vanish from the sum, and skipping the status filter inflates GMV with cancelled orders.

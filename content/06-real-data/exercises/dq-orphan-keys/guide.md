@@ -7,6 +7,6 @@
 4. Each check is a SELECT of a name and `COUNT(*)`. An aggregate with no matching rows still returns one row, with 0, so all four rows always appear.
 5. Stack them with `UNION ALL` and put a single `ORDER BY check_name` at the end.
 
-**Check it.** A clean database gives four rows of zero rather than an empty result. Each check is one linear pass.
+**Check it.** A clean database gives four rows of zero rather than an empty result. Each check is one pass over `orders`.
 
 **Watch out.** Forgetting the NOT NULL guard on the courier makes the check report every cancelled order as missing.
