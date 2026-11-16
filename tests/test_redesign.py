@@ -254,3 +254,35 @@ def test_sql_control_check_compares_the_changed_query_with_the_reference_result(
     assert wrong["passed"] is False
     right = post(client, "/api/control/change", {"exercise_id": "q1", "code": "SELECT COUNT(*) AS n FROM orders WHERE city = 'SP'"})
     assert right["passed"] and right["control"]["b_ok"] and right["status"]["control"] is True
+
+
+def test_dev_mode_opens_everything_and_reveals_answers(env):
+    client, _, _ = env
+    j = client.get("/api/journey").json()
+    assert j["dev"] is False and j["steps"][1]["unlocked"] is False
+    tri, rd, p1 = (client.get(f"/api/exercise/{i}").json() for i in ("tr1", "r1", "p1"))
+    assert "correct" not in tri["proposals"][0] and rd["expected"] == "" and p1["reference"] == "" and p1["control"]["change"] == ""
+    assert post(client, "/api/dev", {"dev": True})["dev"] is True
+    j = client.get("/api/journey").json()
+    assert j["dev"] and all(s["unlocked"] for s in j["steps"])
+    tri, rd, p1, b1 = (client.get(f"/api/exercise/{i}").json() for i in ("tr1", "r1", "p1", "b1"))
+    assert tri["proposals"][1]["correct"] == "reject" and tri["proposals"][1]["why"] == "nobody asked"
+    assert rd["expected"].strip() == "6\n3" and "def total" in p1["reference"] and "Add an optional start" in p1["control"]["change"]
+    assert "skips the first element" in b1["bug"] and "start=0" in p1["change_solution"]
+    assert post(client, "/api/dev", {"dev": False})["dev"] is False
+
+
+def test_password_protects_a_public_deployment(tmp_path, monkeypatch):
+    import base64
+    monkeypatch.setenv("GYM_PASSWORD", "s3cret")
+    root = tmp_path / "c"
+    for name, text in files().items():
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+    client = TestClient(create_app(root, tmp_path / "p.db", call=lambda p, json_mode=True: "x"))
+    assert client.get("/api/journey").status_code == 401
+    good = {"Authorization": "Basic " + base64.b64encode(b"me:s3cret").decode()}
+    bad = {"Authorization": "Basic " + base64.b64encode(b"me:nope").decode()}
+    assert client.get("/api/journey", headers=good).status_code == 200
+    assert client.get("/api/journey", headers=bad).status_code == 401

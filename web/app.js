@@ -1,4 +1,5 @@
 const main = document.getElementById("main");
+let DEV = false; // dev mode: everything open and revealed, no progress shown
 let tick = null; // the running timer, cleared on every route change
 
 async function api(path, body) {
@@ -95,6 +96,7 @@ const CHIP_INFO = {
 };
 
 function statusLine(st) {
+  if (DEV) return h("span");
   const chip = (key, label) => (st[key] === null ? null
     : tip(h("span", { class: "chip " + (st[key] ? "done" : "todo") }, label, " ", mark(st[key])), CHIP_INFO[key]));
   return h("span", {}, chip("tests", "tests"), chip("review", "AI review"),
@@ -126,6 +128,8 @@ function extrasPanel(ex) {
     wrap.append(h("details", { class: "reveal" }, h("summary", {}, ex.kind === "tests" ? "Reference tests" : "Reference solution"),
       h("pre", {}, ex.reference), h("p", { class: "muted" }, kind === "sql" ? "Other correct queries exist." : "Other correct solutions exist. Yours does not have to match.")));
   }
+  if (ex.bug) wrap.append(h("details", { class: "reveal" }, h("summary", {}, "The bug"), md(ex.bug)));
+  if (ex.change_solution) wrap.append(h("details", { class: "reveal" }, h("summary", {}, "Reference solution of the control-check change"), h("pre", {}, ex.change_solution)));
   if (ex.say) wrap.append(h("details", {}, h("summary", {}, "How to say it out loud"), md(ex.say)));
   if (ex.model_prompt) wrap.append(h("details", {}, h("summary", {}, "A good prompt for an AI assistant"), md(ex.model_prompt)));
   return wrap;
@@ -146,7 +150,9 @@ function quizView(ex) {
   const boxes = ex.quiz.map((q, i) => h("div", { class: "review" },
     h("p", {}, h("strong", {}, `${i + 1}. ${q.q}`)),
     q.options.map((o, j) => h("label", { style: "display:block" },
-      h("input", { type: "radio", name: `q${i}`, onchange: () => { picks[i] = j; } }), " " + o))));
+      h("input", { type: "radio", name: `q${i}`, onchange: () => { picks[i] = j; } }), " " + o,
+      DEV && q.answer === j ? h("strong", { class: "ok" }, "  ← answer") : null)),
+    DEV && q.why ? h("p", { class: "muted" }, q.why) : null));
   main.append(...boxes, h("div", { class: "bar" },
     h("button", { class: "primary", onclick: async () => {
       if (picks.includes(null)) { note.replaceChildren(h("p", { class: "bad" }, "Answer every question.")); return; }
@@ -391,7 +397,7 @@ function stepRow(s, j) {
   const name = `${s.order}. ${s.title}`;
   const title = s.unlocked ? h("a", { href: `#/step/${s.id}` }, name)
     : tip(h("span", {}, `🔒 ${name}`), "Opens when you finish the step above, or unlock it yourself.");
-  const row = h("div", { class: "row" + (s.unlocked ? "" : " locked") }, h("span", { class: "grow" }, title), bar, label);
+  const row = h("div", { class: "row" + (s.unlocked ? "" : " locked") }, h("span", { class: "grow" }, title), DEV ? h("span", { class: "muted" }, `${s.total} core`) : bar, DEV ? null : label);
   if (!s.unlocked) {
     row.append(tip(h("button", { onclick: async () => { await api("/unlock", { step_id: s.id }); route(); } }, "Unlock"),
       "Open this step now without finishing the previous one."));
@@ -401,18 +407,20 @@ function stepRow(s, j) {
 
 async function journeyView() {
   const j = await api("/journey");
-  main.append(h("h1", {}, "Your track"),
+  main.append(h("h1", {}, DEV ? "All steps (dev mode)" : "Your track"),
     h("p", { class: "muted" }, "The goal is control, not memorised syntax: read every line, steer the assistant in small steps, catch its mistakes, and explain what you ship. Work from the top. Each step opens when you finish most of the previous one."));
   if (j.errors.length) main.append(h("pre", { class: "bad" }, "Broken content:\n" + j.errors.join("\n")));
-  main.append(j.next
+  if (DEV) main.append(h("p", { class: "notice" }, "Dev mode: every step is open, answers and reference solutions are shown, and no progress is displayed. Switch it off in the top bar."));
+  else main.append(j.next
     ? h("div", { class: "bar" }, tip(h("a", { class: "button", href: `#/ex/${j.next.exercise_id}` }, "Continue: " + j.next.title),
         "Jumps to the next unfinished exercise, in " + j.next.step_title))
     : h("p", {}, "Every step is done. Run a mock round to test yourself."));
-  main.append(h("p", {},
+  if (!DEV) main.append(h("p", {},
     tip(h("span", {}, j.readiness === null ? "Readiness: not yet measured" : `Readiness: ${j.readiness}/100`),
       "Average score of your last three mock rounds. It is an estimate, not a promise."),
     "   ", h("a", { href: "#/cards" }, `Flashcards due today: ${j.due_cards}`)));
   for (const s of j.steps) main.append(stepRow(s, j));
+  if (DEV) return;
   if (j.mocks.length) {
     main.append(h("h2", {}, "Mock round history"));
     for (const m of j.mocks) main.append(h("div", { class: "row" }, `${m.started_at}  score ${m.total}/100`));
@@ -431,7 +439,7 @@ async function stepView(id) {
   const g = s.gate;
   main.append(h("p", {}, h("a", { href: "#/" }, "← Track")), h("h1", {}, s.title));
   if (s.intro) main.append(h("p", {}, s.intro));
-  if (g.total && !s.optional) {
+  if (g.total && !s.optional && !DEV) {
     main.append(h("p", { class: "muted" },
       `Pass this step by finishing ${g.needed} of its ${g.total} required exercises (${g.done} done). ` +
       "Hover a badge or tick for what it means."));
@@ -502,7 +510,8 @@ function triageView(ex, id, afterChange) {
     const reason = h("input", { type: "text", placeholder: "Why? One sentence.", oninput: (e) => { picks[i].reason = e.target.value; } });
     const radios = ["accept", "reject"].map((c) => h("label", { style: "margin-right:1rem" },
       h("input", { type: "radio", name: `p${i}`, onchange: () => { picks[i].choice = c; } }), " " + c));
-    return h("div", { class: "review" }, h("p", {}, h("strong", {}, `${i + 1}. ${p.title}`)), h("pre", {}, p.code), h("div", {}, ...radios), reason);
+    return h("div", { class: "review" }, h("p", {}, h("strong", {}, `${i + 1}. ${p.title}`)), h("pre", {}, p.code), h("div", {}, ...radios), reason,
+      DEV && p.correct ? h("p", { class: "ok" }, `Right call: ${p.correct}. ${p.why}`) : null);
   });
   main.append(...boxes, h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
     if (picks.some((x) => !x.choice)) { out.replaceChildren(h("p", { class: "bad" }, "Decide on every change.")); return; }
@@ -544,6 +553,7 @@ function controlPanel(ex, id, ctx, afterChange) {
     el.replaceChildren(h("strong", {}, "Control check. "));
     if (info.complete) { el.append(h("span", { class: "ok" }, "✓ Done: you explained your code and changed it by hand.")); return; }
     if (!info.started) {
+      if (DEV && info.change) el.append(h("p", { class: "muted" }, "Dev mode: the change you would be asked to make is"), md(info.change));
       const startBtn = h("button", { class: "primary", onclick: async () => {
         const r = await call("/control/start", {}); draw(r.control, r.code);
       } }, "Start control check");
@@ -597,7 +607,7 @@ async function exView(id, mode = "blank") {
   main.append(md(ex.prompt));
   if (ex.schema) main.append(h("details", {}, h("summary", {}, "Tables"), h("pre", {}, ex.schema)));
   if (ex.docs) main.append(h("details", { open: "" }, h("summary", {}, "Documentation (you may consult it, like in the interview)"), md(ex.docs)));
-  const progress = h("div", { class: "bar" }, h("span", { class: "muted" }, "Progress (hover a tick):"), statusEl);
+  const progress = DEV ? h("span") : h("div", { class: "bar" }, h("span", { class: "muted" }, "Progress (hover a tick):"), statusEl);
   applyStatus(ex.status);
 
   const reviewSlot = h("div");
@@ -651,7 +661,7 @@ async function exView(id, mode = "blank") {
   applyStatus = (st) => {
     statusEl.replaceChildren(statusLine(st));
     const needExplain = st.assisted && st.explain !== true;
-    assistNote.replaceChildren(needExplain ? h("div", { class: "notice" }, h("strong", {}, "Explain it back. "),
+    assistNote.replaceChildren(needExplain && !DEV ? h("div", { class: "notice" }, h("strong", {}, "Explain it back. "),
       "The assistant wrote code for this exercise, so it only counts once you explain that code in your own words. Write your explanation in the box below the results, pass the tests, then press 'Get AI review'.") : "");
     text.placeholder = st.assisted
       ? "Required: explain, in your own words, what the code does, why it works and one edge case. The AI review grades this explanation." : PLAIN;
@@ -838,5 +848,16 @@ document.getElementById("theme-toggle").addEventListener("click", () => {
   try { localStorage.setItem("theme", next); } catch (e) { /* not remembered in private mode */ }
 });
 
+const devBtn = document.getElementById("dev-toggle");
+function drawDev(state) {
+  DEV = state.dev;
+  document.body.classList.toggle("dev", DEV);
+  devBtn.classList.toggle("active", DEV);
+  devBtn.textContent = DEV ? "Dev: on" : "Dev";
+  devBtn.disabled = state.forced;
+  devBtn.title = state.forced ? "Dev mode is forced on by GYM_DEV=1" : "Dev mode: open every step, show all answers, hide progress";
+}
+devBtn.addEventListener("click", async () => { drawDev(await api("/dev", { dev: !DEV })); route(); });
+
 window.addEventListener("hashchange", route);
-route();
+api("/dev").then(drawDev).catch(() => {}).finally(route);

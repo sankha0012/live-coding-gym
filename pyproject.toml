@@ -2,10 +2,14 @@
 name = "live-coding-gym"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = ["fastapi", "uvicorn", "pyyaml", "pytest", "pandas", "numpy", "scikit-learn"]
+dependencies = ["fastapi", "uvicorn", "pyyaml", "pytest", "pandas", "numpy"]
+
+[tool.uv]
+default-groups = ["dev", "ml"]
 
 [dependency-groups]
 dev = ["httpx"]
+ml = ["scikit-learn"]  # for the scikit-learn exercises; left out of the Vercel build to stay under its size limit
 tools = [
     "alembic>=1.20.1",
     "cryptography<45",

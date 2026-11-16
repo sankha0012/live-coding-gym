@@ -1,11 +1,14 @@
+import base64
 import inspect
 import json
 import math
+import os
+import secrets
 import subprocess
 from dataclasses import asdict
 from datetime import date
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -93,6 +96,24 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     all_cards = [c for s in steps if not s.optional for c in s.cards]  # the daily deck: required steps only
     app = FastAPI()
 
+    def dev():
+        """Dev mode: see everything, no gates. GYM_DEV=1 forces it on; otherwise it is a switch in the top bar."""
+        return os.environ.get("GYM_DEV") == "1" or db.get_setting(conn, "dev", "") == "1"
+
+    password = os.environ.get("GYM_PASSWORD")
+    if password:  # a public deployment runs the learner's code, so it needs a password (HTTP Basic, any user name)
+        @app.middleware("http")
+        async def basic_auth(request, call_next):
+            given = request.headers.get("authorization", "")
+            try:
+                ok = given.lower().startswith("basic ") and secrets.compare_digest(
+                    base64.b64decode(given[6:]).decode().split(":", 1)[1], password)
+            except Exception:
+                ok = False
+            if ok:
+                return await call_next(request)
+            return Response("Password needed", status_code=401, headers={"WWW-Authenticate": 'Basic realm="Live Coding Gym"'})
+
     def ai_call(prompt, json_mode=True):
         """Send a prompt to the AI provider chosen in the settings menu. `call` replaces it in tests."""
         if call is not None:  # a test double; only some of them care about json_mode
@@ -152,29 +173,33 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         complete = bool(row and row["a_ok"] and row["b_ok"])
         return {"started": started, "complete": complete, "a_ok": bool(row and row["a_ok"]), "b_ok": bool(row and row["b_ok"]),
                 "lines": json.loads(row["lines_json"]) if started else [],
-                "change": ex.change if started else "", "locked": started and not complete,
+                "change": ex.change if started or dev() else "", "locked": started and not complete and not dev(),
                 "ready": db.last_passed_attempt(conn, ex.id) is not None}
 
     def payload(ex, mode="blank"):
         st = status_of(ex)
-        revealed = st["tests"] is True or st["review"] is True
+        revealed = dev() or st["tests"] is True or st["review"] is True
         rk = "explain" if st.get("assisted") else reviewer.REVIEW_KIND.get(ex.kind)
         mode = mode if mode in MODES.get(ex.kind, []) else "blank"
         code = "" if mode == "challenge" else ex.starter
         schema = "\n".join(l for l in ex.seed.splitlines() if not l.startswith("INSERT"))
-        shown_output = ex.kind == "read" and (st["tests"] is True or db.get_setting(conn, f"revealed:{ex.id}") == "1")
+        shown_output = ex.kind == "read" and (dev() or st["tests"] is True or db.get_setting(conn, f"revealed:{ex.id}") == "1")
         return {"id": ex.id, "step_id": ex.step_id, "title": ex.title, "kind": ex.kind, "prompt": ex.prompt,
                 "serves": ex.serves, "docs": ex.docs, "modes": MODES.get(ex.kind, []), "mode": mode, "code": code,
                 "schema": schema, "assistant": ex.assistant, "plan_required": ex.plan_required,
                 "grade_prompts": ex.grade_prompts, "name_bug": ex.name_bug,
                 "snippet": ex.snippet, "questions": ex.questions, "expected": ex.expected if shown_output else "",
-                "proposals": [{"title": p["title"], "code": p["code"]} for p in ex.proposals],
+                "proposals": [{"title": p["title"], "code": p["code"], **({"correct": p["correct"], "why": p.get("why", "")} if dev() else {})}
+                              for p in ex.proposals],
+                "bug": ex.bug if dev() else "", "change_solution": ex.change_solution if dev() else "",
                 "control": control_info(ex),
                 "hint": ex.hint, "say": ex.say if revealed else "",
                 "guide": ex.guide if revealed else "",
                 "reference": ex.solution if revealed and ex.kind in CODED else "",
+                "dev": dev(),
                 "model_prompt": ex.model_prompt if revealed else "",
-                "quiz": [{"q": q["q"], "options": q["options"]} for q in ex.quiz],
+                "quiz": [{"q": q["q"], "options": q["options"], **({"answer": q["answer"], "why": q.get("why", "")} if dev() else {})}
+                         for q in ex.quiz],
                 "pass_ratio": ex.pass_ratio, "status": st, "next": next_exercise(ex),
                 "kb": [{"id": t.id, "title": t.title, "summary": t.summary, "brief": t.brief}
                        for t in (topics.get(i) for i in ex.kb) if t],
@@ -318,6 +343,18 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         db.set_setting(conn, "provider", body.provider)
         return settings_payload()
 
+    @app.get("/api/dev")
+    def dev_get():
+        return {"dev": dev(), "forced": os.environ.get("GYM_DEV") == "1"}
+
+    class DevBody(BaseModel):
+        dev: bool
+
+    @app.post("/api/dev")
+    def dev_set(body: DevBody):
+        db.set_setting(conn, "dev", "1" if body.dev else "0")
+        return dev_get()
+
     @app.get("/api/version")
     def version():
         """Short git commit of the code that is running, so you can tell which copy you are using."""
@@ -332,8 +369,8 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def journey():
         mocks = [{"id": r["id"], "started_at": r["started_at"],
                   "total": json.loads(r["score_json"])["total"]} for r in db.finished_mocks(conn)]
-        rows = gates.journey(conn, steps)
-        return {"steps": rows, "next": next_up(rows), "readiness": mock.readiness(conn), "mocks": mocks,
+        rows = gates.journey(conn, steps, dev())
+        return {"dev": dev(), "steps": rows, "next": next_up(rows), "readiness": mock.readiness(conn), "mocks": mocks,
                 "due_cards": len(cards.due(conn, all_cards, date.today())), "errors": errors}
 
     @app.get("/api/step/{step_id}")

@@ -49,7 +49,7 @@ def step_status(conn, step):
             "done": done, "total": len(required), "exercises": exercises}
 
 
-def journey(conn, steps):
+def journey(conn, steps, open_all=False):
     """One row per step. Steps unlock in order; an optional step is always open and never blocks the next one."""
     manual = db.unlocked(conn)
     out, previous_passed = [], True
@@ -58,7 +58,7 @@ def journey(conn, steps):
         row = {"id": step.id, "title": step.title, "order": step.order, "optional": step.optional,
                "passed": st["passed"], "done": st["done"], "total": st["total"],
                "pass_ratio": step.pass_ratio, "needed": math.ceil(step.pass_ratio * st["total"]),
-               "unlocked": step.optional or previous_passed or step.id in manual}
+               "unlocked": open_all or step.optional or previous_passed or step.id in manual}
         out.append(row)
         if not step.optional:
             previous_passed = st["passed"]

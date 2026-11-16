@@ -1,0 +1,8 @@
+.env
+.venv
+data
+tests
+docs
+tools
+graphify-out
+.pytest_cache

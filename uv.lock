@@ -515,19 +515,22 @@ wheels = [
 name = "live-coding-gym"
 version = "0.1.0"
 source = { virtual = "." }
+default-groups = ["dev", "ml"]
 dependencies = [
     { name = "fastapi" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "pytest" },
     { name = "pyyaml" },
-    { name = "scikit-learn" },
     { name = "uvicorn" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "httpx" },
+]
+ml = [
+    { name = "scikit-learn" },
 ]
 tools = [
     { name = "alembic" },
@@ -544,12 +547,12 @@ requires-dist = [
     { name = "pandas" },
     { name = "pytest" },
     { name = "pyyaml" },
-    { name = "scikit-learn" },
     { name = "uvicorn" },
 ]
 
 [package.metadata.requires-dev]
 dev = [{ name = "httpx" }]
+ml = [{ name = "scikit-learn" }]
 tools = [
     { name = "alembic", specifier = ">=1.20.1" },
     { name = "cryptography", specifier = "<45" },

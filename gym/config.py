@@ -3,7 +3,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CONTENT_DIR = ROOT / "content"
-DB_PATH = ROOT / "data" / "progress.db"
+DB_PATH = Path(os.environ.get("GYM_DB") or ROOT / "data" / "progress.db")
 WEB_DIR = ROOT / "web"
 
 
