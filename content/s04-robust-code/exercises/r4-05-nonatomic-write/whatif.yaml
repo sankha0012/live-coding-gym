@@ -1,0 +1,30 @@
+- change: 'Line 25: `save("model.json", new, atomic, crash_after=20)` becomes `save("model.json", new, atomic, crash_after=None)`.'
+  old: 'crash_after=20'
+  new: 'crash_after=None'
+  answer: different
+  result: Nothing crashes, so no save fails and both readers see version 2.
+- change: 'Line 6: `disk[path] = ""` is deleted (replaced by `pass`).'
+  old: 'disk[path] = ""'
+  new: 'pass'
+  answer: crash
+  result: The temporary file does not exist, so appending to it raises a KeyError that the script does not catch.
+- change: 'Line 7: `for i in range(0, len(text), 10):` becomes `for i in range(0, len(text), 5):`.'
+  old: 'len(text), 10)'
+  new: 'len(text), 5)'
+  answer: different
+  result: The slice on line 9 still takes 10 characters, so the chunks overlap and even the successful save writes corrupt JSON.
+- change: 'Line 8: `if crash_after is not None and i >= crash_after:` becomes `if crash_after is not None and i > crash_after:`.'
+  old: 'i >= crash_after'
+  new: 'i > crash_after'
+  answer: same
+  result: One more chunk is written before the crash, but a cut-off JSON text is still corrupt and the atomic copy is still untouched.
+- change: 'Line 15: `disk[path] = disk.pop(target)` becomes `disk[path] = disk[target]`, so the temporary file is copied instead of moved.'
+  old: 'disk.pop(target)'
+  new: 'disk[target]'
+  answer: same
+  result: Readers only look at model.json, which receives the same complete text; a leftover temporary file does not change what they see.
+- change: 'Line 15: `disk[path] = disk.pop(target)` is deleted (replaced by `pass`).'
+  old: 'disk[path] = disk.pop(target)'
+  new: 'pass'
+  answer: different
+  result: The finished temporary file is never moved into place, so after the successful save readers still see version 1.

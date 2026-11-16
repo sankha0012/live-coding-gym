@@ -1,1 +1,0 @@
-Change your own passing query by hand: a customer now counts as churned when they ordered in August 2026 and did not order in September 2026 or in October 2026 (neither month). Still one row and one column named churned. On the seed data the answer is 27 (the original question gives 52). Check that you excluded both months and did not just swap October for September.

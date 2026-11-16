@@ -1,0 +1,30 @@
+- change: 'Line 5: `p >= 0.5` becomes `p > 0.5`.'
+  old: p >= 0.5
+  new: p > 0.5
+  answer: different
+  result: The probability 0.5 now falls below the threshold, so the false positive disappears and precision becomes 1.0.
+- change: 'Line 4: the score `0.6` becomes `0.95`.'
+  old: 0.6, 0.3]
+  new: 0.95, 0.3]
+  answer: same
+  result: That positive was already above 0.5 and above every negative score, so neither the hard labels nor the ranking change.
+- change: 'Line 10: `roc_auc_score(y_true, y_prob)` becomes `roc_auc_score(y_true, [p * 0.5 for p in y_prob])`.'
+  old: roc_auc_score(y_true, y_prob)
+  new: roc_auc_score(y_true, [p * 0.5 for p in y_prob])
+  answer: same
+  result: AUC only uses the order of the scores, and halving them keeps the order.
+- change: 'Line 11: `roc_auc_score(y_true, y_pred)` becomes `roc_auc_score(y_true, y_prob)`.'
+  old: roc_auc_score(y_true, y_pred)
+  new: roc_auc_score(y_true, y_prob)
+  answer: different
+  result: With the probabilities the last line shows 0.875 instead of 0.75.
+- change: 'Line 4: the score `0.35` becomes `0.55`.'
+  old: '0.35'
+  new: '0.55'
+  answer: different
+  result: 'The third score now crosses the threshold, so that positive is found: recall rises to 1.0 and AUC to 1.0.'
+- change: 'Line 3: `y_true` loses its last item and becomes `[1, 0, 1, 1, 0, 0, 1]`.'
+  old: y_true = [1, 0, 1, 1, 0, 0, 1, 0]
+  new: y_true = [1, 0, 1, 1, 0, 0, 1]
+  answer: crash
+  result: 'ValueError: y_true has 7 items and y_pred has 8.'

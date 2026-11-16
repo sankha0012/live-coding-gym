@@ -1,0 +1,30 @@
+- change: 'Line 1: `percent=20` becomes `percent=50`.'
+  old: percent=20
+  new: percent=50
+  answer: different
+  result: A wider threshold lets more users in, but the count is not 50 percent because the hash is uneven.
+- change: 'Line 2: `% 100` becomes `% 1000`.'
+  old: '% 100 <'
+  new: '% 1000 <'
+  answer: different
+  result: Character sums of these ids are only a few hundred, so none is below 20 and the canary is empty.
+- change: 'Line 2: `sum(ord(c) for c in user_id)` becomes `sum(map(ord, user_id))`.'
+  old: sum(ord(c) for c in user_id)
+  new: sum(map(ord, user_id))
+  answer: same
+  result: It computes the same sum of character codes, only written differently.
+- change: 'Line 9: `in_canary("u0") == in_canary("u0")` becomes `in_canary("u0") == in_canary("0u")`.'
+  old: in_canary("u0") == in_canary("u0")
+  new: in_canary("u0") == in_canary("0u")
+  answer: same
+  result: 'The two strings have the same characters, so the sum is the same: the hash cannot tell reordered ids apart.'
+- change: 'Line 5: `[f"u{i}" for i in range(1000)]` becomes `[i for i in range(1000)]`.'
+  old: f"u{i}"
+  new: i
+  answer: crash
+  result: The ids are now integers and iterating over an int in `for c in user_id` raises TypeError.
+- change: 'Line 2: `< percent` becomes `<= percent`.'
+  old: < percent
+  new: <= percent
+  answer: different
+  result: Bucket 20 is now included, and with such uneven buckets this adds more users to the canary.

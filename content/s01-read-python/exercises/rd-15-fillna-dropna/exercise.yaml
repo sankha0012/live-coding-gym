@@ -8,3 +8,4 @@ questions:
   - "Which value does fillna insert, and where does it come from?"
   - "Which column has a wrong fill in the printed table, and why?"
   - "What does dropna(subset=['age']) keep, and what do the printed index labels tell you?"
+level: 1

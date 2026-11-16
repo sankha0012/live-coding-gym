@@ -1,0 +1,25 @@
+- change: 'Line 16: `log.error("failed to parse quantity")` becomes `log.warning("failed to parse quantity")`.'
+  old: 'log.error("failed to parse quantity")'
+  new: 'log.warning("failed to parse quantity")'
+  answer: different
+  result: The level name is printed first, so the two bad lines start with WARNING instead of ERROR.
+- change: 'Line 8: `log.setLevel(logging.INFO)` becomes `log.setLevel(logging.DEBUG)`.'
+  old: 'logging.INFO'
+  new: 'logging.DEBUG'
+  answer: same
+  result: Only error records are emitted, and they pass a DEBUG threshold just as they pass INFO.
+- change: 'Line 6: `log = logging.getLogger("orders")` becomes `log = logging.getLogger("orders.api")`.'
+  old: 'getLogger("orders")'
+  new: 'getLogger("orders.api")'
+  answer: same
+  result: The handler and level are set on whatever logger `log` is, so the name does not appear in the format and nothing changes.
+- change: 'Line 15: `except (ValueError, TypeError):` becomes `except ValueError:`.'
+  old: '(ValueError, TypeError):'
+  new: 'ValueError:'
+  answer: crash
+  result: int(None) raises a TypeError for order A-19, which is no longer caught in process_bad.
+- change: 'Line 22: `qty=%r` becomes `qty=%s` in the format string of `process_good`.'
+  old: 'qty=%r'
+  new: 'qty=%s'
+  answer: different
+  result: Without repr the string loses its quotes, so the A-18 line shows qty=three instead of qty=''three''.

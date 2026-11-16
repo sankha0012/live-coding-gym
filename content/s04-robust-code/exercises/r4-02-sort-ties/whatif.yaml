@@ -1,0 +1,30 @@
+- change: 'Line 6: `, reverse=True` is deleted.'
+  old: ', reverse=True)'
+  new: )
+  answer: different
+  result: The sort is now ascending, so the lowest score m_c comes first in both naive results.
+- change: 'Line 2: `list(reversed(arrivals_a))` becomes `list(arrivals_a)`.'
+  old: list(reversed(arrivals_a))
+  new: list(arrivals_a)
+  answer: different
+  result: Both orders are now the same, so even the naive version gives the same result and the stability line prints True.
+- change: 'Line 6: `key=lambda r: r[1], reverse=True` becomes `key=lambda r: -r[1]`.'
+  old: 'key=lambda r: r[1], reverse=True'
+  new: 'key=lambda r: -r[1]'
+  answer: same
+  result: Sorting ascending on the negated score is also stable, so tied items keep their arrival order and the output is unchanged.
+- change: 'Line 11: the key `(-r[1], r[0])` becomes `(-r[1], r[0].upper())`.'
+  old: (-r[1], r[0])
+  new: (-r[1], r[0].upper())
+  answer: same
+  result: Upper-casing the name still gives a fixed tie-breaker that does not depend on arrival order, and the names sort the same way.
+- change: 'Line 11: the key `(-r[1], r[0])` becomes `(-r[1],)`.'
+  old: (-r[1], r[0])
+  new: (-r[1],)
+  answer: different
+  result: Without the name as a tie-breaker, top2_fixed behaves like the naive version and follows arrival order again.
+- change: 'Line 11: the key `(-r[1], r[0])` becomes `(-r[1], -r[0])`.'
+  old: (-r[1], r[0])
+  new: (-r[1], -r[0])
+  answer: crash
+  result: 'TypeError: a string cannot be negated.'

@@ -1,0 +1,30 @@
+- change: 'Line 10: `except:` becomes `except Exception:`.'
+  old: 'except:'
+  new: 'except Exception:'
+  answer: same
+  result: KeyError and ZeroDivisionError are both Exceptions, so both are still swallowed; it only stops catching KeyboardInterrupt.
+- change: 'Line 11: `pass` becomes `continue`.'
+  old: pass
+  new: continue
+  answer: same
+  result: Nothing follows the try block in the loop body, so continue and pass behave the same.
+- change: 'Line 1: `{"id": 2, "x": 0}` becomes `{"id": 2, "x": 1}`.'
+  old: '{"id": 2, "x": 0}'
+  new: '{"id": 2, "x": 1}'
+  answer: different
+  result: Row 2 no longer fails, so it appears in both results and only row 4 is reported as failed.
+- change: 'Line 14: `"ok" if results` becomes `"ok" if len(results) == len(batch)`.'
+  old: '"ok" if results else'
+  new: '"ok" if len(results) == len(batch) else'
+  answer: different
+  result: Only 3 of 5 rows produced a result, so the status now reports failed.
+- change: 'Line 21: `(KeyError, ZeroDivisionError)` becomes `KeyError`.'
+  old: (KeyError, ZeroDivisionError)
+  new: KeyError
+  answer: crash
+  result: Row 2 raises ZeroDivisionError, which is no longer caught, so the second loop stops with a traceback.
+- change: 'Line 22: `type(exc).__name__` becomes `str(exc)`.'
+  old: type(exc).__name__
+  new: str(exc)
+  answer: different
+  result: The failures are recorded with the error messages ('division by zero', "'x'") instead of the class names.

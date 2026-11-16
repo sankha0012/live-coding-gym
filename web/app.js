@@ -58,7 +58,7 @@ const COMPETENCY = {
   C10: "Find answers in the documentation you are given",
 };
 const GROUP_INFO = {
-  Read: "Understand code before you touch it: predict, then explain.",
+  Read: "Understand code before you touch it: what happens if one line changes?",
   Build: "Plan, ask the assistant for small pieces, run, then prove control.",
   Catch: "Find what the assistant got wrong.",
   Defend: "Answer the follow-up questions an interviewer asks.",
@@ -71,7 +71,7 @@ const KIND_INFO = {
   open: ["Open question", "Answer in your own words. An AI interviewer scores it against a rubric."],
   prompt: ["Prompt", "Write the prompt you would give an AI assistant. An AI interviewer scores the prompt."],
   explain: ["Explain code", "Explain the code as you would to the interviewer. An AI interviewer scores it."],
-  read: ["Read code", "Read a script, predict exactly what it prints, then explain it. No writing code."],
+  read: ["Read code", "Read a script and say what happens when one line changes. No writing code."],
   triage: ["Accept or reject", "The assistant proposed changes. Decide which to accept and say why."],
 };
 
@@ -86,21 +86,22 @@ function mark(value) {
 }
 
 const CHIP_INFO = {
-  tests: "Hidden tests: passed once.",
+  tests: "Hidden tests: passed once. For readings: the What if round answered right.",
   review: "AI review: every criterion at or above the step's minimum score.",
-  explain: "The assistant wrote code for this exercise, so you must explain it in your own words and pass the AI review.",
+  explain: "The assistant wrote code for this exercise, so you show you understand it with a What if round.",
+  fix: "Change the code so that it prints the target output.",
   control: "Control check: explain two lines of your own code, then make one small change by hand with the assistant locked.",
   bug: "Name the bug in one sentence after you fixed it. An AI interviewer compares it with the real cause.",
   prompts: "The prompts you typed to the assistant must pass the AI prompt review (small, clear, with constraints).",
   assisted: "You asked the assistant to write code for this exercise.",
 };
 
-function statusLine(st) {
+function statusLine(st, kind) {
   if (DEV) return h("span");
   const chip = (key, label) => (st[key] === null ? null
     : tip(h("span", { class: "chip " + (st[key] ? "done" : "todo") }, label, " ", mark(st[key])), CHIP_INFO[key]));
-  return h("span", {}, chip("tests", "tests"), chip("review", "AI review"),
-    chip("explain", "explain it back"), chip("control", "control check"), chip("bug", "name the bug"), chip("prompts", "prompts"),
+  return h("span", {}, chip("tests", kind === "read" ? "what if" : "tests"), chip("review", "AI review"),
+    chip("explain", "what if"), chip("fix", "fix it"), chip("control", "control check"), chip("bug", "name the bug"), chip("prompts", "prompts"),
     st.assisted ? tip(h("span", { class: "chip assisted" }, "assisted"), CHIP_INFO.assisted) : null);
 }
 
@@ -456,7 +457,7 @@ async function stepView(id) {
     h("a", { class: "grow", href: `#/ex/${ex.id}` }, ex.title),
     kindBadge(ex.kind),
     ...(ex.serves || []).map((c) => tip(h("span", { class: "badge" }, c), COMPETENCY[c] || "")),
-    statusLine(ex.status));
+    statusLine(ex.status, ex.kind));
   for (const group of ["Read", "Build", "Catch", "Defend"]) {
     const here = s.exercises.filter((ex) => ex.group === group);
     if (!here.length) continue;
@@ -467,34 +468,72 @@ async function stepView(id) {
 }
 
 // ---------- exercise kinds added by the redesign ----------
+// What if: a change is made to the code and the learner says what happens. The server runs the change to know.
+function whatIfPanel(info, id, afterChange, locked) {
+  const el = h("div", { class: "whatif" });
+  const LABELS = { pass: "The tests still pass", fail: "The tests fail", same: "Same output", different: "Different output", crash: "It crashes" };
+  function draw(state, results) {
+    const picks = state.questions.map(() => null);
+    el.replaceChildren();
+    if (state.ok) { el.append(h("p", { class: "ok" }, "✓ What if: done.")); return; }
+    el.append(h("p", { class: "muted" }, "What happens after this change? The app really runs it to find out."));
+    const boxes = state.questions.map((q, i) => h("div", { class: "review" }, h("p", {}, h("strong", {}, `${i + 1}. `), md(q.change)),
+      h("div", {}, ...state.choices.map((c) => h("label", { style: "margin-right:1rem" },
+        h("input", { type: "radio", name: `w${id}${i}`, onchange: () => { picks[i] = c; } }), " " + LABELS[c])))));
+    const note = h("div");
+    el.append(...boxes, h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
+      if (picks.includes(null)) { note.replaceChildren(h("p", { class: "bad" }, "Answer every question.")); return; }
+      e.target.disabled = true;
+      try {
+        const r = await api("/whatif/answer", { exercise_id: id, answers: picks });
+        r.results.forEach((res, i) => boxes[i].append(h("p", { class: res.correct ? "ok" : "bad" },
+          (res.correct ? "✓ " : `✗ it was: ${LABELS[res.answer]}. `) + (res.result || ""))));
+        note.replaceChildren(h("p", {}, r.ok ? "✓ All right." : "Not all right. Read the answers above, then try the new questions."));
+        afterChange(r);
+        if (!r.ok) setTimeout(() => draw(r.whatif), 2500);
+        else draw(r.whatif);
+      } catch (err) { note.replaceChildren(h("p", { class: "bad" }, err.message)); e.target.disabled = false; }
+    } }, "Check my answers")), note);
+  }
+  draw(info);
+  return el;
+}
+
+// Reading exercises: What if rounds, then (level 2) one sentence on the trap or (level 3) a fix and an explanation.
 function readView(ex, id, afterChange) {
-  const reviewSlot = h("div"), msg = h("div"), outBox = h("pre", { hidden: "" });
-  const prediction = h("textarea", { placeholder: "Type exactly what the program prints, line by line." });
-  const answer = h("textarea", { placeholder: "Answer the questions below in your own words." });
-  const showOut = (t) => { outBox.hidden = false; outBox.textContent = "Real output:\n" + t; };
+  const reviewSlot = h("div"), whatSlot = h("div"), outBox = h("pre", { hidden: "" }), later = h("div");
+  const showOut = (t) => { outBox.hidden = false; outBox.textContent = "What the original prints:\n" + t; };
   if (ex.expected) showOut(ex.expected);
   const snippet = h("div");
   const cm = CodeMirror(snippet, { value: ex.snippet, mode: "python", lineNumbers: true, readOnly: true });
   setTimeout(() => cm.refresh(), 0);
-  main.append(h("h2", {}, "Read this code"), snippet, h("h2", {}, "1. Predict the output"), prediction,
-    h("div", { class: "bar" },
-      tip(h("button", { class: "primary", onclick: async () => {
-        const r = await api("/predict", { exercise_id: id, prediction: prediction.value });
-        msg.replaceChildren(h("p", { class: r.passed ? "ok" : "bad" }, r.passed ? "✓ Correct prediction." : "✗ Not the same as the real output. Read the code again, then retry or reveal."));
-        if (r.passed) { showOut((await api(`/exercise/${id}`)).expected); }
-        afterChange(r.status);
-      } }, "Check my prediction"), "Compared exactly with what the program prints (trailing spaces ignored)."),
-      tip(h("button", { onclick: async () => {
-        try { const r = await api("/predict/reveal", { exercise_id: id }); showOut(r.output); }
-        catch (e) { msg.replaceChildren(h("p", { class: "bad" }, e.message)); }
-      } }, "Show the output"), "Only after you tried a prediction. Then work out why it prints that.")), msg, outBox,
-    h("h2", {}, "2. Explain it"), h("ol", {}, ex.questions.map((q) => h("li", {}, q))), answer,
+  const answer = h("textarea", { placeholder: ex.level === 2 ? "One sentence." : "Answer the questions in your own words." });
+  const written = ex.level >= 2 ? h("div", {}, h("h2", {}, ex.level === 2 ? "2. Name the trap" : "3. Explain it"),
+    h("ol", {}, ex.questions.map((q) => h("li", {}, q))), answer,
     h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
       e.target.disabled = true; e.target.textContent = "Reviewing, please wait...";
       try { showReview(await api("/review", { exercise_id: id, text: answer.value })); }
       catch (err) { reviewSlot.replaceChildren(h("pre", { class: "bad" }, String(err))); }
       e.target.disabled = false; e.target.textContent = "Submit for review";
-    } }, "Submit for review")), reviewSlot);
+    } }, "Submit for review")), reviewSlot) : null;
+  const fixMsg = h("div"), fixOut = h("pre"), fixHolder = h("div");
+  let fixCm = null;
+  const fix = ex.level >= 3 ? h("div", {}, h("h2", {}, "2. Fix it"), md(ex.fix), fixHolder,
+    h("div", { class: "bar" }, h("button", { class: "primary", onclick: async () => {
+      const r = await api("/fix", { exercise_id: id, code: fixCm.getValue() });
+      fixOut.textContent = r.output;
+      fixMsg.replaceChildren(h("p", { class: r.passed ? "ok" : "bad" }, r.passed ? "✓ It prints the target." : "✗ Not the target output yet."));
+      afterChange(r.status);
+    } }, "Run and check")), fixMsg, fixOut) : null;
+  function openLater() {
+    later.replaceChildren(...[fix, written].filter(Boolean));
+    if (fix && !fixCm) { fixCm = editor(fixHolder, "python", ex.snippet); setTimeout(() => fixCm.refresh(), 0); }
+  }
+  main.append(h("h2", {}, "Read this code"), snippet, h("h2", {}, "1. What if?"), whatSlot, outBox, later);
+  function wire(info) {
+    whatSlot.replaceChildren(whatIfPanel(info, id, (r) => { afterChange(r.status); if (r.ok) { api(`/exercise/${id}`).then((x) => x.expected && showOut(x.expected)); openLater(); } }));
+  }
+  api("/whatif/start", { exercise_id: id }).then((r) => { wire(r.whatif); if (r.whatif.ok) openLater(); });
   function showReview(rev) {
     reviewSlot.replaceChildren(reviewBox(rev, async () => showReview(await api(`/reviews/${rev.review_id}/retry`, {}))) || "");
     if (rev && rev.status === "done") afterChange();
@@ -542,45 +581,56 @@ function bugPanel(ex, id, afterChange) {
   return h("div", { class: "notice" }, h("strong", {}, "Name the bug. "), "Once the tests pass, say in one sentence what was wrong. This is what you would tell a teammate.", box, h("div", { class: "bar" }, btn), slot);
 }
 
-// The control check: explain two of your own lines, then change the code by hand with the assistant locked.
+// The control check after a core build passes. Level 1: What if. Level 2: What if, then a change by hand.
+// Level 3: explain two of your own lines, then a change by hand. The assistant is locked until it is done.
 function controlPanel(ex, id, ctx, afterChange) {
   const el = h("div", { class: "notice" });
+  const level = ex.control.level;
   async function call(path, body) { const r = await api(path, { exercise_id: id, ...body }); if (r.status) afterChange(r.status); if (ctx.assistantEl) ctx.assistantEl.refresh(); return r; }
   let last = "";
+  const INTRO = { 1: "Show that you understand your code: say what happens when one line is changed.",
+    2: "Show that you control your code: say what happens when one line is changed, then make one small change by hand.",
+    3: "Prove that you control this code. I pick two lines of your passing solution for you to explain, then you make one small change by hand." };
+  function changeBox(info) {
+    const holder = h("div"), out = h("pre");
+    const cm = editor(holder, ex.kind, last);
+    cm.on("change", () => { last = cm.getValue(); });
+    setTimeout(() => cm.refresh(), 0);
+    return [h("h3", {}, level === 3 ? "B. Make this change by hand" : "2. Make this change by hand"), md(info.change), holder,
+      h("div", { class: "bar" }, h("button", { class: info.b_ok ? "" : "primary", onclick: async () => {
+        const r = await call("/control/change", { code: cm.getValue() }); results(out, r); draw(r.control, cm.getValue()); el.append(out);
+      } }, info.b_ok ? "✓ Passed (run again)" : "Run the change tests"),
+        h("span", { class: "muted" }, "The assistant is locked until this is done.")), out];
+  }
   function draw(info, code) {
     if (code) last = code;
-    code = last;
     el.replaceChildren(h("strong", {}, "Control check. "));
-    if (info.complete) { el.append(h("span", { class: "ok" }, "✓ Done: you explained your code and changed it by hand.")); return; }
+    if (info.complete) { el.append(h("span", { class: "ok" }, "✓ Done.")); return; }
     if (!info.started) {
-      if (DEV && info.change) el.append(h("p", { class: "muted" }, "Dev mode: the change you would be asked to make is"), md(info.change));
       const startBtn = h("button", { class: "primary", onclick: async () => {
         const r = await call("/control/start", {}); draw(r.control, r.code);
       } }, "Start control check");
       if (!info.ready) startBtn.setAttribute("disabled", "");
-      el.append("Prove that you control this code. I pick two lines of your passing solution for you to explain, then you make one small change by hand. The assistant is off until you finish.",
-        h("div", { class: "bar" }, startBtn, info.ready ? null : h("span", { class: "muted" }, "Pass the tests first.")));
+      if (DEV && info.change) el.append(h("p", { class: "muted" }, "Dev mode: the change you would be asked to make is"), md(info.change));
+      el.append(INTRO[level], h("div", { class: "bar" }, startBtn, info.ready ? null : h("span", { class: "muted" }, "Pass the tests first.")));
+      return;
+    }
+    if (level < 3) {
+      el.append(h("h3", {}, level === 2 ? "1. What if?" : "What if?"),
+        whatIfPanel(info.whatif, id, (r) => { afterChange(r.status); if (ctx.assistantEl) ctx.assistantEl.refresh(); if (r.ok) draw(r.control); }));
+      if (level === 2 && info.whatif_ok) el.append(...changeBox(info));
       return;
     }
     const expl = info.lines.map(() => h("textarea", { placeholder: "What does this line do, and why is it there?" }));
     const revSlot = h("div");
-    el.append(h("h3", {}, "A. Explain these two lines of your code") ,
+    el.append(h("h3", {}, "A. Explain these two lines of your code"),
       ...info.lines.flatMap((l, i) => [h("pre", {}, `${l.no}: ${l.text}`), expl[i]]),
       h("div", { class: "bar" }, h("button", { class: info.a_ok ? "" : "primary", onclick: async (e) => {
         e.target.disabled = true;
         try { const r = await call("/control/explain", { explanations: expl.map((x) => x.value) }); revSlot.replaceChildren(reviewBox(r.review, null)); draw(r.control, code); el.append(revSlot); }
         catch (err) { revSlot.replaceChildren(h("p", { class: "bad" }, err.message)); }
         e.target.disabled = false;
-      } }, info.a_ok ? "✓ Explained (check again)" : "Check my explanations")), revSlot);
-    const holder = h("div"), out = h("pre");
-    const cm = editor(holder, ex.kind, code || "");
-    cm.on("change", () => { last = cm.getValue(); });
-    setTimeout(() => cm.refresh(), 0);
-    el.append(h("h3", {}, "B. Make this change by hand"), md(info.change), holder,
-      h("div", { class: "bar" }, h("button", { class: info.b_ok ? "" : "primary", onclick: async () => {
-        const r = await call("/control/change", { code: cm.getValue() }); results(out, r); draw(r.control, cm.getValue()); el.append(out);
-      } }, info.b_ok ? "✓ Passed (run again)" : "Run the change tests"),
-        h("span", { class: "muted" }, "The assistant is locked until both parts pass.")), out);
+      } }, info.a_ok ? "✓ Explained (check again)" : "Check my explanations")), revSlot, ...changeBox(info));
   }
   (async () => {
     const info = ex.control;
@@ -591,6 +641,24 @@ function controlPanel(ex, id, ctx, afterChange) {
   return el;
 }
 
+// An extra (not core) build where the assistant wrote code: a What if round shows the learner understood it.
+function assistWhatIf(ex, id, afterChange) {
+  const el = h("div", { class: "notice" });
+  async function open() {
+    const r = await api("/whatif/start", { exercise_id: id });
+    el.replaceChildren(h("strong", {}, "What if. "), "The assistant wrote code for this exercise, so it only counts once you show you understand it.",
+      whatIfPanel(r.whatif, id, (x) => afterChange(x.status)));
+  }
+  el.redraw = (st) => {
+    if (DEV || !st.assisted || st.explain === true) { el.replaceChildren(); return; }
+    if (el.querySelector(".whatif")) return;
+    el.replaceChildren(h("strong", {}, "What if. "), "The assistant wrote code for this exercise, so it only counts once you show you understand it. ",
+      h("button", { class: "primary", disabled: st.tests ? undefined : "", onclick: open }, "Start"),
+      st.tests ? null : h("span", { class: "muted" }, " Pass the tests first."));
+  };
+  return el;
+}
+
 async function exView(id, mode = "blank") {
   const ex = await api(`/exercise/${id}?mode=${mode}`);
   const coded = ex.modes.length > 0;
@@ -598,7 +666,7 @@ async function exView(id, mode = "blank") {
   main.append(back, h("h1", {}, ex.title, " ", kindBadge(ex.kind)));
   const ctx = { getCode: () => "", getOutput: () => "", getLine: () => "", onAssisted: () => {}, grade: ex.grade_prompts };
   const statusEl = h("span", {});
-  let applyStatus = (st) => { statusEl.replaceChildren(statusLine(st)); };
+  let applyStatus = (st) => { statusEl.replaceChildren(statusLine(st, ex.kind)); };
   const refreshStatus = async () => applyStatus((await api(`/exercise/${id}?mode=${mode}`)).status);
   const after = (st) => { if (st) applyStatus(st); else refreshStatus(); };
   ctx.onGraded = refreshStatus;
@@ -657,14 +725,10 @@ async function exView(id, mode = "blank") {
     return;
   }
 
-  const assistNote = h("div");
+  const assistWhat = !ex.control && ex.whatif.needed !== undefined ? assistWhatIf(ex, id, after) : null;
   applyStatus = (st) => {
-    statusEl.replaceChildren(statusLine(st));
-    const needExplain = st.assisted && st.explain !== true;
-    assistNote.replaceChildren(needExplain && !DEV ? h("div", { class: "notice" }, h("strong", {}, "Explain it back. "),
-      "The assistant wrote code for this exercise, so it only counts once you explain that code in your own words. Write your explanation in the box below the results, pass the tests, then press 'Get AI review'.") : "");
-    text.placeholder = st.assisted
-      ? "Required: explain, in your own words, what the code does, why it works and one edge case. The AI review grades this explanation." : PLAIN;
+    statusEl.replaceChildren(statusLine(st, ex.kind));
+    if (assistWhat) assistWhat.redraw(st);
     if (st.tests && bugSlot && ex.name_bug && !bugSlot.firstChild) bugSlot.append(bugPanel(ex, id, refreshStatus));
     if (controlEl && st.tests) controlEl.redraw();
   };
@@ -680,7 +744,7 @@ async function exView(id, mode = "blank") {
     ex.plan_required ? tip(h("span", { class: "chip todo" }, `plan: ${ex.plan_required}+ comment lines`),
       "Write your plan as # comment lines in the editor first. Submit is refused without it.") : null,
     ex.assistant === "off" ? tip(h("span", { class: "chip todo" }, "assistant off"), "Fix this one yourself.") : null);
-  main.append(assistNote, modeBar, progress);
+  main.append(modeBar, progress);
 
   const holder = h("div");
   const out = h("pre");
@@ -726,7 +790,7 @@ async function exView(id, mode = "blank") {
       applyStatus(r.status);
       if (r.passed) { lastPassed = r.attempt_id; reviewBtn.disabled = false; refreshExtras(); nextSlot.replaceChildren(nextBar(ex, true)); }
     } }, "Submit"), "Run the hidden tests and record the attempt. A pass counts toward the step.")), nextSlot, h("h2", {}, "Results"), out,
-    bugSlot, controlEl, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
+    bugSlot, controlEl, assistWhat, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
   if (ex.status.tests && ex.name_bug) bugSlot.append(bugPanel(ex, id, refreshStatus));
   showReview(ex.review);
 }

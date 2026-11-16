@@ -12,3 +12,4 @@ questions:
 - Why does score_blocking report 45.0 seconds while score_with_timeout reports 2.0 seconds?
 - What goes wrong in production if a call to another service has no timeout?
 - What does the default value do in score_with_timeout, and what is the price of using it?
+level: 3

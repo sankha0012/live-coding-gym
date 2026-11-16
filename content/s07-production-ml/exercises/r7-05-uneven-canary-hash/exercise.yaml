@@ -8,3 +8,4 @@ questions:
   - "Why does a 20 percent canary pick only 21 of 1000 users?"
   - "What goes wrong in production if the canary group is this skewed or tiny?"
   - "Which hash would you use instead, and why is the assignment still deterministic?"
+level: 2

@@ -1,0 +1,1 @@
+`parse_prices` drops two rows without a trace. Change it so that every rejected row is reported: the first two lines of output must be `rejected: 'abc'` and `rejected: ''` (the repr of the value), followed by the three lines the script prints today, which stay the same.

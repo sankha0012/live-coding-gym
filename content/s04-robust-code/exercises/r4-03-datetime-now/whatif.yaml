@@ -1,0 +1,30 @@
+- change: 'Line 12: `end = datetime.now()` becomes `end = datetime(2024, 3, 5, 12, 0)`.'
+  old: 'end = datetime.now()'
+  new: 'end = datetime(2024, 3, 5, 12, 0)'
+  answer: different
+  result: The hidden clock read is gone, so the first line now prints 3 instead of 0.
+- change: 'Line 13: `start = end - timedelta(days=days)` becomes `start = end - timedelta(days=days + 1)`.'
+  old: 'start = end - timedelta(days=days)'
+  new: 'start = end - timedelta(days=days + 1)'
+  answer: same
+  result: The window still ends at today''s date, far after March 2024, so it still holds no event and the line prints 0.
+- change: 'Line 17: `def last_week_events_at(events, now, days=7):` becomes `def last_week_events_at(events, now, days=1):`.'
+  old: 'now, days=7):'
+  new: 'now, days=1):'
+  answer: different
+  result: A one-day window starting 4 March 12:00 keeps only the 23:00 event, so both injected lines print 1.
+- change: 'Line 19: `return [e for e in events if start <= e <= now]` becomes `return [e for e in events if start <= e < now]`.'
+  old: 'start <= e <= now'
+  new: 'start <= e < now'
+  answer: same
+  result: No event sits exactly at 12:00 on 5 March, so the open end changes nothing.
+- change: 'Line 18: `start = now - timedelta(days=days)` becomes `start = now + timedelta(days=days)`.'
+  old: 'start = now - timedelta(days=days)'
+  new: 'start = now + timedelta(days=days)'
+  answer: different
+  result: The start moves after now, the window is empty, and both injected lines print 0.
+- change: 'Line 25: `len(last_week_events_at(events, fixed_now))` becomes `len(last_week_events_at(events))`, so the `now` argument is not passed.'
+  old: '5 12:00:", len(last_week_events_at(events, fixed_now))'
+  new: '5 12:00:", len(last_week_events_at(events))'
+  answer: crash
+  result: The required `now` argument is missing, so Python raises a TypeError.

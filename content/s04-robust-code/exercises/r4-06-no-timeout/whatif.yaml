@@ -1,0 +1,30 @@
+- change: 'Line 1: `SERVER_LATENCY = 45.0` becomes `SERVER_LATENCY = 1.5`.'
+  old: 'SERVER_LATENCY = 45.0'
+  new: 'SERVER_LATENCY = 1.5'
+  answer: different
+  result: The upstream now answers inside the 2 second timeout, so both calls return 0.9 after 1.5 seconds.
+- change: 'Line 6: `SERVER_LATENCY > timeout` becomes `SERVER_LATENCY >= timeout`.'
+  old: 'SERVER_LATENCY > timeout'
+  new: 'SERVER_LATENCY >= timeout'
+  answer: same
+  result: 45 is far above 2, so the timeout fires exactly as before.
+- change: 'Line 20: `except TimeoutError:` becomes `except (TimeoutError, ValueError):`.'
+  old: 'except TimeoutError:'
+  new: 'except (TimeoutError, ValueError):'
+  answer: same
+  result: TimeoutError is still caught, and nothing raises a ValueError.
+- change: 'Line 20: `except TimeoutError:` becomes `except ValueError:`.'
+  old: 'except TimeoutError:'
+  new: 'except ValueError:'
+  answer: crash
+  result: The TimeoutError is no longer caught, so it escapes score_with_timeout and ends the script.
+- change: 'Line 16: `def score_with_timeout(user_id, timeout=2.0, default=0.5):` becomes `def score_with_timeout(user_id, timeout=60.0, default=0.5):`.'
+  old: 'timeout=2.0, default=0.5'
+  new: 'timeout=60.0, default=0.5'
+  answer: different
+  result: A 60 second limit is longer than the 45 second stall, so the call succeeds with 0.9 after 45.0 seconds.
+- change: 'Line 18: `fake_get(f"https://ranker.internal/{user_id}", timeout=timeout)` becomes `fake_get(f"https://ranker.internal/{user_id}")`, so the timeout argument is removed.'
+  old: ', timeout=timeout)'
+  new: ')'
+  answer: different
+  result: Without a timeout this function waits like the blocking one and returns 0.9 after 45.0 seconds.

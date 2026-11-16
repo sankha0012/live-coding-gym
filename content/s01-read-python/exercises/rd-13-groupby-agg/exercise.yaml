@@ -8,3 +8,4 @@ questions:
   - "What is the difference between size and count here, and why do they disagree for RJ?"
   - "Why is the order of the rows BH, RJ, SP, and what does reset_index do?"
   - "What would an assistant get wrong if it said RJ's average is 20.0?"
+level: 1

@@ -1,0 +1,30 @@
+- change: 'Line 15: `precision = tp / (tp + fp) if tp + fp else 0.0` becomes `precision = tp / (tp + fn) if tp + fp else 0.0`.'
+  old: tp / (tp + fp)
+  new: tp / (tp + fn)
+  answer: same
+  result: Here fp and fn are both 1, so the denominators are equal.
+- change: 'Line 17: `accuracy = (tp + tn) / len(y_true)` becomes `accuracy = tp / len(y_true)`.'
+  old: (tp + tn)
+  new: tp
+  answer: different
+  result: Accuracy now ignores true negatives and drops to 0.38.
+- change: 'Line 8: `elif p == 1 and t == 0:` becomes `elif p == 1:`.'
+  old: 'elif p == 1 and t == 0:'
+  new: 'elif p == 1:'
+  answer: same
+  result: The cases with p == 1 and t == 1 were already taken by the first branch.
+- change: 'Line 4: `tp = fp = fn = tn = 0` becomes `tp = fp = fn = 0`.'
+  old: tp = fp = fn = tn = 0
+  new: tp = fp = fn = 0
+  answer: crash
+  result: tn is never defined, so tn += 1 raises NameError.
+- change: 'Line 6: `if p == 1 and t == 1:` becomes `if p == 1 or t == 1:`.'
+  old: p == 1 and t == 1
+  new: p == 1 or t == 1
+  answer: different
+  result: The first branch now catches fp and fn cases too, so everything with a 1 is counted as tp.
+- change: 'Line 2: `y_pred = [1, 0, 0, 1, 1, 0, 1, 0]` becomes `y_pred = [0, 0, 0, 0, 0, 0, 0, 0]`.'
+  old: '[1, 0, 0, 1, 1, 0, 1, 0]'
+  new: '[0, 0, 0, 0, 0, 0, 0, 0]'
+  answer: different
+  result: The model predicts no positives, so the guards return 0.0 instead of dividing by zero, while accuracy is 0.50.

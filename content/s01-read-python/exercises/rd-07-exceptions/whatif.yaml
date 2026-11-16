@@ -1,0 +1,30 @@
+- change: 'Line 8: `print(f"checked {raw!r}")` is deleted (replaced by `pass`).'
+  old: print(f"checked {raw!r}")
+  new: pass
+  answer: different
+  result: The finally block is what prints 'checked' for every value, so with it gone no 'checked' line appears.
+- change: 'Line 6: `return None` is deleted (replaced by `pass`).'
+  old: return None
+  new: pass
+  answer: crash
+  result: For 'abc' execution falls through with value never assigned, so line 9 raises UnboundLocalError, which is not a ValueError and is not caught.
+- change: 'Line 9: `if not 0 <= value <= 1:` becomes `if not 0 <= value < 1:`.'
+  old: 0 <= value <= 1
+  new: 0 <= value < 1
+  answer: same
+  result: Only 1.5 is out of range here, and no row equals exactly 1, so the boundary does not matter for this data.
+- change: 'Line 4: `except ValueError:` becomes `except TypeError:`.'
+  old: 'except ValueError:'
+  new: 'except TypeError:'
+  answer: different
+  result: float('abc') now escapes parse_score (after finally prints), and the loop catches it and prints 'rejected:' instead of 'skip'.
+- change: 'Line 21: `continue` is deleted (replaced by `pass`).'
+  old: '        continue'
+  new: '        pass'
+  answer: same
+  result: score still holds None from the 'abc' row, so the stale value is skipped by the None check; with a different row order it would have appended an old score.
+- change: 'Line 22: `if score is not None:` becomes `if True:`.'
+  old: 'if score is not None:'
+  new: 'if True:'
+  answer: different
+  result: The None returned for 'abc' is no longer filtered out, so None ends up in the list.

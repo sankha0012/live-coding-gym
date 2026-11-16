@@ -1,0 +1,30 @@
+- change: 'Line 7: `random_state=0` becomes `random_state=1`.'
+  old: random_state=0
+  new: random_state=1
+  answer: different
+  result: A different seed picks a different random set of five test days, so the random lines change while the time split does not.
+- change: 'Line 7: `test_size=0.25` becomes `test_size=5`.'
+  old: test_size=0.25
+  new: test_size=5
+  answer: same
+  result: An integer is an absolute row count, and 25% of 20 rows is 5, so the split is identical.
+- change: 'Line 5: `10 * df["day"]` becomes `0 * df["day"]`.'
+  old: 10 * df["day"]
+  new: 0 * df["day"]
+  answer: different
+  result: Sales no longer grow, so every mean is 100.0 and both gaps are 0.0; the gap came from the trend, not from the split alone.
+- change: 'Line 12: `.any()` becomes `.all()`.'
+  old: ).any()
+  new: ).all()
+  answer: different
+  result: Not every random-split training day is after the first test day (day 0 is before it), so the random line now prints False.
+- change: 'Line 11: `abs(` is removed so the gap is `te["sales"].mean() - tr["sales"].mean()`.'
+  old: abs(te["sales"].mean() - tr["sales"].mean())
+  new: (te["sales"].mean() - tr["sales"].mean())
+  answer: same
+  result: The test mean is higher than the train mean in both splits, so the difference is already positive.
+- change: 'Line 7: `test_size=0.25` becomes `test_size=25`.'
+  old: test_size=0.25
+  new: test_size=25
+  answer: crash
+  result: An integer test size larger than the 20 rows is invalid, so train_test_split raises ValueError.

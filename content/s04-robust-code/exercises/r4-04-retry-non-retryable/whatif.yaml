@@ -1,0 +1,30 @@
+- change: 'Line 10: `retry_on=(Exception,)` becomes `retry_on=(BadRequest,)`.'
+  old: 'retry_on=(Exception,)'
+  new: 'retry_on=(BadRequest,)'
+  answer: same
+  result: The only error ever raised is BadRequest, so it is still caught and retried three times.
+- change: 'Line 1: `class BadRequest(Exception): pass` becomes `class BadRequest(ValueError): pass`.'
+  old: 'class BadRequest(Exception)'
+  new: 'class BadRequest(ValueError)'
+  answer: same
+  result: A ValueError is still an Exception and still not a TimeoutError or ConnectionError, so both runs behave as before.
+- change: 'Line 10: `attempts=3` becomes `attempts=1`.'
+  old: 'attempts=3'
+  new: 'attempts=1'
+  answer: different
+  result: The first attempt is already the last, so there is one call and no delays.
+- change: 'Line 25: `retry_on=(TimeoutError, ConnectionError)` becomes `retry_on=(TimeoutError, BadRequest)`.'
+  old: 'retry_on=(TimeoutError, ConnectionError)'
+  new: 'retry_on=(TimeoutError, BadRequest)'
+  answer: different
+  result: BadRequest is now retried, so the second run also makes 3 calls and nothing is raised.
+- change: 'Line 18: `delays.append(0.5 * 2 ** attempt)` becomes `delays.append(0.5 * 2 * attempt)`.'
+  old: '0.5 * 2 ** attempt'
+  new: '0.5 * 2 * attempt'
+  answer: different
+  result: The backoff is linear and starts at zero, so the delays are [0.0, 1.0].
+- change: 'Line 16: `if attempt == attempts - 1:` becomes `if attempt == attempts:`.'
+  old: 'attempt == attempts - 1'
+  new: 'attempt == attempts'
+  answer: crash
+  result: The give-up branch never runs, the function falls off the end and returns None, and unpacking None into result and delays raises a TypeError.

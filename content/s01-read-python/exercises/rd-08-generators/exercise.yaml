@@ -7,3 +7,4 @@ questions:
   - "What does the last print show, and why?"
   - "Why is the final batch only [16]?"
 serves: [C2, C9]
+level: 2

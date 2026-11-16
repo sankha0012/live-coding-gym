@@ -1,1 +1,0 @@
-Change your own passing query by hand: a restaurant is now "busy" only when it has more than 120 delivered orders (instead of more than 100). Same columns and same ordering. On the seed data the result is two rows: restaurant 5 with 125 delivered orders and restaurant 6 with 122.

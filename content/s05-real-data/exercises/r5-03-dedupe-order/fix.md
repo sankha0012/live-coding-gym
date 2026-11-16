@@ -1,0 +1,1 @@
+Change the code so that the first block, `latest`, no longer depends on the row order of `events`. Both printed tables must show `ana  pro` and `bob  pro`, which are each user's most recent plan by `updated_at`.

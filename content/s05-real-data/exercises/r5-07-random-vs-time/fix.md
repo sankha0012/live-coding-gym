@@ -1,0 +1,1 @@
+The model will be used to forecast later days, so the first evaluation is misleading. Change the split on line 7 so that no training row comes after the first test day. Then both groups must print test days `[15, 16, 17, 18, 19]` with `gap=100.0`, and both `train has days after first test day` lines must print `False`.

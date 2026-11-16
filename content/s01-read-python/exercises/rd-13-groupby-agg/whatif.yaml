@@ -1,0 +1,30 @@
+- change: 'Line 8: `groupby("city")` becomes `groupby("city", sort=False)`.'
+  old: groupby("city")
+  new: groupby("city", sort=False)
+  answer: different
+  result: The groups now come out in order of first appearance (SP, RJ, BH) instead of alphabetical order.
+- change: 'Line 11: `avg=("value", "mean")` becomes `avg=("value", "median")`.'
+  old: '"value", "mean"'
+  new: '"value", "median"'
+  answer: same
+  result: RJ has only two known values, 20 and 40, so their median equals their mean, 30.0, and the other cities also have a median equal to their mean (two values or one).
+- change: 'Line 5: `None` becomes `float("nan")`.'
+  old: None
+  new: float("nan")
+  answer: same
+  result: pandas already turns None into NaN in a float column, so the data is identical.
+- change: 'Line 10: `known=("value", "count")` becomes `known=("value", "size")`.'
+  old: ("value", "count")
+  new: ("value", "size")
+  answer: different
+  result: size counts rows including the NaN, so RJ shows 3 known values and the last line prints 6 6.
+- change: 'Line 12: `total=("value", "sum")` becomes `total=("val", "sum")`.'
+  old: '"value", "sum"'
+  new: '"val", "sum"'
+  answer: crash
+  result: 'KeyError: there is no column named val to aggregate.'
+- change: 'Line 13: `.reset_index()` becomes `.reset_index(drop=True)`.'
+  old: .reset_index()
+  new: .reset_index(drop=True)
+  answer: different
+  result: drop=True throws the city keys away, so the table has no city column.

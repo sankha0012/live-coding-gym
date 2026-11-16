@@ -1,0 +1,3 @@
+arrival:    [('u1', 'paid'), ('u2', 'created')]
+event time: [('u1', 'paid'), ('u2', 'created')]
+dropped as late: 1

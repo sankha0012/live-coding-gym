@@ -1,0 +1,30 @@
+- change: 'Line 7: `.days > 7` becomes `.days >= 7`.'
+  old: .days > 7
+  new: .days >= 7
+  answer: different
+  result: Now m2 and m3, both with 7 whole days, count as stale, so the days check flags even exactly 7 days.
+- change: 'Line 10: `> MAX_AGE` becomes `>= MAX_AGE`.'
+  old: '> MAX_AGE'
+  new: '>= MAX_AGE'
+  answer: different
+  result: m3 is exactly 7 days old, so it is now stale by delta; the boundary matters when ages land on the limit.
+- change: 'Line 7: `.days > 7` becomes `.days > 8`.'
+  old: .days > 7
+  new: .days > 8
+  answer: same
+  result: The whole-day values here are 5, 7, 7 and -5, so none is above 7 or above 8.
+- change: 'Line 10: `NOW - trained_at > MAX_AGE` becomes `trained_at < NOW - MAX_AGE`.'
+  old: NOW - trained_at > MAX_AGE
+  new: trained_at < NOW - MAX_AGE
+  answer: same
+  result: It is the same inequality rearranged, so every verdict is unchanged.
+- change: 'Line 4: `MAX_AGE = timedelta(days=7)` becomes `MAX_AGE = 7`.'
+  old: MAX_AGE = timedelta(days=7)
+  new: MAX_AGE = 7
+  answer: crash
+  result: 'TypeError: a timedelta cannot be compared with an int.'
+- change: 'Line 7: `(NOW - trained_at).days > 7` becomes `(NOW - trained_at).total_seconds() > 7 * 86400`.'
+  old: (NOW - trained_at).days > 7
+  new: (NOW - trained_at).total_seconds() > 7 * 86400
+  answer: different
+  result: total_seconds keeps the hours, so m2 (7 days 23 hours) is now stale by the first rule as well.

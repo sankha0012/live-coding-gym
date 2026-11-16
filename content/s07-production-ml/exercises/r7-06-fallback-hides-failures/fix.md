@@ -1,0 +1,1 @@
+Make the fallbacks leave a trace. Record the type of every exception that safe_score swallows and print the real number on the last line. The scores and the count line stay as they are, and the last line must be `errors reported: 2`.

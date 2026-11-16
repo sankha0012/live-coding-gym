@@ -1,0 +1,30 @@
+- change: 'Line 6: `raw.astype(int)` becomes `raw.astype(float)`.'
+  old: raw.astype(int)
+  new: raw.astype(float)
+  answer: different
+  result: It still fails on 'n/a', but the message now says could not convert string to float, so the printed line changes.
+- change: 'Line 10: `errors="coerce"` becomes `errors="raise"`.'
+  old: errors="coerce"
+  new: errors="raise"
+  answer: crash
+  result: to_numeric raises ValueError on 'n/a' and nothing catches it.
+- change: 'Line 3: the bad value `"n/a"` becomes `"8"`.'
+  old: '"n/a"'
+  new: '"8"'
+  answer: different
+  result: Now astype succeeds silently, there are no bad rows, the dtype is int64 and the mean is 14.25.
+- change: 'Line 12: `int(items.isna().sum())` becomes `items.isna().sum()`.'
+  old: int(items.isna().sum())
+  new: items.isna().sum()
+  answer: same
+  result: A numpy integer prints as 1, exactly like the Python int.
+- change: 'Line 7: `except ValueError as err:` becomes `except Exception as err:`.'
+  old: 'except ValueError as err:'
+  new: 'except Exception as err:'
+  answer: same
+  result: astype raises ValueError, which is an Exception, so the same handler runs with the same message.
+- change: 'Line 14: `items.mean()` becomes `items.fillna(0).mean()`.'
+  old: items.mean()
+  new: items.fillna(0).mean()
+  answer: different
+  result: The bad row now counts as 0 instead of being skipped, so the mean drops to 12.25.

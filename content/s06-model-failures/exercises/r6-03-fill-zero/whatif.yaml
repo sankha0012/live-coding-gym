@@ -1,0 +1,25 @@
+- change: 'Line 8: `df["income"].fillna(0)` becomes `df["income"].dropna()`.'
+  old: df["income"].fillna(0)
+  new: df["income"].dropna()
+  answer: different
+  result: The unknown rows are removed instead of set to zero, so the mean is the raw mean and nobody is low income.
+- change: 'Line 13: `df["income"].median()` becomes `df["income"].mean()`.'
+  old: df["income"].median()
+  new: df["income"].mean()
+  answer: same
+  result: Both fill values (4800 and 4666.7) are far above 2000, and nothing else prints that value.
+- change: 'Line 11: `filled < 2000` becomes `filled <= 2000`.'
+  old: filled < 2000
+  new: filled <= 2000
+  answer: same
+  result: No income is exactly 2000, so only the two zeros are counted either way.
+- change: 'Line 16: `isna()` becomes `notna()`.'
+  old: isna().sum()
+  new: notna().sum()
+  answer: different
+  result: It now counts the three known incomes instead of the two missing ones.
+- change: 'Line 8: `fillna(0)` becomes `fillna("0")`.'
+  old: fillna(0)
+  new: fillna("0")
+  answer: crash
+  result: 'The column becomes a mix of text and numbers, so filled.mean() raises TypeError: Could not convert to numeric.'

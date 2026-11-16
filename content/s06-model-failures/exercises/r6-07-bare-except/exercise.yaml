@@ -7,3 +7,4 @@ questions:
   - Which rows fail, and why does the first status line still say ok?
   - What goes wrong if the data has a row with a zero or a missing field?
   - How does the second loop make the failures visible, and what else would you do with them?
+level: 3

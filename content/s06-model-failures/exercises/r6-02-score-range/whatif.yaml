@@ -1,0 +1,30 @@
+- change: 'Line 4: `if s >= THRESHOLD` becomes `if s > THRESHOLD`.'
+  old: if s >= THRESHOLD
+  new: if s > THRESHOLD
+  answer: same
+  result: No score is exactly 0.5, so the boundary does not matter here.
+- change: 'Line 2: `THRESHOLD = 0.5` becomes `THRESHOLD = 1.0`.'
+  old: THRESHOLD = 0.5
+  new: THRESHOLD = 1.0
+  answer: different
+  result: Only the invalid 1.3 is at least 1.0, so the flagged list and the rate change.
+- change: 'Line 9: `0.0 <= s <= 1.0` becomes `s <= 1.0`.'
+  old: 0.0 <= s <= 1.0
+  new: s <= 1.0
+  answer: different
+  result: 'The lower bound is gone, so -0.2 is kept: the range check was two-sided for a reason.'
+- change: 'Line 9: `0.0 <= s <= 1.0` becomes `0.0 <= s < 1.0`.'
+  old: 0.0 <= s <= 1.0
+  new: 0.0 <= s < 1.0
+  answer: same
+  result: No score is exactly 1.0, so excluding the upper bound removes nothing.
+- change: 'Line 9: `0.0 <= s <= 1.0` becomes `2.0 <= s <= 3.0`.'
+  old: 0.0 <= s <= 1.0
+  new: 2.0 <= s <= 3.0
+  answer: crash
+  result: 'No score is in range, so clean is empty and the mean divides by zero: ZeroDivisionError.'
+- change: 'Line 1: `1.30` becomes `0.80`.'
+  old: '1.30'
+  new: '0.80'
+  answer: different
+  result: A valid 0.80 is still flagged, but the 1.3 is gone, so only -0.2 is dropped and both means change.

@@ -1,0 +1,1 @@
+The error lines of `process_bad` do not say which order failed. Change `process_bad` so that its log lines carry the order id, the value and the exception text, in the same format as `process_good`. The "--- bad ---" section must then print the same two error lines as the "--- good ---" section, for A-18 and A-19.

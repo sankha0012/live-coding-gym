@@ -1,0 +1,30 @@
+- change: 'Line 13: `how="left"` becomes `how="inner"` in the first merge.'
+  old: merged = orders.merge(stores, on="store_id", how="left")
+  new: merged = orders.merge(stores, on="store_id", how="inner")
+  answer: same
+  result: Every order has a matching store, so inner and left keep the same 5 rows.
+- change: 'Line 10: the second `"Recife"` becomes `"Olinda"`.'
+  old: '"Recife", "Recife"'
+  new: '"Recife", "Olinda"'
+  answer: same
+  result: The store_id is still duplicated, so the fan-out to 5 rows and the totals do not change; only the city values differ.
+- change: 'Line 18: `drop_duplicates("store_id")` becomes `drop_duplicates("city")`.'
+  old: drop_duplicates("store_id")
+  new: drop_duplicates("city")
+  answer: same
+  result: Here each store has exactly one city, so de-duplicating on city also leaves one row per store.
+- change: 'Line 22: the whole `orders.merge(..., validate="many_to_one")` statement is deleted (replaced by `pass`).'
+  old: orders.merge(stores, on="store_id", how="left", validate="many_to_one")
+  new: pass
+  answer: different
+  result: Nothing is checked or raised, so the last line is never printed.
+- change: 'Line 16: `merged["amount"].sum()` becomes `merged.drop_duplicates("order_id")["amount"].sum()`.'
+  old: merged["amount"].sum()
+  new: merged.drop_duplicates("order_id")["amount"].sum()
+  answer: different
+  result: Dropping repeated order ids hides the inflated total and prints 230.0, but the join itself is still wrong.
+- change: 'Line 18: `stores.drop_duplicates("store_id")` becomes `stores` in the safe merge.'
+  old: stores.drop_duplicates("store_id")
+  new: stores
+  answer: crash
+  result: validate='many_to_one' raises MergeError on the duplicated key, and this call is not in a try block.

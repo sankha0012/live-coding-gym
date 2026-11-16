@@ -1,0 +1,30 @@
+- change: 'Line 17: `ts >= last_ts.get(user, -1)` becomes `ts > last_ts.get(user, -1)`.'
+  old: ts >= last_ts.get
+  new: ts > last_ts.get
+  answer: same
+  result: No two events of the same user share a timestamp here, so the tie case never happens.
+- change: 'Line 17: the default `-1` becomes `0` in `last_ts.get(user, -1)`.'
+  old: last_ts.get(user, -1)
+  new: last_ts.get(user, 0)
+  answer: same
+  result: Every timestamp is above 0, so the first event of each user is still accepted.
+- change: 'Line 4: the `paid` timestamp `130` becomes `105`.'
+  old: (2, 130,
+  new: (2, 105,
+  answer: different
+  result: Now shipped (110) really is after paid (105), so nothing is late and u1 ends as shipped.
+- change: 'Line 19: `last_ts[user] = ts` is deleted (replaced by `pass`).'
+  old: last_ts[user] = ts
+  new: pass
+  answer: different
+  result: Without remembering the latest timestamp nothing is ever late, so event time behaves like arrival order.
+- change: 'Line 17: `last_ts.get(user, -1)` becomes `last_ts[user]`.'
+  old: last_ts.get(user, -1)
+  new: last_ts[user]
+  answer: crash
+  result: The first event of u1 has no entry yet, so indexing raises KeyError.
+- change: 'Line 6: u2''s timestamp `120` becomes `90`.'
+  old: (4, 120,
+  new: (4, 90,
+  answer: same
+  result: Lateness is tracked per user and 90 is u2's first event, so it is not late even though it is older than other users' events.

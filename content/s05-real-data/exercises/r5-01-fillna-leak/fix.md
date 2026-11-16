@@ -1,0 +1,1 @@
+Change the code so the fill value is computed from the training rows only and used for both sets. The first output line must be `fill used: 12.0`, the train list `[10.0, 12.0, 12.0, 14.0]` and the test list `[12.0, 90.0]`. The test value 90.0 must no longer influence what fills the training gaps.

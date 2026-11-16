@@ -1,0 +1,30 @@
+- change: 'Line 9: `StandardScaler()` becomes `StandardScaler(with_mean=False)`.'
+  old: StandardScaler()
+  new: StandardScaler(with_mean=False)
+  answer: same
+  result: Without centering the scaler still separates the two groups cleanly and the classifier gets the same labels right; the learned means are still computed and printed.
+- change: 'Line 10: `LogisticRegression(random_state=0)` becomes `LogisticRegression(random_state=1)`.'
+  old: random_state=0
+  new: random_state=1
+  answer: same
+  result: This solver is deterministic on this data, so the seed does not change anything.
+- change: 'Line 6: the labels `[0, 0, 0, 1, 1, 1]` become `[0, 0, 1, 0, 1, 1]`.'
+  old: y = [0, 0, 0, 1, 1, 1]
+  new: y = [0, 0, 1, 0, 1, 1]
+  answer: different
+  result: The labels no longer follow the features, so the model cannot fit all six rows and the training accuracy drops to 0.67.
+- change: 'Line 5: the fourth row `[4.0, 300.0]` becomes `[4.0, 90.0]`.'
+  old: '[4.0, 300.0]'
+  new: '[4.0, 90.0]'
+  answer: different
+  result: The scaler mean of the second feature changes to 175.0 and one training row is no longer cleanly separated, so the score becomes 0.83.
+- change: 'Line 12: `pipe.fit(X, y)` becomes `pipe.fit(X[:3], y[:3])`.'
+  old: pipe.fit(X, y)
+  new: pipe.fit(X[:3], y[:3])
+  answer: crash
+  result: 'ValueError: the first three rows are all class 0, and the classifier needs at least two classes.'
+- change: 'Line 16: `pipe.named_steps["scale"]` becomes `pipe.named_steps["clf"]`.'
+  old: pipe.named_steps["scale"]
+  new: pipe.named_steps["clf"]
+  answer: crash
+  result: 'AttributeError: the logistic regression has no mean_, only the scaler learns column means.'

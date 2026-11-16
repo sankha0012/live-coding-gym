@@ -1,1 +1,1 @@
-Read the code below without running it. Predict exactly what it prints, then answer the questions in your own words. Remember what Python guarantees about sorted when two items compare equal, and whether reverse=True changes that guarantee.
+Read the code below, then work out what happens when one line is changed, and name the trap. Remember what Python guarantees about sorted when two items compare equal, and whether reverse=True changes that guarantee.

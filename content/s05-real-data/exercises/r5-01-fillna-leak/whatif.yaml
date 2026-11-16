@@ -1,0 +1,30 @@
+- change: 'Line 11: `fill = df["basket"].mean()` becomes `fill = train["basket"].mean()`.'
+  old: fill = df["basket"].mean()
+  new: fill = train["basket"].mean()
+  answer: different
+  result: The fill now comes from training rows only (12.0), so the test value 90.0 no longer pulls it up.
+- change: 'Line 7: `.copy()` is deleted from `train = df[df["day"] <= 4].copy()`.'
+  old: train = df[df["day"] <= 4].copy()
+  new: train = df[df["day"] <= 4]
+  answer: same
+  result: At most a warning goes to stderr; the values assigned and printed are the same.
+- change: 'Line 13: the statement `test["basket"] = test["basket"].fillna(fill)` is deleted (replaced by `pass`).'
+  old: test["basket"] = test["basket"].fillna(fill)
+  new: pass
+  answer: different
+  result: The missing test value is never filled, so it prints as nan.
+- change: 'Line 8: `df["day"] > 4` becomes `df["day"] >= 4`.'
+  old: df["day"] > 4
+  new: df["day"] >= 4
+  answer: different
+  result: Day 4 now belongs to both sets, so the test list gets a third value, 14.0, in front.
+- change: 'Line 19: `df["day"] <= 4` becomes `df["day"] < 5` in the train-only fill.'
+  old: df.loc[df["day"] <= 4, "basket"]
+  new: df.loc[df["day"] < 5, "basket"]
+  answer: same
+  result: For integer days, `<= 4` and `< 5` select the same rows, so the mean is still 12.0.
+- change: 'Line 5: the last basket value `90.0` becomes `18.0`.'
+  old: 14.0, None, 90.0
+  new: 14.0, None, 18.0
+  answer: different
+  result: The fill uses all rows, so changing a test value changes the number that fills the training gaps.

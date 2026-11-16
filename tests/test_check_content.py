@@ -89,5 +89,21 @@ def test_curriculum_rules(steps):
     problems = check_curriculum(steps)
     assert any("missing serves" in p for p in problems) and any("mock task needs docs.md" in p for p in problems)
     ex = steps[0].exercises[0]
-    ex.serves, ex.docs, ex.change = ["C2"], "docs", "change"
+    ex.serves, ex.docs, ex.change, ex.control, ex.level = ["C2"], "docs", "change", True, 3
     assert not [p for p in check_curriculum(steps) if p.startswith(ex.id)]
+
+
+def test_reading_whatif_answers_are_checked_by_really_running_the_snippet(tmp_path):
+    step = tmp_path / "c" / "01-x"
+    ex = step / "exercises" / "r"
+    ex.mkdir(parents=True)
+    (step / "step.yaml").write_text("title: X\norder: 1\n")
+    files = {"exercise.yaml": "title: R\nkind: read\nlevel: 2\n", "prompt.md": "p", "say.md": "s", "snippet.py": "print(1 + 1)\n",
+             "expected.txt": "2\n", "whatif.yaml": (
+                 "- {change: a, old: '1 + 1', new: '1 + 2', answer: different}\n- {change: b, old: '1 + 1', new: '1 + 1', answer: same}\n"
+                 "- {change: c, old: 'print', new: 'prnt', answer: crash}\n- {change: d, old: '1 + 1', new: '2 + 0', answer: different}\n")}
+    for name, text in files.items():
+        (ex / name).write_text(text)
+    problems = check(tmp_path / "c")
+    assert problems == ["r: whatif '2 + 0' really gives same, not different"] or any("really gives same" in p for p in problems)
+    (ex / "whatif.yaml").write_text(files["whatif.yaml"].replace("answer: different}\n", "answer: different}\n", 1))

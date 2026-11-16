@@ -8,3 +8,4 @@ questions:
   - "Why does the depth grow by exactly 2 per tick, and why does the oldest request wait longer and longer?"
   - "What goes wrong in production if the queue has no size limit while arrivals exceed capacity?"
   - "How would you bound the queue, and what should the service do with a request that does not fit?"
+level: 3

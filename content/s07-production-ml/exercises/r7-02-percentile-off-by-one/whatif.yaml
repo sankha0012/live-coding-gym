@@ -1,0 +1,30 @@
+- change: 'Line 9: `ordered[int(0.95 * len(ordered))]` becomes `ordered[int(0.95 * len(ordered)) - 1]`.'
+  old: ordered[int(0.95 * len(ordered))]
+  new: ordered[int(0.95 * len(ordered)) - 1]
+  answer: different
+  result: The naive index 19 moves to 18, so it now returns 19 instead of the 400 outlier.
+- change: 'Line 14: `ordered[math.ceil(0.95 * len(ordered)) - 1]` becomes `ordered[math.ceil(0.95 * len(ordered))]`.'
+  old: math.ceil(0.95 * len(ordered)) - 1]
+  new: math.ceil(0.95 * len(ordered))]
+  answer: different
+  result: Dropping the - 1 turns the 1-based rank 19 into index 19, which is the 400 outlier.
+- change: 'Line 9: `int(0.95 * len(ordered))` becomes `int(1.0 * len(ordered))`.'
+  old: int(0.95 * len(ordered))
+  new: int(1.0 * len(ordered))
+  answer: crash
+  result: The index becomes 20 on a list of 20 items, which raises IndexError.
+- change: 'Line 3: the first value `12` becomes `11`.'
+  old: '[12, 15, 11,'
+  new: '[11, 15, 11,'
+  answer: same
+  result: Only a value at the low end changed, and the percentile and the max depend on the top of the sorted list.
+- change: 'Line 20: `print(max(latencies_ms))` becomes `print(sorted(latencies_ms)[-1])`.'
+  old: print(max(latencies_ms))
+  new: print(sorted(latencies_ms)[-1])
+  answer: same
+  result: The last element of a sorted list is the maximum, so the value is still 400.
+- change: 'Line 4: the last value `400` becomes `20`.'
+  old: 14, 400]
+  new: 14, 20]
+  answer: different
+  result: The outlier is gone, so the naive pick and the max are now 20 while the nearest-rank value stays 19.

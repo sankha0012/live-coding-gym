@@ -1,0 +1,1 @@
+Change the code so that `health()` tells the truth: when the model cannot predict, it must report `{'status': 'down'}` instead of `ok`. The three printed lines must be `{'status': 'down'}`, `AttributeError` and `False`.

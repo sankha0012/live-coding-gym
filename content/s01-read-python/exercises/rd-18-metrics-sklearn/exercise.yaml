@@ -8,3 +8,4 @@ questions:
   - "How many true positives, false positives and false negatives are there, and what do they give for precision and recall?"
   - "Why do the last two prints differ, and which one is the right way to compute AUC?"
   - "What does the 0.5 threshold decide, and which metrics depend on it?"
+level: 1

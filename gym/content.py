@@ -51,6 +51,23 @@ class Exercise:
     expected: str = ""            # read kind: what it prints
     questions: list = field(default_factory=list)
     proposals: list = field(default_factory=list)  # triage kind
+    control: bool = True          # False: no evaluation after the tests pass (tiny test fixtures)
+    level: int = 0                # 1 to 3: how much evaluation (reading: yaml `level`; builds: derived from the solution size unless set)
+    whatif: list = field(default_factory=list)     # read kind: authored one-line changes with their real outcome
+    fix: str = ""                 # read kind, level 3: the "change it so it prints ..." task
+    fix_expected: str = ""
+    fix_solution: str = ""
+
+    @property
+    def control_level(self):
+        """Evaluation after a core build passes. 0: none. 1: What if. 2: What if, then a change by hand.
+        3: explain two of your lines, then a change by hand."""
+        if not self.control or self.kind not in ("python", "sql") or not self.required or self.name_bug or self.assistant == "off":
+            return 0
+        if self.level:
+            return self.level
+        size = len([l for l in self.solution.splitlines() if l.strip() and not l.strip().startswith(("#", "--"))])
+        return 1 if size <= 10 else 2 if size <= 20 else 3
 
 
 @dataclass
@@ -115,6 +132,8 @@ def load_exercise(d, step_id):
         change=_read(d / "change.md"),
         questions=meta.get("questions") or [],
         serves=meta.get("serves") or [],
+        level=meta.get("level", 0),
+        control=meta.get("control", True),
         docs=_read(d / "docs.md"),
     )
     policy = meta.get("assistant")
@@ -157,6 +176,12 @@ def load_exercise(d, step_id):
     if kind == "read":
         ex.snippet = (d / "snippet.py").read_text()
         ex.expected = (d / "expected.txt").read_text()
+        ex.level = ex.level or 2
+        ex.whatif = yaml.safe_load(_read(d / "whatif.yaml")) or []
+        for i, v in enumerate(ex.whatif, 1):
+            if v.get("answer") not in ("same", "different", "crash") or not v.get("change") or "old" not in v or "new" not in v:
+                raise ValueError(f"whatif {i}: needs change, old, new and answer: same|different|crash")
+        ex.fix, ex.fix_expected, ex.fix_solution = (_read(d / "fix.md"), _read(d / "fix_expected.txt"), _read(d / "fix_solution.py"))
     if kind == "triage":
         ex.proposals = yaml.safe_load((d / "proposals.yaml").read_text())
         for i, p in enumerate(ex.proposals, 1):

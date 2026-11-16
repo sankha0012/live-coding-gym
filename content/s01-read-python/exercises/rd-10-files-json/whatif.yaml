@@ -1,0 +1,30 @@
+- change: 'Line 12: `clicks = int(row["clicks"])` becomes `clicks = row["clicks"]`.'
+  old: int(row["clicks"])
+  new: row["clicks"]
+  answer: crash
+  result: No conversion happens, so 0 + '12' raises TypeError and the ValueError handler does not catch it.
+- change: 'Line 17: `text = json.dumps(totals, sort_keys=True)` becomes `text = json.dumps(totals, sort_keys=False)`.'
+  old: sort_keys=True
+  new: sort_keys=False
+  answer: same
+  result: There is only one key, so its order cannot change.
+- change: 'Line 5: `raw = "user,clicks,country\nana,12,PT\nbo,x,US\ncy,7,PT\n"` becomes `raw = "user,clicks,country\nana,12,PT\nbo,x,US\ncy,7,PT"`.'
+  old: cy,7,PT\n
+  new: cy,7,PT
+  answer: same
+  result: A missing final newline does not matter to csv, the last row is still read.
+- change: 'Line 13: `except ValueError:` becomes `except KeyError:`.'
+  old: 'except ValueError:'
+  new: 'except KeyError:'
+  answer: crash
+  result: int('x') raises ValueError, which is no longer caught.
+- change: 'Line 14: `continue` is deleted (replaced by `pass`).'
+  old: continue
+  new: pass
+  answer: different
+  result: clicks keeps the value 12 from the previous row, so bo is counted for US with ana's clicks.
+- change: 'Line 12: `clicks = int(row["clicks"])` becomes `clicks = float(row["clicks"])`.'
+  old: int(row["clicks"])
+  new: float(row["clicks"])
+  answer: different
+  result: CSV values are strings, and float('12') is 12.0, so the totals and the printed type become float.

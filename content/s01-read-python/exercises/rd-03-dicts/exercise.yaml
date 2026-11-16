@@ -7,3 +7,4 @@ questions:
   - Why does buy print ok even though no limit was listed for it?
   - What does the last line sort, and what does key=counts.get mean?
 serves: [C2, C9]
+level: 1

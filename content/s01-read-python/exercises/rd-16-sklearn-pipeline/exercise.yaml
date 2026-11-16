@@ -8,3 +8,4 @@ questions:
   - "What does pipe.fit(X, y) do to each step, and what does pipe.predict do before the classifier sees the data?"
   - "Why is a score of 1.0 not good evidence that this model is good?"
   - "What is the printed mean_ and which data was it computed from?"
+level: 2

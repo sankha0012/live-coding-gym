@@ -8,3 +8,4 @@ questions:
   - "Why are the sizes 7 and 3, and what does the seed guarantee?"
   - "What does stratify=y change, and why does it matter for a rare positive class?"
   - "What does the last line check, and why is it useful?"
+level: 1

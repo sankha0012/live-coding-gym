@@ -7,3 +7,4 @@ questions:
   - "Which of svm and logreg gets rank 2, and why?"
   - "Does sorted change the models list? Point at the output that shows it."
 serves: [C2, C9]
+level: 1

@@ -1,0 +1,1 @@
+Add a time to live of 60 to the cache. Give `get_features` a `now` parameter (default 0), keep the time of storing inside the cache entry, and refetch when more than 60 have passed since then. Change the second call to pass `now=100`, so that the second line prints the updated value. The output must be `42.0`, `55.5`, `55.5` and `fetches=2 cached=1`.

@@ -1,0 +1,30 @@
+- change: 'Line 2: `y_pred = [0] * 100` becomes `y_pred = [1] * 100`.'
+  old: y_pred = [0] * 100
+  new: y_pred = [1] * 100
+  answer: different
+  result: The opposite constant model catches all 5 positives (recall 1.0) but accuracy falls to 0.05.
+- change: 'Line 12: `tp / predicted_pos if predicted_pos else 0.0` loses its guard: `precision = tp / predicted_pos`.'
+  old: precision = tp / predicted_pos if predicted_pos else 0.0
+  new: precision = tp / predicted_pos
+  answer: crash
+  result: predicted_pos is 0, so the division raises ZeroDivisionError.
+- change: 'Line 12: `else 0.0` becomes `else 1.0`.'
+  old: else 0.0
+  new: else 1.0
+  answer: different
+  result: A model that predicts nothing now reports perfect precision, which is a convention that flatters it.
+- change: 'Line 8: `p == 0` becomes `p != 1`.'
+  old: t == 1 and p == 0
+  new: t == 1 and p != 1
+  answer: same
+  result: Predictions are only 0 or 1, so the two tests select the same rows.
+- change: 'Line 11: `sum(y_pred)` becomes `len(y_pred)`.'
+  old: sum(y_pred)
+  new: len(y_pred)
+  answer: same
+  result: The guard now passes and divides, but tp is 0 so precision is 0 / 100 = 0.0 again.
+- change: 'Line 1: `[0] * 95 + [1] * 5` becomes `[0] * 50 + [1] * 50`.'
+  old: '[0] * 95 + [1] * 5'
+  new: '[0] * 50 + [1] * 50'
+  answer: different
+  result: With balanced classes the always-zero model gets accuracy 0.5, so the high score came from the imbalance.

@@ -1,0 +1,30 @@
+- change: 'Line 12: `return DEFAULT_SCORE` becomes `raise`.'
+  old: return DEFAULT_SCORE
+  new: raise
+  answer: crash
+  result: The error is re-raised, so the second order stops the program with ZeroDivisionError.
+- change: 'Line 11: `except Exception:` becomes `except ZeroDivisionError:`.'
+  old: 'except Exception:'
+  new: 'except ZeroDivisionError:'
+  answer: crash
+  result: The third order has no distance_km, which raises KeyError, and it is no longer caught.
+- change: 'Line 1: `DEFAULT_SCORE = 0.5` becomes `DEFAULT_SCORE = 0.0`.'
+  old: DEFAULT_SCORE = 0.5
+  new: DEFAULT_SCORE = 0.0
+  answer: different
+  result: The failed orders now score 0.0 instead of 0.5, and the count of fallbacks is still 2.
+- change: 'Line 16: `{"items": 4, "distance_km": 0}` becomes `{"items": 4, "distance_km": 1.0}`.'
+  old: '{"items": 4, "distance_km": 0}'
+  new: '{"items": 4, "distance_km": 1.0}'
+  answer: different
+  result: That order now gets a real score of 4.0 and only one order falls back.
+- change: 'Line 18: `{"items": 5}` becomes `{"items": 5, "distance_km": 0}`.'
+  old: '{"items": 5}'
+  new: '{"items": 5, "distance_km": 0}'
+  answer: same
+  result: A different error (ZeroDivisionError instead of KeyError) is still swallowed and replaced by the same 0.5.
+- change: 'Line 11: `except Exception:` becomes `except (KeyError, ZeroDivisionError):`.'
+  old: 'except Exception:'
+  new: 'except (KeyError, ZeroDivisionError):'
+  answer: same
+  result: Those are the only two errors in the data, so the same orders fall back and the output is identical.

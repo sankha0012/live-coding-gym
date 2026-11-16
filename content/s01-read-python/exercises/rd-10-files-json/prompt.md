@@ -1,1 +1,1 @@
-Read the code below and predict EXACTLY what it prints, line by line, before you run anything. Then answer the questions in your own words.
+Read the code below, then work out what happens when one line is changed, and name the trap.

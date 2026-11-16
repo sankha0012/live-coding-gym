@@ -1,0 +1,25 @@
+- change: "Line 2: `if not values:` becomes `if values is None:`."
+  old: "if not values:"
+  new: "if values is None:"
+  answer: crash
+  result: "An empty list is not None, so max([]) is reached and raises ValueError."
+- change: "Line 10: `if result is None:` becomes `if not result:`."
+  old: "if result is None:"
+  new: "if not result:"
+  answer: same
+  result: "In these calls the result is either None or a non-empty list, so both checks agree."
+- change: "Line 4: `max(values)` becomes `min(values)`."
+  old: "max(values)"
+  new: "min(values)"
+  answer: different
+  result: "Values are divided by the smallest one, so the biggest becomes 4.0 instead of 1.0."
+- change: "Line 9: `normalise(values, scale=10)` becomes `normalise(values)`."
+  old: "normalise(values, scale=10)"
+  new: "normalise(values)"
+  answer: different
+  result: "The default scale of 1.0 is used, so describe prints [0.2, 1.0] instead of [2.0, 10.0]."
+- change: "Line 1: `scale=1.0` becomes `scale=1`."
+  old: "scale=1.0"
+  new: "scale=1"
+  answer: same
+  result: "v / top is already a float, so multiplying by the int 1 gives the same numbers."

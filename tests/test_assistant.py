@@ -16,7 +16,7 @@ def build(tmp_path, extra=None):
     root = tmp_path / "c"
     layout = {
         "01-a/step.yaml": "title: A\norder: 1\n",
-        "01-a/exercises/e1/exercise.yaml": "title: Sort it\nkind: python\n",
+        "01-a/exercises/e1/exercise.yaml": "title: Sort it\nkind: python\nrequired: false\n",
         "01-a/exercises/e1/solution.py": f"def f(xs):\n    {SECRET_SOLUTION}\n",
         "01-a/exercises/e1/starter.py": "def f(xs):\n    pass\n",
         "01-a/exercises/e1/tests/test_hidden.py": TESTS,
@@ -125,8 +125,10 @@ def test_provider_failure_is_a_502_and_keeps_the_history_clean(tmp_path):
     assert client.get("/api/chat", params={"scope": "e1"}).json()["messages"] == []
 
 
-def test_code_from_the_assistant_means_explain_it_back(env):
+def test_code_from_the_assistant_means_a_what_if_round(env, monkeypatch):
     client, _ = env
+    qs = [{"change": "Line 1: x", "answer": "pass"}, {"change": "Line 2: y", "answer": "fail"}]
+    monkeypatch.setattr("gym.app.whatif.pick", lambda code, seed, judge, want=3, sql=False, limit=6: qs[:want])
     sub = lambda: client.post("/api/submit", json={"exercise_id": "e1", "code": "def f(xs):\n    return sorted(xs)\n",
                                                     "mode": "blank", "duration_s": 5}).json()
     assert chat(client, "e1", "Tell me about sorting")["assisted"] is False  # no code in the reply
@@ -134,12 +136,9 @@ def test_code_from_the_assistant_means_explain_it_back(env):
     first = sub()
     assert first["passed"] and first["status"]["assisted"] and first["status"]["explain"] is False
     assert first["status"]["done"] is False
-    assert client.post("/api/review", json={"exercise_id": "e1", "attempt_id": first["attempt_id"], "text": ""}).status_code == 400
-    rev = client.post("/api/review", json={"exercise_id": "e1", "attempt_id": first["attempt_id"],
-                                           "text": "sorted returns a new sorted list in O(n log n)."}).json()
-    assert rev["status"] == "done"
-    status = client.get("/api/exercise/e1").json()["status"]
-    assert status["explain"] is True and status["done"] is True and status["assisted"] is True
+    assert client.post("/api/whatif/start", json={"exercise_id": "e1"}).json()["whatif"]["needed"] is True
+    done = client.post("/api/whatif/answer", json={"exercise_id": "e1", "answers": ["pass", "fail"]}).json()
+    assert done["ok"] and done["status"]["explain"] is True and done["status"]["done"] is True
     client.post("/api/chat/clear", json={"scope": "e1"})  # clearing the chat does not hide that the assistant helped
     assert client.get("/api/exercise/e1").json()["status"]["assisted"] is True
 

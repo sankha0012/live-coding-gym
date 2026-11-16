@@ -797,7 +797,7 @@
   "795": "no_round.py",
   "796": "py-city/wrong/no_status_filter.py",
   "797": "none_raises.py",
-  "798": "create_app",
+  "798": "test_app_kinds.py",
   "799": "app.py",
   "800": "overwrite_not_sum.py",
   "801": "skip_none_orders.py",
@@ -1319,7 +1319,7 @@
   "1317": "drops_bad_rows.py",
   "1318": "index_of_good.py",
   "1319": "no_try.py",
-  "1320": "test_content_extras.py",
+  "1320": "pick_lines",
   "1321": "mf-silent-drift-alarm/starter.py",
   "1322": "age_returned_as_whole_days.py",
   "1323": "swapped_limit_data_only.py",
@@ -1370,7 +1370,7 @@
   "1368": "bool_passes_as_int.py",
   "1369": "keeps_unknown_fields.py",
   "1370": "nan_only_with_bounds.py",
-  "1371": "test_redesign.py",
+  "1371": "create_app",
   "1372": "range_checked_on_str.py",
   "1373": "stops_at_first.py",
   "1374": "pm-latency-percentiles/change_solution.py",
@@ -2903,5 +2903,7 @@
   "2901": "sr-07-not-in-null/prompt.md",
   "2902": "sr-07-not-in-null/say.md",
   "2903": "sr-08-cte-int-division/prompt.md",
-  "2904": "sr-08-cte-int-division/say.md"
+  "2904": "sr-08-cte-int-division/say.md",
+  "2905": "test_cards.py",
+  "2906": "api/index.py"
 }

@@ -1,0 +1,30 @@
+- change: 'Line 7: `event < deadline` becomes `event == deadline`.'
+  old: print(event < deadline)
+  new: print(event == deadline)
+  answer: different
+  result: Equality between naive and aware datetimes does not raise, it just gives False, so the TypeError line disappears.
+- change: 'Line 4: the event time `11, 30` becomes `12, 30`.'
+  old: 11, 30
+  new: 12, 30
+  answer: different
+  result: The event is now after the deadline, so event < fixed is False, and the printed event time changes.
+- change: 'Line 11: `replace(tzinfo=timezone.utc)` becomes `replace(tzinfo=None)`.'
+  old: deadline.replace(tzinfo=timezone.utc)
+  new: deadline.replace(tzinfo=None)
+  answer: crash
+  result: fixed stays naive, so `event < fixed` on line 12 raises TypeError outside any try.
+- change: 'Line 8: `except TypeError as err:` becomes `except Exception as err:`.'
+  old: 'except TypeError as err:'
+  new: 'except Exception as err:'
+  answer: same
+  result: The error raised is a TypeError, so the broader handler catches it and prints the same message.
+- change: 'Line 13: `event == deadline` becomes `event == fixed`.'
+  old: print(event == deadline)
+  new: print(event == fixed)
+  answer: same
+  result: 11:30 UTC and 12:00 UTC are different instants, so it is still False.
+- change: 'Line 15: `deadline.isoformat()` becomes `fixed.isoformat()`.'
+  old: deadline.isoformat()
+  new: fixed.isoformat()
+  answer: different
+  result: replace attached UTC to the same wall-clock time, so the string now ends in +00:00.

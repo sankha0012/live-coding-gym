@@ -1,0 +1,30 @@
+- change: 'Line 9: `keep="last"` becomes `keep="first"` in the first block.'
+  old: latest = events.drop_duplicates(subset="user", keep="last")
+  new: latest = events.drop_duplicates(subset="user", keep="first")
+  answer: different
+  result: 'It keeps the first row of each user in file order: ana becomes pro and bob becomes free.'
+- change: 'Line 13: `.sort_values("updated_at")` becomes `.sort_values("updated_at", ascending=False)`.'
+  old: .sort_values("updated_at")
+  new: .sort_values("updated_at", ascending=False)
+  answer: different
+  result: With newest first, keep='last' keeps the oldest row of each user, so both users end up on free.
+- change: 'Line 10: `latest.sort_values("user")` becomes `latest.sort_values("plan")`.'
+  old: latest.sort_values("user")
+  new: latest.sort_values("plan")
+  answer: same
+  result: Only the display order of the first block changes, and free before pro happens to give ana then bob again.
+- change: 'Line 5: ana''s first date `"2026-03-05"` becomes `"2026-03-06"`.'
+  old: '"2026-03-05"'
+  new: '"2026-03-06"'
+  answer: same
+  result: That is still ana's newest row, so the same row wins.
+- change: 'Line 14: `subset="user"` becomes `subset="users"` in the second block.'
+  old: '    .drop_duplicates(subset="user"'
+  new: '    .drop_duplicates(subset="users"'
+  answer: crash
+  result: There is no column named users, so drop_duplicates raises KeyError.
+- change: 'Line 5: bob''s date `"2026-03-02"` becomes `"2026-03-09"`.'
+  old: '"2026-03-02"'
+  new: '"2026-03-09"'
+  answer: different
+  result: Bob's free row is now his newest, so the sorted version keeps free instead of pro.

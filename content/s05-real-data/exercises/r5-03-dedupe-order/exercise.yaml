@@ -6,3 +6,4 @@ questions:
   - Which row does keep='last' keep, and what decides 'last'?
   - What goes wrong if the data arrives in a different row order tomorrow?
   - How does the second block make the answer independent of row order?
+level: 3

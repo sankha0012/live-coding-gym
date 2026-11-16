@@ -1,0 +1,30 @@
+- change: 'Line 4: `seed=None` becomes `seed=42` as the default.'
+  old: seed=None
+  new: seed=42
+  answer: different
+  result: The calls without a seed now use 42 too, so the first line prints True.
+- change: 'Line 11: `a = pick_eval_users(users, 5)` becomes `a = pick_eval_users(users, 5, seed=42)`.'
+  old: a = pick_eval_users(users, 5)
+  new: a = pick_eval_users(users, 5, seed=42)
+  answer: same
+  result: b is still unseeded and differs from a, and c and d are untouched.
+- change: 'Line 13: `c = pick_eval_users(users, 5, seed=42)` becomes `c = pick_eval_users(users, 5, seed=43)`.'
+  old: c = pick_eval_users(users, 5, seed=42)
+  new: c = pick_eval_users(users, 5, seed=43)
+  answer: different
+  result: c and d no longer share a seed, so the second line prints False.
+- change: 'Line 5: `rng = random.Random(seed)` becomes `random.seed(seed); rng = random`.'
+  old: rng = random.Random(seed)
+  new: random.seed(seed); rng = random
+  answer: same
+  result: It reseeds the shared generator on each call instead of using a private one, which gives the same printed result here but lets this function disturb the rest of the program.
+- change: 'Line 9: `range(500)` becomes `range(5000)`.'
+  old: range(500)
+  new: range(5000)
+  answer: same
+  result: A bigger pool only makes the unseeded samples even less likely to match; the seeded ones still match and the sizes are 5.
+- change: 'Line 6: `rng.sample(user_ids, k)` becomes `rng.sample(set(user_ids), k)`.'
+  old: rng.sample(user_ids, k)
+  new: rng.sample(set(user_ids), k)
+  answer: crash
+  result: 'TypeError: sample needs a sequence, and a set has no order to draw from.'

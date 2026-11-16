@@ -1,0 +1,30 @@
+- change: 'Line 10: `cache[user_id] = dict(feature_store[user_id])` becomes `cache[user_id] = feature_store[user_id]`.'
+  old: dict(feature_store[user_id])
+  new: feature_store[user_id]
+  answer: different
+  result: The cache now holds the same dict object as the store, so the later update shows through and the second line prints 55.5.
+- change: 'Line 9: `fetches += 1` is deleted (replaced by `pass`).'
+  old: fetches += 1
+  new: pass
+  answer: different
+  result: The cache still works but nothing counts the read, so the last line says fetches=0.
+- change: 'Line 7: `global fetches` is deleted (replaced by `pass`).'
+  old: global fetches
+  new: pass
+  answer: crash
+  result: Without global, `fetches += 1` makes fetches local and reading it first raises UnboundLocalError.
+- change: 'Line 10: `dict(feature_store[user_id])` becomes `{**feature_store[user_id]}`.'
+  old: dict(feature_store[user_id])
+  new: '{**feature_store[user_id]}'
+  answer: same
+  result: Both build a shallow copy of the entry, so the cache keeps the old 42.0 exactly as before.
+- change: 'Line 8: `if user_id not in cache:` becomes `if user_id not in cache.keys():`.'
+  old: 'if user_id not in cache:'
+  new: 'if user_id not in cache.keys():'
+  answer: same
+  result: Membership on a dict already checks the keys, so the miss and hit behaviour is unchanged.
+- change: 'Line 15: `feature_store["user-7"]["avg_basket"] = 55.5` becomes `cache["user-7"]["avg_basket"] = 55.5`.'
+  old: feature_store["user-7"]["avg_basket"] = 55.5
+  new: cache["user-7"]["avg_basket"] = 55.5
+  answer: different
+  result: Now the cache is updated and the store keeps 42.0, so the prints are 42.0, 55.5, 42.0.

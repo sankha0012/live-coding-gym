@@ -11,3 +11,4 @@ questions:
 - How many times is score_api called in the first run, and how many in the second, and why?
 - What goes wrong in production when a client retries an error such as a 400 bad request?
 - Which kinds of error are worth retrying, and what must be true of the operation before you retry it?
+level: 3

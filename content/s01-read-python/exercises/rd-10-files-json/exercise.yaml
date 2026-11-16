@@ -7,3 +7,4 @@ questions:
   - "What happens to the row for bo, and why does the program not crash?"
   - "Why is back['PT'] an int, and what happens to numeric dict keys that go through json.dumps and json.loads?"
 serves: [C2, C9]
+level: 2

@@ -41,12 +41,32 @@ def check_exercise(ex):
         if ex.starter and run_test_writing(ex.starter, ex.impl_good, ex.impls_bad).passed:
             p.append(f"{ex.id}: starter already passes")
     if ex.kind == "read":
-        r = run_python_free(ex.snippet, timeout=60)
         norm = lambda t: "\n".join(x.rstrip() for x in t.strip().splitlines())
-        if not r.passed or norm(r.output) != norm(ex.expected):
+        base = run_python_free(ex.snippet, timeout=60)
+        if not base.passed or norm(base.output) != norm(ex.expected):
             p.append(f"{ex.id}: snippet output differs from expected.txt")
-        if not ex.questions:
-            p.append(f"{ex.id}: a read exercise needs questions")
+        if ex.level >= 3 and not ex.questions:
+            p.append(f"{ex.id}: a level 3 reading needs questions")
+        answers = {v["answer"] for v in ex.whatif}
+        if len(ex.whatif) < 4 or "same" not in answers or not answers & {"different", "crash"}:
+            p.append(f"{ex.id}: whatif.yaml needs 4+ changes, with outcomes that stay the same and ones that do not")
+        for v in ex.whatif:
+            if ex.snippet.count(v["old"]) != 1:
+                p.append(f"{ex.id}: whatif old text must appear exactly once in the snippet: {v['old']!r}")
+                continue
+            r = run_python_free(ex.snippet.replace(v["old"], v["new"], 1), timeout=60)
+            got = "crash" if not r.passed else "same" if norm(r.output) == norm(base.output) else "different"
+            if got != v["answer"]:
+                p.append(f"{ex.id}: whatif {v['change']!r} really gives {got}, not {v['answer']}")
+        if ex.level >= 3:
+            if not (ex.fix and ex.fix_expected and ex.fix_solution):
+                p.append(f"{ex.id}: a level 3 reading needs fix.md, fix_expected.txt and fix_solution.py")
+            else:
+                fixed = run_python_free(ex.fix_solution, timeout=60)
+                if not fixed.passed or norm(fixed.output) != norm(ex.fix_expected):
+                    p.append(f"{ex.id}: fix_solution.py does not print fix_expected.txt")
+                if norm(base.output) == norm(ex.fix_expected):
+                    p.append(f"{ex.id}: the snippet already prints fix_expected.txt")
     if ex.kind == "triage":
         verdicts = {x["correct"] for x in ex.proposals}
         if len(ex.proposals) < 3 or verdicts != {"accept", "reject"}:
@@ -107,9 +127,10 @@ def check_curriculum(steps):
                 p.append(f"{ex.id}: missing serves (competency tags)")
             if ex.mock and not ex.docs:
                 p.append(f"{ex.id}: a mock task needs docs.md")
-            if (ex.required and not step.optional and ex.kind == "python" and not ex.change and not ex.name_bug
-                    and ex.assistant != "off"):
-                p.append(f"{ex.id}: a core build needs a control check (change.md)")
+            if ex.control_level >= 2 and not ex.change:
+                p.append(f"{ex.id}: a level {ex.control_level} build needs a change to make by hand (change.md)")
+            if ex.change and ex.control_level < 2:
+                p.append(f"{ex.id}: change.md is never used here (only core builds at level 2 or 3 ask for a change)")
     return p
 
 

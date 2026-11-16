@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS chat (
 CREATE TABLE IF NOT EXISTS assisted (scope TEXT PRIMARY KEY);
 CREATE TABLE IF NOT EXISTS control (
     exercise_id TEXT PRIMARY KEY, attempt_id INTEGER, lines_json TEXT, a_ok INTEGER DEFAULT 0, b_ok INTEGER DEFAULT 0);
+CREATE TABLE IF NOT EXISTS whatif (
+    exercise_id TEXT PRIMARY KEY, source_id INTEGER, questions_json TEXT, ok INTEGER DEFAULT 0, rounds INTEGER DEFAULT 0);
 CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY, scope TEXT, kind TEXT, chat_id INTEGER);
 CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT);
 CREATE TABLE IF NOT EXISTS mocks (
@@ -153,6 +155,21 @@ def last_passed_attempt(conn, exercise_id):
         "ORDER BY id DESC LIMIT 1", (exercise_id,)).fetchone()
 
 
+def get_whatif(conn, exercise_id):
+    return conn.execute("SELECT * FROM whatif WHERE exercise_id = ?", (exercise_id,)).fetchone()
+
+
+def save_whatif(conn, exercise_id, source_id, questions, rounds):
+    conn.execute("INSERT OR REPLACE INTO whatif (exercise_id, source_id, questions_json, ok, rounds) VALUES (?,?,?,0,?)",
+                 (exercise_id, source_id, json.dumps(questions), rounds))
+    conn.commit()
+
+
+def set_whatif_ok(conn, exercise_id, ok):
+    conn.execute("UPDATE whatif SET ok = ? WHERE exercise_id = ?", (int(ok), exercise_id))
+    conn.commit()
+
+
 def get_control(conn, exercise_id):
     return conn.execute("SELECT * FROM control WHERE exercise_id = ?", (exercise_id,)).fetchone()
 
@@ -189,7 +206,7 @@ def is_assisted(conn, scope):
 
 def reset_progress(conn):
     """Delete everything the learner has done (attempts, reviews, card schedule, unlocks, mocks)."""
-    for table in ("attempts", "reviews", "cards", "unlocks", "mocks", "chat", "assisted", "control", "events"):
+    for table in ("attempts", "reviews", "cards", "unlocks", "mocks", "chat", "assisted", "control", "whatif", "events"):
         conn.execute(f"DELETE FROM {table}")
     conn.commit()
 

@@ -1,0 +1,1 @@
+Change the code so the first merge no longer multiplies rows. The first line must print `3 3` and `total after:` must print `230.0`, equal to `total before:`. The merge must also state its expectation with `validate="many_to_one"`, so that a future duplicate key in the right-hand table would raise instead of silently inflating the total. The other lines must stay as they are.

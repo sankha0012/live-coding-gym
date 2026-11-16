@@ -53,7 +53,7 @@ def test_sql_step_without_timed_or_review(conn, steps):
     db.record_attempt(conn, ex.id, "blank", "q", True, 5000, "")
     st = gates.exercise_status(conn, ex, step)
     assert st == {"tests": True, "review": None, "explain": None, "control": None, "bug": None,
-                  "prompts": None, "done": True, "assisted": False}
+                  "prompts": None, "fix": None, "done": True, "assisted": False}
     assert gates.step_status(conn, step)["passed"] is True
 
 

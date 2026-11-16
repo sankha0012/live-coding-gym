@@ -1,0 +1,30 @@
+- change: 'Line 9: `pass` becomes `out.append(0.0)`.'
+  old: 'pass'
+  new: 'out.append(0.0)'
+  answer: different
+  result: The bad rows now count as zeros, so 5 values are kept and the mean drops to 4.14.
+- change: 'Line 12: `max_bad_ratio=0.2` becomes `max_bad_ratio=0.5`.'
+  old: 'max_bad_ratio=0.2'
+  new: 'max_bad_ratio=0.5'
+  answer: different
+  result: The bad ratio is 0.4, now under the limit, so the strict call no longer raises and the "strict:" line disappears.
+- change: 'Line 19: `if len(bad) / len(rows) > max_bad_ratio:` becomes `if len(bad) / len(rows) >= max_bad_ratio:`.'
+  old: '> max_bad_ratio'
+  new: '>= max_bad_ratio'
+  answer: same
+  result: 0.4 is above 0.2 either way, and the clean input has ratio 0, below the limit.
+- change: 'Line 1: `"7"` becomes `"7 "`, a number with a trailing space.'
+  old: '"7",'
+  new: '"7 ",'
+  answer: same
+  result: float() ignores surrounding whitespace, so the row still parses to 7.0.
+- change: 'Line 1: `"abc"` becomes `"1e3"`.'
+  old: '"abc"'
+  new: '"1e3"'
+  answer: different
+  result: float() reads 1e3 as 1000.0, so 4 rows are kept with a mean of 255.18, and one bad row out of five is exactly 0.2, which does not exceed the limit, so strict does not raise.
+- change: 'Line 23: `prices = parse_prices(raw_prices)` becomes `prices = parse_prices(["abc", ""])`.'
+  old: 'parse_prices(raw_prices)'
+  new: 'parse_prices(["abc", ""])'
+  answer: crash
+  result: Every row is swallowed, the list is empty, and the mean divides by zero with a ZeroDivisionError.

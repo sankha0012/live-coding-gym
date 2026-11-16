@@ -7,3 +7,4 @@ files:
 kb: [pd-sort-dedupe, prod-event-dedup-ordering]
 serves: [C3, C4, C6]
 mock: true
+level: 2

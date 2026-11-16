@@ -189,3 +189,4 @@ button.danger:hover { background: color-mix(in srgb, var(--bad) 18%, var(--surfa
 #dev-toggle { width: auto; height: 34px; font-size: 12px; padding: 0 10px; }
 #dev-toggle.active { background: var(--accent); color: #fff; }
 body.dev .topbar { box-shadow: inset 0 -3px 0 var(--accent); }
+.whatif .review p { margin: .2rem 0; }

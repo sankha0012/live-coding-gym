@@ -1,0 +1,30 @@
+- change: "Line 6: `counts.get(event, 0) + 1` becomes `counts.get(event, 1) + 1`."
+  old: "counts.get(event, 0) + 1"
+  new: "counts.get(event, 1) + 1"
+  answer: different
+  result: "Every event now starts at 2 instead of 1, so each count is one too high."
+- change: "Line 10: `limits.get(name, 1)` becomes `limits[name]`."
+  old: "limits.get(name, 1)"
+  new: "limits[name]"
+  answer: crash
+  result: "buy has no entry in limits, so the square-bracket lookup raises KeyError."
+- change: "Line 11: `n > limit` becomes `n >= limit`."
+  old: "n > limit"
+  new: "n >= limit"
+  answer: different
+  result: "buy has n=1 and the default limit 1, so it now prints over."
+- change: "Line 14: `, reverse=True` is deleted."
+  old: ", reverse=True"
+  new: ""
+  answer: different
+  result: "The sort is ascending by count, so the list comes out as buy, view, click."
+- change: "Line 2: `\"view\": 5` becomes `\"view\": 3`."
+  old: "\"view\": 5"
+  new: "\"view\": 3"
+  answer: same
+  result: "view was seen only 2 times, which is still not over a limit of 3."
+- change: "Line 13: `limits.get(\"scroll\")` becomes `limits.get(\"scroll\", None)`."
+  old: "limits.get(\"scroll\")"
+  new: "limits.get(\"scroll\", None)"
+  answer: same
+  result: "None is already the default of get, so the output is still None."

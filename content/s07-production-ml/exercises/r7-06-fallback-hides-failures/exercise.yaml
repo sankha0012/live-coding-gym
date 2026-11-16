@@ -8,3 +8,4 @@ questions:
   - "Which orders hit the fallback, and what exception does each one raise?"
   - "What goes wrong in production if a fallback swallows every exception and reports nothing?"
   - "What would you add so the fallback stays but the failures become visible?"
+level: 3

@@ -1,1 +1,1 @@
-Read the code below without running it. Predict exactly what it prints, then answer the questions in your own words. The function fake_get simulates an HTTP call without really waiting; read carefully what it does when timeout is None and when it is a number.
+Read the code below, work out what happens when one line is changed, fix the problem, then explain the code. The function fake_get simulates an HTTP call without really waiting; read carefully what it does when timeout is None and when it is a number.

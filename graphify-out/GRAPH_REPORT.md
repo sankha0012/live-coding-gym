@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-16)
 
 ## Corpus Check
-- 3691 files · ~453,853 words
+- 3612 files · ~462,064 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 8125 nodes · 7749 edges · 2907 communities (2720 shown, 187 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 118 edges (avg confidence: 0.56)
+- 7874 nodes · 7349 edges · 2866 communities (2685 shown, 181 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 106 edges (avg confidence: 0.57)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `602922b1`
+- Built from commit: `9c3ffb6a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,17 +22,17 @@
 - app.js
 - test_app.py
 - pm-ttl-cache/tests/test_hidden.py
-- is_rate_limited
+- window_slice
 - parse_config
 - TokenBucket
 - Live Coding Gym: working rules
 - compare_shadow
 - Live Coding Gym
 - count_words
-- process_until
+- Clock
 - check_health
 - BoundedQueue
-- predict_with_fallback
+- pm-timeout-fallback/tests/test_hidden.py
 - fixtures/content/01-hand-python/lessons/01-counting.md
 - get_features
 - precision_recall
@@ -49,7 +49,7 @@
 - safe_mean
 - rank
 - iqr_outliers
-- serve_features
+- mf-train-serve-skew/tests/test_hidden.py
 - assign
 - validate_request
 - atomic_write_json
@@ -173,7 +173,7 @@
 - Explanation structure
 - Complexity cheatsheet
 - Joins explained
-- test_db.py
+- whatif.py
 - ai-topk/tests/test_hidden.py
 - `get_features(keys, *, default=...)`
 - compose
@@ -227,14 +227,14 @@
 - Verifying AI code
 - prod-batch/tests/test_hidden.py
 - tw-parse-duration/solution.py
-- dbg-avg/change_tests/test_change.py
-- dbg-late/change_tests/test_change.py
+- test_content_extras.py
+- _insert
 - dbg-late/tests/test_hidden.py
 - dbg-tags/tests/test_hidden.py
 - st-auc/tests/test_hidden.py
-- st-z/change_tests/test_change.py
+- r4-04-retry-non-retryable/fix_solution.py
 - ai-eval/tests/test_hidden.py
-- ai-psi/change_tests/test_change.py
+- fake_get
 - TTLCache
 - BoundedQueue
 - TTLCache
@@ -265,7 +265,7 @@
 - Atomic writes
 - Structured logging
 - Proving it with tests
-- st-meanstd/change_tests/test_change.py
+- r4-05-nonatomic-write/fix_solution.py
 - st-z/tests/test_hidden.py
 - Missing values and how to fill them
 - Wrong types and parsing
@@ -309,7 +309,6 @@
 - Tools to build and ship: MLflow, FastAPI, Docker, Airflow, Pipelines, CI/CD
 - Tools for data, monitoring and LLMs: feature stores, DVC, Evidently, Prometheus, cloud, RAG
 - ai-chunk/change_tests/test_change.py
-- ai-json/change_tests/test_change.py
 - ai-trim/change_tests/test_change.py
 - BankAccount
 - BankAccount
@@ -336,7 +335,6 @@
 - fill_features reference
 - guard_scores reference
 - score_batch reference
-- serve_features
 - serve_features reference
 - mf-train-serve-skew/starter.py
 - assign_arm: reference
@@ -409,7 +407,6 @@
 - gmv_by_city
 - gmv_by_city
 - gmv_by_city
-- gmv_by_city
 - pdx-dedupe-latest/docs.md
 - pdx-fillna-strategy/docs.md
 - leaky_features
@@ -439,7 +436,7 @@
 - test_change
 - test_io
 - test_change
-- test_change
+- r7-03-health-always-ok/fix_solution.py
 - py1-dataclass-order/starter.py
 - field_order.py
 - no_order.py
@@ -468,7 +465,7 @@
 - coupon_effect
 - coupon_effect
 - coupon_effect
-- add_time_features
+- r7-06-fallback-hides-failures/fix_solution.py
 - add_time_features
 - add_time_features
 - add_time_features
@@ -479,8 +476,6 @@
 - fix_types
 - fix_types
 - fix_types
-- fix_types
-- fill_subtotal
 - fill_subtotal
 - fill_subtotal
 - fill_subtotal
@@ -490,8 +485,6 @@
 - merge_restaurants
 - merge_restaurants
 - merge_restaurants
-- merge_restaurants
-- iqr_outliers
 - iqr_outliers
 - iqr_outliers
 - iqr_outliers
@@ -501,14 +494,11 @@
 - time_split
 - time_split
 - time_split
-- time_split
-- mf-label-leakage-scan/change_solution.py
 - ge_threshold.py
 - lazy_length_check.py
 - signed_only.py
 - sorts_by_signed_correlation.py
 - rolling_mean
-- mf-stale-model-detector/change_solution.py
 - mf-stale-model-detector/starter.py
 - at_limit_is_stale.py
 - uses_days_attr.py
@@ -524,7 +514,7 @@
 - build_model
 - test_assistant.py
 - Knowledge-base topics
-- test_app_kinds.py
+- create_app
 - app.py
 - 03-ai.md
 - reviewer.py
@@ -538,7 +528,7 @@
 - tool-cloud-platforms.md
 - tool-data-versioning.md
 - pick_lines
-- create_app
+- test_redesign.py
 - journey
 - 03-senior.md
 - 04-phrases.md
@@ -680,59 +670,58 @@
 - test-raises.md
 - test-what-to-test.md
 - mock.py
-- check
 - make_delivery_data.py
 - test_cards.py
 - api/index.py
 
 ## God Nodes (most connected - your core abstractions)
-1. `create_app()` - 26 edges
-2. `h()` - 25 edges
-3. `drift_alarm()` - 23 edges
-4. `BoundedQueue` - 23 edges
+1. `create_app()` - 27 edges
+2. `h()` - 27 edges
+3. `BoundedQueue` - 23 edges
+4. `load_content()` - 23 edges
 5. `parse_config()` - 22 edges
 6. `TokenBucket` - 22 edges
 7. `sample_ids()` - 22 edges
-8. `load_content()` - 22 edges
-9. `find_leaky_features()` - 21 edges
-10. `exView()` - 21 edges
+8. `exView()` - 22 edges
+9. `final_state()` - 20 edges
+10. `validate_request()` - 20 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `_mk()` --indirect_call--> `good()`  [INFERRED]
   content/s04-robust-code/exercises/prod-breaker/tests/test_hidden.py → tests/test_gates.py
-- `build_rows()` --calls--> `pick()`  [INFERRED]
-  tools/make_delivery_data.py → gym/mock.py
+- `test_exercises_sort_by_order_then_id()` --calls--> `load_content()`  [EXTRACTED]
+  tests/test_content_extras.py → gym/content.py
 - `client()` --calls--> `create_app()`  [EXTRACTED]
   tests/test_app.py → gym/app.py
-- `client()` --calls--> `create_app()`  [EXTRACTED]
-  tests/test_app_kinds.py → gym/app.py
-- `test_sql_schema_hides_insert_lines()` --calls--> `create_app()`  [EXTRACTED]
-  tests/test_app_kinds.py → gym/app.py
+- `test_pending_review_can_be_retried()` --calls--> `create_app()`  [EXTRACTED]
+  tests/test_app.py → gym/app.py
+- `env()` --calls--> `create_app()`  [EXTRACTED]
+  tests/test_assistant.py → gym/app.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (2907 total, 187 thin omitted)
+## Communities (2866 total, 181 thin omitted)
 
 ### Community 0 - "drift_alarm"
-Cohesion: 0.07
-Nodes (28): RunningMean, drift_alarm(), test_default_keeps_old_behaviour(), test_empty_live_is_still_no_data(), test_window_at_minimum_is_judged(), test_window_below_minimum_is_no_data(), test_works_together_with_k(), drift_alarm() (+20 more)
+Cohesion: 0.08
+Nodes (22): RunningMean, drift_alarm(), test_both_reasons_in_order(), test_empty_windows_never_raise(), test_exactly_on_limit_is_not_alarm(), test_mean_drop_alarms_too(), test_mean_shift(), test_mean_uses_k_too() (+14 more)
 
 ### Community 1 - "runner.py"
 Cohesion: 0.11
 Nodes (33): check_sql(), _pytest(), _query(), Run pytest on test_candidate.py in a temp dir holding `files` (name -> text)., Grade a learner's test file: it must pass on `good` and fail on every `bads`…, Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free() (+25 more)
 
 ### Community 2 - "load_content"
-Cohesion: 0.11
-Nodes (26): Exercise, _existing(), load_content(), load_exercise(), Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric(), Step (+18 more)
+Cohesion: 0.13
+Nodes (16): Exercise, _existing(), load_content(), load_exercise(), Evaluation after a core build passes. 0: none. 1: What if. 2: What if, then a…, Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric() (+8 more)
 
 ### Community 3 - "backoff_delay"
-Cohesion: 0.11
-Nodes (21): backoff_delay(), Backoff delay helper for retry loops., Seconds to wait after failed attempt number `attempt` (1-based)., retry(), Flaky, test_default_factor_is_two(), test_factor_delay_is_still_capped(), test_factor_still_raises_last_without_final_sleep() (+13 more)
+Cohesion: 0.15
+Nodes (15): backoff_delay(), Backoff delay helper for retry loops., Seconds to wait after failed attempt number `attempt` (1-based)., retry(), Flaky, run(), test_delay_is_capped(), test_delays_are_in_seconds() (+7 more)
 
 ### Community 4 - "app.js"
 Cohesion: 0.14
-Nodes (46): api(), assistantPanel(), bugPanel(), cardsView(), CHIP_INFO, COMPETENCY, controlPanel(), devBtn (+38 more)
+Nodes (48): api(), assistantPanel(), assistWhatIf(), bugPanel(), cardsView(), CHIP_INFO, COMPETENCY, controlPanel() (+40 more)
 
 ### Community 5 - "test_app.py"
 Cohesion: 0.14
@@ -742,9 +731,9 @@ Nodes (14): client(), fake_gemini(), post(), fixture, test_a_challenge_pass_coun
 Cohesion: 0.11
 Nodes (21): Clock, make(), test_none_means_default_and_len_counts_live(), test_per_key_ttl_longer_than_default(), test_per_key_ttl_shorter_than_default(), test_replacing_resets_the_lifetime(), TTLCache, Clock (+13 more)
 
-### Community 7 - "is_rate_limited"
-Cohesion: 0.12
-Nodes (21): is_rate_limited(), test_default_still_ignores_request_at_now(), test_include_now_counts_request_at_now(), test_include_now_does_not_count_later_requests(), test_include_now_explicit_false(), test_include_now_keeps_window_start_inclusive(), Small helper for working with event timestamps (seconds)., Return the timestamps t with start <= t < end (start <= t <= end when… (+13 more)
+### Community 7 - "window_slice"
+Cohesion: 0.15
+Nodes (15): Small helper for working with event timestamps (seconds)., Return the timestamps t with start <= t < end (start <= t <= end when…, window_slice(), is_rate_limited(), test_at_limit(), test_empty_history(), test_request_exactly_at_now_does_not_count(), test_request_exactly_at_window_start_counts() (+7 more)
 
 ### Community 8 - "parse_config"
 Cohesion: 0.11
@@ -770,9 +759,9 @@ Nodes (11): Adding content, AI provider, Deploy on Vercel, Design, Dev mode, Kno
 Cohesion: 0.53
 Nodes (4): count_words(), test_basic(), test_empty(), test_mixed_case()
 
-### Community 14 - "process_until"
-Cohesion: 0.18
-Nodes (19): Clock, test_deadline_can_stop_before_max_items(), test_generator_input_with_max_items(), test_max_items_larger_than_items(), test_max_items_limits_work(), test_max_items_stops_before_deadline_and_none_means_no_limit(), test_max_items_zero_runs_nothing(), process_until() (+11 more)
+### Community 14 - "Clock"
+Cohesion: 0.29
+Nodes (12): process_until(), Clock, test_all_done_before_deadline(), test_boundary_is_exclusive(), test_clock_consulted_before_each_item(), test_deadline_already_passed(), test_empty_items(), test_falsy_results_are_kept() (+4 more)
 
 ### Community 15 - "check_health"
 Cohesion: 0.17
@@ -782,9 +771,9 @@ Nodes (23): boom(), degraded(), down(), ok(), test_not_strict_is_still_degraded(
 Cohesion: 0.13
 Nodes (18): test_put_many_drop_oldest(), test_put_many_empty_and_partial_space(), test_put_many_falsy_items_count(), test_put_many_reject(), BoundedQueue, parametrize, test_bad_args(), test_default_policy_is_drop_oldest() (+10 more)
 
-### Community 17 - "predict_with_fallback"
-Cohesion: 0.21
-Nodes (18): Clock, make_model(), test_default_still_times_out(), test_error_still_falls_back_with_keep_late(), test_in_time_is_still_model(), test_late_falsy_result_is_kept(), test_late_result_is_kept(), predict_with_fallback() (+10 more)
+### Community 17 - "pm-timeout-fallback/tests/test_hidden.py"
+Cohesion: 0.35
+Nodes (11): predict_with_fallback(), Clock, make_model(), test_any_exception_type_falls_back_once(), test_exactly_at_deadline_is_ok(), test_exception_uses_fallback(), test_falsy_fallback_is_returned_as_is(), test_falsy_results_are_kept() (+3 more)
 
 ### Community 20 - "get_features"
 Cohesion: 0.15
@@ -799,16 +788,16 @@ Cohesion: 0.20
 Nodes (21): failing(), test_cap_above_all_delays_changes_nothing(), test_cap_given_by_keyword_with_other_base(), test_capped_still_does_not_sleep_after_last_failure_or_retry_permanent(), test_delay_is_capped(), test_none_means_no_cap(), call_with_retry(), Exception (+13 more)
 
 ### Community 28 - "predict_with_fallback"
-Cohesion: 0.18
-Nodes (21): boom(), in_unit(), test_both_invalid_use_default(), test_invalid_model_value_falls_to_rule(), test_valid_model_value_kept_and_rule_not_called(), test_valid_not_applied_to_default(), test_valid_not_called_for_none(), test_valid_receives_the_value() (+13 more)
+Cohesion: 0.30
+Nodes (12): predict_with_fallback(), boom(), test_any_exception_type_is_caught(), test_both_fail_use_default(), test_default_returned_as_is_even_none(), test_exception_falls_to_rule(), test_features_passed_through(), test_later_stage_not_called_when_earlier_answers() (+4 more)
 
 ### Community 29 - "bg7-ttl-refresh-keeps-old-clock/tests/test_hidden.py"
 Cohesion: 0.15
 Nodes (15): TTLCache, Clock, make(), test_evicts_oldest_when_full(), test_expired_entries_are_dropped_before_evicting_live_ones(), test_expires_at_exactly_ttl(), test_falsy_values_are_hits(), test_get_does_not_refresh_age() (+7 more)
 
 ### Community 30 - "run_batch"
-Cohesion: 0.18
-Nodes (17): Handler, test_failure_with_limit_still_propagates_and_keeps_checkpoint(), test_limit_counts_only_new_items(), test_limit_processes_only_part(), test_limit_zero_and_larger_than_work(), test_repeated_limited_runs_continue(), run_batch(), Handler (+9 more)
+Cohesion: 0.29
+Nodes (11): run_batch(), Handler, test_crash_on_first_item_keeps_checkpoint_at_zero(), test_crash_then_resume(), test_duplicate_items_are_each_processed_once(), test_empty_items(), test_falsy_results_are_recorded(), test_finished_items_not_reprocessed() (+3 more)
 
 ### Community 32 - "process_stream"
 Cohesion: 0.18
@@ -823,8 +812,8 @@ Cohesion: 0.16
 Nodes (20): test_empty_exclude_still_works(), test_everything_left_is_picked_when_k_matches(), test_exclude_values_not_in_ids_are_ignored(), test_excluded_never_picked(), test_excluding_every_copy_of_a_value(), test_k_is_checked_against_remaining_items(), test_repeatable_and_input_not_modified(), sample_ids() (+12 more)
 
 ### Community 35 - "find_leaky_features"
-Cohesion: 0.17
-Nodes (19): test_length_check_still_applies_with_top_k(), test_top_k_keeps_the_strongest(), test_top_k_larger_than_result(), test_top_k_none_means_all(), test_top_k_with_threshold(), test_top_k_zero_is_empty(), test_unlimited_order_is_as_before(), _corr() (+11 more)
+Cohesion: 0.26
+Nodes (12): _corr(), find_leaky_features(), test_constant_feature_not_leaky(), test_constant_labels_never_leaky(), test_empty_features(), test_every_feature_length_is_checked(), test_exact_copy_is_leaky(), test_exactly_at_threshold_is_not_leaky() (+4 more)
 
 ### Community 36 - "TokenBucket"
 Cohesion: 0.22
@@ -835,16 +824,16 @@ Cohesion: 0.18
 Nodes (18): test_default_for_empty_and_all_invalid(), test_default_ignored_when_there_are_valid_values(), test_default_none_is_the_old_behaviour(), test_nan_default_is_returned_as_given(), _ok(), safe_mean(), safe_rate(), test_mean_all_zeros_and_negatives_and_fractions() (+10 more)
 
 ### Community 43 - "rank"
-Cohesion: 0.20
-Nodes (18): ids(), test_input_not_modified_and_new_list(), test_limit_applies_after_ranking_with_ties_and_none(), test_limit_none_is_everything(), test_limit_zero_and_too_large(), test_top_two(), rank(), ids() (+10 more)
+Cohesion: 0.30
+Nodes (12): rank(), ids(), test_empty(), test_example(), test_fractional_scores_are_not_rounded(), test_full_ties_keep_input_order(), test_input_not_modified(), test_mixed_ties_everything_at_once() (+4 more)
 
 ### Community 44 - "iqr_outliers"
-Cohesion: 0.22
-Nodes (18): small(), test_default_k_still_1_5(), test_k_with_missing_values_and_real_data(), test_narrower_fence_flags_more(), test_value_on_the_new_fence_is_not_outlier(), test_wider_fence_flags_less(), iqr_outliers(), DataFrame (+10 more)
+Cohesion: 0.32
+Nodes (12): iqr_outliers(), DataFrame, small(), test_ids_sorted_when_rows_are_not(), test_input_untouched(), test_low_and_high_outliers_sorted(), test_matches_reference_on_real_data(), test_missing_values_do_not_shift_quartiles() (+4 more)
 
-### Community 45 - "serve_features"
-Cohesion: 0.20
-Nodes (18): test_category_and_keys_unchanged_when_clipping(), test_clip_none_changes_nothing(), test_large_amount_is_clipped(), test_value_inside_range_is_untouched(), test_very_negative_value_is_clipped(), Online version for one row. Must return exactly what train_features returns for…, Reference implementation used at training time. Do not change it. amount: a…, serve_features() (+10 more)
+### Community 45 - "mf-train-serve-skew/tests/test_hidden.py"
+Cohesion: 0.28
+Nodes (13): Online version for one row. Must return exactly what train_features returns for…, Reference implementation used at training time. Do not change it. amount: a…, serve_features(), train_features(), check(), test_category_is_cleaned(), test_log1p_not_log(), test_missing_amount() (+5 more)
 
 ### Community 46 - "assign"
 Cohesion: 0.17
@@ -879,12 +868,12 @@ Cohesion: 0.20
 Nodes (16): _frame(), test_default_still_latest(), test_earliest_on_real_orders_and_input_untouched(), test_earliest_row_wins(), test_many_ties_keep_the_first_in_input(), test_tie_keeps_the_earlier_row(), latest_per_key(), DataFrame (+8 more)
 
 ### Community 54 - "score_batch"
-Cohesion: 0.25
-Nodes (16): fn(), test_default_fill_still_none(), test_fill_example(), test_fill_zero_is_used_not_ignored(), test_good_scores_never_replaced_by_fill(), test_string_fill(), score_batch(), fn() (+8 more)
+Cohesion: 0.38
+Nodes (10): score_batch(), fn(), test_all_good(), test_bad_row_does_not_sink_batch(), test_empty(), test_missing_key_is_reported_not_raised(), test_only_exception_is_caught(), test_order_and_length_preserved() (+2 more)
 
 ### Community 55 - "check_staleness"
-Cohesion: 0.19
-Nodes (16): test_ages_are_not_changed_by_grace(), test_beyond_limit_plus_grace_is_stale(), test_exactly_limit_plus_grace_is_ok(), test_future_timestamp_still_raises(), test_grace_applies_to_data_too(), test_grace_makes_slightly_old_model_ok(), check_staleness(), datetime (+8 more)
+Cohesion: 0.30
+Nodes (10): check_staleness(), datetime, test_ages_keep_the_fraction(), test_data_stale(), test_each_age_uses_its_own_limit(), test_exactly_at_limit_is_ok(), test_fractional_age_counts(), test_fresh() (+2 more)
 
 ### Community 56 - "parse_event"
 Cohesion: 0.20
@@ -895,28 +884,28 @@ Cohesion: 0.20
 Nodes (15): test_bounds_are_inclusive(), test_custom_fallback_with_bounds_and_nan(), test_no_bounds_unchanged(), test_only_hi(), test_only_lo(), test_range_example(), guard_scores(), test_all_good() (+7 more)
 
 ### Community 58 - "assign_arm"
-Cohesion: 0.20
-Nodes (14): test_empty_force_list_changes_nothing(), test_forced_user_is_canary_even_at_zero_percent(), test_forced_users_among_many_get_canary_at_any_percent(), test_other_users_are_unchanged(), assign_arm(), test_about_five_percent(), test_default_salt_is_canary_v1(), test_empty_id_and_return_values() (+6 more)
+Cohesion: 0.27
+Nodes (10): assign_arm(), test_about_five_percent(), test_default_salt_is_canary_v1(), test_empty_id_and_return_values(), test_only_adds_users_when_percent_grows(), test_percent_is_respected(), test_salt_reshuffles(), test_share_even_at_other_percents() (+2 more)
 
 ### Community 59 - "prod-monitor/tests/test_hidden.py"
 Cohesion: 0.31
 Nodes (17): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_check_4(), test_check_5(), test_check_6() (+9 more)
 
 ### Community 60 - "merge_intervals"
-Cohesion: 0.21
-Nodes (14): test_gap_chain_unsorted(), test_gap_input_not_changed(), test_gap_merges_near_intervals(), test_gap_mixed(), test_gap_too_small(), test_gap_zero_and_default_unchanged(), merge_intervals(), test_basic() (+6 more)
+Cohesion: 0.36
+Nodes (8): merge_intervals(), test_basic(), test_chain_and_point(), test_contained(), test_empty_and_single(), test_input_not_changed(), test_touching(), test_unsorted()
 
 ### Community 61 - "bg4-retry-extra-sleep/tests/test_hidden.py"
 Cohesion: 0.28
 Nodes (15): call_with_retry(), Exception, TransientError, flaky(), test_backoff_keeps_doubling(), test_base_delay(), test_exhausted_reraises_last_without_extra_sleep(), test_last_transient_error_is_the_one_raised() (+7 more)
 
 ### Community 62 - "gmv_by_city"
-Cohesion: 0.22
-Nodes (14): small(), test_cancelled_also_counted(), test_default_and_input_untouched(), test_only_cancelled_and_empty_selection(), test_real_data_all_statuses_sorted(), gmv_by_city(), DataFrame, Series (+6 more)
+Cohesion: 0.31
+Nodes (9): gmv_by_city(), DataFrame, Series, reference(), small(), test_inputs_not_modified(), test_matches_reference_on_real_data(), test_small_case_missing_subtotal_and_cancelled() (+1 more)
 
 ### Community 63 - "fill_features"
-Cohesion: 0.21
-Nodes (14): test_empty_string_filled_when_flag_on(), test_empty_string_in_non_default_key_kept(), test_flag_off_keeps_empty_string(), test_no_mutation_with_flag(), test_none_and_absent_still_filled_when_flag_on(), test_zero_false_still_real_when_flag_on(), fill_features(), test_absent_and_none() (+6 more)
+Cohesion: 0.36
+Nodes (8): fill_features(), test_absent_and_none(), test_defaults_not_modified(), test_empty_row_and_no_mutation(), test_empty_string_is_a_real_value(), test_extra_keys_kept(), test_nothing_missing(), test_zero_and_false_are_real()
 
 ### Community 64 - "find_skew"
 Cohesion: 0.22
@@ -931,16 +920,16 @@ Cohesion: 0.12
 Nodes (15): 10. The test edited to pass, 1. Mutable default argument, 2. Off-by-one, 3. NaN comparison, 4. Swallowed exceptions, 5. Data leakage, 6. Naive datetimes, 7. Wrong complexity (+7 more)
 
 ### Community 67 - "fix_types"
-Cohesion: 0.27
-Nodes (13): _raw(), test_default_and_empty_tuple_unchanged(), test_input_not_modified_with_tokens(), test_listed_tokens_become_nan_after_strip(), test_real_data_with_extra_tokens(), fix_types(), DataFrame, _raw() (+5 more)
+Cohesion: 0.42
+Nodes (8): fix_types(), DataFrame, _raw(), test_coupon_empty_becomes_nan_and_codes_kept(), test_empty_frame(), test_input_not_modified(), test_real_data_types(), test_spaces_only_coupon_and_other_columns_untouched()
 
 ### Community 68 - "merge_restaurants"
-Cohesion: 0.22
-Nodes (13): test_all_matched_is_fine_when_required(), test_real_data_and_inputs_untouched(), test_unmatched_order_kept_by_default(), test_unmatched_order_raises_when_required(), test_unused_restaurants_are_fine_and_empty_orders_never_raise(), merge_restaurants(), DataFrame, test_duplicate_key_nobody_uses_is_not_an_error() (+5 more)
+Cohesion: 0.33
+Nodes (8): merge_restaurants(), DataFrame, test_duplicate_key_nobody_uses_is_not_an_error(), test_duplicate_restaurant_key_raises(), test_inputs_not_modified_and_empty_orders(), test_order_without_restaurant_is_kept(), test_real_data_matches_reference(), test_unsorted_inputs_not_modified_even_on_the_error_path()
 
 ### Community 69 - "binary_metrics"
-Cohesion: 0.23
-Nodes (13): test_default_is_still_label_one(), test_explicit_positive_one_matches_default(), test_length_mismatch_still_raises(), test_no_example_of_chosen_label_gives_zeros(), test_positive_zero_metrics(), test_positive_zero_second_case(), binary_metrics(), test_always_negative_on_imbalanced() (+5 more)
+Cohesion: 0.39
+Nodes (7): binary_metrics(), test_always_negative_on_imbalanced(), test_empty(), test_f1_is_harmonic_mean(), test_length_mismatch_raises(), test_mixed(), test_no_positives_in_truth()
 
 ### Community 70 - "prod-debug/tests/test_hidden.py"
 Cohesion: 0.33
@@ -951,20 +940,20 @@ Cohesion: 0.13
 Nodes (14): *args and **kwargs, Common mistakes, Comprehensions, Dict methods, f-strings, Lambdas and key functions, Related, Slicing (+6 more)
 
 ### Community 72 - "top_k"
-Cohesion: 0.24
-Nodes (12): test_default_unchanged(), test_filters_rare_items(), test_k_still_applies(), test_min_count_three(), test_nothing_reaches_min_count(), top_k(), test_basic(), test_empty_and_zero() (+4 more)
+Cohesion: 0.39
+Nodes (7): top_k(), test_basic(), test_empty_and_zero(), test_k_too_big(), test_ties_all_equal(), test_ties_by_first_appearance(), test_ties_first_appearance_not_last()
 
 ### Community 73 - "add_time_features"
-Cohesion: 0.28
-Nodes (12): _frame(), test_default_still_saturday_sunday_and_input_untouched(), test_dtype_empty_frame_and_real_data(), test_friday_saturday_weekend(), test_single_day_and_list_and_empty_set(), add_time_features(), DataFrame, _frame() (+4 more)
+Cohesion: 0.42
+Nodes (7): add_time_features(), DataFrame, _frame(), test_empty_frame(), test_known_values(), test_real_data_matches_reference(), test_types_and_input_not_modified()
 
 ### Community 74 - "fill_subtotal"
-Cohesion: 0.28
-Nodes (12): _small(), test_default_adds_no_column(), test_flag_keeps_index_and_input_untouched(), test_flag_marks_original_missing_rows(), test_flag_on_real_data_and_empty(), fill_subtotal(), DataFrame, _small() (+4 more)
+Cohesion: 0.42
+Nodes (7): fill_subtotal(), DataFrame, _small(), test_input_not_modified_and_index_kept(), test_matches_reference_on_real_data(), test_nothing_missing_and_empty(), test_small_frame_uses_restaurant_then_global_median()
 
 ### Community 75 - "dedupe_events"
-Cohesion: 0.24
-Nodes (12): test_custom_key_example(), test_empty_and_input_untouched(), test_falsy_key_values_deduped(), test_id_field_ignored_when_key_given(), dedupe_events(), test_empty(), test_falsy_ids_are_deduped_too(), test_input_not_modified() (+4 more)
+Cohesion: 0.36
+Nodes (8): dedupe_events(), test_empty(), test_falsy_ids_are_deduped_too(), test_input_not_modified(), test_keeps_first_and_counts(), test_no_duplicates(), test_order_preserved(), test_same_id_different_type_is_different()
 
 ### Community 76 - "Counter"
 Cohesion: 0.21
@@ -979,16 +968,16 @@ Cohesion: 0.30
 Nodes (12): rank(), ids(), test_empty(), test_example(), test_fractional_scores_are_not_rounded(), test_full_ties_keep_input_order(), test_input_not_modified(), test_mixed_ties_everything_at_once() (+4 more)
 
 ### Community 79 - "time_split"
-Cohesion: 0.25
-Nodes (11): test_default_has_no_gap(), test_embargo_can_empty_train(), test_gap_rows_are_in_neither_frame(), test_real_data_embargo(), DataFrame, time_split(), real(), test_empty_side_and_input_untouched() (+3 more)
+Cohesion: 0.39
+Nodes (7): DataFrame, time_split(), real(), test_empty_side_and_input_untouched(), test_matches_reference_on_real_data(), test_no_overlap_and_train_is_older(), test_row_exactly_at_cutoff_goes_to_test()
 
 ### Community 80 - "calibration_bins"
 Cohesion: 0.33
 Nodes (12): calibration_bins(), _check(), test_bad_input_raises(), test_bin_edge_goes_up(), test_bin_is_floor_not_round(), test_default_is_ten_bins(), test_empty_bins_skipped(), test_empty_input() (+4 more)
 
 ### Community 81 - "clip_probs"
-Cohesion: 0.25
-Nodes (11): test_clipped_value_is_float(), test_default_still_one(), test_hi_two_keeps_values_below(), test_percent_scale(), test_value_equal_to_hi_not_counted(), clip_probs(), test_boundaries_not_counted(), test_clips_and_counts() (+3 more)
+Cohesion: 0.43
+Nodes (6): clip_probs(), test_boundaries_not_counted(), test_clips_and_counts(), test_empty(), test_in_range_untouched(), test_input_not_modified()
 
 ### Community 82 - "validate_request"
 Cohesion: 0.26
@@ -1338,9 +1327,9 @@ Nodes (8): Complexity cheatsheet, Python structures, Say it like this, SQL, The 
 Cohesion: 0.22
 Nodes (8): Finding rows with no match, Joining three tables and a table to itself, Joins explained, Say it like this, The four kinds you need, The problem it solves, The smallest example, The three traps
 
-### Community 169 - "test_db.py"
-Cohesion: 0.22
-Nodes (8): get_attempt(), get_review(), latest_review(), passed_attempts(), update_review(), test_attempts_round_trip(), test_latest_review_is_per_kind(), test_update_review()
+### Community 169 - "whatif.py"
+Cohesion: 0.24
+Nodes (11): candidates(), describe(), _in_string(), pick(), What if: change one line of some code and ask whether it still works. Builds:…, Every one-line change: swap an operator, bump a number, or delete a simple…, Change the code `want` ways. judge(changed_code) -> 'pass' or 'fail' by really…, valid_python() (+3 more)
 
 ### Community 170 - "ai-topk/tests/test_hidden.py"
 Cohesion: 0.54
@@ -1502,13 +1491,13 @@ Nodes (6): Say it like this, The problem it solves, The smallest runnable exampl
 Cohesion: 0.57
 Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_inf_none_and_other_exceptions(), test_rate_all_good_all_bad_and_zero_fallback()
 
-### Community 227 - "dbg-avg/change_tests/test_change.py"
-Cohesion: 0.52
-Nodes (6): D(), test_cap_with_cancelled_and_missing(), test_default_keeps_everything(), test_large_values_dropped(), test_nothing_left_is_none(), test_value_equal_to_cap_stays()
+### Community 227 - "test_content_extras.py"
+Cohesion: 0.38
+Nodes (11): build(), load_one(), One step with one exercise 'e1'. files maps path-under-exercise -> text., test_exercises_sort_by_order_then_id(), test_extras_and_wrong_solutions(), test_files_are_resolved_and_must_exist(), test_quiz_loads_and_rejects_bad_answer_index(), test_rubric_items_with_a_colon_stay_strings() (+3 more)
 
-### Community 228 - "dbg-late/change_tests/test_change.py"
-Cohesion: 0.52
-Nodes (6): D(), test_grace_boundary_is_strict(), test_grace_forgives_small_delays(), test_grace_uses_each_orders_own_promise(), test_mixed_with_grace_and_cancelled(), test_no_delivered_still_zero()
+### Community 228 - "_insert"
+Cohesion: 0.22
+Nodes (11): add_chat(), add_event(), create_mock(), finished_mocks(), get_mock(), _insert(), Record that the learner did something (for example ran code) and where in the…, update_mock() (+3 more)
 
 ### Community 229 - "dbg-late/tests/test_hidden.py"
 Cohesion: 0.67
@@ -1522,17 +1511,17 @@ Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_each_order_keep
 Cohesion: 0.67
 Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_check_3(), test_ties_mixed_with_unequal_class_sizes_and_unsorted_input()
 
-### Community 232 - "st-z/change_tests/test_change.py"
-Cohesion: 0.62
-Nodes (6): _close(), _ns(), test_default_and_pooled_true_unchanged(), test_unpooled_differs_from_pooled_and_equal_rates_zero(), test_unpooled_values(), _unpooled()
+### Community 232 - "r4-04-retry-non-retryable/fix_solution.py"
+Cohesion: 0.50
+Nodes (3): BadRequest, Exception, score_api()
 
 ### Community 233 - "ai-eval/tests/test_hidden.py"
 Cohesion: 0.67
 Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_gold_is_normalised_too(), test_overall_is_pooled_not_mean_of_categories()
 
-### Community 234 - "ai-psi/change_tests/test_change.py"
-Cohesion: 0.67
-Nodes (6): _close(), _ns(), test_default_eps_unchanged(), test_eps_applies_to_expected_too(), test_eps_leaves_nonzero_bins_alone(), test_larger_eps_for_zero_bin()
+### Community 234 - "fake_get"
+Cohesion: 0.60
+Nodes (4): fake_get(), Simulates an HTTP GET without sleeping; returns (payload, seconds_waited)., score_blocking(), score_with_timeout()
 
 ### Community 242 - "prod-debug/starter.py"
 Cohesion: 0.29
@@ -1605,10 +1594,6 @@ Nodes (5): How it breaks in production, Structured logging, The defence in code,
 ### Community 269 - "Proving it with tests"
 Cohesion: 0.33
 Nodes (5): How it breaks in production, Proving it with tests, The defence in code, What it is, What to say in the interview
-
-### Community 270 - "st-meanstd/change_tests/test_change.py"
-Cohesion: 0.73
-Nodes (5): _close(), _ns(), test_ddof_matches_statistics_module(), test_population_std(), test_single_value_with_ddof_zero_and_default()
 
 ### Community 271 - "st-z/tests/test_hidden.py"
 Cohesion: 0.73
@@ -1746,10 +1731,6 @@ Nodes (5): How it breaks in production, The defence in code, Tools for data, mon
 Cohesion: 0.70
 Nodes (4): _ns(), test_drops_short_last_chunk(), test_full_chunks_and_default_unchanged(), test_nothing_full_gives_empty()
 
-### Community 314 - "ai-json/change_tests/test_change.py"
-Cohesion: 0.70
-Nodes (4): _ns(), test_all_required_keys_present(), test_default_and_invalid_unchanged(), test_missing_required_key_gives_none()
-
 ### Community 315 - "ai-trim/change_tests/test_change.py"
 Cohesion: 0.70
 Nodes (4): _ns(), test_reserve_exactly_fits(), test_reserve_shrinks_budget(), test_system_kept_even_with_big_reserve()
@@ -1810,10 +1791,6 @@ Nodes (4): Contract, Gotchas, guard_scores reference, Library notes
 Cohesion: 0.40
 Nodes (4): Contract, Gotchas, Library notes, score_batch reference
 
-### Community 341 - "serve_features"
-Cohesion: 0.50
-Nodes (4): Online version for one row. Must return exactly what train_features returns for…, Reference implementation used at training time. Do not change it. amount: a…, serve_features(), train_features()
-
 ### Community 342 - "serve_features reference"
 Cohesion: 0.40
 Nodes (4): Contract, Gotchas, Library notes, serve_features reference
@@ -1851,8 +1828,8 @@ Cohesion: 0.40
 Nodes (4): Contract, Gotchas, Library notes, TTLCache: reference
 
 ### Community 351 - "check_content.py"
-Cohesion: 0.24
-Nodes (12): check_exercise(), check_kb(), Knowledge-base problems: broken articles, links to missing topics, exercises…, load_kb(), The in-app knowledge base: short reference articles under content/_kb/<topic-…, Topic, build(), test_api_serves_index_article_and_exercise_topics() (+4 more)
+Cohesion: 0.13
+Nodes (25): check(), check_curriculum(), check_exercise(), check_kb(), Knowledge-base problems: broken articles, links to missing topics, exercises…, Rules for the real curriculum (not for tiny test fixtures): every exercise…, load_kb(), The in-app knowledge base: short reference articles under content/_kb/<topic-… (+17 more)
 
 ### Community 352 - "cb-brackets/tests/test_hidden.py"
 Cohesion: 0.67
@@ -1950,10 +1927,6 @@ Nodes (3): days_since_previous(), DataFrame, Series
 Cohesion: 0.50
 Nodes (3): days_since_previous(), DataFrame, Series
 
-### Community 411 - "gmv_by_city"
-Cohesion: 0.50
-Nodes (3): gmv_by_city(), DataFrame, Series
-
 ### Community 412 - "gmv_by_city"
 Cohesion: 0.50
 Nodes (3): gmv_by_city(), DataFrame, Series
@@ -2034,25 +2007,25 @@ Nodes (21): build_prompt(), has_code_block(), The in-app AI assistant. One assis
 Cohesion: 0.17
 Nodes (11): AI assistants and LLM engineering, AI/ML engineering tools, Algorithm patterns, Interview technique, Knowledge-base topics, Machine learning and statistics, pandas, Python core (+3 more)
 
-### Community 798 - "test_app_kinds.py"
-Cohesion: 0.22
-Nodes (4): client(), fake_gemini(), fixture, test_sql_schema_hides_insert_lines()
+### Community 798 - "create_app"
+Cohesion: 0.11
+Nodes (15): Vercel entry point: the same FastAPI app, with progress kept in /tmp (it is…, create_app(), main(), load_env(), Read KEY=VALUE lines into os.environ without overriding existing values., client(), fake_gemini(), fixture (+7 more)
 
 ### Community 799 - "app.py"
-Cohesion: 0.16
-Nodes (19): Vercel entry point: the same FastAPI app, with progress kept in /tmp (it is…, BaseModel, CardBody, ControlChangeBody, ControlExplainBody, ExerciseBody, main(), MockAnswers (+11 more)
+Cohesion: 0.21
+Nodes (17): BaseModel, CardBody, ControlChangeBody, ControlExplainBody, ExerciseBody, FixBody, MockAnswers, MockSubmit (+9 more)
 
 ### Community 984 - "reviewer.py"
 Cohesion: 0.16
 Nodes (17): build_prompt(), call_groq(), followups(), _material(), parse_review(), provider_info(), Groq's OpenAI-compatible chat endpoint, asked for a JSON object., What the settings menu shows: label, model in use, and whether a key is… (+9 more)
 
 ### Community 986 - "test_gates.py"
-Cohesion: 0.31
-Nodes (13): record_attempt(), save_review(), exercise_status(), _review_ok(), step_status(), good(), test_passes_in_other_modes_do_not_count(), test_review_must_be_done_and_meet_min_score() (+5 more)
+Cohesion: 0.29
+Nodes (14): record_attempt(), save_review(), exercise_status(), _review_ok(), step_status(), _whatif_ok(), good(), test_passes_in_other_modes_do_not_count() (+6 more)
 
 ### Community 1212 - "db.py"
-Cohesion: 0.10
-Nodes (15): add_chat(), add_event(), create_mock(), finished_mocks(), get_control(), get_mock(), _insert(), is_assisted() (+7 more)
+Cohesion: 0.09
+Nodes (13): get_attempt(), get_control(), get_review(), get_whatif(), is_assisted(), latest_review(), passed_attempts(), Delete everything the learner has done (attempts, reviews, card schedule,… (+5 more)
 
 ### Community 1215 - "tool-ci-cd-ml.md"
 Cohesion: 0.40
@@ -2070,9 +2043,9 @@ Nodes (4): Details, Likely interview questions, See also, What to say and what n
 Cohesion: 0.33
 Nodes (8): candidate_lines(), pick_lines(), The control check: pick two lines of the learner's own code to explain., Two lines, in file order, chosen at random but fixed for a given seed (the…, (line number, text) of lines worth asking about: real logic, not comments,…, test_candidates_skip_comments_imports_and_docstrings(), test_tiny_code_falls_back_to_any_lines(), test_two_lines_in_file_order_fixed_per_seed()
 
-### Community 1371 - "create_app"
-Cohesion: 0.14
-Nodes (21): create_app(), env(), files(), post(), fixture, test_a_low_line_explanation_review_does_not_open_the_change(), test_a_plan_is_required_before_the_code_runs(), test_dev_mode_opens_everything_and_reveals_answers() (+13 more)
+### Community 1371 - "test_redesign.py"
+Cohesion: 0.17
+Nodes (20): env(), files(), fixed_questions(), post(), fixture, test_a_low_line_explanation_review_does_not_open_the_change(), test_a_plan_is_required_before_the_code_runs(), test_an_assisted_extra_build_needs_what_if_instead_of_an_explanation() (+12 more)
 
 ### Community 1411 - "journey"
 Cohesion: 0.29
@@ -2626,10 +2599,6 @@ Nodes (3): Common mistakes, Details, See also
 Cohesion: 0.22
 Nodes (10): pick(), ratio(), Up to two Python tasks flagged mock: true., Share of good behaviours; no data counts as full credit., results: one test result per task. asks, ran, lines: 0..1 shares (small asks,…, score(), test_pick_fails_without_mock_exercises(), test_pick_returns_the_python_mock_tasks() (+2 more)
 
-### Community 2359 - "check"
-Cohesion: 0.27
-Nodes (12): check(), check_curriculum(), Rules for the real curriculum (not for tiny test fixtures): every exercise…, test_curriculum_rules(), test_duplicate_exercise_id_is_reported(), test_missing_say_and_hint_are_reported(), test_sample_content_is_clean(), test_sql_wrong_and_alt_queries_are_checked() (+4 more)
-
 ### Community 2371 - "make_delivery_data.py"
 Cohesion: 0.43
 Nodes (5): test_dataset_shape_and_determinism(), build_rows(), generate(), Generate the shared food-delivery dataset used by SQL and pandas exercises.…, sql_value()
@@ -2645,22 +2614,22 @@ Nodes (5): includeFiles, maxDuration, functions, api/index.py, rewrites
 ## Knowledge Gaps
 - **960 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+955 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **187 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **181 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `create_app()` connect `create_app` to `load_content`, `test_app.py`, `test_assistant.py`, `app.py`, `test_app_kinds.py`, `check_content.py`?**
-  _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **Why does `load_content()` connect `load_content` to `create_app`, `check`, `check_content.py`, `app.py`?**
-  _High betweenness centrality (0.000) - this node is a cross-community bridge._
+- **Why does `good()` connect `test_gates.py` to `prod-breaker/tests/test_hidden.py`?**
+  _High betweenness centrality (0.001) - this node is a cross-community bridge._
+- **Why does `_mk()` connect `prod-breaker/tests/test_hidden.py` to `test_gates.py`?**
+  _High betweenness centrality (0.001) - this node is a cross-community bridge._
 - **What connects `Version`, `Version`, `Version` to the rest of the system?**
   _960 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `drift_alarm` be split into smaller, more focused modules?**
-  _Cohesion score 0.06866002214839424 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08235294117647059 - nodes in this community are weakly interconnected._
 - **Should `runner.py` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `load_content` be split into smaller, more focused modules?**
-  _Cohesion score 0.11051693404634581 - nodes in this community are weakly interconnected._
-- **Should `backoff_delay` be split into smaller, more focused modules?**
-  _Cohesion score 0.11092436974789915 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12681159420289856 - nodes in this community are weakly interconnected._
+- **Should `app.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.1363265306122449 - nodes in this community are weakly interconnected._

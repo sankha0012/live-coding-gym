@@ -7,3 +7,4 @@ questions:
   - What does zip do in the positives line, and which items does the if filter keep?
   - Why can sum(flags) be used to count, and what would len(flags) be if scores were empty?
 serves: [C2, C9]
+level: 1

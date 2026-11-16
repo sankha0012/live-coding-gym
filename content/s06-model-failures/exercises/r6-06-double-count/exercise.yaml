@@ -7,3 +7,4 @@ questions:
   - Why do the naive totals differ from the deduplicated ones?
   - What goes wrong if the data comes from a source that retries and delivers events at least once?
   - What does the dropped count tell a monitor?
+level: 3

@@ -1,0 +1,30 @@
+- change: 'Line 7: `ranked = sorted(pairs, key=lambda p: (-p[1], p[0]))` becomes `ranked = sorted(pairs, key=lambda p: (p[1], p[0]))`.'
+  old: -p[1]
+  new: p[1]
+  answer: different
+  result: Without the minus sign the scores sort ascending, so the worst model comes first.
+- change: 'Line 7: `ranked = sorted(pairs, key=lambda p: (-p[1], p[0]))` becomes `ranked = sorted(pairs, key=lambda p: (-p[1],))`.'
+  old: (-p[1], p[0])
+  new: (-p[1],)
+  answer: different
+  result: Without the name as tie-breaker, svm and logreg keep their original order, so svm gets rank 2.
+- change: 'Line 11: `by_name_length = sorted(models, key=lambda m: len(m))` becomes `by_name_length = sorted(models, key=len)`.'
+  old: 'lambda m: len(m)'
+  new: len
+  answer: same
+  result: key=len is exactly the same function as the lambda.
+- change: 'Line 4: `pairs = list(zip(models, scores))` becomes `pairs = [*zip(models, scores)]`.'
+  old: list(zip(models, scores))
+  new: '[*zip(models, scores)]'
+  answer: same
+  result: Both build a list of the same pairs.
+- change: 'Line 8: `for rank, (name, score) in enumerate(ranked, start=1):` becomes `for rank, name, score in enumerate(ranked, start=1):`.'
+  old: rank, (name, score)
+  new: rank, name, score
+  answer: crash
+  result: Each item is (rank, pair), so unpacking it into three names fails with ValueError.
+- change: 'Line 11: `by_name_length = sorted(models, key=lambda m: len(m))` becomes `by_name_length = models.sort(key=lambda m: len(m))`.'
+  old: 'sorted(models, key=lambda m: len(m))'
+  new: 'models.sort(key=lambda m: len(m))'
+  answer: different
+  result: list.sort changes the list in place and returns None, so it prints None and then the sorted models list.

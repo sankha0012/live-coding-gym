@@ -1,0 +1,1 @@
+Make `load_model` stop replacing a missing version with another one: only an explicit `"latest"` request may resolve to the latest model. Change the second call so that it asks for `"latest"`. The output must be `model-churn-1.0`, `model-churn-1.1` and `KeyError ('fraud', '1.0')`, so that the error names what the caller really asked for.

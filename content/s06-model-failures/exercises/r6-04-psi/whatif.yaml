@@ -1,0 +1,30 @@
+- change: 'Line 12: `eps = 1e-4` becomes `eps = 1e-6`.'
+  old: eps = 1e-4
+  new: eps = 1e-6
+  answer: different
+  result: A smaller floor makes the empty bins weigh more, since the log of a smaller ratio is larger in size.
+- change: 'Line 13: `e = np.clip(e, eps, None)` is deleted (replaced by `pass`).'
+  old: e = np.clip(e, eps, None)
+  new: pass
+  answer: same
+  result: The expected shares have no empty bin, so clipping them changes nothing.
+- change: 'Line 14: `a = np.clip(a, eps, None)` is deleted (replaced by `pass`).'
+  old: a = np.clip(a, eps, None)
+  new: pass
+  answer: different
+  result: The actual shares contain zeros, so the log gives -inf and the PSI becomes inf, with only a warning.
+- change: 'Line 6: `[0.0, 0.25, 0.5, 0.75, 1.0]` becomes `[1.0, 0.75, 0.5, 0.25, 0.0]`.'
+  old: '[0.0, 0.25, 0.5, 0.75, 1.0]'
+  new: '[1.0, 0.75, 0.5, 0.25, 0.0]'
+  answer: crash
+  result: 'ValueError: histogram bin edges must increase monotonically.'
+- change: 'Line 17: `psi > 0.25` becomes `psi > 1.0`.'
+  old: psi > 0.25
+  new: psi > 1.0
+  answer: same
+  result: The PSI of 5.97 is above both cutoffs, so it is still high.
+- change: 'Line 15: `np.log(a / e)` becomes `np.log(e / a)`.'
+  old: np.log(a / e)
+  new: np.log(e / a)
+  answer: different
+  result: 'The sign of every term flips, so the sum is negative and drift reads as ok: the two factors must have the same sign.'

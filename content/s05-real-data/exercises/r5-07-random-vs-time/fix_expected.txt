@@ -1,0 +1,6 @@
+random: test days [15, 16, 17, 18, 19]
+random: train mean=170.0 test mean=270.0 gap=100.0
+random: train has days after first test day: False
+time: test days [15, 16, 17, 18, 19]
+time: train mean=170.0 test mean=270.0 gap=100.0
+time: train has days after first test day: False

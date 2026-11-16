@@ -1,0 +1,30 @@
+- change: 'Line 12: `pass` becomes `raise`.'
+  old: pass
+  new: raise
+  answer: crash
+  result: The error is no longer swallowed, so health() raises AttributeError on the first call.
+- change: 'Line 12: `pass` becomes `return {"status": "down"}`.'
+  old: pass
+  new: 'return {"status": "down"}'
+  answer: different
+  result: A failing check now reports down, so the first print and the last line (False) change.
+- change: 'Line 1: `state = {"model": None}` becomes `state = {}`.'
+  old: 'state = {"model": None}'
+  new: state = {}
+  answer: different
+  result: The lookup state["model"] raises KeyError instead of AttributeError, while health() still says ok.
+- change: 'Line 1: `state = {"model": None}` becomes `state = {"model": object()}`.'
+  old: 'state = {"model": None}'
+  new: 'state = {"model": object()}'
+  answer: same
+  result: A plain object has no predict method either, so it is still an AttributeError that health() swallows.
+- change: 'Line 10: `predict([1.0, 2.0])` inside health is deleted (replaced by `pass`).'
+  old: '        predict([1.0, 2.0])'
+  new: '        pass'
+  answer: same
+  result: health() never used the result of the check, so removing the check changes nothing it returns.
+- change: 'Line 5: `state["model"].predict([features])[0]` becomes `state["model"].predict([features])`.'
+  old: .predict([features])[0]
+  new: .predict([features])
+  answer: same
+  result: The call never gets past state["model"].predict because None has no predict, so the index is never reached.

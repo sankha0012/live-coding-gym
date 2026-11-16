@@ -1,0 +1,30 @@
+- change: 'Line 8: `e.get("amount_cents", 0)` becomes `e["amount_cents"]`.'
+  old: e.get("amount_cents", 0)
+  new: e["amount_cents"]
+  answer: crash
+  result: The v1 events have no amount_cents key, so the lookup raises KeyError.
+- change: 'Line 8: `e.get("amount_cents", 0)` becomes `e.get("amount_cents", 0.0)`.'
+  old: e.get("amount_cents", 0)
+  new: e.get("amount_cents", 0.0)
+  answer: different
+  result: The sum starts mixing floats, so the total prints as 1250.0 instead of 1250.
+- change: 'Line 10: `total_cents / 100` becomes `total_cents // 100`.'
+  old: total_cents / 100
+  new: total_cents // 100
+  answer: different
+  result: Floor division drops the half unit, so 12 is printed instead of 12.5.
+- change: 'Line 8: `e.get("amount_cents", 0)` becomes `e.get("amount_cents") or 0`.'
+  old: e.get("amount_cents", 0)
+  new: e.get("amount_cents") or 0
+  answer: same
+  result: Missing keys give None, which is falsy, so 0 is used and the total is unchanged.
+- change: 'Line 12: `"amount_cents" not in e` becomes `e["v"] == 1`.'
+  old: '"amount_cents" not in e'
+  new: e["v"] == 1
+  answer: same
+  result: In this data the events without amount_cents are exactly the v1 events, so the count is still 2.
+- change: 'Line 8: `e.get("amount_cents", 0)` becomes `e.get("amount_cents", e.get("amount", 0) * 100)`.'
+  old: e.get("amount_cents", 0)
+  new: e.get("amount_cents", e.get("amount", 0) * 100)
+  answer: different
+  result: The v1 amounts are now converted to cents and counted, so the total grows to 3200.0.

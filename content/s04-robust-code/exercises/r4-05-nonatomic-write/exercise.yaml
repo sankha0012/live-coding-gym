@@ -12,3 +12,4 @@ questions:
 - Why does a reader see 'corrupt' after the naive crash but 1 after the atomic crash?
 - What goes wrong in production if a model or config file is written in place and the process is killed halfway?
 - Why is writing to a temporary file and then replacing the target safe, and what must be true about where the temporary file lives?
+level: 3

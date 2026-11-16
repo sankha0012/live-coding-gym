@@ -1,0 +1,30 @@
+- change: 'Line 14: `print(list(gen))` becomes `print(list(batches(ids, 3)))`.'
+  old: list(gen)
+  new: list(batches(ids, 3))
+  answer: different
+  result: A fresh generator is created, so it runs from the start and prints the 'making batch' lines and a full list of batches instead of the empty list.
+- change: 'Line 4: `yield items[start:start + size]` becomes `return items[start:start + size]`.'
+  old: yield items[start:start + size]
+  new: return items[start:start + size]
+  answer: crash
+  result: With no yield batches is a normal function that returns a list, so next(gen) fails with TypeError because a list is not an iterator.
+- change: 'Line 2: `for start in range(0, len(items), size):` becomes `for start in range(0, len(items) + 1, size):`.'
+  old: range(0, len(items), size)
+  new: range(0, len(items) + 1, size)
+  answer: same
+  result: len is 7, so range(0, 8, 3) still yields starts 0, 3 and 6.
+- change: 'Line 12: `for batch in gen:` becomes `for batch in iter(gen):`.'
+  old: 'for batch in gen:'
+  new: 'for batch in iter(gen):'
+  answer: same
+  result: iter() of a generator returns the same generator, so nothing changes.
+- change: 'Line 8: `gen = batches(ids, 3)` becomes `gen = iter(list(batches(ids, 3)))`.'
+  old: batches(ids, 3)
+  new: iter(list(batches(ids, 3)))
+  answer: different
+  result: list() runs the generator to the end immediately, so all 'making batch' lines print before 'created'.
+- change: 'Line 10: `first = next(gen)` becomes `first = next(gen) + next(gen)`.'
+  old: next(gen)
+  new: next(gen) + next(gen)
+  answer: different
+  result: Two batches are consumed at once and concatenated, so 'first' holds six ids and the loop only sees the last batch.

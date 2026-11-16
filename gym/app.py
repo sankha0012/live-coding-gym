@@ -3,6 +3,7 @@ import inspect
 import json
 import math
 import os
+import random
 import secrets
 import subprocess
 from dataclasses import asdict
@@ -12,7 +13,7 @@ from fastapi import FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import assistant, cards, config, control, db, gates, mock, reviewer, runner
+from . import assistant, cards, config, control, db, gates, mock, reviewer, runner, whatif
 from .content import load_content
 from .kb import load_kb
 
@@ -31,8 +32,16 @@ class ExerciseBody(BaseModel):
     exercise_id: str
 
 
-class PredictBody(ExerciseBody):
-    prediction: str
+class WhatIfStartBody(ExerciseBody):
+    fresh: bool = False   # new questions instead of the open ones
+
+
+class WhatIfAnswerBody(ExerciseBody):
+    answers: list[str]
+
+
+class FixBody(ExerciseBody):
+    code: str
 
 
 class TriageBody(ExerciseBody):
@@ -165,30 +174,49 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
             return "Catch"
         return "Build" if ex.kind in ("python", "sql", "tests", "prompt") else "Defend"
 
+    TRAP_QUESTION = "In one sentence: what is the trap or surprise in this code?"
+    BUILD_CHOICES, READ_CHOICES = ["pass", "fail"], ["same", "different", "crash"]
+
+    def whatif_info(ex):
+        """The What if rounds of a reading, of a core build, or of an assisted extra build."""
+        row = db.get_whatif(conn, ex.id)
+        needed = ex.kind == "read" or ex.control_level in (1, 2) or (not ex.control_level and status_of(ex)["assisted"])
+        return {"needed": needed, "started": row is not None, "ok": bool(row and row["ok"]),
+                "choices": READ_CHOICES if ex.kind == "read" else BUILD_CHOICES,
+                "questions": [{"change": q["change"]} for q in json.loads(row["questions_json"])] if row else []}
+
     def control_info(ex):
-        if not ex.change_dir:
+        level = ex.control_level
+        if not level:
             return None
         row = db.get_control(conn, ex.id)
         started = row is not None
-        complete = bool(row and row["a_ok"] and row["b_ok"])
-        return {"started": started, "complete": complete, "a_ok": bool(row and row["a_ok"]), "b_ok": bool(row and row["b_ok"]),
+        a, b = bool(row and row["a_ok"]), bool(row and row["b_ok"])
+        w = bool(db.get_whatif(conn, ex.id) and db.get_whatif(conn, ex.id)["ok"])
+        complete = {1: w, 2: w and b, 3: a and b}[level]
+        return {"level": level, "started": started, "complete": complete, "a_ok": a, "b_ok": b, "whatif_ok": w,
                 "lines": json.loads(row["lines_json"]) if started else [],
-                "change": ex.change if started or dev() else "", "locked": started and not complete and not dev(),
-                "ready": db.last_passed_attempt(conn, ex.id) is not None}
+                "change": ex.change if (started or dev()) and level >= 2 else "",
+                "locked": started and not complete and not dev(),
+                "ready": db.last_passed_attempt(conn, ex.id) is not None,
+                "whatif": whatif_info(ex)}
 
     def payload(ex, mode="blank"):
         st = status_of(ex)
-        revealed = dev() or st["tests"] is True or st["review"] is True
-        rk = "explain" if st.get("assisted") else reviewer.REVIEW_KIND.get(ex.kind)
+        written = ex.kind == "read" and ex.level >= 2  # the model answer would give the written part away
+        revealed = dev() or (st["review"] is True if written else st["tests"] is True or st["review"] is True)
+        rk = reviewer.REVIEW_KIND.get(ex.kind) if ex.kind != "read" or ex.level >= 2 else None
         mode = mode if mode in MODES.get(ex.kind, []) else "blank"
         code = "" if mode == "challenge" else ex.starter
         schema = "\n".join(l for l in ex.seed.splitlines() if not l.startswith("INSERT"))
-        shown_output = ex.kind == "read" and (dev() or st["tests"] is True or db.get_setting(conn, f"revealed:{ex.id}") == "1")
+        shown_output = ex.kind == "read" and (dev() or st["tests"] is True)
         return {"id": ex.id, "step_id": ex.step_id, "title": ex.title, "kind": ex.kind, "prompt": ex.prompt,
                 "serves": ex.serves, "docs": ex.docs, "modes": MODES.get(ex.kind, []), "mode": mode, "code": code,
                 "schema": schema, "assistant": ex.assistant, "plan_required": ex.plan_required,
                 "grade_prompts": ex.grade_prompts, "name_bug": ex.name_bug,
-                "snippet": ex.snippet, "questions": ex.questions, "expected": ex.expected if shown_output else "",
+                "snippet": ex.snippet, "level": ex.level if ex.kind == "read" else ex.control_level,
+                "questions": [] if ex.kind != "read" or ex.level < 2 else [TRAP_QUESTION] if ex.level == 2 else ex.questions,
+                "fix": ex.fix if ex.level >= 3 else "", "whatif": whatif_info(ex), "expected": ex.expected if shown_output else "",
                 "proposals": [{"title": p["title"], "code": p["code"], **({"correct": p["correct"], "why": p.get("why", "")} if dev() else {})}
                               for p in ex.proposals],
                 "bug": ex.bug if dev() else "", "change_solution": ex.change_solution if dev() else "",
@@ -420,20 +448,16 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         kind = reviewer.REVIEW_KIND.get(ex.kind)
         if kind is None:
             raise HTTPException(400, "this exercise has no review")
-        if ex.kind in CODED and status_of(ex)["assisted"]:
-            # the assistant wrote code here: grade the learner's explanation of it, not the code
-            if not body.text.strip():
-                raise HTTPException(400, "The assistant wrote code for this exercise. Explain it in your own words first.")
-            attempt = need(db.get_attempt(conn, body.attempt_id), "attempt")
-            material = {"task": ex.prompt, "code": attempt["code"], "candidate explanation": body.text}
-            return do_review(ex.id, "explain", None, material, body.attempt_id)
         if ex.kind in CODED:
             attempt = need(db.get_attempt(conn, body.attempt_id), "attempt")
             material = {"task": ex.prompt, "code": attempt["code"],
                         "candidate explanation": body.text, "reference solution": ex.solution}
         elif ex.kind == "read":
+            if ex.level < 2:
+                raise HTTPException(400, "this reading has no written answer")
+            asked = [TRAP_QUESTION] if ex.level == 2 else ex.questions
             material = {"task": ex.prompt, "code the candidate was shown": ex.snippet,
-                        "questions asked": "\n".join(f"- {q}" for q in ex.questions),
+                        "questions asked": "\n".join(f"- {q}" for q in asked),
                         "candidate answer": body.text, "reference answer": ex.say}
         else:
             material = {"task": ex.prompt, "answer": body.text}
@@ -451,27 +475,68 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def norm_output(text):
         return "\n".join(line.rstrip() for line in text.strip().splitlines())
 
-    @app.post("/api/predict")
-    def predict(body: PredictBody):
-        """read exercises: the learner's prediction of what the snippet prints, compared exactly."""
-        ex = get_ex(body.exercise_id)
-        if ex.kind != "read":
-            raise HTTPException(400, "this exercise is not a reading exercise")
-        passed = norm_output(body.prediction) == norm_output(ex.expected)
-        attempt_id = db.record_attempt(conn, ex.id, "blank", body.prediction, passed, 0, "")
-        return {"passed": passed, "attempt_id": attempt_id, "status": status_of(ex)}
+    def judge_build(ex):
+        """Run changed code the way the exercise grades code: 'pass' or 'fail'."""
+        return lambda code: "pass" if grade(ex, code).passed else "fail"
 
-    @app.post("/api/predict/reveal")
-    def predict_reveal(body: ExerciseBody):
-        """Show what the snippet really prints, but only after the learner has made a prediction."""
+    def make_questions(ex, rounds):
+        """(source attempt id, questions with answers) for one round of What if."""
+        if ex.kind == "read":
+            want = 2 if ex.level == 1 else 3
+            variants = list(ex.whatif)
+            random.Random(f"{ex.id}{rounds}").shuffle(variants)
+            both = [next((v for v in variants if (v["answer"] == "same") == flag), None) for flag in (True, False)]
+            chosen = [v for v in both if v] + [v for v in variants if v not in both]
+            return 0, [{"change": v["change"], "answer": v["answer"], "result": v.get("result", "")} for v in chosen[:want]]
+        attempt = db.last_passed_attempt(conn, ex.id)
+        if attempt is None:
+            raise HTTPException(400, "Pass the tests first. What if works on your passing code.")
+        want = 2 if ex.control_level == 1 or not ex.control_level else 3
+        qs = whatif.pick(attempt["code"], attempt["id"] * 101 + rounds, judge_build(ex), want=want, sql=ex.kind == "sql")
+        if not qs:
+            raise HTTPException(400, "This code has no line that can be changed. Write a longer solution.")
+        return attempt["id"], qs
+
+    @app.post("/api/whatif/start")
+    def whatif_start(body: WhatIfStartBody):
+        """Open (or reopen, or refresh) the What if questions for an exercise."""
         ex = get_ex(body.exercise_id)
-        if ex.kind != "read":
-            raise HTTPException(400, "this exercise is not a reading exercise")
-        if not db.passed_attempts(conn, ex.id) and not conn.execute(
-                "SELECT 1 FROM attempts WHERE exercise_id = ?", (ex.id,)).fetchone():
-            raise HTTPException(400, "Predict first. Reading the output before you try defeats the exercise.")
-        db.set_setting(conn, f"revealed:{ex.id}", "1")
-        return {"output": ex.expected}
+        if ex.kind != "read" and ex.kind not in ("python", "sql"):
+            raise HTTPException(400, "this exercise has no What if rounds")
+        row = db.get_whatif(conn, ex.id)
+        newest = 0 if ex.kind == "read" else (db.last_passed_attempt(conn, ex.id) or {"id": None})["id"]
+        if row and (row["ok"] or (not body.fresh and row["source_id"] == newest)):
+            return {"whatif": whatif_info(ex), "status": status_of(ex)}
+        source, qs = make_questions(ex, (row["rounds"] + 1) if row else 0)
+        db.save_whatif(conn, ex.id, source, qs, (row["rounds"] + 1) if row else 0)
+        return {"whatif": whatif_info(ex), "status": status_of(ex)}
+
+    @app.post("/api/whatif/answer")
+    def whatif_answer(body: WhatIfAnswerBody):
+        ex = get_ex(body.exercise_id)
+        row = need(db.get_whatif(conn, ex.id), "What if round")
+        qs = json.loads(row["questions_json"])
+        if len(body.answers) != len(qs):
+            raise HTTPException(400, "answer every question")
+        results = [{"correct": a == q["answer"], "answer": q["answer"], "result": q.get("result", "")} for a, q in zip(body.answers, qs)]
+        ok = all(r["correct"] for r in results)
+        if ok:
+            db.set_whatif_ok(conn, ex.id, True)
+        else:  # the answers were just shown, so the next try gets a new set
+            source, fresh = make_questions(ex, row["rounds"] + 1)
+            db.save_whatif(conn, ex.id, source, fresh, row["rounds"] + 1)
+        return {"results": results, "ok": ok, "whatif": whatif_info(ex), "control": control_info(ex), "status": status_of(ex)}
+
+    @app.post("/api/fix")
+    def fix(body: FixBody):
+        """Reading, level 3: change the code so that it prints the target output."""
+        ex = get_ex(body.exercise_id)
+        if ex.kind != "read" or ex.level < 3:
+            raise HTTPException(400, "this exercise has no fix task")
+        result = runner.run_python_free(body.code, timeout=30)
+        passed = result.passed and norm_output(result.output) == norm_output(ex.fix_expected)
+        db.record_attempt(conn, ex.id, "fix", body.code, passed, 0, result.output)
+        return {"passed": passed, "output": result.output, "status": status_of(ex)}
 
     @app.post("/api/triage")
     def triage(body: TriageBody):
@@ -516,22 +581,25 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def control_start(body: ExerciseBody):
         """Begin the control check on the learner's latest passing code: two random lines to explain, then a change."""
         ex = get_ex(body.exercise_id)
-        if not ex.change_dir:
+        level = ex.control_level
+        if not level:
             raise HTTPException(400, "this exercise has no control check")
         attempt = db.last_passed_attempt(conn, ex.id)
         if attempt is None:
             raise HTTPException(400, "Pass the tests first. The control check works on your passing code.")
         row = db.get_control(conn, ex.id)
-        done = bool(row and row["a_ok"] and row["b_ok"])
+        done = control_info(ex)["complete"]
         if row is None or (not done and row["attempt_id"] != attempt["id"]):
-            db.start_control(conn, ex.id, attempt["id"], control.pick_lines(attempt["code"], attempt["id"]))
+            db.start_control(conn, ex.id, attempt["id"], control.pick_lines(attempt["code"], attempt["id"]) if level == 3 else [])
+        if level < 3:
+            whatif_start(WhatIfStartBody(exercise_id=ex.id))
         return {"control": control_info(ex), "code": attempt["code"], "status": status_of(ex)}
 
     @app.post("/api/control/explain")
     def control_explain(body: ControlExplainBody):
         ex = get_ex(body.exercise_id)
         row = db.get_control(conn, ex.id)
-        if row is None:
+        if row is None or ex.control_level != 3:
             raise HTTPException(400, "Start the control check first.")
         lines = json.loads(row["lines_json"])
         if len(body.explanations) != len(lines) or not all(e.strip() for e in body.explanations):
@@ -548,7 +616,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def control_change(body: ControlChangeBody):
         ex = get_ex(body.exercise_id)
         row = db.get_control(conn, ex.id)
-        if row is None:
+        if row is None or ex.control_level < 2 or not ex.change_dir:
             raise HTTPException(400, "Start the control check first.")
         if ex.kind == "sql":
             result = runner.check_sql(ex.seed, body.code, ex.change_solution, ex.ordered)

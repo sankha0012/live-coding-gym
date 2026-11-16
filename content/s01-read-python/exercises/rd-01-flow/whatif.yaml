@@ -1,0 +1,30 @@
+- change: "Line 9: `if loss < best_loss:` becomes `if loss <= best_loss:`."
+  old: "if loss < best_loss:"
+  new: "if loss <= best_loss:"
+  answer: different
+  result: "In epoch 1 the loss equals best_loss (1.0), so it now counts as improved instead of no change."
+- change: "Line 6: `range(1, epochs + 1)` becomes `range(epochs)`."
+  old: "range(1, epochs + 1)"
+  new: "range(epochs)"
+  answer: crash
+  result: "The loop now starts at epoch 0 and 1.0 / 0 raises ZeroDivisionError."
+- change: "Line 7: `round(1.0 / epoch, 3)` becomes `round(1 / epoch, 3)`."
+  old: "round(1.0 / epoch, 3)"
+  new: "round(1 / epoch, 3)"
+  answer: same
+  result: "Dividing integers with / gives a float in Python 3, so the values are identical."
+- change: "Line 8: `history.append(loss)` is deleted (replaced by `pass`)."
+  old: "history.append(loss)"
+  new: "pass"
+  answer: different
+  result: "history stays empty, so the last line says after 0 epochs."
+- change: "Line 19: `print(\"keep training\")` is deleted (replaced by `pass`)."
+  old: "print(\"keep training\")"
+  new: "pass"
+  answer: same
+  result: "The else branch never runs because best_loss is 0.2, so removing it changes nothing."
+- change: "Line 16: `if best_loss < 0.25:` becomes `if best_loss < 0.2:`."
+  old: "if best_loss < 0.25:"
+  new: "if best_loss < 0.2:"
+  answer: different
+  result: "best_loss is exactly 0.2, which is not less than 0.2, so it prints keep training."

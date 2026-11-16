@@ -8,3 +8,4 @@ questions:
   - "What does load_model('churn', '1.2') return, and why is that surprising?"
   - "What goes wrong in production if a missing model version silently resolves to latest?"
   - "Why does the final KeyError name ('fraud', 'latest') and not ('fraud', '1.0'), and how would you fix the lookup?"
+level: 3

@@ -7,3 +7,4 @@ questions:
   - "Why do the guards 'if tp + fp else 0.0' exist?"
   - "Why can accuracy look good on its own even when a model is poor?"
 serves: [C2, C9]
+level: 1

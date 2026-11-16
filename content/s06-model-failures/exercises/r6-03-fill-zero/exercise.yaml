@@ -7,3 +7,4 @@ questions:
   - What does fillna(0) do to the mean and to the low-income count?
   - What goes wrong if the data has missing incomes that are not really zero?
   - Why is the median fill a better default here, and what does it still hide?
+level: 2

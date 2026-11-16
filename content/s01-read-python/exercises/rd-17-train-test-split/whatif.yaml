@@ -1,0 +1,30 @@
+- change: 'Line 7: `stratify=y` becomes `stratify=None`.'
+  old: stratify=y
+  new: stratify=None
+  answer: different
+  result: Without stratifying, the second call is the same plain shuffle as the first, so it prints [1, 5, 8] instead of [3, 6, 8].
+- change: 'Line 7: `test_size=0.3` becomes `test_size=0.25`.'
+  old: test_size=0.3, random_state=42,
+  new: test_size=0.25, random_state=42,
+  answer: same
+  result: The test size is rounded up to ceil(10 * 0.25) = 3 rows, the same size as before, so the stratified split is identical.
+- change: 'Line 9: `print(len(a), len(b))` becomes `print(len(ya), len(yb))`.'
+  old: print(len(a), len(b))
+  new: print(len(ya), len(yb))
+  answer: same
+  result: The labels are split along with the rows, so they have the same lengths, 7 and 3.
+- change: 'Line 7: `stratify=y` becomes `stratify=X`.'
+  old: stratify=y
+  new: stratify=X
+  answer: crash
+  result: 'ValueError: every value of X is its own class with a single member, and stratifying needs at least two per class.'
+- change: 'Line 12: `sorted(a + b)` becomes `sorted(a + d)`.'
+  old: sorted(a + b)
+  new: sorted(a + d)
+  answer: different
+  result: The train rows of the first split and the test rows of the second split overlap and miss some rows, so it prints False.
+- change: 'Line 6: `random_state=42)` becomes `random_state=7)`.'
+  old: test_size=0.3, random_state=42)
+  new: test_size=0.3, random_state=7)
+  answer: different
+  result: A different seed gives a different shuffle, so the first test set is [0, 5, 8], while the stratified split keeps its seed and does not change.

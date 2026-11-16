@@ -11,3 +11,4 @@ questions:
 - Why do the first two runs differ while the seeded pair matches, even though all four calls use the same function?
 - What goes wrong in production if the evaluation sample is drawn with seed=None?
 - Why does pick_eval_users create its own random.Random(seed) instead of calling random.seed(seed) globally?
+level: 2

@@ -1,0 +1,30 @@
+- change: "Line 26: `alias = latency` becomes `alias = RunningMean(\"latency\")`."
+  old: "alias = latency"
+  new: "alias = RunningMean(\"latency\")"
+  answer: different
+  result: "alias is now a separate object, so latency stays at 2 values and the last line prints 2 100.0."
+- change: "Line 4: `self.total = 0.0` becomes `pass`."
+  old: "self.total = 0.0"
+  new: "pass"
+  answer: crash
+  result: "total is never created, so self.total += value raises AttributeError in add."
+- change: "Line 4: `self.total = 0.0` becomes `self.total = 0`."
+  old: "self.total = 0.0"
+  new: "self.total = 0"
+  answer: same
+  result: "Dividing ints with / still gives a float, and the empty mean returns 0.0 directly."
+- change: "Line 27: `alias.add(100)` becomes `latency.add(100)`."
+  old: "alias.add(100)"
+  new: "latency.add(100)"
+  answer: same
+  result: "alias and latency are the same object, so adding through either name is identical."
+- change: "Line 22: `latency.add(120).add(80)` becomes `latency.add(120)`."
+  old: "latency.add(120).add(80)"
+  new: "latency.add(120)"
+  answer: different
+  result: "Only one value is added at first, so the first line shows n=1 mean=120.00 and the last shows 2 110.0."
+- change: "Line 18: `{self.name!r}` becomes `{self.name}`."
+  old: "{self.name!r}"
+  new: "{self.name}"
+  answer: different
+  result: "The !r adds quotes, so the name now prints without them."

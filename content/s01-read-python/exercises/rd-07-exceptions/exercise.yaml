@@ -7,3 +7,4 @@ questions:
   - "What happens to the loop when parse_score raises ValueError for 1.5?"
   - "Why is 'abc' not in the final list even though no error reached the loop?"
 serves: [C2, C9]
+level: 2

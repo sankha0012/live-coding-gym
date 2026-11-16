@@ -7,3 +7,4 @@ rubric:
   - Correct for empty input and mixed case
   - Readable names and structure
   - No unnecessary code
+control: false

@@ -1,0 +1,30 @@
+- change: 'Line 1: `"u1": 0.71, "u2": float("nan")` becomes `"u1": float("nan"), "u2": 0.71`.'
+  old: '"u1": 0.71, "u2": float("nan")'
+  new: '"u1": float("nan"), "u2": 0.71'
+  answer: different
+  result: Now nan is the first item, so max keeps it and prints u1, and the sort order changes too.
+- change: 'Line 10: `if v == v}` becomes `if v >= 0}`.'
+  old: if v == v}
+  new: if v >= 0}
+  answer: same
+  result: The comparison with nan is False, so nan is still filtered out, and no valid score is negative.
+- change: 'Line 1: `"u4": 0.40` becomes `"u4": 0.45`.'
+  old: '"u4": 0.40'
+  new: '"u4": 0.45'
+  answer: same
+  result: u4 is still the lowest valid score, and the nan comparisons do not depend on the other values.
+- change: 'Line 1: `float("nan")` becomes `0.55`.'
+  old: float("nan")
+  new: '0.55'
+  answer: different
+  result: With a real number the sort is consistent, so u2 lands between u1 and u4 instead of first.
+- change: 'Line 3: `key=scores.get` becomes `key=scores`.'
+  old: sorted(scores, key=scores.get,
+  new: sorted(scores, key=scores,
+  answer: crash
+  result: 'TypeError: a dict is not callable, so it cannot be used as a key function.'
+- change: 'Line 11: `reverse=True` becomes `reverse=False` in the last sorted call.'
+  old: key=valid.get, reverse=True
+  new: key=valid.get, reverse=False
+  answer: different
+  result: 'Without nan the sort is well defined, so the order is simply ascending: u4, u1, u5, u3.'

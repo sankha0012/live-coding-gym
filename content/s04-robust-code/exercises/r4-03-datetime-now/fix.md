@@ -1,0 +1,1 @@
+The first line reads the wall clock, so it prints 0 today and would print something else on another day. Change the code so that `last_week_events` receives the time as an argument instead of calling `datetime.now()`, and call it with `fixed_now`. The first line must then print `with datetime.now(): 3` on every run, and the other two lines stay as they are.

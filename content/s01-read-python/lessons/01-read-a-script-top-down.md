@@ -37,7 +37,7 @@ With input `ann,5 bo,2 ann,3` (separated by whitespace) the script prints `ann 8
 3. **Pick a tiny input** and trace it by hand: one or two items. Write down what each variable holds after each loop pass.
 4. **Look at the types.** For each variable ask: string, number, list, dict? Many surprises come from a value that is a string when you expected a number.
 5. **Check the ends of the loop.** What happens on the first pass, the last pass and with no items at all?
-6. **Predict, then run.** Write down the expected output before you run the code. If the result differs, your mental model is wrong, and that is the thing to fix.
+6. **Predict, then run.** Decide what the output should be before you run the code. If the result differs, your mental model is wrong, and that is the thing to fix.
 
 ## Reading functions
 

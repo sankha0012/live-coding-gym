@@ -1,1 +1,1 @@
-Read the code below without running it. Predict exactly what it prints, character for character, then answer the questions in your own words. Pay attention to the data: the code looks reasonable, but ask what each line assumes about the rows it receives.
+Read the code below, then work out what happens when one line is changed, and name the trap. Pay attention to the data: the code looks reasonable, but ask what each line assumes about the rows it receives.

@@ -1,0 +1,30 @@
+- change: "Line 1: `history=[]` becomes `history=None`."
+  old: "history=[]"
+  new: "history=None"
+  answer: crash
+  result: "log_event has no None check, so history.append raises AttributeError on None."
+- change: "Line 19: `log_event(\"retry\", [])` becomes `log_event(\"retry\")`."
+  old: "log_event(\"retry\", [])"
+  new: "log_event(\"retry\")"
+  answer: different
+  result: "Without its own list the call uses the shared default, which already holds start and stop."
+- change: "Line 14: `log_event(\"stop\")` becomes `log_event(\"stop\", [])`."
+  old: "log_event(\"stop\")"
+  new: "log_event(\"stop\", [])"
+  answer: different
+  result: "second is now a fresh list, so first is only start, second only stop, and first is second is False."
+- change: "Line 7: `if history is None:` becomes `if not history:`."
+  old: "if history is None:"
+  new: "if not history:"
+  answer: same
+  result: "Safe calls never pass a list, so history is None either way and a new list is made."
+- change: "Line 23: `log_event_safe(\"stop\")` becomes `log_event_safe(\"stop\", None)`."
+  old: "log_event_safe(\"stop\")"
+  new: "log_event_safe(\"stop\", None)"
+  answer: same
+  result: "Passing None explicitly is exactly what the default already is."
+- change: "Line 17: `first is second` becomes `first == second`."
+  old: "first is second"
+  new: "first == second"
+  answer: same
+  result: "They are the same object, so they are also equal and it still prints True."

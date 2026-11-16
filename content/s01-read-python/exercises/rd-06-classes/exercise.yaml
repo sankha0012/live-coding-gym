@@ -7,3 +7,4 @@ questions:
   - Why can latency.add(120).add(80) be chained?
   - Why does the last line print 3 and 100.0 after calling alias.add(100)?
 serves: [C2, C9]
+level: 2

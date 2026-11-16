@@ -7,3 +7,4 @@ questions:
   - How are the share lists built, and which bin does the value 0.5 fall into?
   - What goes wrong if the data has an empty bin and the code does not clip?
   - What does the PSI value tell you, and what would you do next?
+level: 3

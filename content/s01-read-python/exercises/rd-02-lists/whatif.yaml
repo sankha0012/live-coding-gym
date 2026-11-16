@@ -1,0 +1,30 @@
+- change: "Line 4: `sorted(scores, reverse=True)[:3]` becomes `sorted(scores)[:3]`."
+  old: "sorted(scores, reverse=True)[:3]"
+  new: "sorted(scores)[:3]"
+  answer: different
+  result: "Without reverse=True the sort is ascending, so the first three are the smallest scores."
+- change: "Line 5: `scores[-2:]` becomes `scores[-2]`."
+  old: "scores[-2:]"
+  new: "scores[-2]"
+  answer: different
+  result: "Without the colon it is an index, not a slice, so a single float 0.05 is printed instead of a list."
+- change: "Line 8: `s > 0.5` becomes `s >= 0.5`."
+  old: "s > 0.5"
+  new: "s >= 0.5"
+  answer: same
+  result: "No score is exactly 0.5, so the boundary does not matter for this data."
+- change: "Line 7: `if y == 1` becomes `if y`."
+  old: "if y == 1"
+  new: "if y"
+  answer: same
+  result: "Labels are only 0 or 1, and 1 is truthy while 0 is falsy, so the same items are kept."
+- change: "Line 7: `zip(scores, labels)` becomes `zip(scores)`."
+  old: "zip(scores, labels)"
+  new: "zip(scores)"
+  answer: crash
+  result: "zip now yields one-item tuples, and unpacking them into s, y raises a ValueError."
+- change: "Line 15: `/ len(flags)` becomes `// len(flags)`."
+  old: "/ len(flags)"
+  new: "// len(flags)"
+  answer: different
+  result: "Floor division of 4 by 6 gives 0 instead of 0.666...."

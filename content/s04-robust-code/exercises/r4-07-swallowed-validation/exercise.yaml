@@ -12,3 +12,4 @@ questions:
 - Which rows does parse_prices silently drop, and why is its printed mean 6.9 rather than something computed over all five rows?
 - What goes wrong in production when invalid rows are dropped with except ... pass?
 - What does parse_prices_strict do differently, and why does it reject two bad rows out of five but accept a clean list?
+level: 3

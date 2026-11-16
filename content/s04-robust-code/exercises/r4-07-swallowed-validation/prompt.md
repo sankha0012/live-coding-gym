@@ -1,1 +1,1 @@
-Read the code below without running it. Predict exactly what it prints, then answer the questions in your own words. Notice which of the five raw strings float() can convert, and compare the share of bad rows with the threshold in the strict version.
+Read the code below, work out what happens when one line is changed, fix the problem, then explain the code. Notice which of the five raw strings float() can convert, and compare the share of bad rows with the threshold in the strict version.

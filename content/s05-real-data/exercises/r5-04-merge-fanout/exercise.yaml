@@ -6,3 +6,4 @@ questions:
   - Why does the merged frame have 5 rows when orders has 3?
   - What goes wrong if the dimension table is loaded from a source that sometimes contains a duplicate key?
   - What do drop_duplicates and validate='many_to_one' each do in the safe version?
+level: 3

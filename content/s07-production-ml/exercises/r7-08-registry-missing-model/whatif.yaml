@@ -1,0 +1,30 @@
+- change: 'Line 9: `or registry[(name, "latest")]` becomes `or registry[(name, version)]`.'
+  old: or registry[(name, "latest")]
+  new: or registry[(name, version)]
+  answer: crash
+  result: Version 1.2 does not exist, so the fallback lookup raises an uncaught KeyError.
+- change: 'Line 9: `registry[(name, "latest")]` becomes `registry.get((name, "latest"))`.'
+  old: registry[(name, "latest")]
+  new: registry.get((name, "latest"))
+  answer: different
+  result: The unknown model fraud now returns None quietly, so no KeyError is raised and the last line is not printed.
+- change: 'Line 4: `("churn", "latest"): "model-churn-1.1"` becomes `("churn", "latest"): "model-churn-1.0"`.'
+  old: '("churn", "latest"): "model-churn-1.1"'
+  new: '("churn", "latest"): "model-churn-1.0"'
+  answer: different
+  result: The unknown version 1.2 falls back to whatever latest points to, which is now 1.0.
+- change: 'Line 2: `("churn", "1.0"): "model-churn-1.0"` becomes `("churn", "1.0"): ""`.'
+  old: '("churn", "1.0"): "model-churn-1.0"'
+  new: '("churn", "1.0"): ""'
+  answer: different
+  result: An empty string is falsy, so `or` treats the found entry as missing and returns the latest model.
+- change: 'Line 17: `print("KeyError", exc)` becomes `print("KeyError", exc.args[0])`.'
+  old: print("KeyError", exc)
+  new: print("KeyError", exc.args[0])
+  answer: same
+  result: A KeyError prints its key, and its first argument is that same tuple key.
+- change: 'Line 13: `load_model("churn", "1.2")` becomes `load_model("churn", "latest")`.'
+  old: load_model("churn", "1.2")
+  new: load_model("churn", "latest")
+  answer: same
+  result: Asking for latest finds the entry directly and returns the same model that the fallback returned.

@@ -1,0 +1,30 @@
+- change: 'Line 8: `df.fillna(df["age"].mean())` becomes `df.fillna({"age": df["age"].mean()})`.'
+  old: df.fillna(df["age"].mean())
+  new: 'df.fillna({"age": df["age"].mean()})'
+  answer: different
+  result: Only the age column is filled now, so the missing income at row 2 stays NaN instead of getting 40.0.
+- change: 'Line 8: `df["age"].mean()` becomes `df["age"].median()`.'
+  old: df["age"].mean()
+  new: df["age"].median()
+  answer: same
+  result: With only two known ages, 30 and 50, the median and the mean are both 40.0.
+- change: 'Line 8: `df.fillna(df["age"].mean())` becomes `df.fillna()`.'
+  old: df.fillna(df["age"].mean())
+  new: df.fillna()
+  answer: crash
+  result: 'TypeError: fillna needs a value (or a method), and none is given.'
+- change: 'Line 11: `dropna(subset=["age"])` becomes `dropna(subset=["income"])`.'
+  old: dropna(subset=["age"])
+  new: dropna(subset=["income"])
+  answer: different
+  result: Only the row with a missing income (row 2) is dropped, so 3 rows remain with index [0, 1, 3].
+- change: 'Line 13: `df["age"].isna()` becomes `df["age"].isnull()`.'
+  old: df["age"].isna()
+  new: df["age"].isnull()
+  answer: same
+  result: isnull is just an alias of isna, so the count is still 2.
+- change: 'Line 13: `print(df["age"].isna().sum())` becomes `print(filled["age"].isna().sum())`.'
+  old: print(df["age"].isna().sum())
+  new: print(filled["age"].isna().sum())
+  answer: different
+  result: filled is the filled copy and has no missing ages, so it prints 0, while df itself still has 2.

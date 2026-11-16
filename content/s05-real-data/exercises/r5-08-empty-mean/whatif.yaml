@@ -1,0 +1,30 @@
+- change: 'Line 6: `.mean()` becomes `.sum()` in `avg_ticket`.'
+  old: df.loc[df["city"] == city, "amount"].mean()
+  new: df.loc[df["city"] == city, "amount"].sum()
+  answer: different
+  result: The sum of no rows is 0.0, not nan, so Rio now looks like a real ticket of zero and the comparisons give False True.
+- change: 'Line 11: `{rio:.2f}` becomes `{rio:.0f}`.'
+  old: '{rio:.2f}'
+  new: '{rio:.0f}'
+  answer: same
+  result: nan ignores the number of decimals and still formats as nan.
+- change: 'Line 12: `rio <= 50` becomes `not rio > 50`.'
+  old: rio <= 50
+  new: not rio > 50
+  answer: different
+  result: Every comparison with nan is False, so `rio > 50` is False and its negation is True.
+- change: 'Line 11: `{rio:.2f}` becomes `{int(rio)}`.'
+  old: '{rio:.2f}'
+  new: '{int(rio)}'
+  answer: crash
+  result: int(nan) raises ValueError because nan cannot be converted to an integer.
+- change: 'Line 17: `sub.empty` becomes `len(sub) == 0`.'
+  old: sub.empty
+  new: len(sub) == 0
+  answer: same
+  result: Both tests say the selection has no rows, so safe_avg still returns the default.
+- change: 'Line 13: `round(rio, 1) == rio` becomes `rio != rio`.'
+  old: round(rio, 1) == rio
+  new: rio != rio
+  answer: different
+  result: nan is the only value not equal to itself, so this prints True.

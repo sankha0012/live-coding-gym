@@ -1,0 +1,30 @@
+- change: 'Line 17: `if ev["id"] in seen:` becomes `if ev["user"] in seen:`.'
+  old: 'if ev["id"] in seen:'
+  new: 'if ev["user"] in seen:'
+  answer: different
+  result: seen holds ids, never users, so nothing is skipped and the deduped totals equal the naive ones.
+- change: 'Line 18: `continue` becomes `pass`.'
+  old: continue
+  new: pass
+  answer: different
+  result: Duplicates are recognised but still added, so the totals double count; dropped still prints 2.
+- change: 'Line 5: `{"id": "e3", "user": "a", "amount": 5}` has its id changed: `"id": "e3"` becomes `"id": "e1"`.'
+  old: '"id": "e3"'
+  new: '"id": "e1"'
+  answer: different
+  result: The genuine event e3 now shares an id with e1, so the dedupe drops it as a replay (deduped a is 10, dropped is 3); an id must be unique per event.
+- change: 'Line 22: `len(events) - len(seen)` becomes `len(events) - len(set(e["id"] for e in events))`.'
+  old: len(events) - len(seen)
+  new: len(events) - len(set(e["id"] for e in events))
+  answer: same
+  result: There are 3 distinct ids in the events, which is exactly what seen ends up holding.
+- change: 'Line 17: `if ev["id"] in seen:` becomes `if ev["id"] in seen and ev["amount"] > 0:`.'
+  old: 'if ev["id"] in seen:'
+  new: 'if ev["id"] in seen and ev["amount"] > 0:'
+  answer: same
+  result: Every amount is positive, so the extra condition is always true and the skip still happens.
+- change: 'Line 11: `naive.get(ev["user"], 0)` becomes `naive[ev["user"]]`.'
+  old: naive.get(ev["user"], 0) + ev["amount"]
+  new: naive[ev["user"]] + ev["amount"]
+  answer: crash
+  result: 'The first event of a user has no entry yet, so it raises KeyError: get supplied the default.'

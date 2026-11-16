@@ -1,0 +1,1 @@
+Change the code so the first result, `arrival:`, no longer depends on the order in which events arrived. It must print `[('u1', 'paid'), ('u2', 'created')]`, the same final status per user as the event-time result below it. Do not change the late-event counting.

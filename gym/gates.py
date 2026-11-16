@@ -16,22 +16,36 @@ def _review_ok(conn, exercise_id, kind, min_score):
     return bool(scores) and min(scores.values()) >= min_score
 
 
+def _whatif_ok(conn, exercise_id):
+    row = db.get_whatif(conn, exercise_id)
+    return bool(row and row["ok"])
+
+
 def exercise_status(conn, ex, step):
     coded = ex.kind in TESTED
     rows = db.passed_attempts(conn, ex.id) if coded else []
     code_kind = ex.kind in ("python", "sql", "tests")
     assisted = code_kind and ex.assistant != "off" and db.is_assisted(conn, ex.id)
-    status = {"tests": None, "review": None, "explain": None,
-              "control": None, "bug": None, "prompts": None}
-    if coded:
-        status["tests"] = any(r["mode"] in PASS_MODES for r in rows)
-    if ex.review or not coded or ex.kind in ("read", "triage"):
-        status["review"] = _review_ok(conn, ex.id, REVIEW_KIND[ex.kind], step.min_score)
-    if assisted:  # the assistant wrote code here: it only counts once the learner explains it
-        status["explain"] = _review_ok(conn, ex.id, "explain", step.min_score)
-    if ex.change_dir:  # control check: explain two lines, then change the code by hand
+    status = {"tests": None, "review": None, "explain": None, "control": None, "bug": None, "prompts": None, "fix": None}
+    if ex.kind == "read":  # the What if rounds are this kind's check; levels 2 and 3 add a written answer, level 3 a fix
+        status["tests"] = _whatif_ok(conn, ex.id)
+        if ex.level >= 2:
+            status["review"] = _review_ok(conn, ex.id, REVIEW_KIND["read"], step.min_score)
+        if ex.level >= 3:
+            status["fix"] = any(r["mode"] == "fix" for r in rows)
+    else:
+        if coded:
+            status["tests"] = any(r["mode"] in PASS_MODES for r in rows)
+        if ex.review or not coded or ex.kind == "triage":
+            status["review"] = _review_ok(conn, ex.id, REVIEW_KIND[ex.kind], step.min_score)
+    level = ex.control_level
+    if level:  # core build: prove you understand the passing code
         control = db.get_control(conn, ex.id)
-        status["control"] = bool(control and control["a_ok"] and control["b_ok"])
+        a, b = bool(control and control["a_ok"]), bool(control and control["b_ok"])
+        w = _whatif_ok(conn, ex.id)
+        status["control"] = {1: w, 2: w and b, 3: a and b}[level]
+    elif assisted:  # the assistant wrote code here: it only counts once the learner shows they understand it
+        status["explain"] = _whatif_ok(conn, ex.id)
     if ex.name_bug:
         status["bug"] = _review_ok(conn, ex.id, "bug", step.min_score)
     if ex.grade_prompts:

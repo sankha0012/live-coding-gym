@@ -1,1 +1,1 @@
-Read the code below without running it. Predict exactly what it prints, line by line, then answer the questions in your own words. Note that the output you are asked to predict is deliberately independent of which users the sampler picks; only the comparisons matter.
+Read the code below, then work out what happens when one line is changed, and name the trap. The output does not depend on which users the sampler picks; only the comparisons matter.

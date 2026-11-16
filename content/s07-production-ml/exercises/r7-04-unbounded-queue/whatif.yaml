@@ -1,0 +1,30 @@
+- change: 'Line 5: `SERVED_PER_TICK = 3` becomes `SERVED_PER_TICK = 5`.'
+  old: SERVED_PER_TICK = 3
+  new: SERVED_PER_TICK = 5
+  answer: crash
+  result: Serving as fast as requests arrive empties the queue, and queue[0] on an empty deque raises IndexError.
+- change: 'Line 5: `SERVED_PER_TICK = 3` becomes `SERVED_PER_TICK = 4`.'
+  old: SERVED_PER_TICK = 3
+  new: SERVED_PER_TICK = 4
+  answer: different
+  result: The backlog grows by 1 per tick instead of 2, so depth and wait are smaller.
+- change: 'Line 13: `queue.popleft()` becomes `queue.pop()`.'
+  old: queue.popleft()
+  new: queue.pop()
+  answer: different
+  result: The newest item is served first, so the depth is the same but the oldest request now waits much longer.
+- change: 'Line 12: `min(SERVED_PER_TICK, len(queue))` becomes `SERVED_PER_TICK`.'
+  old: min(SERVED_PER_TICK, len(queue))
+  new: SERVED_PER_TICK
+  answer: same
+  result: At least five items are always queued when serving starts, so min() never picks len(queue) and the guard never mattered.
+- change: 'Line 3: `queue = deque()` becomes `queue = deque(maxlen=1000)`.'
+  old: queue = deque()
+  new: queue = deque(maxlen=1000)
+  answer: same
+  result: The queue only reaches 20 items, so a bound of 1000 is never hit.
+- change: 'Line 3: `queue = deque()` becomes `queue = deque(maxlen=5)`.'
+  old: queue = deque()
+  new: queue = deque(maxlen=5)
+  answer: different
+  result: The deque silently discards the oldest items when full, so the depth after serving is only 2, and the last line still claims dropped=0.

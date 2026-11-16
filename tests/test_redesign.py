@@ -16,7 +16,7 @@ CHANGED = "def total(xs, start=0):\n    result = start\n    for x in xs:\n      
 
 def files():
     f = {
-        "t1/step.yaml": "title: Track 1\norder: 1\nsequence: [r1, p1, lib1, b1, tr1, q1]\n",
+        "t1/step.yaml": "title: Track 1\norder: 1\nsequence: [r1, r3, p1, p2, p3, lib1, b1, tr1, q1]\n",
         "t2/step.yaml": "title: Track 2\norder: 2\n",
         "t2/exercises/t2x/exercise.yaml": "title: T2x\nkind: open\n",
         "t2/exercises/t2x/prompt.md": "p",
@@ -31,13 +31,18 @@ def files():
         "lib/exercises/lib2/exercise.yaml": "title: Lib2\nkind: open\n",
         "lib/exercises/lib2/prompt.md": "p",
         # a reading exercise
-        "t1/exercises/r1/exercise.yaml": "title: Read it\nkind: read\nquestions:\n  - What does line 1 do?\n  - What if the list is empty?\n",
+        "t1/exercises/r1/exercise.yaml": "title: Read it\nkind: read\nlevel: 2\nquestions:\n  - What does line 1 do?\n  - What if the list is empty?\n",
         "t1/exercises/r1/prompt.md": "Read the code. Predict what it prints.",
         "t1/exercises/r1/snippet.py": "xs = [1, 2, 3]\nprint(sum(xs))\nprint(len(xs))\n",
         "t1/exercises/r1/expected.txt": "6\n3\n",
         "t1/exercises/r1/say.md": "Sum then length.",
+        "t1/exercises/r1/whatif.yaml": (
+            "- {change: 'Line 1: the list gets a 4', old: 'xs = [1, 2, 3]', new: 'xs = [1, 2, 3, 4]', answer: different}\n"
+            "- {change: 'Line 3: a harmless + 0', old: 'print(len(xs))', new: 'print(len(xs) + 0)', answer: same}\n"
+            "- {change: 'Line 2: a typo', old: 'print(sum(xs))', new: 'print(sum(ys))', answer: crash}\n"
+            "- {change: 'Line 1: the list is reversed', old: 'xs = [1, 2, 3]', new: 'xs = [3, 2, 1]', answer: same}\n"),
         # python with a plan, prompt grading and a control check
-        "t1/exercises/p1/exercise.yaml": "title: Plan it\nkind: python\nplan_required: 2\ngrade_prompts: true\n",
+        "t1/exercises/p1/exercise.yaml": "title: Plan it\nkind: python\nlevel: 3\nplan_required: 2\ngrade_prompts: true\n",
         "t1/exercises/p1/prompt.md": "Return the total of a list.",
         "t1/exercises/p1/solution.py": SOLUTION,
         "t1/exercises/p1/starter.py": "# PLAN\n\ndef total(xs):\n    pass\n",
@@ -45,6 +50,32 @@ def files():
         "t1/exercises/p1/change.md": "Add an optional start value (default 0) that the sum starts from.",
         "t1/exercises/p1/change_tests/test_change.py": CHANGE_TESTS,
         "t1/exercises/p1/change_solution.py": CHANGED,
+        # a level 3 reading: What if, a fix to make, then a written explanation
+        "t1/exercises/r3/exercise.yaml": "title: Fix it read\nkind: read\nlevel: 3\nquestions: [\"What is wrong?\"]\n",
+        "t1/exercises/r3/prompt.md": "Read.",
+        "t1/exercises/r3/snippet.py": "print(sum([1, 2, 3]) - 1)\n",
+        "t1/exercises/r3/expected.txt": "5\n",
+        "t1/exercises/r3/say.md": "Off by one.",
+        "t1/exercises/r3/fix.md": "Make it print 6.",
+        "t1/exercises/r3/fix_expected.txt": "6\n",
+        "t1/exercises/r3/fix_solution.py": "print(sum([1, 2, 3]))\n",
+        "t1/exercises/r3/whatif.yaml": (
+            "- {change: a, old: 'sum(', new: 'max(', answer: different}\n- {change: b, old: ' - 1', new: ' - 0', answer: different}\n"
+            "- {change: c, old: '[1, 2, 3]', new: '[1, 2, 3, 0]', answer: same}\n- {change: d, old: 'print(', new: 'prnt(', answer: crash}\n"),
+        # builds at level 2 (What if, then a change) and level 1 (What if only)
+        "t1/exercises/p2/exercise.yaml": "title: Level two\nkind: python\nlevel: 2\n",
+        "t1/exercises/p2/prompt.md": "Return the total of a list.",
+        "t1/exercises/p2/solution.py": SOLUTION,
+        "t1/exercises/p2/starter.py": "def total(xs):\n    pass\n",
+        "t1/exercises/p2/tests/test_hidden.py": TOTAL_TESTS,
+        "t1/exercises/p2/change.md": "Add an optional start value.",
+        "t1/exercises/p2/change_tests/test_change.py": CHANGE_TESTS,
+        "t1/exercises/p2/change_solution.py": CHANGED,
+        "t1/exercises/p3/exercise.yaml": "title: Level one\nkind: python\nlevel: 1\n",
+        "t1/exercises/p3/prompt.md": "Return the total of a list.",
+        "t1/exercises/p3/solution.py": SOLUTION,
+        "t1/exercises/p3/starter.py": "def total(xs):\n    pass\n",
+        "t1/exercises/p3/tests/test_hidden.py": TOTAL_TESTS,
         # assistant-written buggy code: fix it and name the bug
         "t1/exercises/b1/exercise.yaml": "title: Fix it\nkind: python\nname_bug: true\nassistant: off\n",
         "t1/exercises/b1/prompt.md": "An assistant wrote this. Fix it.",
@@ -53,7 +84,7 @@ def files():
         "t1/exercises/b1/tests/test_hidden.py": TOTAL_TESTS,
         "t1/exercises/b1/bug.md": "The loop skips the first element (xs[1:]).",
         # a SQL exercise with a control check and a documentation page
-        "t1/exercises/q1/exercise.yaml": "title: Count\nkind: sql\nserves: [C6]\n",
+        "t1/exercises/q1/exercise.yaml": "title: Count\nkind: sql\nlevel: 3\nserves: [C6]\n",
         "t1/exercises/q1/prompt.md": "Count the orders.",
         "t1/exercises/q1/seed.sql": "CREATE TABLE orders (id INTEGER, city TEXT);\nINSERT INTO orders VALUES (1,'SP'),(2,'SP'),(3,'RJ');\n",
         "t1/exercises/q1/solution.sql": "SELECT COUNT(*) AS n\nFROM orders\nWHERE id > 0;\n",
@@ -99,7 +130,7 @@ def test_sequence_orders_exercises(env):
     steps, errors = load_content(root)
     by = {s.id: s for s in steps}
     assert errors == []
-    assert [e.id for e in by["t1"].exercises] == ["r1", "p1", "lib1", "b1", "tr1", "q1"]
+    assert [e.id for e in by["t1"].exercises] == ["r1", "r3", "p1", "p2", "p3", "lib1", "b1", "tr1", "q1"]
     assert [e.id for e in by["lib"].exercises] == ["lib2"] and by["lib"].optional
 
 
@@ -125,26 +156,33 @@ def test_optional_step_is_open_and_never_blocks_or_feeds_the_deck(env):
 def test_step_page_groups_exercises_into_the_four_moves(env):
     client, _, _ = env
     groups = {e["id"]: e["group"] for e in client.get("/api/step/t1").json()["exercises"]}
-    assert groups == {"r1": "Read", "p1": "Build", "lib1": "Build", "b1": "Catch", "tr1": "Catch", "q1": "Build"}
+    assert groups == {"r1": "Read", "r3": "Read", "p1": "Build", "p2": "Build", "p3": "Build", "lib1": "Build", "b1": "Catch", "tr1": "Catch", "q1": "Build"}
     assert client.get("/api/step/t2").json()["exercises"][0]["group"] == "Defend"
 
 
-def test_reading_exercise_prediction_reveal_and_review(env):
+READ_ANSWERS = {"Line 1: the list gets a 4": "different", "Line 3: a harmless + 0": "same", "Line 2: a typo": "crash",
+                "Line 1: the list is reversed": "same"}
+
+
+def test_reading_exercise_what_if_then_a_written_answer(env):
     client, seen, _ = env
     ex = client.get("/api/exercise/r1").json()
-    assert ex["kind"] == "read" and "sum(xs)" in ex["snippet"] and ex["expected"] == "" and len(ex["questions"]) == 2
-    assert post(client, "/api/predict/reveal", {"exercise_id": "r1"}, status=400)  # predict first
-    wrong = post(client, "/api/predict", {"exercise_id": "r1", "prediction": "7\n3"})
-    assert wrong["passed"] is False and wrong["status"]["tests"] is False
-    assert post(client, "/api/predict/reveal", {"exercise_id": "r1"})["output"].strip() == "6\n3"
+    assert ex["kind"] == "read" and ex["level"] == 2 and "sum(xs)" in ex["snippet"] and ex["expected"] == ""
+    assert ex["questions"] == ["In one sentence: what is the trap or surprise in this code?"] and ex["say"] == ""
+    start = post(client, "/api/whatif/start", {"exercise_id": "r1"})["whatif"]
+    assert len(start["questions"]) == 3 and start["choices"] == ["same", "different", "crash"] and "answer" not in start["questions"][0]
+    assert post(client, "/api/whatif/start", {"exercise_id": "r1"})["whatif"]["questions"] == start["questions"]  # stable
+    wrong = post(client, "/api/whatif/answer", {"exercise_id": "r1", "answers": ["crash"] * 3})
+    assert wrong["ok"] is False and wrong["status"]["tests"] is False and all("answer" in r for r in wrong["results"])
+    fresh = wrong["whatif"]  # a wrong round is replaced at once: seeing the answers must not pass the same set
+    assert fresh["started"] and not fresh["ok"]
+    right = post(client, "/api/whatif/answer", {"exercise_id": "r1", "answers": [READ_ANSWERS[q["change"]] for q in fresh["questions"]]})
+    assert right["ok"] and right["status"]["tests"] is True and right["status"]["done"] is False  # still the written answer
     assert client.get("/api/exercise/r1").json()["expected"].strip() == "6\n3"
-    ok = post(client, "/api/predict", {"exercise_id": "r1", "prediction": "6 \n3\n\n"})  # trailing whitespace does not matter
-    assert ok["passed"] and ok["status"]["tests"] is True and ok["status"]["done"] is False  # still needs the explanation
-    rev = post(client, "/api/review", {"exercise_id": "r1", "text": "Line 1 sums; empty list gives 0."})
-    assert rev["status"] == "done"
-    prompt = seen[-1][0]
-    assert "sum(xs)" in prompt and "What if the list is empty?" in prompt and "Sum then length." in prompt
-    assert client.get("/api/exercise/r1").json()["status"]["done"] is True
+    rev = post(client, "/api/review", {"exercise_id": "r1", "text": "Nothing surprising: it sums and counts."})
+    assert rev["status"] == "done" and "what is the trap" in seen[-1][0] and "Sum then length." in seen[-1][0]
+    st = client.get("/api/exercise/r1").json()
+    assert st["status"]["done"] is True and st["say"] == "Sum then length."
 
 
 def test_triage_scores_decisions_and_reviews_reasons(env):
@@ -286,3 +324,80 @@ def test_password_protects_a_public_deployment(tmp_path, monkeypatch):
     bad = {"Authorization": "Basic " + base64.b64encode(b"me:nope").decode()}
     assert client.get("/api/journey", headers=good).status_code == 200
     assert client.get("/api/journey", headers=bad).status_code == 401
+
+
+def fixed_questions(monkeypatch, answers=("pass", "fail")):
+    qs = [{"change": f"Line {i}: change {i}", "answer": a} for i, a in enumerate(answers, 1)]
+    monkeypatch.setattr("gym.app.whatif.pick", lambda code, seed, judge, want=3, sql=False, limit=6: qs[:want])
+    return qs
+
+
+def test_level_one_build_is_done_after_the_what_if_round(env, monkeypatch):
+    client, _, _ = env
+    qs = fixed_questions(monkeypatch)
+    sub = post(client, "/api/submit", {"exercise_id": "p3", "code": SOLUTION, "mode": "blank"})
+    assert sub["status"]["control"] is False and sub["status"]["done"] is False
+    ctl = post(client, "/api/control/start", {"exercise_id": "p3"})["control"]
+    assert ctl["level"] == 1 and ctl["locked"] and ctl["change"] == "" and len(ctl["whatif"]["questions"]) == 2
+    assert ctl["whatif"]["choices"] == ["pass", "fail"]
+    bad = post(client, "/api/whatif/answer", {"exercise_id": "p3", "answers": ["fail", "fail"]})
+    assert bad["ok"] is False and [r["correct"] for r in bad["results"]] == [False, True] and bad["control"]["complete"] is False
+    good = post(client, "/api/whatif/answer", {"exercise_id": "p3", "answers": [q["answer"] for q in qs]})
+    assert good["ok"] and good["control"]["complete"] and good["status"]["control"] is True and good["status"]["done"] is True
+    assert post(client, "/api/control/change", {"exercise_id": "p3", "code": CHANGED}, status=400)  # level 1 has no change
+    assert post(client, "/api/control/explain", {"exercise_id": "p3", "explanations": ["a", "b"]}, status=400)
+
+
+def test_level_two_build_needs_the_what_if_round_and_the_change(env, monkeypatch):
+    client, _, _ = env
+    qs = fixed_questions(monkeypatch)
+    post(client, "/api/submit", {"exercise_id": "p2", "code": SOLUTION, "mode": "blank"})
+    ctl = post(client, "/api/control/start", {"exercise_id": "p2"})["control"]
+    assert ctl["level"] == 2 and "optional start" in ctl["change"] and ctl["lines"] == []
+    done = post(client, "/api/whatif/answer", {"exercise_id": "p2", "answers": [q["answer"] for q in qs]})
+    assert done["ok"] and done["status"]["control"] is False  # the change is still to do
+    right = post(client, "/api/control/change", {"exercise_id": "p2", "code": CHANGED})
+    assert right["passed"] and right["status"]["control"] is True and right["status"]["done"] is True
+
+
+def test_what_if_needs_passing_code_and_derived_level_follows_solution_size(env):
+    client, _, _ = env
+    assert post(client, "/api/whatif/start", {"exercise_id": "p3"}, status=400)  # pass first
+    steps, _ = load_content(env[2])
+    by = {e.id: e for s in steps for e in s.exercises}
+    assert by["p3"].control_level == 1 and by["lib1"].control_level == 1  # five lines of code
+    by["lib1"].solution = "x = 1\n" * 15
+    assert by["lib1"].control_level == 2
+    by["lib1"].solution = "x = 1\n" * 40
+    assert by["lib1"].control_level == 3
+    by["lib1"].control = False
+    assert by["lib1"].control_level == 0
+
+
+def test_an_assisted_extra_build_needs_what_if_instead_of_an_explanation(tmp_path, monkeypatch):
+    root = tmp_path / "c"
+    for name, text in files().items():
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+    (root / "t1/exercises/p3/exercise.yaml").write_text("title: Extra\nkind: python\nrequired: false\n")
+    fake = lambda prompt, json_mode=True: "SIZE: small\n\n```python\nx = 1\n```" if not json_mode else "{}"
+    client = TestClient(create_app(root, tmp_path / "p.db", call=fake))
+    qs = fixed_questions(monkeypatch)
+    post(client, "/api/chat", {"scope": "p3", "message": "write it"})
+    sub = post(client, "/api/submit", {"exercise_id": "p3", "code": SOLUTION, "mode": "blank"})
+    assert sub["status"]["assisted"] and sub["status"]["explain"] is False and sub["status"]["done"] is False
+    assert post(client, "/api/whatif/start", {"exercise_id": "p3"})["whatif"]["needed"]
+    ok = post(client, "/api/whatif/answer", {"exercise_id": "p3", "answers": [q["answer"] for q in qs][:2]})
+    assert ok["ok"] and ok["status"]["explain"] is True and ok["status"]["done"] is True
+
+
+def test_level_three_reading_needs_a_fix_that_prints_the_target(env):
+    client, _, _ = env
+    ex = client.get("/api/exercise/r3").json()
+    assert ex["level"] == 3 and ex["fix"] == "Make it print 6." and ex["questions"] == ["What is wrong?"] and ex["status"]["fix"] is False
+    assert post(client, "/api/fix", {"exercise_id": "p3", "code": "x"}, status=400)  # only level 3 readings
+    bad = post(client, "/api/fix", {"exercise_id": "r3", "code": "print(sum([1, 2, 3]) - 1)"})
+    assert bad["passed"] is False and bad["output"].strip() == "5" and bad["status"]["fix"] is False
+    good = post(client, "/api/fix", {"exercise_id": "r3", "code": "print(sum([1, 2, 3]))\n"})
+    assert good["passed"] and good["status"]["fix"] is True and good["status"]["done"] is False  # what if and the explanation remain

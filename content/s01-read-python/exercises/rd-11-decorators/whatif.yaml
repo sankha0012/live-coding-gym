@@ -1,0 +1,30 @@
+- change: 'Line 21: `@retry(3)` becomes `@retry`.'
+  old: '@retry(3)'
+  new: '@retry'
+  answer: crash
+  result: retry(fetch) returns decorator, so fetch is now decorator and calling fetch() fails with TypeError for the missing func.
+- change: 'Line 21: `@retry(3)` becomes `@retry(5)`.'
+  old: '@retry(3)'
+  new: '@retry(5)'
+  answer: same
+  result: fetch succeeds on its third call, so extra allowed attempts are never used.
+- change: 'Line 6: `@functools.wraps(func)` is deleted (replaced by `pass`).'
+  old: '@functools.wraps(func)'
+  new: pass
+  answer: different
+  result: Without wraps the decorated function is called wrapper, so the last line prints wrapper.
+- change: 'Line 11: `except ConnectionError as err:` becomes `except ValueError as err:`.'
+  old: 'except ConnectionError as err:'
+  new: 'except ValueError as err:'
+  answer: crash
+  result: ConnectionError is no longer caught, so it escapes on the first failure.
+- change: 'Line 8: `for attempt in range(1, times + 1):` becomes `for attempt in range(0, times):`.'
+  old: range(1, times + 1)
+  new: range(0, times)
+  answer: different
+  result: Attempt numbers start at 0, so the messages say attempt 0 and attempt 1.
+- change: 'Line 10: `return func(*args, **kwargs)` becomes `return func()`.'
+  old: func(*args, **kwargs)
+  new: func()
+  answer: same
+  result: fetch takes no arguments, so passing none is equivalent.

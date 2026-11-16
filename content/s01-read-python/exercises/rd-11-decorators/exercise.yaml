@@ -7,3 +7,4 @@ questions:
   - "Why does the program print two failure lines and then ok?"
   - "What would happen if fetch had failed on all three attempts, and what does functools.wraps change?"
 serves: [C2, C9]
+level: 2

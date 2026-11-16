@@ -7,3 +7,4 @@ questions:
   - Why does the call with an explicit [] behave differently?
   - How does log_event_safe avoid the problem?
 serves: [C2, C9]
+level: 2

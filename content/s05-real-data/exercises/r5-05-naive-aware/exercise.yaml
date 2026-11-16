@@ -7,3 +7,4 @@ questions:
   - Why does the first comparison raise, and what does Python refuse to guess?
   - What goes wrong if the naive timestamp was actually written in local time (UTC-3) and you attach UTC with replace?
   - Why does event == deadline print False, and not an error?
+level: 2

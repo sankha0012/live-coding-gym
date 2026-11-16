@@ -7,3 +7,4 @@ questions:
   - What does avg_ticket return for a city with no rows, and why does it not raise?
   - What goes wrong if that value is used in a threshold check like rio > 50 inside an alert or a router?
   - How does safe_avg change the behaviour, and what must the caller still decide?
+level: 2

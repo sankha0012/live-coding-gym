@@ -1,0 +1,1 @@
+Even with the timeout, 100 users take 200 seconds against a budget of 100 seconds, because the timeout of 2 seconds per call is larger than the 1 second per user the batch can afford. Change the code so that the timeout fits the budget: the second line must print `with timeout: score=0.5 waited=1.0s` and the last line `100 users, timeout: 100.0 s`.
