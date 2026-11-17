@@ -1,4 +1,5 @@
-const main = document.getElementById("main");
+const mainEl = document.getElementById("main");
+let main = mainEl; // where a view appends; on exercise pages it is the Task tab of the work pane
 let DEV = false; // dev mode: everything open and revealed, no progress shown
 let tick = null; // the running timer, cleared on every route change
 
@@ -324,14 +325,14 @@ function sidebarTabs(panes) {
 }
 
 // The sidebar for one exercise: its relevant topics, a search over everything, articles opened in place, and the assistant.
-function helpSidebar(ex, ctx) {
+function helpSidebar(ex, ctx, mount = true) {
   const body = h("div");
   const search = h("input", { type: "search", placeholder: "Search the reference (e.g. join, sorted, window)" });
   const showArticle = async (id) => {
     const t = await api(`/kb/${id}`);
     body.replaceChildren(h("p", {}, h("button", { onclick: showTopics }, "← Back to this exercise's help")),
       h("h2", {}, t.title), md(t.body));
-    helpPane.scrollTop = 0;
+    (body.closest("#work-pane") || helpPane).scrollTop = 0;
   };
   const topicLink = (t) => h("div", { class: "kb-hit" }, h("a", { href: `#/kb/${t.id}` }, t.title),
     h("div", { class: "muted" }, t.summary));
@@ -359,7 +360,8 @@ function helpSidebar(ex, ctx) {
   showTopics();
   const panes = [{ id: "help", label: "Help", el: h("div", {}, search, body) }];
   if (ex.kind !== "quiz") { ctx.assistantEl = assistantPanel(ex.id, ctx); panes.push({ id: "assistant", label: "Assistant", el: ctx.assistantEl }); }
-  sidebarTabs(panes);
+  if (mount) sidebarTabs(panes);
+  return panes;
 }
 
 async function kbView(id) {
@@ -468,6 +470,95 @@ async function stepView(id) {
 }
 
 // ---------- exercise kinds added by the redesign ----------
+// ---------------- exercise pages: code on the left, the work on the right, each filling the screen ----------------
+let CODE = null; // the code pane of the open exercise: tabs of editors, and the main editor for pointing at lines
+function splitLayout() {
+  mainEl.className = "split";
+  try { const w = localStorage.getItem("codeWidth"); if (w) mainEl.style.setProperty("--code-w", w); } catch (e) { /* default */ }
+  const bar = h("div", { class: "tabs code-tabs" }), body = h("div", { class: "code-body" }), tabs = {};
+  CODE = {
+    cm: null, mainTab: null,
+    tab(name, nodes, select = true) {
+      if (!tabs[name]) {
+        tabs[name] = { btn: h("button", { class: "tab", onclick: () => CODE.show(name) }, name), body: h("div", { class: "code-tab" }) };
+        bar.append(tabs[name].btn); body.append(tabs[name].body);
+        tabs[name].body.hidden = true;
+      }
+      tabs[name].body.replaceChildren(...nodes.filter(Boolean));
+      if (select || Object.keys(tabs).length === 1) CODE.show(name);
+      bar.hidden = Object.keys(tabs).length < 2;
+      return tabs[name].body;
+    },
+    show(name) {
+      for (const [n, t] of Object.entries(tabs)) { t.body.hidden = n !== name; t.btn.classList.toggle("active", n === name); }
+      tabs[name].body.querySelectorAll(".CodeMirror").forEach((c) => c.CodeMirror.refresh());
+    },
+  };
+  const code = h("section", { id: "code-pane" }, bar, body);
+  const work = h("section", { id: "work-pane" });
+  const divider = h("div", { id: "divider", title: "Drag to resize" });
+  divider.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    const move = (ev) => {
+      const pct = Math.min(75, Math.max(25, 100 * (ev.clientX - mainEl.getBoundingClientRect().left) / mainEl.clientWidth));
+      mainEl.style.setProperty("--code-w", pct.toFixed(1) + "%");
+    };
+    const up = () => {
+      removeEventListener("pointermove", move); removeEventListener("pointerup", up);
+      try { localStorage.setItem("codeWidth", mainEl.style.getPropertyValue("--code-w")); } catch (err) { /* not remembered */ }
+      code.querySelectorAll(".CodeMirror").forEach((c) => c.CodeMirror.refresh());
+    };
+    addEventListener("pointermove", move); addEventListener("pointerup", up);
+  });
+  mainEl.replaceChildren(code, divider, work);
+  return work;
+}
+
+// An editor that fills its tab in the code pane.
+function paneEditor(kind, value, readOnly = false) {
+  const holder = h("div", { class: "cm-holder" });
+  const cm = CodeMirror(holder, { value, mode: kind === "sql" ? "text/x-sql" : "python", lineNumbers: true, indentUnit: 4, readOnly,
+    extraKeys: { Tab: (c) => c.replaceSelection("    ") } });
+  setTimeout(() => cm.refresh(), 0);
+  return { holder, cm };
+}
+
+// Tabs at the top of the work pane: Task, Help, Assistant.
+function workTabs(work, panes) {
+  const buttons = panes.map((p) => h("button", { class: "tab", onclick: () => show(p.id) }, p.label));
+  function show(id) { panes.forEach((p, i) => { p.el.hidden = p.id !== id; buttons[i].classList.toggle("active", p.id === id); }); work.scrollTop = 0; }
+  work.replaceChildren(h("div", { class: "tabs work-tabs" }, ...buttons), ...panes.map((p) => p.el));
+  show(panes[0].id);
+}
+
+// Point at the line a question names: highlight it in the main editor and show the question under it.
+let pointed = null;
+function pointAt(text) {
+  clearPoint();
+  const m = /Line (\d+)/.exec(text);
+  if (!m || !CODE || !CODE.cm) return;
+  const cm = CODE.cm, line = Number(m[1]) - 1;
+  if (line < 0 || line >= cm.lineCount()) return;
+  if (CODE.mainTab) CODE.show(CODE.mainTab);
+  cm.addLineClass(line, "background", "cm-pointed");
+  pointed = { cm, line, widget: cm.addLineWidget(line, h("div", { class: "cm-change" }, md(text))) };
+  cm.scrollIntoView({ line, ch: 0 }, 120);
+}
+function clearPoint() {
+  if (!pointed) return;
+  pointed.cm.removeLineClass(pointed.line, "background", "cm-pointed");
+  pointed.widget.clear();
+  pointed = null;
+}
+function pointable(el, text) {
+  let pinned = false;
+  el.classList.add("pointable");
+  el.addEventListener("mouseenter", () => pointAt(text));
+  el.addEventListener("mouseleave", () => { if (!pinned) clearPoint(); });
+  el.addEventListener("click", (e) => { if (e.target.closest("input, button, label")) return; pinned = !pinned; pinned ? pointAt(text) : clearPoint(); });
+  return el;
+}
+
 // What if: a change is made to the code and the learner says what happens. The server runs the change to know.
 function whatIfPanel(info, id, afterChange, locked) {
   const el = h("div", { class: "whatif" });
@@ -476,10 +567,10 @@ function whatIfPanel(info, id, afterChange, locked) {
     const picks = state.questions.map(() => null);
     el.replaceChildren();
     if (state.ok) { el.append(h("p", { class: "ok" }, "✓ What if: done.")); return; }
-    el.append(h("p", { class: "muted" }, "What happens after this change? The app really runs it to find out."));
-    const boxes = state.questions.map((q, i) => h("div", { class: "review" }, h("p", {}, h("strong", {}, `${i + 1}. `), md(q.change)),
+    el.append(h("p", { class: "muted" }, "What happens after this change? Hover a question to see its line in the code (click to keep it). The app really runs each change to find out."));
+    const boxes = state.questions.map((q, i) => pointable(h("div", { class: "review" }, h("p", {}, h("strong", {}, `${i + 1}. `), md(q.change)),
       h("div", {}, ...state.choices.map((c) => h("label", { style: "margin-right:1rem" },
-        h("input", { type: "radio", name: `w${id}${i}`, onchange: () => { picks[i] = c; } }), " " + LABELS[c])))));
+        h("input", { type: "radio", name: `w${id}${i}`, onchange: () => { picks[i] = c; } }), " " + LABELS[c])))), q.change));
     const note = h("div"), bar = h("div", { class: "bar" });
     const check = h("button", { class: "primary", onclick: async (e) => {
       if (picks.includes(null)) { note.replaceChildren(h("p", { class: "bad" }, "Answer every question.")); return; }
@@ -509,12 +600,12 @@ function whatIfPanel(info, id, afterChange, locked) {
 
 // Reading exercises: What if rounds, then (level 2) one sentence on the trap or (level 3) a fix and an explanation.
 function readView(ex, id, afterChange) {
-  const reviewSlot = h("div"), whatSlot = h("div"), outBox = h("pre", { hidden: "" }), later = h("div");
+  const reviewSlot = h("div"), whatSlot = h("div"), outBox = h("pre", { class: "out", hidden: "" }), later = h("div");
   const showOut = (t) => { outBox.hidden = false; outBox.textContent = "What the original prints:\n" + t; };
   if (ex.expected) showOut(ex.expected);
-  const snippet = h("div");
-  const cm = CodeMirror(snippet, { value: ex.snippet, mode: "python", lineNumbers: true, readOnly: true });
-  setTimeout(() => cm.refresh(), 0);
+  const code = paneEditor("python", ex.snippet, true);
+  CODE.cm = code.cm; CODE.mainTab = "Code";
+  CODE.tab("Code", [code.holder, outBox]);
   const answer = h("textarea", { placeholder: ex.level === 2 ? "One sentence." : "Answer the questions in your own words." });
   const written = ex.level >= 2 ? h("div", {}, h("h2", {}, ex.level === 2 ? "2. Name the trap" : "3. Explain it"),
     h("ol", {}, ex.questions.map((q) => h("li", {}, q))), answer,
@@ -524,20 +615,26 @@ function readView(ex, id, afterChange) {
       catch (err) { reviewSlot.replaceChildren(h("pre", { class: "bad" }, String(err))); }
       e.target.disabled = false; e.target.textContent = "Submit for review";
     } }, "Submit for review")), reviewSlot) : null;
-  const fixMsg = h("div"), fixOut = h("pre"), fixHolder = h("div");
-  let fixCm = null;
-  const fix = ex.level >= 3 ? h("div", {}, h("h2", {}, "2. Fix it"), md(ex.fix), fixHolder,
-    h("div", { class: "bar" }, h("button", { class: "primary", onclick: async () => {
-      const r = await api("/fix", { exercise_id: id, code: fixCm.getValue() });
-      fixOut.textContent = r.output;
-      fixMsg.replaceChildren(h("p", { class: r.passed ? "ok" : "bad" }, r.passed ? "✓ It prints the target." : "✗ Not the target output yet."));
-      afterChange(r.status);
-    } }, "Run and check")), fixMsg, fixOut) : null;
+  const fixMsg = h("div"), fixOut = h("pre", { class: "out" });
+  let fixEd = null;
+  const fix = ex.level >= 3 ? h("div", {}, h("h2", {}, "2. Fix it"), md(ex.fix),
+    h("p", { class: "muted" }, "Edit the code in the Fix it tab on the left, then press Run and check there."),
+    h("button", { onclick: () => CODE.show("Fix it") }, "Open the Fix it tab"), fixMsg) : null;
   function openLater() {
     later.replaceChildren(...[fix, written].filter(Boolean));
-    if (fix && !fixCm) { fixCm = editor(fixHolder, "python", ex.snippet); setTimeout(() => fixCm.refresh(), 0); }
+    if (fix && !fixEd) {
+      fixEd = paneEditor("python", ex.snippet);
+      CODE.tab("Fix it", [fixEd.holder, h("div", { class: "bar" }, h("button", { class: "primary", onclick: async () => {
+        const r = await api("/fix", { exercise_id: id, code: fixEd.cm.getValue() });
+        fixOut.textContent = r.output;
+        const verdict = h("p", { class: r.passed ? "ok" : "bad" }, r.passed ? "✓ It prints the target." : "✗ Not the target output yet.");
+        fixMsg.replaceChildren(verdict.cloneNode(true));
+        fixOut.prepend((r.passed ? "✓ It prints the target.\n\n" : "✗ Not the target output yet.\n\n"));
+        afterChange(r.status);
+      } }, "Run and check")), fixOut], false);
+    }
   }
-  main.append(h("h2", {}, "Read this code"), snippet, h("h2", {}, "1. What if?"), whatSlot, outBox, later);
+  main.append(h("h2", {}, "1. What if?"), whatSlot, later);
   function wire(info) {
     whatSlot.replaceChildren(whatIfPanel(info, id, (r) => { afterChange(r.status); if (r.ok) { api(`/exercise/${id}`).then((x) => x.expected && showOut(x.expected)); openLater(); } }));
   }
@@ -599,16 +696,22 @@ function controlPanel(ex, id, ctx, afterChange) {
   const INTRO = { 1: "Show that you understand your code: say what happens when one line is changed.",
     2: "Show that you control your code: say what happens when one line is changed, then make one small change by hand.",
     3: "Prove that you control this code. I pick two lines of your passing solution for you to explain, then you make one small change by hand." };
+  let changeEd = null;
+  const changeOut = h("pre", { class: "out" }), changeMsg = h("div");
   function changeBox(info) {
-    const holder = h("div"), out = h("pre");
-    const cm = editor(holder, ex.kind, last);
-    cm.on("change", () => { last = cm.getValue(); });
-    setTimeout(() => cm.refresh(), 0);
-    return [h("h3", {}, level === 3 ? "B. Make this change by hand" : "2. Make this change by hand"), md(info.change), holder,
-      h("div", { class: "bar" }, h("button", { class: info.b_ok ? "" : "primary", onclick: async () => {
-        const r = await call("/control/change", { code: cm.getValue() }); results(out, r); draw(r.control, cm.getValue()); el.append(out);
-      } }, info.b_ok ? "✓ Passed (run again)" : "Run the change tests"),
-        h("span", { class: "muted" }, "The assistant is locked until this is done.")), out];
+    const first = !changeEd;
+    if (first) {
+      changeEd = paneEditor(ex.kind, last);
+      changeEd.cm.on("change", () => { last = changeEd.cm.getValue(); });
+    }
+    CODE.tab("Change by hand", [changeEd.holder, h("div", { class: "bar" }, h("button", { class: "primary", onclick: async () => {
+      const r = await call("/control/change", { code: changeEd.cm.getValue() }); results(changeOut, r);
+      changeMsg.replaceChildren(h("p", { class: r.passed ? "ok" : "bad" }, r.passed ? "✓ The change tests pass." : "✗ The change tests fail. See the output on the left."));
+      draw(r.control, changeEd.cm.getValue());
+    } }, "Run the change tests"), h("span", { class: "muted" }, "The assistant is locked until this is done.")), changeOut], first && !info.b_ok);
+    return [h("h3", {}, level === 3 ? "B. Make this change by hand" : "2. Make this change by hand"), md(info.change),
+      info.b_ok ? h("p", { class: "ok" }, "✓ Done.") : h("p", { class: "muted" }, "Edit your code in the Change by hand tab on the left and run the change tests there."),
+      h("button", { onclick: () => CODE.show("Change by hand") }, "Open the Change by hand tab"), changeMsg];
   }
   function draw(info, code) {
     if (code) last = code;
@@ -632,7 +735,7 @@ function controlPanel(ex, id, ctx, afterChange) {
     const expl = info.lines.map(() => h("textarea", { placeholder: "What does this line do, and why is it there?" }));
     const revSlot = h("div");
     el.append(h("h3", {}, "A. Explain these two lines of your code"),
-      ...info.lines.flatMap((l, i) => [h("pre", {}, `${l.no}: ${l.text}`), expl[i]]),
+      ...info.lines.flatMap((l, i) => [pointable(h("pre", {}, `${l.no}: ${l.text}`), `Line ${l.no}: explain this line.`), expl[i]]),
       h("div", { class: "bar" }, h("button", { class: info.a_ok ? "" : "primary", onclick: async (e) => {
         e.target.disabled = true;
         try { const r = await call("/control/explain", { explanations: expl.map((x) => x.value) }); revSlot.replaceChildren(reviewBox(r.review, null)); draw(r.control, code); el.append(revSlot); }
@@ -671,6 +774,9 @@ async function exView(id, mode = "blank") {
   const ex = await api(`/exercise/${id}?mode=${mode}`);
   const coded = ex.modes.length > 0;
   const back = h("p", {}, h("a", { href: `#/step/${ex.step_id}` }, "← Back to the step"));
+  const split = ex.kind === "read" || coded;
+  let work = null;
+  if (split) { work = splitLayout(); main = h("div", { class: "task-tab" }); }
   main.append(back, h("h1", {}, ex.title, " ", kindBadge(ex.kind)));
   const ctx = { getCode: () => "", getOutput: () => "", getLine: () => "", onAssisted: () => {}, grade: ex.grade_prompts };
   const statusEl = h("span", {});
@@ -678,11 +784,19 @@ async function exView(id, mode = "blank") {
   const refreshStatus = async () => applyStatus((await api(`/exercise/${id}?mode=${mode}`)).status);
   const after = (st) => { if (st) applyStatus(st); else refreshStatus(); };
   ctx.onGraded = refreshStatus;
-  helpSidebar(ex, ctx);
+  const helpTabs = helpSidebar(ex, ctx, !split);
+  if (split) workTabs(work, [{ id: "task", label: "Task", el: main }, ...helpTabs]);
   if (ex.kind === "quiz") { main.append(md(ex.prompt)); return quizView(ex); }
-  main.append(md(ex.prompt));
+  if (split) {  // the task text folds away once read, so the questions sit next to the code
+    const key = `fold:${id}`;
+    let folded = false;
+    try { folded = localStorage.getItem(key) === "1"; } catch (e) { /* default open */ }
+    const task = h("details", { class: "task-text", ...(folded ? {} : { open: "" }) }, h("summary", {}, "The task"), md(ex.prompt));
+    task.addEventListener("toggle", () => { try { localStorage.setItem(key, task.open ? "0" : "1"); } catch (e) { /* not remembered */ } });
+    main.append(task);
+  } else main.append(md(ex.prompt));
   if (ex.schema) main.append(h("details", {}, h("summary", {}, "Tables"), h("pre", {}, ex.schema)));
-  if (ex.docs) main.append(h("details", { open: "" }, h("summary", {}, "Documentation (you may consult it, like in the interview)"), md(ex.docs)));
+  if (ex.docs) main.append(h("details", split ? {} : { open: "" }, h("summary", {}, "Documentation (you may consult it, like in the interview)"), md(ex.docs)));
   const progress = DEV ? h("span") : h("div", { class: "bar" }, h("span", { class: "muted" }, "Progress (hover a tick):"), statusEl);
   applyStatus(ex.status);
 
@@ -754,8 +868,7 @@ async function exView(id, mode = "blank") {
     ex.assistant === "off" ? tip(h("span", { class: "chip todo" }, "assistant off"), "Fix this one yourself.") : null);
   main.append(modeBar, progress);
 
-  const holder = h("div");
-  const out = h("pre");
+  const out = h("pre", { class: "out" });
   const reviewBtn = tip(h("button", { disabled: "" }, "Get AI review of my passing code"),
     "An AI interviewer reviews your last passing submission. Pass the tests first.");
   let cm = null, elapsed = () => 0, lastPassed = null;
@@ -769,7 +882,9 @@ async function exView(id, mode = "blank") {
   const readDraft = () => { try { return localStorage.getItem(draftKey); } catch (e) { return null; } };
   const writeDraft = (v) => { try { if (v === null) localStorage.removeItem(draftKey); else localStorage.setItem(draftKey, v); } catch (e) { /* drafts are a convenience only */ } };
   const saved = readDraft();
-  cm = editor(holder, ex.kind, saved === null ? ex.code : saved);
+  const ed = paneEditor(ex.kind, saved === null ? ex.code : saved);
+  cm = ed.cm;
+  CODE.cm = cm; CODE.mainTab = "Your code";
   cm.on("change", () => writeDraft(cm.getValue()));
   setTimeout(() => cm.refresh(), 0); // an editor built before it is on the page draws blank until refreshed
   elapsed = startTimer(clock, 0);
@@ -783,7 +898,7 @@ async function exView(id, mode = "blank") {
     reviewBtn.textContent = label;
     reviewBtn.disabled = false;
   });
-  main.append(holder, h("div", { class: "bar" },
+  CODE.tab("Your code", [ed.holder, h("div", { class: "bar" },
     tip(h("button", { onclick: async () => cm && results(out, await api("/run", { exercise_id: id, code: cm.getValue() }), "run") },
       "Run"), "Runs your code as a script so you can try it with print(...). Nothing is recorded. Submit runs the hidden tests."),
     tip(h("button", { onclick: () => {
@@ -797,8 +912,8 @@ async function exView(id, mode = "blank") {
       results(out, r);
       applyStatus(r.status);
       if (r.passed) { lastPassed = r.attempt_id; reviewBtn.disabled = false; refreshExtras(); nextSlot.replaceChildren(nextBar(ex, true)); }
-    } }, "Submit"), "Run the hidden tests and record the attempt. A pass counts toward the step.")), nextSlot, h("h2", {}, "Results"), out,
-    bugSlot, controlEl, assistWhat, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
+    } }, "Submit"), "Run the hidden tests and record the attempt. A pass counts toward the step.")), out]);
+  main.append(nextSlot, bugSlot, controlEl, assistWhat, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
   if (ex.status.tests && ex.name_bug) bugSlot.append(bugPanel(ex, id, refreshStatus));
   showReview(ex.review);
 }
@@ -872,7 +987,11 @@ async function mockView() {
 async function render(view) {
   clearInterval(tick);
   hideHelp();
-  main.replaceChildren();
+  clearPoint();
+  CODE = null;
+  main = mainEl;
+  mainEl.className = "";
+  mainEl.replaceChildren();
   try { await view(); } catch (e) { main.append(h("pre", { class: "bad" }, String(e))); }
 }
 
