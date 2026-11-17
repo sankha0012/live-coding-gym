@@ -12,6 +12,8 @@ SQL_SOLUTION = (FIXTURES / "03-hand-sql/exercises/top-customers/solution.sql").r
 
 
 def fake_gemini(prompt, json_mode=True):
+    if '"verdict": "good|' in prompt:  # the interviewer
+        return json.dumps({"verdict": "good", "reply": "Right.", "follow_up": "", "strong": "A strong answer."})
     if not json_mode:
         return "SIZE: small\n\n```python\nx = 1\n```"
     if '"questions"' in prompt:
@@ -77,7 +79,7 @@ def test_full_step_flow_passes_gate_and_unlocks_next(client):
     rev = post(client, "/api/review", {"exercise_id": "count-words", "attempt_id": sub["attempt_id"],
                                        "text": "I count with dict.get."})
     assert rev["status"] == "done" and min(rev["scores"].values()) == 4
-    post(client, "/api/review", {"exercise_id": "explain-count-words", "text": "It splits and counts."})
+    post(client, "/api/interview/answer", {"exercise_id": "explain-count-words", "text": "It splits and counts."})
     j = client.get("/api/journey").json()
     assert j["steps"][0]["passed"] and j["steps"][1]["unlocked"]
     assert client.get("/api/exercise/count-words").json()["review"]["verdict"] == "Good"
@@ -110,7 +112,8 @@ def test_pending_review_can_be_retried(tmp_path):
         return fake_gemini(prompt)
 
     client = TestClient(create_app(FIXTURES, tmp_path / "p.db", call=flaky))
-    rev = post(client, "/api/review", {"exercise_id": "explain-count-words", "text": "answer"})
+    sub = post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION, "mode": "blank"})
+    rev = post(client, "/api/review", {"exercise_id": "count-words", "attempt_id": sub["attempt_id"], "text": "answer"})
     assert rev["status"] == "pending"
     state["down"] = False
     again = post(client, f"/api/reviews/{rev['review_id']}/retry")

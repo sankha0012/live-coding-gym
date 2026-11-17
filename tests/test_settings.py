@@ -40,13 +40,15 @@ def test_reviews_use_the_selected_provider(tmp_path, keys, monkeypatch):
     def fake(name):
         def call(prompt, json_mode=True):
             seen.append(name)
-            return json.dumps({"scores": [4, 4, 4, 4], "verdict": "v", "feedback": "f"})
+            return json.dumps({"scores": [4, 4, 4], "verdict": "v", "feedback": "f"})
         return call
 
     monkeypatch.setitem(reviewer.PROVIDERS, "gemini", ("Gemini", fake("gemini"), "GEMINI_API_KEY", "GEMINI_MODEL", "m"))
     monkeypatch.setitem(reviewer.PROVIDERS, "groq", ("Groq", fake("groq"), "GROQ_API_KEY", "GROQ_MODEL", "m"))
     client = TestClient(create_app(FIXTURES, tmp_path / "p.db"))
-    body = {"exercise_id": "explain-count-words", "text": "answer"}
+    code = (FIXTURES / "01-hand-python/exercises/count-words/solution.py").read_text()
+    attempt = client.post("/api/submit", json={"exercise_id": "count-words", "code": code, "mode": "blank"}).json()["attempt_id"]
+    body = {"exercise_id": "count-words", "attempt_id": attempt, "text": "answer"}
     assert client.post("/api/review", json=body).json()["status"] == "done"
     client.post("/api/settings", json={"provider": "groq"})
     assert client.post("/api/review", json=body).json()["status"] == "done"

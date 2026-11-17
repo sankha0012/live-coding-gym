@@ -562,6 +562,57 @@ function pointable(el, text) {
   return el;
 }
 
+// A written answer as a short exchange with an interviewer: one question at a time, one follow-up at most.
+const VERDICT = { good: ["got it", "done"], partial: ["partly", "todo"], missed: ["missed", "todo"] };
+function interviewPanel(ex, id, part, opts, afterChange) {
+  const el = h("div", { class: "interview" });
+  let view = null, busy = false;
+  const act = async (action, text = "") => {
+    busy = true; draw();
+    try { view = await api("/interview/answer", { exercise_id: id, part, action, text }); afterChange(view); }
+    catch (err) { view.error = err.message; }
+    busy = false; draw();
+  };
+  function draw() {
+    el.replaceChildren();
+    if (!view) { el.append(h("p", { class: "muted" }, "Loading...")); return; }
+    const total = view.qs.length, upTo = view.i === null ? total : view.i + 1;
+    view.qs.slice(0, upTo).forEach((q, n) => {
+      const box = h("div", { class: "iv-q" });
+      if (total > 1 || !opts.hideQuestion) box.append(h("div", { class: "iv-head" }, total > 1 ? h("strong", {}, `Question ${n + 1} of ${total}`) : h("strong", {}, "Interviewer"),
+        q.verdict ? h("span", { class: "chip " + VERDICT[q.verdict][1] }, VERDICT[q.verdict][0]) : null));
+      if (!opts.hideQuestion) box.append(h("div", { class: "bubble them" }, md(q.q)));
+      q.turns.forEach((t) => box.append(h("div", { class: "bubble " + (t.who === "you" ? "you" : "them") }, t.text)));
+      if (q.verdict && q.strong) {
+        box.append(h("div", { class: "iv-strong" }, h("strong", {}, "A strong answer sounds like: "), q.strong,
+          q.verdict !== "good" && ASK ? h("button", { class: "ask", onclick: () => ASK(
+            `The interviewer asked: ${q.q}\nMy answers: ${q.turns.filter((t) => t.who === "you").map((t) => t.text).join(" / ")}\nA strong answer: ${q.strong}\nI do not see the gap in my answer. Please explain what I missed, without writing code for me.`) }, "Ask the assistant about this") : null));
+      }
+      el.append(box);
+    });
+    if (view.done) {
+      el.append(h("div", { class: "iv-result" }, view.passed ? h("p", { class: "ok" }, "✓ Done: nothing missed.")
+        : h("p", { class: "bad" }, "Not yet: at least one question was missed. Read the strong answers above, then try again with fresh questions."),
+        view.passed ? null : h("button", { class: "primary", onclick: async () => { view = await api("/interview/reset", { exercise_id: id, part }); afterChange(view); draw(); } }, "Try again")));
+      return;
+    }
+    const q = view.qs[view.i];
+    const box = h("textarea", { class: "iv-input", rows: "3", ...(busy ? { disabled: "" } : {}),
+      placeholder: opts.placeholder || "Answer first, then why, then one edge case. Two or three sentences, like out loud. Ctrl+Enter sends." });
+    const send = () => { if (box.value.trim()) act("answer", box.value); };
+    box.addEventListener("keydown", (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); send(); } });
+    el.append(box, h("div", { class: "bar" },
+      h("button", { class: "primary", ...(busy ? { disabled: "" } : {}), onclick: send }, busy ? "The interviewer is thinking..." : "Answer"),
+      tip(h("button", { ...(busy || q.hinted ? { disabled: "" } : {}), onclick: () => act("hint") }, "Give me a hint"), "A nudge. The question then counts as partly answered at best."),
+      tip(h("button", { ...(busy ? { disabled: "" } : {}), onclick: () => act("skip") }, "Skip"), "Shows a strong answer and counts as missed.")),
+      ...(view.error ? [h("p", { class: "bad" }, view.error)] : []));
+    if (!busy) setTimeout(() => box.focus(), 0);
+  }
+  api(`/interview?exercise_id=${id}&part=${part}`).then((v) => { view = v; draw(); }).catch((e) => el.replaceChildren(h("p", { class: "bad" }, e.message)));
+  draw();
+  return el;
+}
+
 // What if: a change is made to the code and the learner says what happens. The server runs the change to know.
 function whatIfPanel(info, id, afterChange, locked) {
   const el = h("div", { class: "whatif" });
@@ -609,21 +660,14 @@ function whatIfPanel(info, id, afterChange, locked) {
 
 // Reading exercises: What if rounds, then (level 2) one sentence on the trap or (level 3) a fix and an explanation.
 function readView(ex, id, afterChange) {
-  const reviewSlot = h("div"), whatSlot = h("div"), outBox = h("pre", { class: "out", hidden: "" }), later = h("div");
+  const whatSlot = h("div"), outBox = h("pre", { class: "out", hidden: "" }), later = h("div");
   const showOut = (t) => { outBox.hidden = false; outBox.textContent = "What the original prints:\n" + t; };
   if (ex.expected) showOut(ex.expected);
   const code = paneEditor("python", ex.snippet, true);
   CODE.cm = code.cm; CODE.mainTab = "Code";
   CODE.tab("Code", [code.holder, outBox]);
-  const answer = h("textarea", { placeholder: ex.level === 2 ? "One sentence." : "Answer the questions in your own words." });
   const written = ex.level >= 2 ? h("div", {}, h("h2", {}, ex.level === 2 ? "2. Name the trap" : "3. Explain it"),
-    h("ol", {}, ex.questions.map((q) => h("li", {}, q))), answer,
-    h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
-      e.target.disabled = true; e.target.textContent = "Reviewing, please wait...";
-      try { showReview(await api("/review", { exercise_id: id, text: answer.value })); }
-      catch (err) { reviewSlot.replaceChildren(h("pre", { class: "bad" }, String(err))); }
-      e.target.disabled = false; e.target.textContent = "Submit for review";
-    } }, "Submit for review")), reviewSlot) : null;
+    interviewPanel(ex, id, "main", { placeholder: ex.level === 2 ? "One or two sentences: what is the trap, and what does it cause?" : undefined }, (r) => afterChange(r.status))) : null;
   const fixMsg = h("div"), fixOut = h("pre", { class: "out" });
   let fixEd = null;
   const fix = ex.level >= 3 ? h("div", {}, h("h2", {}, "2. Fix it"), md(ex.fix),
@@ -648,12 +692,6 @@ function readView(ex, id, afterChange) {
     whatSlot.replaceChildren(whatIfPanel(info, id, (r) => { afterChange(r.status); if (r.ok) { api(`/exercise/${id}`).then((x) => x.expected && showOut(x.expected)); openLater(); } }));
   }
   api("/whatif/start", { exercise_id: id }).then((r) => { wire(r.whatif); if (r.whatif.ok) openLater(); });
-  function showReview(rev) {
-    reviewSlot.replaceChildren(reviewBox(rev, async () => showReview(await api(`/reviews/${rev.review_id}/retry`, {}))) || "");
-    if (rev && rev.status === "done") afterChange();
-  }
-  showReview(ex.review);
-  return reviewSlot;
 }
 
 function triageView(ex, id, afterChange) {
@@ -683,16 +721,8 @@ function triageView(ex, id, afterChange) {
 
 // name-the-bug box: shown once the learner's fix passes
 function bugPanel(ex, id, afterChange) {
-  const slot = h("div"), box = h("textarea", { placeholder: "In one sentence: what was the bug, where, and what did it cause?" });
-  const btn = h("button", { class: "primary", onclick: async (e) => {
-    e.target.disabled = true;
-    try {
-      const rev = await api("/bug", { exercise_id: id, text: box.value });
-      slot.replaceChildren(reviewBox(rev, null)); afterChange();
-    } catch (err) { slot.replaceChildren(h("p", { class: "bad" }, err.message)); }
-    e.target.disabled = false;
-  } }, "Submit for review");
-  return h("div", { class: "notice" }, h("strong", {}, "Name the bug. "), "Once the tests pass, say in one sentence what was wrong. This is what you would tell a teammate.", box, h("div", { class: "bar" }, btn), slot);
+  return h("div", { class: "notice" }, h("strong", {}, "Name the bug. "), "Once the tests pass, say what was wrong, as you would tell a teammate.",
+    interviewPanel(ex, id, "bug", { hideQuestion: false, placeholder: "The bug, where it was, and what it caused. One or two sentences." }, () => afterChange()));
 }
 
 // The control check after a core build passes. Level 1: What if. Level 2: What if, then a change by hand.
@@ -741,16 +771,11 @@ function controlPanel(ex, id, ctx, afterChange) {
       if (level === 2 && info.whatif_ok) el.append(...changeBox(info));
       return;
     }
-    const expl = info.lines.map(() => h("textarea", { placeholder: "What does this line do, and why is it there?" }));
-    const revSlot = h("div");
-    el.append(h("h3", {}, "A. Explain these two lines of your code"),
-      ...info.lines.flatMap((l, i) => [pointable(h("pre", {}, `${l.no}: ${l.text}`), `Line ${l.no}: explain this line.`), expl[i]]),
-      h("div", { class: "bar" }, h("button", { class: info.a_ok ? "" : "primary", onclick: async (e) => {
-        e.target.disabled = true;
-        try { const r = await call("/control/explain", { explanations: expl.map((x) => x.value) }); revSlot.replaceChildren(reviewBox(r.review, null)); draw(r.control, code); el.append(revSlot); }
-        catch (err) { revSlot.replaceChildren(h("p", { class: "bad" }, err.message)); }
-        e.target.disabled = false;
-      } }, info.a_ok ? "✓ Explained (check again)" : "Check my explanations")), revSlot, ...changeBox(info));
+    el.append(h("h3", {}, "A. Explain two lines of your code"),
+      ...info.lines.map((l) => pointable(h("pre", {}, `${l.no}: ${l.text}`), `Line ${l.no}: explain this line.`)),
+      interviewPanel(ex, id, "lines", { placeholder: "What the line does and why it is there. One or two sentences." },
+        (r) => { afterChange(r.status); if (ctx.assistantEl) ctx.assistantEl.refresh(); if (r.done) draw(r.control); }),
+      ...changeBox(info));
   }
   (async () => {
     const info = ex.control;
@@ -773,7 +798,7 @@ function assistWhatIf(ex, id, afterChange) {
     if (DEV || !st.assisted || st.explain === true) { el.replaceChildren(); return; }
     if (el.querySelector(".whatif")) return;
     el.replaceChildren(h("strong", {}, "What if. "), "The assistant wrote code for this exercise, so it only counts once you show you understand it. ",
-      h("button", { class: "primary", disabled: st.tests ? undefined : "", onclick: open }, "Start"),
+      h("button", { class: "primary", ...(st.tests ? {} : { disabled: "" }), onclick: open }, "Start"),
       st.tests ? null : h("span", { class: "muted" }, " Pass the tests first."));
   };
   return el;
@@ -848,6 +873,10 @@ async function exView(id, mode = "blank") {
   ctx.getCode = () => text.value;
 
   if (!coded) {
+    if (ex.kind === "open" || ex.kind === "explain") {
+      main.append(progress, interviewPanel(ex, id, "main", { hideQuestion: true }, (r) => { after(r.status); if (r.done) { refreshExtras(); nextSlot.replaceChildren(nextBar(ex, r.passed)); } }), nextSlot, extras);
+      return;
+    }
     main.append(progress, text, h("div", { class: "bar" }, tip(h("button", { class: "primary", onclick: async (e) => {
       e.target.disabled = true;
       e.target.textContent = "Reviewing, please wait...";

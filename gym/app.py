@@ -13,7 +13,7 @@ from fastapi import FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import assistant, cards, config, control, db, gates, mock, reviewer, runner, whatif
+from . import assistant, cards, config, control, db, gates, interview, mock, reviewer, runner, whatif
 from .content import load_content
 from .kb import load_kb
 
@@ -48,12 +48,14 @@ class TriageBody(ExerciseBody):
     decisions: list[dict]
 
 
-class TextBody(ExerciseBody):
-    text: str
+class InterviewBody(ExerciseBody):
+    part: str = "main"      # main: the exercise's own questions; bug: name the bug; lines: explain two lines of your code
+    action: str = "answer"  # answer | hint | skip
+    text: str = ""
 
 
-class ControlExplainBody(ExerciseBody):
-    explanations: list[str]
+class InterviewPart(ExerciseBody):
+    part: str = "main"
 
 
 class ControlChangeBody(ExerciseBody):
@@ -450,19 +452,12 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def review(body: ReviewBody):
         ex = get_ex(body.exercise_id)
         kind = reviewer.REVIEW_KIND.get(ex.kind)
-        if kind is None:
-            raise HTTPException(400, "this exercise has no review")
+        if kind is None or ex.kind in ("read", "open", "explain"):
+            raise HTTPException(400, "this exercise has no review: answer the interviewer instead")
         if ex.kind in CODED:
             attempt = need(db.get_attempt(conn, body.attempt_id), "attempt")
             material = {"task": ex.prompt, "code": attempt["code"],
                         "candidate explanation": body.text, "reference solution": ex.solution}
-        elif ex.kind == "read":
-            if ex.level < 2:
-                raise HTTPException(400, "this reading has no written answer")
-            asked = [TRAP_QUESTION] if ex.level == 2 else ex.questions
-            material = {"task": ex.prompt, "code the candidate was shown": ex.snippet,
-                        "questions asked": "\n".join(f"- {q}" for q in asked),
-                        "candidate answer": body.text, "reference answer": ex.say}
         else:
             material = {"task": ex.prompt, "answer": body.text}
         return do_review(ex.id, kind, ex.rubric, material, body.attempt_id)
@@ -573,20 +568,92 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         return {"passed": passed, "correct": correct, "total": len(ex.proposals), "results": results,
                 "review": review_out, "attempt_id": attempt_id, "status": status_of(ex)}
 
-    @app.post("/api/bug")
-    def name_bug(body: TextBody):
-        """Name the bug in one sentence: reviewed against the reference description."""
-        ex = get_ex(body.exercise_id)
-        if not ex.name_bug:
-            raise HTTPException(400, "this exercise does not ask you to name the bug")
+    BUG_QUESTION = "In one sentence: what was the bug, where was it, and what did it cause?"
+
+    def interview_def(ex, part):
+        """(questions, reference answer, rubric, context) of one written exchange."""
+        if part == "main" and ex.kind == "read" and ex.level >= 2:
+            return ([TRAP_QUESTION] if ex.level == 2 else ex.questions), ex.say, [], ex.snippet
+        if part == "main" and ex.kind in ("open", "explain"):
+            return [ex.prompt], ex.say, ex.rubric, ""
+        if part == "bug" and ex.name_bug:
+            attempt = db.last_passed_attempt(conn, ex.id)
+            if attempt is None:
+                raise HTTPException(400, "Fix the code and pass the tests first.")
+            return [BUG_QUESTION], ex.bug, [], f"The assistant's buggy code:\n{ex.starter}\n\nThe candidate's fixed code:\n{attempt['code']}"
+        if part == "lines" and ex.control_level == 3:
+            row, attempt = db.get_control(conn, ex.id), db.last_passed_attempt(conn, ex.id)
+            if row is None or attempt is None:
+                raise HTTPException(400, "Start the control check first.")
+            return [f"Line {l['no']}: `{l['text'].strip()}`. What does this line do, and why is it there?"
+                    for l in json.loads(row["lines_json"])], "", [], attempt["code"]
+        raise HTTPException(400, "this exercise has no such written exchange")
+
+    def interview_view(state):
+        i = interview.current(state)
+        return {"qs": [{"q": q["q"], "turns": q["turns"], "verdict": q["verdict"], "strong": q["strong"], "hinted": q["hinted"],
+                        "followups": q["followups"]} for q in state["qs"]], "i": i, "done": state["done"], "passed": state["passed"]}
+
+    def interview_state(ex, part):
+        scope = f"{ex.id}:{part}"
+        state = db.get_interview(conn, scope)
+        if state is None:
+            state = interview.new_state(interview_def(ex, part)[0])
+            db.save_interview(conn, scope, state)
+        return scope, state
+
+    def interview_finish(ex, part, state):
+        passed = state["passed"]
+        if part == "lines":
+            db.set_control_part(conn, ex.id, "a", passed)
+        kind = {"main": reviewer.REVIEW_KIND.get(ex.kind), "bug": "bug", "lines": "line"}[part]
         attempt = db.last_passed_attempt(conn, ex.id)
-        if attempt is None:
-            raise HTTPException(400, "Fix the code and pass the tests first.")
-        if not body.text.strip():
-            raise HTTPException(400, "Write one sentence naming the bug.")
-        material = {"task": ex.prompt, "the assistant's buggy code": ex.starter, "the candidate's fixed code": attempt["code"],
-                    "reference description of the bug": ex.bug, "candidate's sentence": body.text}
-        return do_review(ex.id, "bug", None, material, attempt["id"])
+        db.save_review(conn, ex.id, kind, {"interview": state},
+                       {"status": "done", "scores": interview.scores(state),
+                        "verdict": f"{sum(q['verdict'] != 'missed' for q in state['qs'])} of {len(state['qs'])} answered well",
+                        "feedback": " ".join(q["strong"] for q in state["qs"] if q["strong"])}, attempt["id"] if attempt else None)
+
+    @app.get("/api/interview")
+    def interview_get(exercise_id: str, part: str = "main"):
+        ex = get_ex(exercise_id)
+        return interview_view(interview_state(ex, part)[1])
+
+    @app.post("/api/interview/answer")
+    def interview_answer(body: InterviewBody):
+        ex = get_ex(body.exercise_id)
+        if body.action not in ("answer", "hint", "skip"):
+            raise HTTPException(400, "unknown action")
+        questions, reference, rubric, context = interview_def(ex, body.part)
+        scope, state = interview_state(ex, body.part)
+        i = interview.current(state)
+        if i is None:
+            raise HTTPException(400, "This exchange is finished.")
+        q = state["qs"][i]
+        if body.action == "answer" and not body.text.strip():
+            raise HTTPException(400, "Write your answer first.")
+        if body.action == "hint" and q["hinted"]:
+            raise HTTPException(400, "You already used the hint for this question.")
+        if body.action == "skip":
+            move = interview.skip_move(q, reference)
+        else:
+            try:
+                move = interview.ask(ai_call, q, reference, rubric, context, body.action, body.text.strip())
+            except RuntimeError as e:
+                raise HTTPException(502, str(e))
+        interview.apply(state, body.action, body.text.strip(), move)
+        db.save_interview(conn, scope, state)
+        if state["done"]:
+            interview_finish(ex, body.part, state)
+        return {**interview_view(state), "status": status_of(ex), "control": control_info(ex)}
+
+    @app.post("/api/interview/reset")
+    def interview_reset(body: InterviewPart):
+        ex = get_ex(body.exercise_id)
+        scope, state = interview_state(ex, body.part)
+        if state["passed"]:
+            raise HTTPException(400, "You passed this one.")
+        db.delete_interview(conn, scope)
+        return interview_view(interview_state(ex, body.part)[1])
 
     @app.post("/api/control/start")
     def control_start(body: ExerciseBody):
@@ -602,26 +669,10 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         done = control_info(ex)["complete"]
         if row is None or (not done and row["attempt_id"] != attempt["id"]):
             db.start_control(conn, ex.id, attempt["id"], control.pick_lines(attempt["code"], attempt["id"]) if level == 3 else [])
+            db.delete_interview(conn, f"{ex.id}:lines")
         if level < 3:
             whatif_start(WhatIfStartBody(exercise_id=ex.id))
         return {"control": control_info(ex), "code": attempt["code"], "status": status_of(ex)}
-
-    @app.post("/api/control/explain")
-    def control_explain(body: ControlExplainBody):
-        ex = get_ex(body.exercise_id)
-        row = db.get_control(conn, ex.id)
-        if row is None or ex.control_level != 3:
-            raise HTTPException(400, "Start the control check first.")
-        lines = json.loads(row["lines_json"])
-        if len(body.explanations) != len(lines) or not all(e.strip() for e in body.explanations):
-            raise HTTPException(400, "Explain every line.")
-        attempt = need(db.get_attempt(conn, row["attempt_id"]), "attempt")
-        asked = "\n\n".join(f"Line {l['no']}: {l['text'].strip()}\nCandidate: {e}" for l, e in zip(lines, body.explanations))
-        rev = do_review(ex.id, "line", None, {"task": ex.prompt, "the candidate's code": attempt["code"],
-                                              "lines asked and explanations": asked}, attempt["id"])
-        ok = rev["status"] == "done" and bool(rev["scores"]) and min(rev["scores"].values()) >= step_by_id[ex.step_id].min_score
-        db.set_control_part(conn, ex.id, "a", ok)
-        return {"review": rev, "a_ok": ok, "control": control_info(ex), "status": status_of(ex)}
 
     @app.post("/api/control/change")
     def control_change(body: ControlChangeBody):

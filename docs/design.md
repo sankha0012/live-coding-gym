@@ -39,7 +39,7 @@ Each topic is taught in four moves: **read** it (What if: one line changes, what
 - **Python options**: `name_bug` (needs `bug.md`), `plan_required` (comment lines before code), `grade_prompts` (the prompts to the assistant must pass the prompt review).
 - **Documentation**: `docs.md` in an exercise is shown in a box on the exercise page and in mock rounds. A documentation task ships a helper module through `files:` and can only be solved by reading it.
 - **Mock round**: two Python tasks with `mock: true`, 35 minutes, the assistant on and the docs open; then two "explain this line" questions and three follow-ups. Score: tests 35, review 25, time 10, small asks 10, ran code before accepting it 10, line explanations 10. Readiness is the average of the last three rounds.
-- **Reviews** are scored 1 to 5 per criterion by Gemini or Groq (settings menu); `min_score` is 3.
+- **Written answers are an exchange with an AI interviewer** (`gym/interview.py`): one question at a time, a short answer, at most one follow-up aimed at the gap, a hint (caps the question at partial) and skip (counts as missed). Verdicts are good, partial or missed; nothing missed passes. It covers the one-sentence trap and the explanation in readings, open and explain exercises, naming the bug, and the two lines of a level 3 build. Code review of passing code and prompt grading still use the 1 to 5 reviewer (Gemini or Groq, settings menu; `min_score` 3).
 - **Flashcards** ask "what does this do" and "what breaks here"; the daily deck uses the required steps.
 
 ## Content format

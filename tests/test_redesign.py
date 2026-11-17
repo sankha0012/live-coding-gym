@@ -106,6 +106,17 @@ def env(tmp_path):
 
     def fake(prompt, json_mode=True):
         seen.append((prompt, json_mode))
+        if "## Conversation so far" in prompt:  # the interviewer, steered by words in the candidate's answer
+            talk = prompt.split("## Conversation so far")[1]
+            if "asks for a hint" in prompt and "(asked for a hint)" not in talk:
+                return json.dumps({"reply": "Look at the loop."})
+            final = "You have already asked a follow-up" in prompt
+            last = [l for l in talk.splitlines() if l.startswith("Candidate:")][-1:] or [""]
+            if "WRONG" in last[0]:
+                return json.dumps({"verdict": "missed", "reply": "Not quite.", "follow_up": "", "strong": "The real answer."})
+            if "VAGUE" in last[0] and not final:
+                return json.dumps({"verdict": "probe", "reply": "Hm.", "follow_up": "And then what happens?", "strong": ""})
+            return json.dumps({"verdict": "partial" if "VAGUE" in last[0] else "good", "reply": "Right.", "follow_up": "", "strong": "A strong answer."})
         if json_mode:
             n = int(re.search(r"Return exactly (\d+) scores", prompt).group(1))
             return json.dumps({"scores": [4] * n, "verdict": "ok", "feedback": "fine"})
@@ -179,10 +190,19 @@ def test_reading_exercise_what_if_then_a_written_answer(env):
     right = post(client, "/api/whatif/answer", {"exercise_id": "r1", "answers": [READ_ANSWERS[q["change"]] for q in fresh["questions"]]})
     assert right["ok"] and right["status"]["tests"] is True and right["status"]["done"] is False  # still the written answer
     assert client.get("/api/exercise/r1").json()["expected"].strip() == "6\n3"
-    rev = post(client, "/api/review", {"exercise_id": "r1", "text": "Nothing surprising: it sums and counts."})
-    assert rev["status"] == "done" and "what is the trap" in seen[-1][0] and "Sum then length." in seen[-1][0]
+    assert post(client, "/api/review", {"exercise_id": "r1", "text": "x"}, status=400)  # answered with the interviewer now
+    view = client.get("/api/interview", params={"exercise_id": "r1"}).json()
+    assert [q["q"] for q in view["qs"]] == ["In one sentence: what is the trap or surprise in this code?"] and view["i"] == 0
+    probe = post(client, "/api/interview/answer", {"exercise_id": "r1", "text": "VAGUE: it sums."})
+    assert probe["qs"][0]["verdict"] is None and probe["qs"][0]["followups"] == 1 and not probe["done"]
+    assert probe["qs"][0]["turns"][-1] == {"who": "interviewer", "text": "Hm. And then what happens?"}
+    assert "Sum then length." in seen[-1][0] and "sum(xs)" in seen[-1][0]  # the reference and the code are the interviewer's
+    done = post(client, "/api/interview/answer", {"exercise_id": "r1", "text": "VAGUE: it counts too."})
+    assert done["done"] and done["passed"] and done["qs"][0]["verdict"] == "partial"  # partial still passes
+    assert done["status"]["review"] is True and done["status"]["done"] is True
     st = client.get("/api/exercise/r1").json()
-    assert st["status"]["done"] is True and st["say"] == "Sum then length."
+    assert st["say"] == "Sum then length." and st["review"]["scores"] and "answered well" in st["review"]["verdict"]
+    assert post(client, "/api/interview/answer", {"exercise_id": "r1", "text": "more"}, status=400)  # finished
 
 
 def test_triage_scores_decisions_and_reviews_reasons(env):
@@ -203,12 +223,12 @@ def test_triage_scores_decisions_and_reviews_reasons(env):
 def test_naming_the_bug_needs_a_pass_and_is_reviewed_against_the_reference(env):
     client, seen, _ = env
     assert client.get("/api/chat", params={"scope": "b1"}).json()["policy"] == "off"
-    assert post(client, "/api/bug", {"exercise_id": "b1", "text": "x"}, status=400)  # fix the code first
+    assert post(client, "/api/interview/answer", {"exercise_id": "b1", "part": "bug", "text": "x"}, status=400)  # fix the code first
     fixed = post(client, "/api/submit", {"exercise_id": "b1", "code": SOLUTION, "mode": "blank", "duration_s": 1})
     assert fixed["passed"] and fixed["status"]["bug"] is False and fixed["status"]["done"] is False
-    assert post(client, "/api/bug", {"exercise_id": "b1", "text": " "}, status=400)
-    rev = post(client, "/api/bug", {"exercise_id": "b1", "text": "It skipped the first element."})
-    assert rev["status"] == "done" and "The loop skips the first element" in seen[-1][0]
+    assert post(client, "/api/interview/answer", {"exercise_id": "b1", "part": "bug", "text": " "}, status=400)
+    rev = post(client, "/api/interview/answer", {"exercise_id": "b1", "part": "bug", "text": "It skipped the first element."})
+    assert rev["done"] and rev["passed"] and "The loop skips the first element" in seen[-1][0]
     assert client.get("/api/exercise/b1").json()["status"]["done"] is True
 
 
@@ -246,11 +266,14 @@ def test_the_control_check_end_to_end(env):
     # the assistant is off while the check is open
     assert post(client, "/api/chat", {"scope": "p1", "message": "just do it"}, status=403)
     assert client.get("/api/chat", params={"scope": "p1"}).json()["locked"] is True
-    # part A: explain the two lines
-    assert post(client, "/api/control/explain", {"exercise_id": "p1", "explanations": ["only one"]}, status=400)
-    a = post(client, "/api/control/explain", {"exercise_id": "p1", "explanations": ["It adds x to the total.", "It starts at zero."]})
-    assert a["a_ok"] and a["review"]["status"] == "done"
-    assert ctl["lines"][0]["text"].strip() in seen[-1][0]
+    # part A: explain the two lines to the interviewer
+    lines = client.get("/api/interview", params={"exercise_id": "p1", "part": "lines"}).json()
+    assert len(lines["qs"]) == 2 and ctl["lines"][0]["text"].strip() in lines["qs"][0]["q"]
+    a = post(client, "/api/interview/answer", {"exercise_id": "p1", "part": "lines", "text": "It adds x to the total."})
+    assert not a["done"] and a["control"]["a_ok"] is False
+    a = post(client, "/api/interview/answer", {"exercise_id": "p1", "part": "lines", "text": "It starts at zero."})
+    assert a["done"] and a["passed"] and a["control"]["a_ok"] is True
+    assert ctl["lines"][1]["text"].strip() in seen[-1][0] and code in seen[-1][0]  # the interviewer sees the code
     assert a["status"]["control"] is False and a["status"]["done"] is False  # still needs the change
     # part B: the change by hand, checked by hidden tests
     wrong = post(client, "/api/control/change", {"exercise_id": "p1", "code": code})
@@ -262,21 +285,27 @@ def test_the_control_check_end_to_end(env):
     assert client.get("/api/exercise/p1").json()["status"]["tests"] is True
 
 
-def test_a_low_line_explanation_review_does_not_open_the_change(tmp_path):
-    def stingy(prompt, json_mode=True):
-        n = int(re.search(r"Return exactly (\d+) scores", prompt).group(1))
-        return json.dumps({"scores": [1] * n, "verdict": "no", "feedback": "weak"})
-
-    root = tmp_path / "c"
-    for name, text in files().items():
-        path = root / name
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text)
-    client = TestClient(create_app(root, tmp_path / "p.db", call=stingy))
+def test_a_missed_line_does_not_open_the_change_and_can_be_retried(env):
+    client, _, _ = env
     post(client, "/api/submit", {"exercise_id": "p1", "mode": "blank", "code": "# a\n# b\ndef total(xs):\n    return sum(xs)\n"})
     post(client, "/api/control/start", {"exercise_id": "p1"})
-    a = post(client, "/api/control/explain", {"exercise_id": "p1", "explanations": ["x", "y"]})
-    assert a["a_ok"] is False and a["control"]["a_ok"] is False
+    post(client, "/api/interview/answer", {"exercise_id": "p1", "part": "lines", "action": "hint", "text": ""})
+    assert post(client, "/api/interview/answer", {"exercise_id": "p1", "part": "lines", "action": "hint"}, status=400)  # one hint each
+    post(client, "/api/interview/answer", {"exercise_id": "p1", "part": "lines", "text": "WRONG"})
+    skipped = post(client, "/api/interview/answer", {"exercise_id": "p1", "part": "lines", "action": "skip"})
+    assert skipped["done"] and skipped["passed"] is False and skipped["control"]["a_ok"] is False
+    assert [q["verdict"] for q in skipped["qs"]] == ["missed", "missed"]
+    fresh = post(client, "/api/interview/reset", {"exercise_id": "p1", "part": "lines"})
+    assert not fresh["done"] and fresh["i"] == 0 and all(q["verdict"] is None for q in fresh["qs"])
+
+
+def test_a_hint_caps_a_question_at_partial(env):
+    client, _, _ = env
+    hinted = post(client, "/api/interview/answer", {"exercise_id": "r1", "action": "hint"})
+    assert hinted["qs"][0]["hinted"] and hinted["qs"][0]["turns"][-1]["text"] == "Look at the loop."
+    done = post(client, "/api/interview/answer", {"exercise_id": "r1", "text": "It sums and counts."})
+    assert done["qs"][0]["verdict"] == "partial"  # a good answer after a hint
+    assert post(client, "/api/interview/reset", {"exercise_id": "r1"}, status=400)  # passed: nothing to retry
 
 
 def test_sql_control_check_compares_the_changed_query_with_the_reference_result(env):
@@ -287,7 +316,8 @@ def test_sql_control_check_compares_the_changed_query_with_the_reference_result(
     post(client, "/api/submit", {"exercise_id": "q1", "code": solution, "mode": "blank"})
     ctl = post(client, "/api/control/start", {"exercise_id": "q1"})["control"]
     assert ctl["started"] and "SP" in ctl["change"] and all(not l["text"].lstrip().startswith("--") for l in ctl["lines"])
-    post(client, "/api/control/explain", {"exercise_id": "q1", "explanations": ["a", "b"][:len(ctl["lines"])]})
+    for _ in ctl["lines"]:
+        post(client, "/api/interview/answer", {"exercise_id": "q1", "part": "lines", "text": "It filters and counts."})
     wrong = post(client, "/api/control/change", {"exercise_id": "q1", "code": solution})
     assert wrong["passed"] is False
     right = post(client, "/api/control/change", {"exercise_id": "q1", "code": "SELECT COUNT(*) AS n FROM orders WHERE city = 'SP'"})
@@ -345,7 +375,7 @@ def test_level_one_build_is_done_after_the_what_if_round(env, monkeypatch):
     good = post(client, "/api/whatif/answer", {"exercise_id": "p3", "answers": [q["answer"] for q in qs]})
     assert good["ok"] and good["control"]["complete"] and good["status"]["control"] is True and good["status"]["done"] is True
     assert post(client, "/api/control/change", {"exercise_id": "p3", "code": CHANGED}, status=400)  # level 1 has no change
-    assert post(client, "/api/control/explain", {"exercise_id": "p3", "explanations": ["a", "b"]}, status=400)
+    assert post(client, "/api/interview/answer", {"exercise_id": "p3", "part": "lines", "text": "a"}, status=400)
 
 
 def test_level_two_build_needs_the_what_if_round_and_the_change(env, monkeypatch):
