@@ -270,7 +270,7 @@ function assistantPanel(scope, ctx) {
     input.disabled = !can;
     gradeBtn.hidden = !(ctx.grade && state.messages.some((m) => m.role === "user"));
   }
-  async function send(text) {
+  async function send(text, explainOnly = false) {
     text = (text ?? input.value).trim();
     if (!text) return;
     error.textContent = "";
@@ -279,7 +279,7 @@ function assistantPanel(scope, ctx) {
     state.messages.push({ role: "assistant", content: "Thinking..." });
     draw();
     try {
-      const r = await api("/chat", { scope, message: text, code: ctx.getCode(), output: ctx.getOutput() });
+      const r = await api("/chat", { scope, message: text, code: ctx.getCode(), output: ctx.getOutput(), explain_only: explainOnly });
       const wasAssisted = state.assisted;
       state = { ...state, messages: r.messages, assisted: r.assisted, policy: r.policy, locked: r.locked };
       if (r.assisted && !wasAssisted && ctx.onAssisted) ctx.onAssisted();
@@ -301,6 +301,7 @@ function assistantPanel(scope, ctx) {
     note, list, error, quick, input,
     h("div", { class: "bar" }, h("button", { class: "primary", onclick: () => send() }, "Send"), gradeBtn), gradeSlot);
   el.refresh = load;
+  el.ask = (text) => send(text, true);
   load();
   return el;
 }
@@ -471,6 +472,7 @@ async function stepView(id) {
 
 // ---------- exercise kinds added by the redesign ----------
 // ---------------- exercise pages: code on the left, the work on the right, each filling the screen ----------------
+let ASK = null; // (text) => send a question to the assistant and open its tab
 let CODE = null; // the code pane of the open exercise: tabs of editors, and the main editor for pointing at lines
 function splitLayout() {
   mainEl.className = "split";
@@ -529,6 +531,7 @@ function workTabs(work, panes) {
   function show(id) { panes.forEach((p, i) => { p.el.hidden = p.id !== id; buttons[i].classList.toggle("active", p.id === id); }); work.scrollTop = 0; }
   work.replaceChildren(h("div", { class: "tabs work-tabs" }, ...buttons), ...panes.map((p) => p.el));
   show(panes[0].id);
+  work.showTab = show;
 }
 
 // Point at the line a question names: highlight it in the main editor and show the question under it.
@@ -577,8 +580,14 @@ function whatIfPanel(info, id, afterChange, locked) {
       e.target.disabled = true;
       try {
         const r = await api("/whatif/answer", { exercise_id: id, answers: picks });
-        r.results.forEach((res, i) => boxes[i].append(h("p", { class: res.correct ? "ok" : "bad" },
-          (res.correct ? "✓ " : `✗ it was: ${LABELS[res.answer]}. `) + (res.result || ""))));
+        r.results.forEach((res, i) => {
+          boxes[i].append(h("p", { class: res.correct ? "ok" : "bad" },
+            (res.correct ? "✓ " : `✗ it was: ${LABELS[res.answer]}. `) + (res.result || "")));
+          if (ASK) boxes[i].append(h("button", { class: "ask", onclick: () => ASK(
+            `A What if question: ${state.questions[i].change}\nI answered "${LABELS[picks[i]]}". The right answer is "${LABELS[res.answer]}". ` +
+            `The explanation I was shown: ${res.result || "(none)"}\nI do not fully understand. Please explain it in more detail, with a small example if that helps. Do not write the solution.`) },
+            "Ask the assistant about this"));
+        });
         boxes.forEach((b) => b.querySelectorAll("input").forEach((x) => { x.disabled = true; }));
         // the answers stay on screen until the learner moves on
         if (r.ok) {
@@ -785,7 +794,10 @@ async function exView(id, mode = "blank") {
   const after = (st) => { if (st) applyStatus(st); else refreshStatus(); };
   ctx.onGraded = refreshStatus;
   const helpTabs = helpSidebar(ex, ctx, !split);
-  if (split) workTabs(work, [{ id: "task", label: "Task", el: main }, ...helpTabs]);
+  if (split) {
+    workTabs(work, [{ id: "task", label: "Task", el: main }, ...helpTabs]);
+    ASK = (text) => { work.showTab("assistant"); ctx.assistantEl.ask(text); };
+  }
   if (ex.kind === "quiz") { main.append(md(ex.prompt)); return quizView(ex); }
   if (split) {  // the task text folds away once read, so the questions sit next to the code
     const key = `fold:${id}`;
@@ -818,6 +830,7 @@ async function exView(id, mode = "blank") {
     applyStatus(now); refreshExtras(); nextSlot.replaceChildren(nextBar(ex, now.done));
   };
   if (ex.kind === "read") {
+    ctx.getCode = () => ex.snippet;
     main.append(progress);
     readView(ex, id, finished);
     main.append(nextSlot, extras);
@@ -989,6 +1002,7 @@ async function render(view) {
   hideHelp();
   clearPoint();
   CODE = null;
+  ASK = null;
   main = mainEl;
   mainEl.className = "";
   mainEl.replaceChildren();

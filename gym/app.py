@@ -267,6 +267,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     class ChatBody(BaseModel):
         scope: str
         message: str
+        explain_only: bool = False   # "ask about this" from a What if answer: explains, never writes code, works even while the check is locked
         code: str = ""
         output: str = ""
 
@@ -309,6 +310,9 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     @app.post("/api/chat")
     def chat_send(body: ChatBody):
         ctx = chat_context(body.scope)
+        shown = ctx  # what the panel keeps showing: the asking does not unlock the exercise
+        if body.explain_only and ctx["policy"] != "free":
+            ctx = {**ctx, "policy": "explain", "locked": False}
         if ctx["policy"] == "off":
             raise HTTPException(403, "The assistant is off on this exercise.")
         if ctx["locked"]:
@@ -327,7 +331,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         db.add_chat(conn, body.scope, "assistant", reply, ctx["policy"], size)
         if ctx["policy"] in ("train", "free") and ctx["assist_key"] and assistant.has_code_block(reply):
             db.mark_assisted(conn, ctx["assist_key"])
-        return {"reply": reply, "size": size, **chat_state(body.scope, ctx)}
+        return {"reply": reply, "size": size, **chat_state(body.scope, shown)}
 
     @app.post("/api/chat/clear")
     def chat_clear(body: ScopeBody):

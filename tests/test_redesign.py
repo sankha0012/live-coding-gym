@@ -401,3 +401,13 @@ def test_level_three_reading_needs_a_fix_that_prints_the_target(env):
     assert bad["passed"] is False and bad["output"].strip() == "5" and bad["status"]["fix"] is False
     good = post(client, "/api/fix", {"exercise_id": "r3", "code": "print(sum([1, 2, 3]))\n"})
     assert good["passed"] and good["status"]["fix"] is True and good["status"]["done"] is False  # what if and the explanation remain
+
+
+def test_asking_about_a_what_if_answer_works_while_the_check_is_locked_and_never_writes_code(env, monkeypatch):
+    client, _, _ = env
+    fixed_questions(monkeypatch)
+    post(client, "/api/submit", {"exercise_id": "p3", "code": SOLUTION, "mode": "blank"})
+    assert post(client, "/api/control/start", {"exercise_id": "p3"})["control"]["locked"]
+    assert post(client, "/api/chat", {"scope": "p3", "message": "why?"}, status=403)  # the assistant is locked
+    r = post(client, "/api/chat", {"scope": "p3", "message": "Why did this fail?", "explain_only": True})
+    assert r["assisted"] is False and r["locked"] is True and len(r["messages"]) == 2  # still locked for everything else
