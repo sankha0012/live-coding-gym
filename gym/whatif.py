@@ -69,18 +69,19 @@ def pick(code, seed, judge, want=3, sql=False, limit=6):
     random.Random(seed).shuffle(pool)
     seen, found = set(), []
     for m in pool:
-        if len(found) >= limit or ({a for _, a in found} >= {"pass", "fail"} and len(found) >= want):
+        if len(found) >= limit or ({a[0] for _, a in found} >= {"pass", "fail"} and len(found) >= want):
             break
         key = (m["line"], m["new"])
         if key in seen:
             continue
         seen.add(key)
-        found.append((m, judge(m["code"])))
+        verdict = judge(m["code"])  # 'pass'/'fail', or ('pass'/'fail', why)
+        found.append((m, verdict if isinstance(verdict, tuple) else (verdict, "")))
     chosen = []
     for outcome in ("fail", "pass"):  # at least one of each, then fill up
-        hit = next((x for x in found if x[1] == outcome and x not in chosen), None)
+        hit = next((x for x in found if x[1][0] == outcome and x not in chosen), None)
         if hit:
             chosen.append(hit)
     chosen += [x for x in found if x not in chosen][:max(0, want - len(chosen))]
     random.Random(seed + 1).shuffle(chosen)
-    return [{"change": describe(m), "answer": a} for m, a in chosen[:want]]
+    return [{"change": describe(m), "answer": a, "result": why} for m, (a, why) in chosen[:want]]

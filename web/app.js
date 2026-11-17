@@ -480,20 +480,28 @@ function whatIfPanel(info, id, afterChange, locked) {
     const boxes = state.questions.map((q, i) => h("div", { class: "review" }, h("p", {}, h("strong", {}, `${i + 1}. `), md(q.change)),
       h("div", {}, ...state.choices.map((c) => h("label", { style: "margin-right:1rem" },
         h("input", { type: "radio", name: `w${id}${i}`, onchange: () => { picks[i] = c; } }), " " + LABELS[c])))));
-    const note = h("div");
-    el.append(...boxes, h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
+    const note = h("div"), bar = h("div", { class: "bar" });
+    const check = h("button", { class: "primary", onclick: async (e) => {
       if (picks.includes(null)) { note.replaceChildren(h("p", { class: "bad" }, "Answer every question.")); return; }
       e.target.disabled = true;
       try {
         const r = await api("/whatif/answer", { exercise_id: id, answers: picks });
         r.results.forEach((res, i) => boxes[i].append(h("p", { class: res.correct ? "ok" : "bad" },
           (res.correct ? "✓ " : `✗ it was: ${LABELS[res.answer]}. `) + (res.result || ""))));
-        note.replaceChildren(h("p", {}, r.ok ? "✓ All right." : "Not all right. Read the answers above, then try the new questions."));
-        afterChange(r);
-        if (!r.ok) setTimeout(() => draw(r.whatif), 2500);
-        else draw(r.whatif);
+        boxes.forEach((b) => b.querySelectorAll("input").forEach((x) => { x.disabled = true; }));
+        // the answers stay on screen until the learner moves on
+        if (r.ok) {
+          note.replaceChildren(h("p", { class: "ok" }, "✓ All right."));
+          bar.replaceChildren(h("button", { class: "primary", onclick: () => { afterChange(r); draw(r.whatif); } }, "Continue"));
+        } else {
+          note.replaceChildren(h("p", {}, "Not all right. Read the explanations above, then go on with new questions."));
+          bar.replaceChildren(h("button", { class: "primary", onclick: () => draw(r.whatif) }, "Next questions"));
+          afterChange(r);
+        }
       } catch (err) { note.replaceChildren(h("p", { class: "bad" }, err.message)); e.target.disabled = false; }
-    } }, "Check my answers")), note);
+    } }, "Check my answers");
+    bar.append(check);
+    el.append(...boxes, bar, note);
   }
   draw(info);
   return el;

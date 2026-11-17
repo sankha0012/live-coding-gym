@@ -476,8 +476,15 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         return "\n".join(line.rstrip() for line in text.strip().splitlines())
 
     def judge_build(ex):
-        """Run changed code the way the exercise grades code: 'pass' or 'fail'."""
-        return lambda code: "pass" if grade(ex, code).passed else "fail"
+        """Run changed code the way the exercise grades code: ('pass' or 'fail', a short reason)."""
+        def judge(code):
+            r = grade(ex, code)
+            if r.passed:
+                return "pass", "The tests still pass."
+            failed = [t["name"] for t in r.tests if not t["passed"]]
+            last = next((l for l in reversed(r.output.strip().splitlines()) if l.strip()), "")
+            return "fail", f"Failing: {', '.join(failed[:3])}." if failed else last[:160]
+        return judge
 
     def make_questions(ex, rounds):
         """(source attempt id, questions with answers) for one round of What if."""

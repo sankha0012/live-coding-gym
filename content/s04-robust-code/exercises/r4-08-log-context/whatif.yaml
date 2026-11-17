@@ -22,4 +22,4 @@
   old: 'qty=%r'
   new: 'qty=%s'
   answer: different
-  result: Without repr the string loses its quotes, so the A-18 line shows qty=three instead of qty=''three''.
+  result: Without repr the string loses its quotes, so the A-18 line shows qty=three instead of qty='three'.

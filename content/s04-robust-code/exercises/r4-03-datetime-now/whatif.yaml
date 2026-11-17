@@ -7,7 +7,7 @@
   old: 'start = end - timedelta(days=days)'
   new: 'start = end - timedelta(days=days + 1)'
   answer: same
-  result: The window still ends at today''s date, far after March 2024, so it still holds no event and the line prints 0.
+  result: The window still ends at today's date, far after March 2024, so it still holds no event and the line prints 0.
 - change: 'Line 17: `def last_week_events_at(events, now, days=7):` becomes `def last_week_events_at(events, now, days=1):`.'
   old: 'now, days=7):'
   new: 'now, days=1):'
