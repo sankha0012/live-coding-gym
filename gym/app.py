@@ -54,6 +54,11 @@ class InterviewBody(ExerciseBody):
     text: str = ""
 
 
+class MockInterviewBody(BaseModel):
+    action: str = "answer"
+    text: str = ""
+
+
 class InterviewPart(ExerciseBody):
     part: str = "main"
 
@@ -65,12 +70,6 @@ class ControlChangeBody(ExerciseBody):
 class SubmitBody(RunBody):
     mode: str = "blank"
     duration_s: float = 0
-
-
-class ReviewBody(BaseModel):
-    exercise_id: str
-    attempt_id: int | None = None
-    text: str = ""
 
 
 class QuizBody(BaseModel):
@@ -90,11 +89,6 @@ class UnlockBody(BaseModel):
 class MockSubmit(BaseModel):
     codes: list[str]
     duration_s: float
-
-
-class MockAnswers(BaseModel):
-    answers: list[str]
-    line_answers: list[str] = []
 
 
 def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None):
@@ -448,20 +442,6 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
                                        body.duration_s, result.output)
         return {**asdict(result), "attempt_id": attempt_id, "status": status_of(ex)}
 
-    @app.post("/api/review")
-    def review(body: ReviewBody):
-        ex = get_ex(body.exercise_id)
-        kind = reviewer.REVIEW_KIND.get(ex.kind)
-        if kind is None or ex.kind in ("read", "open", "explain"):
-            raise HTTPException(400, "this exercise has no review: answer the interviewer instead")
-        if ex.kind in CODED:
-            attempt = need(db.get_attempt(conn, body.attempt_id), "attempt")
-            material = {"task": ex.prompt, "code": attempt["code"],
-                        "candidate explanation": body.text, "reference solution": ex.solution}
-        else:
-            material = {"task": ex.prompt, "answer": body.text}
-        return do_review(ex.id, kind, ex.rubric, material, body.attempt_id)
-
     @app.post("/api/reviews/{review_id}/retry")
     def retry(review_id: int):
         row = need(db.get_review(conn, review_id), "review")
@@ -546,7 +526,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
 
     @app.post("/api/triage")
     def triage(body: TriageBody):
-        """triage exercises: accept or reject each proposed change, with a reason."""
+        """triage exercises: accept or reject each proposed change; the reasons are shown after."""
         ex = get_ex(body.exercise_id)
         if ex.kind != "triage":
             raise HTTPException(400, "this exercise is not a triage exercise")
@@ -558,15 +538,8 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         passed = correct / len(ex.proposals) >= ex.pass_ratio
         attempt_id = db.record_attempt(conn, ex.id, "blank", json.dumps(body.decisions), passed, 0,
                                        f"{correct}/{len(ex.proposals)}")
-        review_out = None
-        if all(str(d.get("reason", "")).strip() for d in body.decisions):
-            lines = []
-            for i, (d, p, r) in enumerate(zip(body.decisions, ex.proposals, results), 1):
-                lines.append(f"Change {i}: {p['title']}\nCode:\n{p['code']}\nKey: {p['correct']} because {p.get('why', '')}\n"
-                             f"Candidate: {d.get('choice')} because {d.get('reason')}")
-            review_out = do_review(ex.id, "triage", ex.rubric, {"task": ex.prompt, "decisions": "\n\n".join(lines)}, attempt_id)
         return {"passed": passed, "correct": correct, "total": len(ex.proposals), "results": results,
-                "review": review_out, "attempt_id": attempt_id, "status": status_of(ex)}
+                "attempt_id": attempt_id, "status": status_of(ex)}
 
     BUG_QUESTION = "In one sentence: what was the bug, where was it, and what did it cause?"
 
@@ -576,6 +549,8 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
             return ([TRAP_QUESTION] if ex.level == 2 else ex.questions), ex.say, [], ex.snippet
         if part == "main" and ex.kind in ("open", "explain"):
             return [ex.prompt], ex.say, ex.rubric, ""
+        if part == "main" and ex.kind == "prompt":
+            return [ex.prompt], ex.model_prompt or ex.say, ex.rubric, ""
         if part == "bug" and ex.name_bug:
             attempt = db.last_passed_attempt(conn, ex.id)
             if attempt is None:
@@ -750,7 +725,9 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         state.update(codes=codes, duration_s=body.duration_s, results=[asdict(grade(ex, c)) for ex, c in zip(tasks, codes)],
                      lines=lines[:2], questions=reviewer.followups(all_task, all_code, ai_call))
         db.update_mock(conn, mock_id, state)
-        return {"results": state["results"], "lines": state["lines"], "questions": state["questions"]}
+        asked = [f"Task {l['task'] + 1}, line {l['no']}: `{l['text'].strip()}`. What does this line do, and why is it there?" for l in state["lines"]]
+        db.save_interview(conn, f"mock:{mock_id}", interview.new_state(asked + state["questions"]))
+        return {"results": state["results"], "interview": interview_view(db.get_interview(conn, f"mock:{mock_id}"))}
 
     def mock_behaviour(mock_id):
         """From the chat: share of small asks, share of code replies that were run before moving on."""
@@ -760,33 +737,57 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         ran = set(db.events(conn, scope, "run"))
         return mock.ratio(sizes.count("small"), len(sizes)), mock.ratio(sum(i in ran for i in coded), len(coded))
 
-    @app.post("/api/mock/{mock_id}/answers")
-    def mock_answers(mock_id: int, body: MockAnswers):
-        state = mock_state(mock_id)
-        if "questions" not in state:
-            raise HTTPException(400, "submit the code before answering follow-ups")
+    def mock_context(state):
         tasks = [exercises[i] for i in state["python_ids"]]
-        transcript = "\n\n".join(f"Q: {q}\nA: {a}" for q, a in zip(state["questions"], body.answers))
+        return "\n\n".join(f"Task {i}: {ex.prompt}\n\nThe candidate's code:\n{c}" for i, (ex, c) in enumerate(zip(tasks, state["codes"]), 1))
+
+    def mock_finish(mock_id, state, view):
+        """All follow-ups answered: review the code and the prompts, then score the round."""
+        tasks = [exercises[i] for i in state["python_ids"]]
         tag = f"mock:{mock_id}"  # kept apart from the exercise so mock reviews never affect step gates
         reviews = [do_review(tag, "code", ex.rubric, {"task": ex.prompt, "code": code, "reference solution": ex.solution})
                    for ex, code in zip(tasks, state["codes"])]
         typed = typed_prompts(mock_id)
         if typed:
             reviews.append(do_review(tag, "prompt", None, {"task": tasks[0].prompt, "answer": typed}))
-        reviews.append(do_review(tag, "mock", None, {"task": tasks[0].prompt, "code": state["codes"][0], "transcript": transcript}))
-        line_rev, line_scores = None, []
-        if state["lines"]:
-            asked = "\n\n".join(f"Line {l['no']}: {l['text'].strip()}\nCandidate: {a}"
-                                 for l, a in zip(state["lines"], body.line_answers))
-            line_rev = do_review(tag, "line", None, {"task": tasks[0].prompt, "the candidate's code": state["codes"][0],
-                                                     "lines asked and explanations": asked})
-            reviews.append(line_rev)
-            line_scores = list(line_rev["scores"].values())
+        talk = interview.get_scores(view)
+        n_lines = len(state["lines"])
+        line_scores, question_scores = talk[:n_lines], talk[n_lines:]
         asks, ran = mock_behaviour(mock_id)
-        score = mock.score(state["results"], [r["scores"] for r in reviews if r is not line_rev], state["duration_s"],
-                           asks, ran, mock.ratio(sum(line_scores), 5 * len(line_scores)))
+        score = mock.score(state["results"], [r["scores"] for r in reviews] + [{f"Q{i}": v for i, v in enumerate(question_scores, 1)}],
+                           state["duration_s"], asks, ran, mock.ratio(sum(line_scores), 5 * len(line_scores)))
         db.update_mock(conn, mock_id, state, score)
         return {"score": score, "reviews": reviews, "readiness": mock.readiness(conn)}
+
+    @app.get("/api/mock/{mock_id}/interview")
+    def mock_interview_get(mock_id: int):
+        mock_state(mock_id)
+        return interview_view(need(db.get_interview(conn, f"mock:{mock_id}"), "interview"))
+
+    @app.post("/api/mock/{mock_id}/interview/answer")
+    def mock_interview_answer(mock_id: int, body: MockInterviewBody):
+        state = mock_state(mock_id)
+        scope = f"mock:{mock_id}"
+        talk = need(db.get_interview(conn, scope), "interview")
+        i = interview.current(talk)
+        if i is None or body.action not in ("answer", "hint", "skip"):
+            raise HTTPException(400, "This exchange is finished or the action is unknown.")
+        q = talk["qs"][i]
+        if body.action == "answer" and not body.text.strip():
+            raise HTTPException(400, "Write your answer first.")
+        if body.action == "hint" and q["hinted"]:
+            raise HTTPException(400, "You already used the hint for this question.")
+        if body.action == "skip":
+            move = interview.skip_move(q, "")
+        else:
+            try:
+                move = interview.ask(ai_call, q, "", [], mock_context(state), body.action, body.text.strip())
+            except RuntimeError as e:
+                raise HTTPException(502, str(e))
+        interview.apply(talk, body.action, body.text.strip(), move)
+        db.save_interview(conn, scope, talk)
+        view = interview_view(talk)
+        return {**view, **(mock_finish(mock_id, state, talk) if talk["done"] else {})}
 
     app.mount("/", StaticFiles(directory=config.WEB_DIR, html=True), name="web")
     return app

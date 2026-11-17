@@ -20,7 +20,6 @@ class Exercise:
     solution: str = ""
     seed: str = ""
     required: bool = True
-    review: bool = False
     mock: bool = False
     ordered: bool = False
     rubric: list = field(default_factory=list)
@@ -113,7 +112,6 @@ def load_exercise(d, step_id):
         prompt=(d / "prompt.md").read_text(),
         dir=d,
         required=meta.get("required", True),
-        review=meta.get("review", False),
         mock=meta.get("mock", False),
         ordered=meta.get("ordered", False),
         rubric=_rubric(meta.get("rubric")),

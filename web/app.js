@@ -316,6 +316,7 @@ function sidebarTabs(panes) {
     panes.forEach((p, i) => { p.el.hidden = p.id !== id; buttons[i].classList.toggle("active", p.id === id); });
     try { localStorage.setItem("helpTab", id); } catch (e) { /* not remembered */ }
   }
+  sidebarShow = show;
   helpPane.replaceChildren(h("div", { class: "tabs" }, ...(panes.length > 1 ? buttons : [])), ...panes.map((p) => p.el));
   show(saved);
   helpPane.hidden = false;
@@ -472,6 +473,7 @@ async function stepView(id) {
 
 // ---------- exercise kinds added by the redesign ----------
 // ---------------- exercise pages: code on the left, the work on the right, each filling the screen ----------------
+let sidebarShow = null; // switches the right-hand sidebar tab on pages without the split layout
 let ASK = null; // (text) => send a question to the assistant and open its tab
 let CODE = null; // the code pane of the open exercise: tabs of editors, and the main editor for pointing at lines
 function splitLayout() {
@@ -538,11 +540,11 @@ function workTabs(work, panes) {
 let pointed = null;
 function pointAt(text) {
   clearPoint();
-  const m = /Line (\d+)/.exec(text);
+  const t = /Task (\d+), [Ll]ine (\d+)/.exec(text), m = t || /Line (\d+)/.exec(text);
   if (!m || !CODE || !CODE.cm) return;
-  const cm = CODE.cm, line = Number(m[1]) - 1;
-  if (line < 0 || line >= cm.lineCount()) return;
-  if (CODE.mainTab) CODE.show(CODE.mainTab);
+  const cm = t && CODE.editors ? CODE.editors[Number(t[1]) - 1] : CODE.cm, line = Number(m[m.length - 1]) - 1;
+  if (!cm || line < 0 || line >= cm.lineCount()) return;
+  if (t && CODE.editors) CODE.show(`Task ${t[1]}`); else if (CODE.mainTab) CODE.show(CODE.mainTab);
   cm.addLineClass(line, "background", "cm-pointed");
   pointed = { cm, line, widget: cm.addLineWidget(line, h("div", { class: "cm-change" }, md(text))) };
   cm.scrollIntoView({ line, ch: 0 }, 120);
@@ -567,9 +569,10 @@ const VERDICT = { good: ["got it", "done"], partial: ["partly", "todo"], missed:
 function interviewPanel(ex, id, part, opts, afterChange) {
   const el = h("div", { class: "interview" });
   let view = null, busy = false;
+  const base = opts.mock ? `/mock/${opts.mock}/interview` : null;
   const act = async (action, text = "") => {
     busy = true; draw();
-    try { view = await api("/interview/answer", { exercise_id: id, part, action, text }); afterChange(view); }
+    try { view = await api(base ? base + "/answer" : "/interview/answer", base ? { action, text } : { exercise_id: id, part, action, text }); afterChange(view); }
     catch (err) { view.error = err.message; }
     busy = false; draw();
   };
@@ -581,7 +584,10 @@ function interviewPanel(ex, id, part, opts, afterChange) {
       const box = h("div", { class: "iv-q" });
       if (total > 1 || !opts.hideQuestion) box.append(h("div", { class: "iv-head" }, total > 1 ? h("strong", {}, `Question ${n + 1} of ${total}`) : h("strong", {}, "Interviewer"),
         q.verdict ? h("span", { class: "chip " + VERDICT[q.verdict][1] }, VERDICT[q.verdict][0]) : null));
-      if (!opts.hideQuestion) box.append(h("div", { class: "bubble them" }, md(q.q)));
+      if (!opts.hideQuestion) {
+        const bubble = h("div", { class: "bubble them" }, md(q.q));
+        box.append(/[Ll]ine \d+/.test(q.q) ? pointable(bubble, q.q) : bubble);
+      }
       q.turns.forEach((t) => box.append(h("div", { class: "bubble " + (t.who === "you" ? "you" : "them") }, t.text)));
       if (q.verdict && q.strong) {
         box.append(h("div", { class: "iv-strong" }, h("strong", {}, "A strong answer sounds like: "), q.strong,
@@ -590,6 +596,7 @@ function interviewPanel(ex, id, part, opts, afterChange) {
       }
       el.append(box);
     });
+    if (view.done && opts.hideResult) return;
     if (view.done) {
       el.append(h("div", { class: "iv-result" }, view.passed ? h("p", { class: "ok" }, "✓ Done: nothing missed.")
         : h("p", { class: "bad" }, "Not yet: at least one question was missed. Read the strong answers above, then try again with fresh questions."),
@@ -608,7 +615,7 @@ function interviewPanel(ex, id, part, opts, afterChange) {
       ...(view.error ? [h("p", { class: "bad" }, view.error)] : []));
     if (!busy) setTimeout(() => box.focus(), 0);
   }
-  api(`/interview?exercise_id=${id}&part=${part}`).then((v) => { view = v; draw(); }).catch((e) => el.replaceChildren(h("p", { class: "bad" }, e.message)));
+  api(base || `/interview?exercise_id=${id}&part=${part}`).then((v) => { view = v; draw(); }).catch((e) => el.replaceChildren(h("p", { class: "bad" }, e.message)));
   draw();
   return el;
 }
@@ -695,24 +702,23 @@ function readView(ex, id, afterChange) {
 }
 
 function triageView(ex, id, afterChange) {
-  const picks = ex.proposals.map(() => ({ choice: null, reason: "" }));
+  const picks = ex.proposals.map(() => null);
   const out = h("div");
-  const boxes = ex.proposals.map((p, i) => {
-    const reason = h("input", { type: "text", placeholder: "Why? One sentence.", oninput: (e) => { picks[i].reason = e.target.value; } });
-    const radios = ["accept", "reject"].map((c) => h("label", { style: "margin-right:1rem" },
-      h("input", { type: "radio", name: `p${i}`, onchange: () => { picks[i].choice = c; } }), " " + c));
-    return h("div", { class: "review" }, h("p", {}, h("strong", {}, `${i + 1}. ${p.title}`)), h("pre", {}, p.code), h("div", {}, ...radios), reason,
-      DEV && p.correct ? h("p", { class: "ok" }, `Right call: ${p.correct}. ${p.why}`) : null);
-  });
+  const boxes = ex.proposals.map((p, i) => h("div", { class: "review" }, h("p", {}, h("strong", {}, `${i + 1}. ${p.title}`)), h("pre", {}, p.code),
+    h("div", {}, ...["accept", "reject"].map((c) => h("label", { style: "margin-right:1rem" },
+      h("input", { type: "radio", name: `p${i}`, onchange: () => { picks[i] = c; } }), " " + c))),
+    DEV && p.correct ? h("p", { class: "ok" }, `Right call: ${p.correct}. ${p.why}`) : null));
   main.append(...boxes, h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
-    if (picks.some((x) => !x.choice)) { out.replaceChildren(h("p", { class: "bad" }, "Decide on every change.")); return; }
+    if (picks.includes(null)) { out.replaceChildren(h("p", { class: "bad" }, "Decide on every change.")); return; }
     e.target.disabled = true;
     try {
-      const r = await api("/triage", { exercise_id: id, decisions: picks.map((x) => ({ choice: x.choice, reason: x.reason })) });
-      r.results.forEach((res, i) => boxes[i].append(h("p", { class: res.correct ? "ok" : "bad" },
-        (res.correct ? "✓ " : `✗ the right call was ${res.key}. `) + res.why)));
-      out.replaceChildren(h("p", {}, `${r.correct}/${r.total} right. ` + (r.passed ? "Passed." : "Not yet: read the reasons, then retry.")),
-        r.review ? reviewBox(r.review, null) : h("p", { class: "muted" }, "Fill in a reason for every change to get the AI review of your reasoning (needed to finish)."));
+      const r = await api("/triage", { exercise_id: id, decisions: picks.map((choice) => ({ choice })) });
+      r.results.forEach((res, i) => {
+        boxes[i].append(h("p", { class: res.correct ? "ok" : "bad" }, (res.correct ? "✓ " : `✗ the right call was ${res.key}. `) + res.why));
+        if (!res.correct && ASK) boxes[i].append(h("button", { class: "ask", onclick: () => ASK(
+          `A review exercise: ${ex.proposals[i].title}\n${ex.proposals[i].code}\nI chose "${picks[i]}" but the right call is "${res.key}" because: ${res.why}\nPlease explain the reasoning in more detail, without writing code for me.`) }, "Ask the assistant about this"));
+      });
+      out.replaceChildren(h("p", {}, `${r.correct}/${r.total} right. ` + (r.passed ? "Passed." : "Not yet: read the reasons above, then retry.")));
       afterChange(r.status);
     } catch (err) { out.replaceChildren(h("p", { class: "bad" }, err.message)); }
     e.target.disabled = false;
@@ -822,7 +828,7 @@ async function exView(id, mode = "blank") {
   if (split) {
     workTabs(work, [{ id: "task", label: "Task", el: main }, ...helpTabs]);
     ASK = (text) => { work.showTab("assistant"); ctx.assistantEl.ask(text); };
-  }
+  } else if (ctx.assistantEl) ASK = (text) => { setHelpOpen(true); sidebarShow("assistant"); ctx.assistantEl.ask(text); };
   if (ex.kind === "quiz") { main.append(md(ex.prompt)); return quizView(ex); }
   if (split) {  // the task text folds away once read, so the questions sit next to the code
     const key = `fold:${id}`;
@@ -837,18 +843,11 @@ async function exView(id, mode = "blank") {
   const progress = DEV ? h("span") : h("div", { class: "bar" }, h("span", { class: "muted" }, "Progress (hover a tick):"), statusEl);
   applyStatus(ex.status);
 
-  const reviewSlot = h("div");
   const extras = h("div");
   const nextSlot = h("div");
   nextSlot.replaceChildren(nextBar(ex, false));
   const refreshExtras = async () => extras.replaceChildren(extrasPanel(await api(`/exercise/${id}?mode=${mode}`)));
   refreshExtras();
-  const showReview = (rev) => {
-    reviewSlot.replaceChildren(reviewBox(rev, async () => {
-      showReview(await api(`/reviews/${rev.review_id}/retry`, {}));
-    }) || "");
-    if (rev && rev.status === "done") { refreshExtras(); refreshStatus(); nextSlot.replaceChildren(nextBar(ex, true)); }
-  };
 
   const finished = async (st) => {
     const now = st || (await api(`/exercise/${id}`)).status;
@@ -867,25 +866,10 @@ async function exView(id, mode = "blank") {
     main.append(nextSlot, extras);
     return;
   }
-  const PLAIN = coded
-    ? "Optional: explain your code as you would to the interviewer. It is sent with the AI review." : "Type your answer here, then press the button below.";
-  const text = h("textarea", { placeholder: PLAIN });
-  ctx.getCode = () => text.value;
-
-  if (!coded) {
-    if (ex.kind === "open" || ex.kind === "explain") {
-      main.append(progress, interviewPanel(ex, id, "main", { hideQuestion: true }, (r) => { after(r.status); if (r.done) { refreshExtras(); nextSlot.replaceChildren(nextBar(ex, r.passed)); } }), nextSlot, extras);
-      return;
-    }
-    main.append(progress, text, h("div", { class: "bar" }, tip(h("button", { class: "primary", onclick: async (e) => {
-      e.target.disabled = true;
-      e.target.textContent = "Reviewing, please wait...";
-      try { showReview(await api("/review", { exercise_id: id, text: text.value })); }
-      catch (err) { reviewSlot.replaceChildren(h("pre", { class: "bad" }, String(err))); }
-      e.target.textContent = "Submit for review";
-      e.target.disabled = false;
-    } }, "Submit for review"), "An AI interviewer scores your answer 1 to 5 on each criterion and gives feedback. Takes a few seconds.")), reviewSlot, nextSlot, extras);
-    showReview(ex.review);
+  if (!coded) {  // open, explain and prompt exercises: an exchange with the interviewer
+    main.append(progress, interviewPanel(ex, id, "main", { hideQuestion: true,
+      placeholder: ex.kind === "prompt" ? "Write the prompt you would give the assistant." : undefined },
+      (r) => { after(r.status); if (r.done) { refreshExtras(); nextSlot.replaceChildren(nextBar(ex, r.passed)); } }), nextSlot, extras);
     return;
   }
 
@@ -911,9 +895,7 @@ async function exView(id, mode = "blank") {
   main.append(modeBar, progress);
 
   const out = h("pre", { class: "out" });
-  const reviewBtn = tip(h("button", { disabled: "" }, "Get AI review of my passing code"),
-    "An AI interviewer reviews your last passing submission. Pass the tests first.");
-  let cm = null, elapsed = () => 0, lastPassed = null;
+  let cm = null, elapsed = () => 0;
   ctx.getCode = () => (cm ? cm.getValue() : "");
   ctx.getOutput = () => out.textContent;
   ctx.getLine = () => (cm ? cm.getLine(cm.getCursor().line).trim() : "");
@@ -931,15 +913,6 @@ async function exView(id, mode = "blank") {
   setTimeout(() => cm.refresh(), 0); // an editor built before it is on the page draws blank until refreshed
   elapsed = startTimer(clock, 0);
 
-  reviewBtn.addEventListener("click", async () => {
-    reviewBtn.disabled = true;
-    const label = reviewBtn.textContent;
-    reviewBtn.textContent = "Reviewing, please wait...";
-    try { showReview(await api("/review", { exercise_id: id, attempt_id: lastPassed, text: text.value })); }
-    catch (e) { reviewSlot.replaceChildren(h("pre", { class: "bad" }, String(e))); }
-    reviewBtn.textContent = label;
-    reviewBtn.disabled = false;
-  });
   CODE.tab("Your code", [ed.holder, h("div", { class: "bar" },
     tip(h("button", { onclick: async () => cm && results(out, await api("/run", { exercise_id: id, code: cm.getValue() }), "run") },
       "Run"), "Runs your code as a script so you can try it with print(...). Nothing is recorded. Submit runs the hidden tests."),
@@ -953,11 +926,10 @@ async function exView(id, mode = "blank") {
       const r = await api("/submit", { exercise_id: id, code: cm.getValue(), mode, duration_s: elapsed() });
       results(out, r);
       applyStatus(r.status);
-      if (r.passed) { lastPassed = r.attempt_id; reviewBtn.disabled = false; refreshExtras(); nextSlot.replaceChildren(nextBar(ex, true)); }
+      if (r.passed) { refreshExtras(); nextSlot.replaceChildren(nextBar(ex, true)); }
     } }, "Submit"), "Run the hidden tests and record the attempt. A pass counts toward the step.")), out]);
-  main.append(nextSlot, bugSlot, controlEl, assistWhat, text, h("div", { class: "bar" }, reviewBtn), reviewSlot, extras);
+  main.append(nextSlot, bugSlot, controlEl, assistWhat, extras);
   if (ex.status.tests && ex.name_bug) bugSlot.append(bugPanel(ex, id, refreshStatus));
-  showReview(ex.review);
 }
 
 async function cardsView() {
@@ -979,50 +951,47 @@ async function cardsView() {
 
 async function mockView() {
   main.append(h("h1", {}, "Mock round"),
-    h("p", {}, "Two Python tasks with the assistant on, 35 minutes. Then two 'explain this line' questions about your own code and three follow-up questions. The clock starts when you press Start. Score out of 100: hidden tests 35%, AI review 25%, finishing in time 10%, small asks 10%, running code before accepting the assistant's code 10%, explaining your lines 10%."));
+    h("p", {}, "Two Python tasks with the assistant on and the documentation open, 35 minutes. Then the interviewer asks about two lines of your own code and three follow-up questions, with your code still on screen. The clock starts when you press Start. Score out of 100: hidden tests 35%, reviews and answers 25%, finishing in time 10%, small asks 10%, running code before accepting the assistant's code 10%, explaining your lines 10%."));
   main.append(h("button", { class: "primary", onclick: async () => {
     const m = await api("/mock/start", {});
     const scope = `mock:${m.mock_id}`;
-    main.replaceChildren();
+    const work = splitLayout();
+    main = h("div", { class: "task-tab" });
     const clock = h("span", { class: "timer" });
     const elapsed = startTimer(clock, m.time_limit_s);
-    main.append(h("div", { class: "bar" }, h("strong", {}, "Mock round"), clock));
     const editors = m.tasks.map((t, i) => {
-      const holder = h("div"), out = h("pre");
-      main.append(h("h2", {}, `Task ${i + 1}: ${t.title}`), md(t.prompt),
-        t.docs ? h("details", { open: "" }, h("summary", {}, "Documentation"), md(t.docs)) : null, holder,
-        h("div", { class: "bar" }, h("button", { onclick: async () => results(out, await api("/run", { exercise_id: t.id, code: cm.getValue(), scope }), "run") }, "Run")), out);
-      const cm = editor(holder, "python", t.code);
-      setTimeout(() => cm.refresh(), 0);
-      return cm;
+      const ed = paneEditor("python", t.code), out = h("pre", { class: "out" });
+      CODE.tab(`Task ${i + 1}`, [ed.holder, h("div", { class: "bar" }, h("button", { onclick: async () =>
+        results(out, await api("/run", { exercise_id: t.id, code: ed.cm.getValue(), scope }), "run") }, "Run")), out], i === 0);
+      return ed.cm;
     });
-    sidebarTabs([{ id: "assistant", label: "Assistant", el: assistantPanel(scope, {
-      getCode: () => editors.map((e, i) => `# TASK ${i + 1}\n${e.getValue()}`).join("\n\n"), getOutput: () => "",
-      getLine: () => { const e = editors.find((x) => x.hasFocus()) || editors[0]; return e.getLine(e.getCursor().line).trim(); },
-      onAssisted: () => {}, grade: true }) }]);
-    main.append(h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (e) => {
+    CODE.cm = editors[0]; CODE.mainTab = "Task 1"; CODE.editors = editors;
+    const finish = h("button", { class: "primary", onclick: async (e) => {
       e.target.disabled = true;
       const r = await api(`/mock/${m.mock_id}/submit`, { codes: editors.map((x) => x.getValue()), duration_s: elapsed() });
       clearInterval(tick);
-      const outs = r.results.map((res, i) => { const o = h("pre"); results(o, res); return [h("h2", {}, `Task ${i + 1} result`), o]; });
-      const lineAnswers = r.lines.map(() => h("textarea"));
-      const answers = r.questions.map(() => h("textarea"));
-      main.replaceChildren(h("h1", {}, "Follow-up questions"), ...outs.flat(),
-        h("h2", {}, "Explain these lines of your code"),
-        ...r.lines.flatMap((l, i) => [h("pre", {}, `Task ${l.task + 1}, line ${l.no}: ${l.text}`), lineAnswers[i]]),
-        h("h2", {}, "Questions"),
-        ...r.questions.flatMap((q, i) => [h("p", {}, h("strong", {}, q)), answers[i]]),
-        h("div", { class: "bar" }, h("button", { class: "primary", onclick: async (ev) => {
-          ev.target.disabled = true;
-          const done = await api(`/mock/${m.mock_id}/answers`, { answers: answers.map((a) => a.value), line_answers: lineAnswers.map((a) => a.value) });
-          const sc = done.score, pc = (x) => Math.round(x * 100) + "%";
-          main.replaceChildren(h("h1", {}, `Score: ${sc.total}/100`),
-            h("p", {}, `Tests passed: ${pc(sc.pass_rate)}. Review average: ${sc.review_avg.toFixed(1)}/5. ${sc.in_time ? "Inside" : "Over"} the time limit. ` +
+      editors.forEach((x) => x.setOption("readOnly", true));
+      const scoreSlot = h("div");
+      const passed = r.results.map((res, i) => `Task ${i + 1}: ${res.tests.filter((x) => x.passed).length}/${res.tests.length} hidden tests`).join(", ");
+      workTabs(work, [{ id: "talk", label: "Follow-ups", el: h("div", {}, h("h1", {}, "Follow-up questions"), h("p", { class: "muted" }, passed + ". Your code stays on the left."), scoreSlot,
+        interviewPanel(null, null, "main", { mock: m.mock_id, hideResult: true }, (view) => {
+          if (!view.done || !view.score) return;
+          const sc = view.score, pc = (x) => Math.round(x * 100) + "%";
+          scoreSlot.replaceChildren(h("div", { class: "notice" }, h("h2", {}, `Score: ${sc.total}/100`),
+            h("p", {}, `Tests passed: ${pc(sc.pass_rate)}. Reviews and answers: ${sc.review_avg.toFixed(1)}/5. ${sc.in_time ? "Inside" : "Over"} the time limit. ` +
               `Small asks: ${pc(sc.asks)}. Ran code before accepting: ${pc(sc.ran)}. Line explanations: ${pc(sc.lines)}. ` +
-              (done.readiness === null ? "" : `Readiness estimate: ${done.readiness}/100.`)),
-            ...done.reviews.map((rev) => reviewBox(rev, null)));
-        } }, "Submit answers")));
-    } }, "Finish coding")));
+              (view.readiness === null ? "" : `Readiness estimate: ${view.readiness}/100.`)),
+            ...view.reviews.map((rev) => reviewBox(rev, null))));
+        })) }]);
+    } }, "Finish coding");
+    main.append(h("div", { class: "bar" }, h("strong", {}, "Mock round"), clock, finish));
+    m.tasks.forEach((t, i) => main.append(h("h2", {}, `Task ${i + 1}: ${t.title}`), md(t.prompt),
+      t.docs ? h("details", {}, h("summary", {}, "Documentation"), md(t.docs)) : null));
+    workTabs(work, [{ id: "tasks", label: "Tasks", el: main },
+      { id: "assistant", label: "Assistant", el: assistantPanel(scope, {
+        getCode: () => editors.map((e, i) => `# TASK ${i + 1}\n${e.getValue()}`).join("\n\n"), getOutput: () => "",
+        getLine: () => { const e = editors.find((x) => x.hasFocus()) || editors[0]; return e.getLine(e.getCursor().line).trim(); },
+        onAssisted: () => {}, grade: true }) }]);
   } }, "Start"));
 }
 

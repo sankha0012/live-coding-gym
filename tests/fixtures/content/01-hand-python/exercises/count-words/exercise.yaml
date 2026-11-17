@@ -1,7 +1,6 @@
 title: Count words
 kind: python
 required: true
-review: true
 mock: true
 rubric:
   - Correct for empty input and mixed case

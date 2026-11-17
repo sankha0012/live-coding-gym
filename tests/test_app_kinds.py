@@ -53,7 +53,6 @@ def test_quiz_payload_hides_answers_and_grades(client):
 def test_quiz_bad_requests(client):
     assert client.post("/api/quiz", json={"exercise_id": "quiz1", "answers": [1]}).status_code == 400
     assert client.post("/api/quiz", json={"exercise_id": "p1", "answers": []}).status_code == 400
-    assert client.post("/api/review", json={"exercise_id": "quiz1"}).status_code == 400
 
 
 def test_tests_kind_flow(client):

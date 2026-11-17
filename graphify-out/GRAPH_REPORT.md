@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-17)
 
 ## Corpus Check
-- 3613 files · ~465,215 words
+- 3613 files · ~464,688 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 7901 nodes · 7398 edges · 2869 communities (2688 shown, 181 thin omitted)
+- 7902 nodes · 7400 edges · 2866 communities (2685 shown, 181 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 106 edges (avg confidence: 0.57)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `54d42e22`
+- Built from commit: `e2a84a39`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -227,7 +227,6 @@
 - Verifying AI code
 - prod-batch/tests/test_hidden.py
 - tw-parse-duration/solution.py
-- test_content_extras.py
 - test_mocks
 - dbg-late/tests/test_hidden.py
 - dbg-tags/tests/test_hidden.py
@@ -527,7 +526,6 @@
 - tool-ci-cd-ml.md
 - tool-cloud-platforms.md
 - tool-data-versioning.md
-- pick_lines
 - test_redesign.py
 - journey
 - 03-senior.md
@@ -674,7 +672,6 @@
 - interview.py
 - test_db.py
 - make_delivery_data.py
-- test_cards.py
 - api/index.py
 
 ## God Nodes (most connected - your core abstractions)
@@ -692,19 +689,19 @@
 ## Surprising Connections (you probably didn't know these)
 - `_mk()` --indirect_call--> `good()`  [INFERRED]
   content/s04-robust-code/exercises/prod-breaker/tests/test_hidden.py → tests/test_gates.py
-- `test_exercises_sort_by_order_then_id()` --calls--> `load_content()`  [EXTRACTED]
-  tests/test_content_extras.py → gym/content.py
 - `client()` --calls--> `create_app()`  [EXTRACTED]
   tests/test_app.py → gym/app.py
 - `test_pending_review_can_be_retried()` --calls--> `create_app()`  [EXTRACTED]
   tests/test_app.py → gym/app.py
 - `env()` --calls--> `create_app()`  [EXTRACTED]
   tests/test_assistant.py → gym/app.py
+- `test_provider_failure_is_a_502_and_keeps_the_history_clean()` --calls--> `create_app()`  [EXTRACTED]
+  tests/test_assistant.py → gym/app.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (2869 total, 181 thin omitted)
+## Communities (2866 total, 181 thin omitted)
 
 ### Community 0 - "drift_alarm"
 Cohesion: 0.08
@@ -715,8 +712,8 @@ Cohesion: 0.11
 Nodes (33): check_sql(), _pytest(), _query(), Run pytest on test_candidate.py in a temp dir holding `files` (name -> text)., Grade a learner's test file: it must pass on `good` and fail on every `bads`…, Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free() (+25 more)
 
 ### Community 2 - "load_content"
-Cohesion: 0.13
-Nodes (16): Exercise, _existing(), load_content(), load_exercise(), Evaluation after a core build passes. 0: none. 1: What if. 2: What if, then a…, Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric() (+8 more)
+Cohesion: 0.12
+Nodes (23): Exercise, _existing(), load_content(), load_exercise(), Evaluation after a core build passes. 0: none. 1: What if. 2: What if, then a…, Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric() (+15 more)
 
 ### Community 3 - "backoff_delay"
 Cohesion: 0.15
@@ -724,7 +721,7 @@ Nodes (15): backoff_delay(), Backoff delay helper for retry loops., Seconds to w
 
 ### Community 4 - "app.js"
 Cohesion: 0.12
-Nodes (56): api(), assistantPanel(), assistWhatIf(), bugPanel(), cardsView(), CHIP_INFO, clearPoint(), COMPETENCY (+48 more)
+Nodes (55): api(), assistantPanel(), assistWhatIf(), bugPanel(), cardsView(), CHIP_INFO, clearPoint(), COMPETENCY (+47 more)
 
 ### Community 5 - "test_app.py"
 Cohesion: 0.14
@@ -1494,10 +1491,6 @@ Nodes (6): Say it like this, The problem it solves, The smallest runnable exampl
 Cohesion: 0.57
 Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_inf_none_and_other_exceptions(), test_rate_all_good_all_bad_and_zero_fallback()
 
-### Community 227 - "test_content_extras.py"
-Cohesion: 0.38
-Nodes (11): build(), load_one(), One step with one exercise 'e1'. files maps path-under-exercise -> text., test_exercises_sort_by_order_then_id(), test_extras_and_wrong_solutions(), test_files_are_resolved_and_must_exist(), test_quiz_loads_and_rejects_bad_answer_index(), test_rubric_items_with_a_colon_stay_strings() (+3 more)
-
 ### Community 228 - "test_mocks"
 Cohesion: 0.38
 Nodes (7): create_mock(), finished_mocks(), get_mock(), update_mock(), readiness(), test_mocks(), test_readiness_needs_three_mocks_and_uses_last_three()
@@ -1831,7 +1824,7 @@ Cohesion: 0.40
 Nodes (4): Contract, Gotchas, Library notes, TTLCache: reference
 
 ### Community 351 - "check_content.py"
-Cohesion: 0.24
+Cohesion: 0.25
 Nodes (12): check_exercise(), check_kb(), Knowledge-base problems: broken articles, links to missing topics, exercises…, load_kb(), The in-app knowledge base: short reference articles under content/_kb/<topic-…, Topic, build(), test_api_serves_index_article_and_exercise_topics() (+4 more)
 
 ### Community 352 - "cb-brackets/tests/test_hidden.py"
@@ -2012,15 +2005,15 @@ Nodes (11): AI assistants and LLM engineering, AI/ML engineering tools, Algorith
 
 ### Community 798 - "create_app"
 Cohesion: 0.11
-Nodes (15): Vercel entry point: the same FastAPI app, with progress kept in /tmp (it is…, create_app(), main(), load_env(), Read KEY=VALUE lines into os.environ without overriding existing values., client(), fake_gemini(), fixture (+7 more)
+Nodes (16): Vercel entry point: the same FastAPI app, with progress kept in /tmp (it is…, create_app(), connect(), conn(), fixture, steps(), client(), fake_gemini() (+8 more)
 
 ### Community 799 - "app.py"
-Cohesion: 0.21
-Nodes (17): BaseModel, CardBody, ControlChangeBody, ExerciseBody, FixBody, InterviewBody, InterviewPart, MockAnswers (+9 more)
+Cohesion: 0.17
+Nodes (19): BaseModel, CardBody, ControlChangeBody, ExerciseBody, FixBody, InterviewBody, InterviewPart, main() (+11 more)
 
 ### Community 984 - "reviewer.py"
-Cohesion: 0.16
-Nodes (17): build_prompt(), call_groq(), followups(), _material(), parse_review(), provider_info(), Groq's OpenAI-compatible chat endpoint, asked for a JSON object., What the settings menu shows: label, model in use, and whether a key is… (+9 more)
+Cohesion: 0.08
+Nodes (32): due(), record(), candidate_lines(), pick_lines(), The control check: pick two lines of the learner's own code to explain., Two lines, in file order, chosen at random but fixed for a given seed (the…, (line number, text) of lines worth asking about: real logic, not comments,…, build_prompt() (+24 more)
 
 ### Community 986 - "test_gates.py"
 Cohesion: 0.29
@@ -2041,10 +2034,6 @@ Nodes (4): Details, Likely interview questions, See also, What to say and what n
 ### Community 1268 - "tool-data-versioning.md"
 Cohesion: 0.40
 Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
-
-### Community 1320 - "pick_lines"
-Cohesion: 0.33
-Nodes (8): candidate_lines(), pick_lines(), The control check: pick two lines of the learner's own code to explain., Two lines, in file order, chosen at random but fixed for a given seed (the…, (line number, text) of lines worth asking about: real logic, not comments,…, test_candidates_skip_comments_imports_and_docstrings(), test_tiny_code_falls_back_to_any_lines(), test_two_lines_in_file_order_fixed_per_seed()
 
 ### Community 1371 - "test_redesign.py"
 Cohesion: 0.16
@@ -2607,8 +2596,8 @@ Cohesion: 0.22
 Nodes (10): pick(), ratio(), Up to two Python tasks flagged mock: true., Share of good behaviours; no data counts as full credit., results: one test result per task. asks, ran, lines: 0..1 shares (small asks,…, score(), test_pick_fails_without_mock_exercises(), test_pick_returns_the_python_mock_tasks() (+2 more)
 
 ### Community 1905 - "interview.py"
-Cohesion: 0.19
-Nodes (11): apply(), ask(), build_prompt(), _conversation(), current(), parse_move(), Written answers as a short exchange with an interviewer: one question at a…, Skipping needs no AI: the strong answer is the reference, trimmed. (+3 more)
+Cohesion: 0.16
+Nodes (13): apply(), ask(), build_prompt(), _conversation(), current(), get_scores(), parse_move(), Written answers as a short exchange with an interviewer: one question at a… (+5 more)
 
 ### Community 1923 - "test_db.py"
 Cohesion: 0.22
@@ -2617,10 +2606,6 @@ Nodes (8): get_attempt(), get_review(), latest_review(), passed_attempts(), upda
 ### Community 2371 - "make_delivery_data.py"
 Cohesion: 0.43
 Nodes (5): test_dataset_shape_and_determinism(), build_rows(), generate(), Generate the shared food-delivery dataset used by SQL and pandas exercises.…, sql_value()
-
-### Community 2905 - "test_cards.py"
-Cohesion: 0.42
-Nodes (7): due(), record(), test_box_is_capped_at_five(), test_card_returns_on_its_due_date(), test_correct_answers_climb_boxes(), test_unseen_cards_are_due(), test_wrong_answer_resets_and_stays_due()
 
 ### Community 2906 - "api/index.py"
 Cohesion: 0.33
@@ -2645,6 +2630,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `runner.py` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `load_content` be split into smaller, more focused modules?**
-  _Cohesion score 0.12681159420289856 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12043010752688173 - nodes in this community are weakly interconnected._
 - **Should `app.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.1161524500907441 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11736237144585603 - nodes in this community are weakly interconnected._

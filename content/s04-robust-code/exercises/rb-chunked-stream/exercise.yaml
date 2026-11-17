@@ -1,7 +1,6 @@
 title: Process a stream in chunks
 kind: python
 required: true
-review: true
 rubric:
   - The input is consumed lazily, one chunk at a time, and is never turned into a full list.
   - A failing batch is retried record by record, so only the bad records are lost and the rest keep their results in input order.

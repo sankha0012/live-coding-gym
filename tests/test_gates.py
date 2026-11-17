@@ -20,13 +20,13 @@ def test_passes_in_other_modes_do_not_count(conn, steps):
 
 
 def test_review_must_be_done_and_meet_min_score(conn, steps):
-    step, ex = steps[0], steps[0].exercises[0]
+    step, ex = steps[0], steps[0].exercises[1]  # an explain exercise: answered with the interviewer
     assert gates.exercise_status(conn, ex, step)["review"] is False
-    db.save_review(conn, ex.id, "code", {}, good(score=3))
+    db.save_review(conn, ex.id, "explain", {}, good(score=3))
     assert gates.exercise_status(conn, ex, step)["review"] is False
-    db.save_review(conn, ex.id, "code", {}, good(score=4))
+    db.save_review(conn, ex.id, "explain", {}, good(score=4))
     assert gates.exercise_status(conn, ex, step)["review"] is True
-    db.save_review(conn, ex.id, "code", {}, {"status": "pending", "scores": {}, "verdict": "", "feedback": ""})
+    db.save_review(conn, ex.id, "explain", {}, {"status": "pending", "scores": {}, "verdict": "", "feedback": ""})
     assert gates.exercise_status(conn, ex, step)["review"] is False
 
 

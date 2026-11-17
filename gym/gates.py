@@ -36,7 +36,7 @@ def exercise_status(conn, ex, step):
     else:
         if coded:
             status["tests"] = any(r["mode"] in PASS_MODES for r in rows)
-        if ex.review or not coded or ex.kind == "triage":
+        if not coded:  # answer-writing kinds are judged by the interviewer
             status["review"] = _review_ok(conn, ex.id, REVIEW_KIND[ex.kind], step.min_score)
     level = ex.control_level
     if level:  # core build: prove you understand the passing code

@@ -11,7 +11,7 @@ def test_python_exercise_fields(steps):
     assert ex.id == "count-words"
     assert ex.kind == "python"
     assert "def count_words" in ex.solution
-    assert ex.review and ex.mock
+    assert ex.mock
     assert len(ex.rubric) == 3
 
 

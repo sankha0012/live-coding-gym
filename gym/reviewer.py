@@ -14,63 +14,17 @@ DEFAULT_RUBRICS = {
         "Robust: handles bad or unexpected input sensibly",
         "No unnecessary complexity",
     ],
-    "explain": [
-        "Accurately describes what the code does, step by step",
-        "States trade-offs and complexity",
-        "Names failure modes and limits honestly",
-        "Clear and concise, as spoken to an interviewer",
-    ],
     "prompt": [
         "States the task, inputs, outputs and constraints precisely",
         "Asks for robustness: validation, edge cases, determinism",
         "Keeps the candidate in control: small scope, asks for tests or explanation",
         "Would convince an observer the candidate understands the problem",
     ],
-    "open": [
-        "Technically accurate",
-        "Shows understanding of what problem the tool or idea solves",
-        "Gives a concrete example",
-        "Honest about limits of own experience",
-    ],
-    "read": [
-        "Says accurately what each line does, in order",
-        "Answers the edge-case questions correctly (empty input, NaN, duplicates) by tracing the code",
-        "Notices a risk or a limit of this code",
-        "Plain, precise language: no guessing and no hand-waving",
-    ],
-    "line": [
-        "Says accurately what the line does",
-        "Says why the line is there and what would break without it",
-        "Names an edge case or a risk that concerns this line",
-    ],
-    "bug": [
-        "Names the real root cause of the bug, not only its symptom",
-        "Says how to spot this kind of bug next time",
-        "One clear sentence, without hedging",
-    ],
-    "triage": [
-        "Each reason points at the actual problem or benefit of that change",
-        "Rejections cite a concrete failure, not a vague worry",
-        "Accepted changes are accepted because they are needed and correct, not because they look neat",
-    ],
-    "mock": [
-        "Answers the follow-up questions directly and correctly",
-        "Explains reasoning and trade-offs behind the code",
-        "Identifies what could fail in production",
-        "Communicates clearly under pressure",
-    ],
 }
 
 ROLES = {
-    "read": "You are an interviewer. The candidate was shown code written by someone else and asked to explain it and to answer questions about it. Judge the explanation against the code and the reference answer.",
-    "line": "You are an interviewer. The candidate wrote or accepted this code. You picked specific lines and asked them to explain each. Judge how well they understand those lines.",
-    "bug": "You are an interviewer. An assistant wrote buggy code and the candidate fixed it, then named the bug in one sentence. Compare their sentence with the reference description of the bug.",
-    "triage": "You are an interviewer. An AI assistant proposed several changes to working code. The candidate accepted or rejected each and gave a reason. Judge the reasons against the key.",
     "code": "You are a senior engineer interviewing a candidate for a production ML systems role. Review the candidate's code.",
-    "explain": "You are an interviewer. The candidate is explaining their own code after a live-coding exercise. Judge the explanation.",
     "prompt": "You are an interviewer watching a candidate use an AI coding assistant. Judge the prompt the candidate wrote for the assistant.",
-    "open": "You are an interviewer for an AI/ML engineering role. Grade the candidate's answer to a theory question.",
-    "mock": "You are an interviewer. Grade the candidate's answers to your follow-up questions about their code.",
 }
 
 FALLBACK_QUESTIONS = [

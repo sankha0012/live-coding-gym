@@ -20,10 +20,10 @@ def test_prompt_carries_rubric_and_material():
 
 
 def test_default_rubric_used_when_none_given():
-    n = len(reviewer.DEFAULT_RUBRICS["explain"])
+    n = len(reviewer.DEFAULT_RUBRICS["prompt"])
     reply = json.dumps({"scores": [4] * n, "verdict": "v", "feedback": "f"})
-    r = reviewer.review("explain", None, {"answer": "a"}, call=lambda p: reply)
-    assert list(r["scores"]) == reviewer.DEFAULT_RUBRICS["explain"]
+    r = reviewer.review("prompt", None, {"answer": "a"}, call=lambda p: reply)
+    assert list(r["scores"]) == reviewer.DEFAULT_RUBRICS["prompt"]
 
 
 def test_malformed_reply_is_retried_once_then_pending():

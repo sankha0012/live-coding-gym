@@ -1,7 +1,6 @@
 title: Parse a typed config
 kind: python
 required: true
-review: true
 rubric:
   - Every problem is collected and reported together, not only the first one found.
   - Each value is converted and range-checked by its own small step, so the code is easy to read.

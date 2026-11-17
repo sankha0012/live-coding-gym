@@ -190,7 +190,6 @@ def test_reading_exercise_what_if_then_a_written_answer(env):
     right = post(client, "/api/whatif/answer", {"exercise_id": "r1", "answers": [READ_ANSWERS[q["change"]] for q in fresh["questions"]]})
     assert right["ok"] and right["status"]["tests"] is True and right["status"]["done"] is False  # still the written answer
     assert client.get("/api/exercise/r1").json()["expected"].strip() == "6\n3"
-    assert post(client, "/api/review", {"exercise_id": "r1", "text": "x"}, status=400)  # answered with the interviewer now
     view = client.get("/api/interview", params={"exercise_id": "r1"}).json()
     assert [q["q"] for q in view["qs"]] == ["In one sentence: what is the trap or surprise in this code?"] and view["i"] == 0
     probe = post(client, "/api/interview/answer", {"exercise_id": "r1", "text": "VAGUE: it sums."})
@@ -205,18 +204,16 @@ def test_reading_exercise_what_if_then_a_written_answer(env):
     assert post(client, "/api/interview/answer", {"exercise_id": "r1", "text": "more"}, status=400)  # finished
 
 
-def test_triage_scores_decisions_and_reviews_reasons(env):
+def test_triage_scores_decisions_and_shows_the_reasons(env):
     client, _, _ = env
     ex = client.get("/api/exercise/tr1").json()
     assert [p["title"] for p in ex["proposals"]] == ["Rename a variable", "Add a new dependency"]
     assert "correct" not in ex["proposals"][0] and "why" not in ex["proposals"][0]
     assert post(client, "/api/triage", {"exercise_id": "tr1", "decisions": [{"choice": "accept"}]}, status=400)
-    bad = post(client, "/api/triage", {"exercise_id": "tr1", "decisions": [
-        {"choice": "reject", "reason": ""}, {"choice": "accept", "reason": ""}]})
-    assert bad["correct"] == 0 and bad["review"] is None and bad["status"]["done"] is False
-    good = post(client, "/api/triage", {"exercise_id": "tr1", "decisions": [
-        {"choice": "accept", "reason": "just a rename"}, {"choice": "reject", "reason": "nobody asked for a dependency"}]})
-    assert good["passed"] and good["review"]["status"] == "done" and good["results"][1]["why"] == "nobody asked"
+    bad = post(client, "/api/triage", {"exercise_id": "tr1", "decisions": [{"choice": "reject"}, {"choice": "accept"}]})
+    assert bad["correct"] == 0 and bad["status"]["done"] is False
+    good = post(client, "/api/triage", {"exercise_id": "tr1", "decisions": [{"choice": "accept"}, {"choice": "reject"}]})
+    assert good["passed"] and good["results"][1]["why"] == "nobody asked"
     assert good["status"]["done"] is True
 
 

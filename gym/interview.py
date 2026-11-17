@@ -115,3 +115,8 @@ def skip_move(q, reference):
 
 def scores(state):
     return {f"Q{i}: {q['q'][:60]}": SCORE[q["verdict"]] for i, q in enumerate(state["qs"], 1)}
+
+
+def get_scores(state):
+    """The score of each question, in order (what the mock round adds up)."""
+    return [SCORE[q["verdict"]] for q in state["qs"]]

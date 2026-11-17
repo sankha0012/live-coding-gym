@@ -40,19 +40,18 @@ def test_reviews_use_the_selected_provider(tmp_path, keys, monkeypatch):
     def fake(name):
         def call(prompt, json_mode=True):
             seen.append(name)
-            return json.dumps({"scores": [4, 4, 4], "verdict": "v", "feedback": "f"})
+            return json.dumps({"scores": [4, 4, 4, 4], "verdict": "v", "feedback": "f"})
         return call
 
     monkeypatch.setitem(reviewer.PROVIDERS, "gemini", ("Gemini", fake("gemini"), "GEMINI_API_KEY", "GEMINI_MODEL", "m"))
     monkeypatch.setitem(reviewer.PROVIDERS, "groq", ("Groq", fake("groq"), "GROQ_API_KEY", "GROQ_MODEL", "m"))
     client = TestClient(create_app(FIXTURES, tmp_path / "p.db"))
-    code = (FIXTURES / "01-hand-python/exercises/count-words/solution.py").read_text()
-    attempt = client.post("/api/submit", json={"exercise_id": "count-words", "code": code, "mode": "blank"}).json()["attempt_id"]
-    body = {"exercise_id": "count-words", "attempt_id": attempt, "text": "answer"}
-    assert client.post("/api/review", json=body).json()["status"] == "done"
+    grade = lambda: (client.post("/api/chat", json={"scope": "count-words", "message": "write a clear prompt"}),
+                     client.post("/api/chat/grade", json={"scope": "count-words"}).json()["status"])[1]
+    assert grade() == "done"
     client.post("/api/settings", json={"provider": "groq"})
-    assert client.post("/api/review", json=body).json()["status"] == "done"
-    assert seen == ["gemini", "groq"]
+    assert grade() == "done"
+    assert seen == ["gemini", "gemini", "groq", "groq"]
 
 
 def test_progress_reset_keeps_the_provider_choice(tmp_path, keys):

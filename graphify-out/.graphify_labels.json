@@ -226,7 +226,6 @@
   "224": "tw-dedupe/solution.py",
   "225": "tw-normalize-scores/solution.py",
   "226": "tw-parse-duration/solution.py",
-  "227": "test_content_extras.py",
   "228": "test_mocks",
   "229": "dbg-late/tests/test_hidden.py",
   "230": "dbg-tags/tests/test_hidden.py",
@@ -1319,7 +1318,6 @@
   "1317": "drops_bad_rows.py",
   "1318": "index_of_good.py",
   "1319": "no_try.py",
-  "1320": "pick_lines",
   "1321": "mf-silent-drift-alarm/starter.py",
   "1322": "age_returned_as_whole_days.py",
   "1323": "swapped_limit_data_only.py",
@@ -2866,6 +2864,5 @@
   "2902": "sr-07-not-in-null/say.md",
   "2903": "sr-08-cte-int-division/prompt.md",
   "2904": "sr-08-cte-int-division/say.md",
-  "2905": "test_cards.py",
   "2906": "api/index.py"
 }

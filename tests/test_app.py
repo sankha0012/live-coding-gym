@@ -76,13 +76,9 @@ def test_full_step_flow_passes_gate_and_unlocks_next(client):
     sub = post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION,
                                        "mode": "blank", "duration_s": 120})
     assert sub["passed"] and sub["status"]["tests"]
-    rev = post(client, "/api/review", {"exercise_id": "count-words", "attempt_id": sub["attempt_id"],
-                                       "text": "I count with dict.get."})
-    assert rev["status"] == "done" and min(rev["scores"].values()) == 4
     post(client, "/api/interview/answer", {"exercise_id": "explain-count-words", "text": "It splits and counts."})
     j = client.get("/api/journey").json()
     assert j["steps"][0]["passed"] and j["steps"][1]["unlocked"]
-    assert client.get("/api/exercise/count-words").json()["review"]["verdict"] == "Good"
 
 
 def test_failed_submission_is_recorded_but_not_passed(client):
@@ -100,20 +96,19 @@ def test_sql_submit(client):
 def test_bad_requests(client):
     assert client.post("/api/submit", json={"exercise_id": "nope", "code": ""}).status_code == 404
     assert client.post("/api/submit", json={"exercise_id": "explain-count-words", "code": ""}).status_code == 400
-    assert client.post("/api/review", json={"exercise_id": "count-words", "attempt_id": 999}).status_code == 404
 
 
 def test_pending_review_can_be_retried(tmp_path):
     state = {"down": True}
 
-    def flaky(prompt):
-        if state["down"]:
+    def flaky(prompt, json_mode=True):
+        if state["down"] and json_mode:
             raise OSError("offline")
-        return fake_gemini(prompt)
+        return fake_gemini(prompt, json_mode)
 
     client = TestClient(create_app(FIXTURES, tmp_path / "p.db", call=flaky))
-    sub = post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION, "mode": "blank"})
-    rev = post(client, "/api/review", {"exercise_id": "count-words", "attempt_id": sub["attempt_id"], "text": "answer"})
+    post(client, "/api/chat", {"scope": "count-words", "message": "write a clear prompt"})
+    rev = post(client, "/api/chat/grade", {"scope": "count-words"})
     assert rev["status"] == "pending"
     state["down"] = False
     again = post(client, f"/api/reviews/{rev['review_id']}/retry")
@@ -134,15 +129,21 @@ def test_mock_round(client):
     assert [t["id"] for t in start["tasks"]] == ["count-words"]
     mid = start["mock_id"]
     sub = post(client, f"/api/mock/{mid}/submit", {"codes": [PY_SOLUTION], "duration_s": 600})
-    assert sub["results"][0]["passed"] and sub["questions"] == ["q1?", "q2?", "q3?"]
-    assert len(sub["lines"]) == 2  # one task: two lines to explain
+    assert sub["results"][0]["passed"] and len(sub["interview"]["qs"]) == 5  # two lines of the code, then three questions
+    assert "line" in sub["interview"]["qs"][0]["q"] and sub["interview"]["qs"][2]["q"] == "q1?"
     # the assistant in a mock round: small asks, code that was run
     post(client, "/api/chat", {"scope": f"mock:{mid}", "message": "write count_words"})
     post(client, "/api/run", {"exercise_id": "count-words", "code": PY_SOLUTION, "scope": f"mock:{mid}"})
-    done = post(client, f"/api/mock/{mid}/answers", {"answers": ["a", "b", "c"], "line_answers": ["x", "y"]})
-    assert done["score"]["asks"] == 1.0 and done["score"]["ran"] == 1.0 and done["score"]["lines"] == 0.8
-    assert done["score"]["total"] == round(100 * (0.35 + 0.25 * 4 / 5 + 0.1 + 0.1 + 0.1 + 0.1 * 0.8))
-    assert len(done["reviews"]) >= 3 and done["readiness"] is None
+    for n in range(5):
+        step = post(client, f"/api/mock/{mid}/interview/answer", {"text": f"answer {n}"})
+        assert step["done"] is (n == 4)
+    done = step
+    assert client.post(f"/api/mock/{mid}/interview/answer", json={"text": "more"}).status_code == 400  # finished
+    assert done["score"]["asks"] == 1.0 and done["score"]["ran"] == 1.0 and done["score"]["lines"] == 1.0
+    avg = done["score"]["review_avg"]  # code review 3 x 4, prompt review 4 x 4, three questions 3 x 5
+    assert avg == pytest.approx(43 / 10)
+    assert done["score"]["total"] == round(100 * (0.35 + 0.25 * avg / 5 + 0.1 + 0.1 + 0.1 + 0.1))
+    assert len(done["reviews"]) == 2 and done["readiness"] is None
     j = client.get("/api/journey").json()
     assert j["mocks"][0]["total"] == done["score"]["total"]
     assert client.post("/api/mock/999/submit", json={"codes": [], "duration_s": 0}).status_code == 404
@@ -152,7 +153,6 @@ def test_journey_next_up_points_to_first_unfinished_exercise(client):
     j = client.get("/api/journey").json()
     assert j["next"]["exercise_id"] == "count-words" and j["next"]["step_id"] == "01-hand-python"
     post(client, "/api/submit", {"exercise_id": "count-words", "code": PY_SOLUTION, "mode": "blank", "duration_s": 60})
-    post(client, "/api/review", {"exercise_id": "count-words", "attempt_id": 1, "text": "x"})
     assert client.get("/api/journey").json()["next"]["exercise_id"] == "explain-count-words"
 
 
