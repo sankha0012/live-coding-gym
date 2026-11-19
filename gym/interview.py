@@ -17,7 +17,10 @@ ROLE = (
 
 
 def new_state(questions):
-    return {"qs": [{"q": q, "turns": [], "followups": 0, "hinted": False, "verdict": None, "strong": ""} for q in questions],
+    """Each question is a string, or {"q", "ref"} when it carries its own private notes on a strong answer."""
+    items = [q if isinstance(q, dict) else {"q": q} for q in questions]
+    return {"qs": [{"q": i["q"], "ref": i.get("ref", ""), "turns": [], "followups": 0, "hinted": False, "verdict": None, "strong": ""}
+                   for i in items],
             "done": False, "passed": None}
 
 
@@ -120,3 +123,40 @@ def scores(state):
 def get_scores(state):
     """The score of each question, in order (what the mock round adds up)."""
     return [SCORE[q["verdict"]] for q in state["qs"]]
+
+
+QUESTION_TYPES = [
+    "Design choice: pick a specific line, quote it with its number, and ask why the candidate chose it and what the obvious alternative would cost.",
+    "Behaviour: pick an edge case or bad input for this code (empty, duplicate, missing, malformed, huge). Ask what the code does, and whether that is the right thing to do.",
+    "Production: tie the code to the focus below (scale, failure, randomness, bad data, model behaviour). Ask what would go wrong in a real system and how they would find out or prevent it.",
+]
+
+
+def questions_prompt(task, code, focus, n, reference="", avoid=(), number=True):
+    numbered = "\n".join(f"{i}: {l}" for i, l in enumerate(code.splitlines(), 1)) if number else code
+    kinds = "\n".join(f"{i}. {t}" for i, t in enumerate(QUESTION_TYPES[:n], 1))
+    return (f"{ROLE}\n\nThe candidate just passed this live-coding task. Write exactly {n} interview questions about THEIR code, to find out whether they understand it.\n\n"
+            f"## Task\n{task}\n\n## The candidate's code (line numbers added)\n{numbered}\n\n"
+            + (f"## A reference solution (private)\n{reference}\n\n" if reference else "")
+            + f"## Focus of this exercise\n{focus or 'writing reliable Python'}\n\n## Questions, in this order\n{kinds}\n\n"
+            "Rules: answerable in two or three spoken sentences; never yes/no; never about tests; never ask what a line does; "
+            "never ask for an exact computed output; refer to the candidate's own lines and names.\n"
+            + ("Do not repeat or rephrase these earlier questions:\n" + "".join(f"- {q}\n" for q in avoid) if avoid else "")
+            + 'For each question also write "strong": private notes, at most 2 sentences, on what a correct answer must say.\n'
+              'Return JSON: {"questions": [{"q": "...", "strong": "..."}]}')
+
+
+def make_questions(call, task, code, focus, n, reference="", avoid=(), number=True):
+    """n interview questions about the learner's own code: [{"q", "ref"}]. Raises RuntimeError if the AI cannot write them."""
+    prompt = questions_prompt(task, code, focus, n, reference, avoid, number)
+    last = None
+    for _ in range(2):
+        try:
+            items = json.loads(call(prompt))["questions"]
+            out = [{"q": str(i["q"]).strip(), "ref": str(i.get("strong") or "").strip()} for i in items]
+            if len(out) != n or not all(o["q"] for o in out):
+                raise ValueError(f"expected {n} questions, got {len(out)}")
+            return out
+        except Exception as e:  # network, quota, bad JSON, wrong count
+            last = e
+    raise RuntimeError(f"The interviewer could not write questions: {last}")

@@ -13,7 +13,7 @@ from fastapi import FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import assistant, cards, config, control, db, gates, interview, mock, reviewer, runner, whatif
+from . import assistant, cards, config, control, db, gates, interview, mock, reviewer, runner
 from .content import load_content
 from .kb import load_kb
 
@@ -171,14 +171,12 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         return "Build" if ex.kind in ("python", "sql", "tests", "prompt") else "Defend"
 
     TRAP_QUESTION = "In one sentence: what is the trap or surprise in this code?"
-    BUILD_CHOICES, READ_CHOICES = ["pass", "fail"], ["same", "different", "crash"]
+    READ_CHOICES = ["same", "different", "crash"]
 
     def whatif_info(ex):
-        """The What if rounds of a reading, of a core build, or of an assisted extra build."""
+        """The What if rounds of a reading: hand-written changes, answered same, different or crash."""
         row = db.get_whatif(conn, ex.id)
-        needed = ex.kind == "read" or ex.control_level in (1, 2) or (not ex.control_level and status_of(ex)["assisted"])
-        return {"needed": needed, "started": row is not None, "ok": bool(row and row["ok"]),
-                "choices": READ_CHOICES if ex.kind == "read" else BUILD_CHOICES,
+        return {"needed": ex.kind == "read", "started": row is not None, "ok": bool(row and row["ok"]), "choices": READ_CHOICES,
                 "questions": [{"change": q["change"]} for q in json.loads(row["questions_json"])] if row else []}
 
     def control_info(ex):
@@ -187,15 +185,13 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
             return None
         row = db.get_control(conn, ex.id)
         started = row is not None
-        a, b = bool(row and row["a_ok"]), bool(row and row["b_ok"])
-        w = bool(db.get_whatif(conn, ex.id) and db.get_whatif(conn, ex.id)["ok"])
-        complete = {1: w, 2: w and b, 3: a and b}[level]
-        return {"level": level, "started": started, "complete": complete, "a_ok": a, "b_ok": b, "whatif_ok": w,
-                "lines": json.loads(row["lines_json"]) if started else [],
+        a, b = gates.defended(conn, ex, step_by_id[ex.step_id]), bool(row and row["b_ok"])
+        complete = a if level == 1 else a and b
+        return {"level": level, "started": started, "complete": complete, "a_ok": a, "b_ok": b,
+                "asked": db.get_interview(conn, f"{ex.id}:defend") is not None,  # false when the credit comes from an earlier check
                 "change": ex.change if (started or dev()) and level >= 2 else "",
                 "locked": started and not complete and not dev(),
-                "ready": db.last_passed_attempt(conn, ex.id) is not None,
-                "whatif": whatif_info(ex)}
+                "ready": db.last_passed_attempt(conn, ex.id) is not None}
 
     def payload(ex, mode="blank"):
         st = status_of(ex)
@@ -454,44 +450,23 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def norm_output(text):
         return "\n".join(line.rstrip() for line in text.strip().splitlines())
 
-    def judge_build(ex):
-        """Run changed code the way the exercise grades code: ('pass' or 'fail', a short reason)."""
-        def judge(code):
-            r = grade(ex, code)
-            if r.passed:
-                return "pass", "The tests still pass."
-            failed = [t["name"] for t in r.tests if not t["passed"]]
-            last = next((l for l in reversed(r.output.strip().splitlines()) if l.strip()), "")
-            return "fail", f"Failing: {', '.join(failed[:3])}." if failed else last[:160]
-        return judge
-
     def make_questions(ex, rounds):
-        """(source attempt id, questions with answers) for one round of What if."""
-        if ex.kind == "read":
-            want = 2 if ex.level == 1 else 3
-            variants = list(ex.whatif)
-            random.Random(f"{ex.id}{rounds}").shuffle(variants)
-            both = [next((v for v in variants if (v["answer"] == "same") == flag), None) for flag in (True, False)]
-            chosen = [v for v in both if v] + [v for v in variants if v not in both]
-            return 0, [{"change": v["change"], "answer": v["answer"], "result": v.get("result", "")} for v in chosen[:want]]
-        attempt = db.last_passed_attempt(conn, ex.id)
-        if attempt is None:
-            raise HTTPException(400, "Pass the tests first. What if works on your passing code.")
-        want = 2 if ex.control_level == 1 or not ex.control_level else 3
-        qs = whatif.pick(attempt["code"], attempt["id"] * 101 + rounds, judge_build(ex), want=want, sql=ex.kind == "sql")
-        if not qs:
-            raise HTTPException(400, "This code has no line that can be changed. Write a longer solution.")
-        return attempt["id"], qs
+        """(0, questions with answers) for one round of What if on a reading."""
+        want = 2 if ex.level == 1 else 3
+        variants = list(ex.whatif)
+        random.Random(f"{ex.id}{rounds}").shuffle(variants)
+        both = [next((v for v in variants if (v["answer"] == "same") == flag), None) for flag in (True, False)]
+        chosen = [v for v in both if v] + [v for v in variants if v not in both]
+        return 0, [{"change": v["change"], "answer": v["answer"], "result": v.get("result", "")} for v in chosen[:want]]
 
     @app.post("/api/whatif/start")
     def whatif_start(body: WhatIfStartBody):
         """Open (or reopen, or refresh) the What if questions for an exercise."""
         ex = get_ex(body.exercise_id)
-        if ex.kind != "read" and ex.kind not in ("python", "sql"):
-            raise HTTPException(400, "this exercise has no What if rounds")
+        if ex.kind != "read":
+            raise HTTPException(400, "this exercise has no What if rounds: the interviewer asks about your code instead")
         row = db.get_whatif(conn, ex.id)
-        newest = 0 if ex.kind == "read" else (db.last_passed_attempt(conn, ex.id) or {"id": None})["id"]
-        if row and (row["ok"] or (not body.fresh and row["source_id"] == newest)):
+        if row and (row["ok"] or not body.fresh):
             return {"whatif": whatif_info(ex), "status": status_of(ex)}
         source, qs = make_questions(ex, (row["rounds"] + 1) if row else 0)
         db.save_whatif(conn, ex.id, source, qs, (row["rounds"] + 1) if row else 0)
@@ -556,12 +531,11 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
             if attempt is None:
                 raise HTTPException(400, "Fix the code and pass the tests first.")
             return [BUG_QUESTION], ex.bug, [], f"The assistant's buggy code:\n{ex.starter}\n\nThe candidate's fixed code:\n{attempt['code']}"
-        if part == "lines" and ex.control_level == 3:
-            row, attempt = db.get_control(conn, ex.id), db.last_passed_attempt(conn, ex.id)
-            if row is None or attempt is None:
-                raise HTTPException(400, "Start the control check first.")
-            return [f"Line {l['no']}: `{l['text'].strip()}`. What does this line do, and why is it there?"
-                    for l in json.loads(row["lines_json"])], "", [], attempt["code"]
+        if part == "defend" and ex.kind in ("python", "sql") and (ex.control_level or status_of(ex)["assisted"]):
+            attempt = db.last_passed_attempt(conn, ex.id)
+            if attempt is None:
+                raise HTTPException(400, "Pass the tests first. The interviewer asks about your passing code.")
+            return [], "", [], f"The task:\n{ex.prompt}\n\nThe candidate's passing code:\n{attempt['code']}"
         raise HTTPException(400, "this exercise has no such written exchange")
 
     def interview_view(state):
@@ -569,19 +543,37 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         return {"qs": [{"q": q["q"], "turns": q["turns"], "verdict": q["verdict"], "strong": q["strong"], "hinted": q["hinted"],
                         "followups": q["followups"]} for q in state["qs"]], "i": i, "done": state["done"], "passed": state["passed"]}
 
-    def interview_state(ex, part):
+    def defend_n(ex):
+        return 3 if ex.control_level >= 2 else 2
+
+    def write_questions(ex, avoid=()):
+        """Fresh interview questions about the learner's latest passing code (one AI call, kept in the saved exchange)."""
+        attempt = db.last_passed_attempt(conn, ex.id)
+        step = step_by_id[ex.step_id]
+        try:
+            qs = interview.make_questions(ai_call, ex.prompt, attempt["code"], f"{step.title}. {step.intro}", defend_n(ex), ex.solution, avoid)
+        except RuntimeError as e:
+            raise HTTPException(502, f"The interviewer is not available. Try again. ({e})")
+        state = interview.new_state(qs)
+        state["source"] = attempt["id"]
+        return state
+
+    def interview_state(ex, part, fresh=False):
         scope = f"{ex.id}:{part}"
         state = db.get_interview(conn, scope)
-        if state is None:
+        if part == "defend":
+            interview_def(ex, part)  # checks that the exercise has this exchange and that the tests passed
+            newest = db.last_passed_attempt(conn, ex.id)["id"]
+            if state is None or fresh or (not state["passed"] and state.get("source") != newest):  # new code gets new questions
+                state = write_questions(ex, [q["q"] for q in state["qs"]] if state else [])
+                db.save_interview(conn, scope, state)
+        elif state is None:
             state = interview.new_state(interview_def(ex, part)[0])
             db.save_interview(conn, scope, state)
         return scope, state
 
     def interview_finish(ex, part, state):
-        passed = state["passed"]
-        if part == "lines":
-            db.set_control_part(conn, ex.id, "a", passed)
-        kind = {"main": reviewer.REVIEW_KIND.get(ex.kind), "bug": "bug", "lines": "line"}[part]
+        kind = {"main": reviewer.REVIEW_KIND.get(ex.kind), "bug": "bug", "defend": "defend"}[part]
         attempt = db.last_passed_attempt(conn, ex.id)
         db.save_review(conn, ex.id, kind, {"interview": state},
                        {"status": "done", "scores": interview.scores(state),
@@ -604,6 +596,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         if i is None:
             raise HTTPException(400, "This exchange is finished.")
         q = state["qs"][i]
+        reference = q.get("ref") or reference  # questions the interviewer wrote carry their own private notes
         if body.action == "answer" and not body.text.strip():
             raise HTTPException(400, "Write your answer first.")
         if body.action == "hint" and q["hinted"]:
@@ -627,12 +620,14 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         scope, state = interview_state(ex, body.part)
         if state["passed"]:
             raise HTTPException(400, "You passed this one.")
+        if body.part == "defend":
+            return interview_view(interview_state(ex, body.part, fresh=True)[1])
         db.delete_interview(conn, scope)
         return interview_view(interview_state(ex, body.part)[1])
 
     @app.post("/api/control/start")
     def control_start(body: ExerciseBody):
-        """Begin the control check on the learner's latest passing code: two random lines to explain, then a change."""
+        """Begin the control check on the learner's latest passing code: the interviewer's questions, then a change by hand."""
         ex = get_ex(body.exercise_id)
         level = ex.control_level
         if not level:
@@ -643,10 +638,7 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         row = db.get_control(conn, ex.id)
         done = control_info(ex)["complete"]
         if row is None or (not done and row["attempt_id"] != attempt["id"]):
-            db.start_control(conn, ex.id, attempt["id"], control.pick_lines(attempt["code"], attempt["id"]) if level == 3 else [])
-            db.delete_interview(conn, f"{ex.id}:lines")
-        if level < 3:
-            whatif_start(WhatIfStartBody(exercise_id=ex.id))
+            db.start_control(conn, ex.id, attempt["id"], [])
         return {"control": control_info(ex), "code": attempt["code"], "status": status_of(ex)}
 
     @app.post("/api/control/change")
@@ -722,11 +714,15 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
                 lines.append({"task": i, **ln})
         all_task = "\n\n".join(f"Task {i}: {ex.prompt}" for i, ex in enumerate(tasks, 1))
         all_code = "\n\n".join(f"# Task {i}\n{c}" for i, c in enumerate(codes, 1))
+        try:  # written before anything is saved, so an AI outage leaves the round open to submit again
+            questions = interview.make_questions(ai_call, all_task, all_code, "a timed round: design choices, edge cases, production behaviour", 3, number=False)
+        except RuntimeError as e:
+            raise HTTPException(502, f"The interviewer is not available. Try again. ({e})")
         state.update(codes=codes, duration_s=body.duration_s, results=[asdict(grade(ex, c)) for ex, c in zip(tasks, codes)],
-                     lines=lines[:2], questions=reviewer.followups(all_task, all_code, ai_call))
+                     lines=lines[:2], questions=[q["q"] for q in questions])
         db.update_mock(conn, mock_id, state)
         asked = [f"Task {l['task'] + 1}, line {l['no']}: `{l['text'].strip()}`. What does this line do, and why is it there?" for l in state["lines"]]
-        db.save_interview(conn, f"mock:{mock_id}", interview.new_state(asked + state["questions"]))
+        db.save_interview(conn, f"mock:{mock_id}", interview.new_state(asked + questions))
         return {"results": state["results"], "interview": interview_view(db.get_interview(conn, f"mock:{mock_id}"))}
 
     def mock_behaviour(mock_id):
@@ -778,10 +774,10 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
         if body.action == "hint" and q["hinted"]:
             raise HTTPException(400, "You already used the hint for this question.")
         if body.action == "skip":
-            move = interview.skip_move(q, "")
+            move = interview.skip_move(q, q.get("ref", ""))
         else:
             try:
-                move = interview.ask(ai_call, q, "", [], mock_context(state), body.action, body.text.strip())
+                move = interview.ask(ai_call, q, q.get("ref", ""), [], mock_context(state), body.action, body.text.strip())
             except RuntimeError as e:
                 raise HTTPException(502, str(e))
         interview.apply(talk, body.action, body.text.strip(), move)

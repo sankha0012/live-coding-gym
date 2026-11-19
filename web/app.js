@@ -89,11 +89,11 @@ function mark(value) {
 const CHIP_INFO = {
   tests: "Hidden tests: passed once. For readings: the What if round answered right.",
   review: "AI review: every criterion at or above the step's minimum score.",
-  explain: "The assistant wrote code for this exercise, so you show you understand it with a What if round.",
+  explain: "The assistant wrote code for this exercise, so you show you understand it by answering the interviewer's questions about it.",
   fix: "Change the code so that it prints the target output.",
-  control: "Control check: explain two lines of your own code, then make one small change by hand with the assistant locked.",
+  control: "Control check: answer the interviewer's questions about your own code, then (on longer exercises) make one small change by hand with the assistant locked.",
   bug: "Name the bug in one sentence after you fixed it. An AI interviewer compares it with the real cause.",
-  prompts: "The prompts you typed to the assistant must pass the AI prompt review (small, clear, with constraints).",
+  prompts: "If you asked the assistant, the prompts you typed must pass the AI prompt review (small, clear, with constraints). Press Grade my prompts in the Assistant tab. No prompts, no review.",
   assisted: "You asked the assistant to write code for this exercise.",
 };
 
@@ -102,7 +102,7 @@ function statusLine(st, kind) {
   const chip = (key, label) => (st[key] === null ? null
     : tip(h("span", { class: "chip " + (st[key] ? "done" : "todo") }, label, " ", mark(st[key])), CHIP_INFO[key]));
   return h("span", {}, chip("tests", kind === "read" ? "what if" : "tests"), chip("review", "AI review"),
-    chip("explain", "what if"), chip("fix", "fix it"), chip("control", "control check"), chip("bug", "name the bug"), chip("prompts", "prompts"),
+    chip("explain", "interviewer"), chip("fix", "fix it"), chip("control", "control check"), chip("bug", "name the bug"), chip("prompts", "prompts"),
     st.assisted ? tip(h("span", { class: "chip assisted" }, "assisted"), CHIP_INFO.assisted) : null);
 }
 
@@ -393,12 +393,13 @@ async function kbView(id) {
 function stepRow(s, j) {
   const pct = s.total ? Math.round(100 * s.done / s.total) : 0;
   const need = s.total ? Math.round(100 * s.needed / s.total) : 0;
-  const bar = tip(h("div", { class: "progress" }, h("div", { class: "fill", style: `width:${pct}%` }),
+  const part = s.total ? Math.round(100 * (s.done + s.started) / s.total) : 0;
+  const bar = tip(h("div", { class: "progress" }, h("div", { class: "fill started", style: `width:${part}%` }), h("div", { class: "fill", style: `width:${pct}%` }),
     s.optional ? null : h("div", { class: "needed", style: `left:${need}%` })),
-    s.total ? `${s.done} of ${s.total} done.` + (s.optional ? "" : ` The marker shows the ${s.needed} needed to pass.`) : "No exercises here.");
-  const label = s.optional ? h("span", { class: "muted" }, `optional · ${s.done}/${s.total}`)
+    s.total ? `${s.done} of ${s.total} done.` + (s.started ? ` ${s.started} more started (some checks passed, not all).` : "") + (s.optional ? "" : ` The marker shows the ${s.needed} needed to pass.`) : "No exercises here.");
+  const label = s.optional ? h("span", { class: "muted" }, `optional · ${s.done}/${s.total}` + (s.started ? ` · ${s.started} started` : ""))
     : s.passed ? tip(h("span", { class: "ok" }, "passed ✓"), "You finished enough of this step.")
-    : s.total ? h("span", { class: "muted" }, `${s.done}/${s.total} (need ${s.needed})`) : h("span", { class: "muted" }, "mock rounds");
+    : s.total ? h("span", { class: "muted" }, `${s.done}/${s.total} (need ${s.needed})` + (s.started ? ` · ${s.started} started` : "")) : h("span", { class: "muted" }, "mock rounds");
   const name = `${s.order}. ${s.title}`;
   const title = s.unlocked ? h("a", { href: `#/step/${s.id}` }, name)
     : tip(h("span", {}, `🔒 ${name}`), "Opens when you finish the step above, or unlock it yourself.");
@@ -731,16 +732,16 @@ function bugPanel(ex, id, afterChange) {
     interviewPanel(ex, id, "bug", { hideQuestion: false, placeholder: "The bug, where it was, and what it caused. One or two sentences." }, () => afterChange()));
 }
 
-// The control check after a core build passes. Level 1: What if. Level 2: What if, then a change by hand.
-// Level 3: explain two of your own lines, then a change by hand. The assistant is locked until it is done.
+// The control check after a core build passes: an interviewer asks about your own code (2 questions at level 1, 3 above),
+// then levels 2 and 3 add a change by hand. The assistant is locked until it is done.
 function controlPanel(ex, id, ctx, afterChange) {
   const el = h("div", { class: "notice" });
   const level = ex.control.level;
   async function call(path, body) { const r = await api(path, { exercise_id: id, ...body }); if (r.status) afterChange(r.status); if (ctx.assistantEl) ctx.assistantEl.refresh(); return r; }
   let last = "";
-  const INTRO = { 1: "Show that you understand your code: say what happens when one line is changed.",
-    2: "Show that you control your code: say what happens when one line is changed, then make one small change by hand.",
-    3: "Prove that you control this code. I pick two lines of your passing solution for you to explain, then you make one small change by hand." };
+  const INTRO = { 1: "Show that you understand your code: an interviewer asks two questions about it.",
+    2: "Show that you control your code: an interviewer asks three questions about it, then you make one small change by hand.",
+    3: "Show that you control your code: an interviewer asks three questions about it, then you make one small change by hand." };
   let changeEd = null;
   const changeOut = h("pre", { class: "out" }), changeMsg = h("div");
   function changeBox(info) {
@@ -754,7 +755,7 @@ function controlPanel(ex, id, ctx, afterChange) {
       changeMsg.replaceChildren(h("p", { class: r.passed ? "ok" : "bad" }, r.passed ? "✓ The change tests pass." : "✗ The change tests fail. See the output on the left."));
       draw(r.control, changeEd.cm.getValue());
     } }, "Run the change tests"), h("span", { class: "muted" }, "The assistant is locked until this is done.")), changeOut], first && !info.b_ok);
-    return [h("h3", {}, level === 3 ? "B. Make this change by hand" : "2. Make this change by hand"), md(info.change),
+    return [h("h3", {}, "2. Make this change by hand"), md(info.change),
       info.b_ok ? h("p", { class: "ok" }, "✓ Done.") : h("p", { class: "muted" }, "Edit your code in the Change by hand tab on the left and run the change tests there."),
       h("button", { onclick: () => CODE.show("Change by hand") }, "Open the Change by hand tab"), changeMsg];
   }
@@ -771,17 +772,9 @@ function controlPanel(ex, id, ctx, afterChange) {
       el.append(INTRO[level], h("div", { class: "bar" }, startBtn, info.ready ? null : h("span", { class: "muted" }, "Pass the tests first.")));
       return;
     }
-    if (level < 3) {
-      el.append(h("h3", {}, level === 2 ? "1. What if?" : "What if?"),
-        whatIfPanel(info.whatif, id, (r) => { afterChange(r.status); if (ctx.assistantEl) ctx.assistantEl.refresh(); if (r.ok) draw(r.control); }));
-      if (level === 2 && info.whatif_ok) el.append(...changeBox(info));
-      return;
-    }
-    el.append(h("h3", {}, "A. Explain two lines of your code"),
-      ...info.lines.map((l) => pointable(h("pre", {}, `${l.no}: ${l.text}`), `Line ${l.no}: explain this line.`)),
-      interviewPanel(ex, id, "lines", { placeholder: "What the line does and why it is there. One or two sentences." },
-        (r) => { afterChange(r.status); if (ctx.assistantEl) ctx.assistantEl.refresh(); if (r.done) draw(r.control); }),
-      ...changeBox(info));
+    el.append(h("h3", {}, "1. The interviewer's questions"),
+      info.a_ok && !info.asked ? h("p", { class: "ok" }, "✓ Done (credit from an earlier check).") : interviewPanel(ex, id, "defend", {}, (r) => { afterChange(r.status); if (ctx.assistantEl) ctx.assistantEl.refresh(); if (r.done) draw(r.control); }));
+    if (level >= 2 && info.a_ok) el.append(...changeBox(info));
   }
   (async () => {
     const info = ex.control;
@@ -792,18 +785,17 @@ function controlPanel(ex, id, ctx, afterChange) {
   return el;
 }
 
-// An extra (not core) build where the assistant wrote code: a What if round shows the learner understood it.
-function assistWhatIf(ex, id, afterChange) {
+// An extra (not core) build where the assistant wrote code: the interviewer's questions show the learner understood it.
+function assistDefend(ex, id, afterChange) {
   const el = h("div", { class: "notice" });
   async function open() {
-    const r = await api("/whatif/start", { exercise_id: id });
-    el.replaceChildren(h("strong", {}, "What if. "), "The assistant wrote code for this exercise, so it only counts once you show you understand it.",
-      whatIfPanel(r.whatif, id, (x) => afterChange(x.status)));
+    el.replaceChildren(h("strong", {}, "Interviewer. "), "The assistant wrote code for this exercise, so it only counts once you show you understand it.",
+      interviewPanel(ex, id, "defend", {}, (x) => afterChange(x.status)));
   }
   el.redraw = (st) => {
     if (DEV || !st.assisted || st.explain === true) { el.replaceChildren(); return; }
-    if (el.querySelector(".whatif")) return;
-    el.replaceChildren(h("strong", {}, "What if. "), "The assistant wrote code for this exercise, so it only counts once you show you understand it. ",
+    if (el.querySelector(".interview")) return;
+    el.replaceChildren(h("strong", {}, "Interviewer. "), "The assistant wrote code for this exercise, so it only counts once you show you understand it. ",
       h("button", { class: "primary", ...(st.tests ? {} : { disabled: "" }), onclick: open }, "Start"),
       st.tests ? null : h("span", { class: "muted" }, " Pass the tests first."));
   };
@@ -873,7 +865,7 @@ async function exView(id, mode = "blank") {
     return;
   }
 
-  const assistWhat = !ex.control && ex.whatif.needed !== undefined ? assistWhatIf(ex, id, after) : null;
+  const assistWhat = !ex.control && (ex.kind === "python" || ex.kind === "sql") ? assistDefend(ex, id, after) : null;
   applyStatus = (st) => {
     statusEl.replaceChildren(statusLine(st, ex.kind));
     if (assistWhat) assistWhat.redraw(st);

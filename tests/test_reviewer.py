@@ -51,13 +51,3 @@ def test_network_error_becomes_pending():
         raise OSError("no network")
 
     assert reviewer.review("code", RUBRIC, {}, call=down)["status"] == "pending"
-
-
-def test_followups_returns_three_questions():
-    reply = json.dumps({"questions": ["a?", "b?", "c?", "d?"]})
-    assert reviewer.followups("task", "code", call=lambda p: reply) == ["a?", "b?", "c?"]
-
-
-def test_followups_falls_back_when_gemini_fails():
-    qs = reviewer.followups("task", "code", call=lambda p: "garbage")
-    assert qs == reviewer.FALLBACK_QUESTIONS and len(qs) == 3

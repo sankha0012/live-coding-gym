@@ -21,6 +21,13 @@ def _whatif_ok(conn, exercise_id):
     return bool(row and row["ok"])
 
 
+def defended(conn, ex, step):
+    """The learner answered the interviewer's questions about their own passing code. Credit from the earlier
+    designs (a What if round, or two explained lines) still counts, so finished work stays finished."""
+    row = db.get_control(conn, ex.id)
+    return _review_ok(conn, ex.id, "defend", step.min_score) or _whatif_ok(conn, ex.id) or bool(row and row["a_ok"])
+
+
 def exercise_status(conn, ex, step):
     coded = ex.kind in TESTED
     rows = db.passed_attempts(conn, ex.id) if coded else []
@@ -41,14 +48,13 @@ def exercise_status(conn, ex, step):
     level = ex.control_level
     if level:  # core build: prove you understand the passing code
         control = db.get_control(conn, ex.id)
-        a, b = bool(control and control["a_ok"]), bool(control and control["b_ok"])
-        w = _whatif_ok(conn, ex.id)
-        status["control"] = {1: w, 2: w and b, 3: a and b}[level]
+        a, b = defended(conn, ex, step), bool(control and control["b_ok"])
+        status["control"] = a if level == 1 else a and b
     elif assisted:  # the assistant wrote code here: it only counts once the learner shows they understand it
-        status["explain"] = _whatif_ok(conn, ex.id)
+        status["explain"] = defended(conn, ex, step)
     if ex.name_bug:
         status["bug"] = _review_ok(conn, ex.id, "bug", step.min_score)
-    if ex.grade_prompts:
+    if ex.grade_prompts and db.user_messages(conn, ex.id):  # no prompts typed (solved without the assistant): nothing to grade
         status["prompts"] = _review_ok(conn, f"chat:{ex.id}", "prompt", step.min_score)
     status["done"] = all(v for v in status.values() if v is not None)
     status["assisted"] = assisted
@@ -59,8 +65,11 @@ def step_status(conn, step):
     exercises = {ex.id: exercise_status(conn, ex, step) for ex in step.exercises}
     required = [ex.id for ex in step.exercises if ex.required]
     done = sum(exercises[i]["done"] for i in required)
+    # started: some check passed (tests, control...) but not all, so the landing page does not show a flat zero
+    started = sum(not exercises[i]["done"] and any(v is True for k, v in exercises[i].items() if k not in ("done", "assisted"))
+                  for i in required)
     return {"passed": bool(required) and done / len(required) >= step.pass_ratio,
-            "done": done, "total": len(required), "exercises": exercises}
+            "done": done, "started": started, "total": len(required), "exercises": exercises}
 
 
 def journey(conn, steps, open_all=False):
@@ -70,7 +79,7 @@ def journey(conn, steps, open_all=False):
     for step in steps:
         st = step_status(conn, step)
         row = {"id": step.id, "title": step.title, "order": step.order, "optional": step.optional,
-               "passed": st["passed"], "done": st["done"], "total": st["total"],
+               "passed": st["passed"], "done": st["done"], "started": st["started"], "total": st["total"],
                "pass_ratio": step.pass_ratio, "needed": math.ceil(step.pass_ratio * st["total"]),
                "unlocked": open_all or step.optional or previous_passed or step.id in manual}
         out.append(row)

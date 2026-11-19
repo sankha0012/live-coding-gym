@@ -27,12 +27,6 @@ ROLES = {
     "prompt": "You are an interviewer watching a candidate use an AI coding assistant. Judge the prompt the candidate wrote for the assistant.",
 }
 
-FALLBACK_QUESTIONS = [
-    "Walk me through your code line by line. Why did you structure it this way?",
-    "What inputs would break this code, and how would you defend against them?",
-    "How would this behave in production with 100 times more data, and what would you monitor?",
-]
-
 
 def call_gemini(prompt, timeout=60, json_mode=True):
     model = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
@@ -119,21 +113,3 @@ def review(kind, rubric, material, call=call_gemini):
             error = e
     return {"status": "pending", "scores": {}, "verdict": "",
             "feedback": f"Review unavailable: {error}. Your submission is saved; retry later."}
-
-
-def followups(task, code, call=call_gemini):
-    prompt = (
-        "You are an interviewer for a production ML systems role. The candidate just "
-        "finished this live-coding task. Ask exactly 3 follow-up questions that probe "
-        "whether they understand their own code: design choices, edge cases, and "
-        "production behaviour. Refer to specific lines.\n\n"
-        f"## TASK\n{task}\n\n## CODE\n{code}\n\n"
-        'Return JSON: {"questions": ["...", "...", "..."]}'
-    )
-    try:
-        questions = [str(q) for q in json.loads(call(prompt))["questions"]][:3]
-        if len(questions) == 3:
-            return questions
-    except Exception:
-        pass
-    return FALLBACK_QUESTIONS

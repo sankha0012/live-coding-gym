@@ -85,7 +85,8 @@ input[type=search]:focus, textarea:focus, select:focus, button:focus-visible { o
 .chip.todo { background: var(--surface-2); color: var(--muted); }
 .chip .ok, .chip .bad { font-weight: 700; }
 .progress { position: relative; width: 150px; height: 8px; background: var(--surface-2); border-radius: 999px; border: 1px solid var(--border); }
-.progress .fill { height: 100%; background: linear-gradient(90deg, var(--accent), #9b5bf0); border-radius: 999px; }
+.progress .fill { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, var(--accent), #9b5bf0); border-radius: 999px; }
+.progress .fill.started { background: var(--accent); opacity: .35; }
 .progress .needed { position: absolute; top: -4px; width: 2px; height: 14px; background: var(--text); opacity: .55; border-radius: 1px; }
 .timer { font: 600 14px var(--mono); color: var(--accent); background: var(--accent-soft); padding: 3px 10px; border-radius: 8px; font-variant-numeric: tabular-nums; }
 .timer.bad { color: var(--bad); background: var(--bad-soft); }

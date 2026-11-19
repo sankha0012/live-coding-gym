@@ -17,7 +17,7 @@ def fake_gemini(prompt, json_mode=True):
     if not json_mode:
         return "SIZE: small\n\n```python\nx = 1\n```"
     if '"questions"' in prompt:
-        return json.dumps({"questions": ["q1?", "q2?", "q3?"]})
+        return json.dumps({"questions": [{"q": f"q{i}?", "strong": f"n{i}"} for i in (1, 2, 3)]})
     n = int(re.search(r"Return exactly (\d+) scores", prompt).group(1))
     return json.dumps({"scores": [4] * n, "verdict": "Good", "feedback": "Fine."})
 

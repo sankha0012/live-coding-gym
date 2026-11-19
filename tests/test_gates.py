@@ -84,3 +84,17 @@ def test_journey_reports_needed_count(conn, steps):
     steps[0].pass_ratio = 0.7
     j = gates.journey(conn, steps)[0]
     assert j["needed"] == 2 and j["pass_ratio"] == 0.7  # ceil(0.7 * 2)
+
+
+def test_journey_counts_started_exercises(conn, steps):
+    """Tests passed but the prompts are not graded yet: not done, but the landing page must show it as started."""
+    step, ex = steps[0], steps[0].exercises[0]
+    ex.grade_prompts = True
+    db.add_chat(conn, ex.id, "user", "write it", "train")  # prompts typed, so they must be graded
+    assert gates.journey(conn, steps)[0]["started"] == 0
+    db.record_attempt(conn, ex.id, "blank", "c", True, 10, "")
+    row = gates.journey(conn, steps)[0]
+    assert row["done"] == 0 and row["started"] == 1
+    db.save_review(conn, f"chat:{ex.id}", "prompt", {}, good())
+    row = gates.journey(conn, steps)[0]
+    assert row["done"] == 1 and row["started"] == 0

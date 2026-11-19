@@ -16,7 +16,7 @@ Progress is stored in `data/progress.db` (git-ignored). Delete it, or use "Reset
 ## What is in it
 
 - Ten steps in `content/`: read Python, the control loop on Coderbyte, catching the assistant's mistakes, robust code, real data behaviour, model failures, ML systems in production, explain and defend, mock rounds, and an optional SQL step. 359 exercises, 139 reference articles, flashcards.
-- **What if**: the app changes one line of code and you say what happens; it runs the change to know. Levels 1 to 3 decide how much evaluation each reading or build carries.
+- **What if** (readings): a changed line and you say what happens. **Control check** (builds): an AI interviewer asks 2 or 3 questions about your own passing code, then levels 2 and 3 add a small change by hand. Levels 1 to 3 decide how much evaluation each reading or build carries.
 - **An AI interviewer** for written answers: one question at a time, one follow-up, hint and skip.
 - **Assistant policies** per exercise (train, explain, off, free), a **control check** after core builds, **mock rounds** with documentation and an assistant, **Dev mode** (Dev button: everything open and revealed, no progress shown).
 - Layout: code on the left, task, questions, help and assistant on the right.
