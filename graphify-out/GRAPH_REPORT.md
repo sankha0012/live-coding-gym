@@ -1,16 +1,16 @@
-# Graph Report - live-coding-gym  (2026-11-17)
+# Graph Report - live-coding-gym  (2026-11-19)
 
 ## Corpus Check
-- 3613 files · ~464,688 words
+- 3613 files · ~465,144 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 7902 nodes · 7400 edges · 2866 communities (2685 shown, 181 thin omitted)
+- 7900 nodes · 7398 edges · 2868 communities (2687 shown, 181 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 106 edges (avg confidence: 0.57)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e2a84a39`
+- Built from commit: `bb905b55`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -227,6 +227,7 @@
 - Verifying AI code
 - prod-batch/tests/test_hidden.py
 - tw-parse-duration/solution.py
+- pick_lines
 - test_mocks
 - dbg-late/tests/test_hidden.py
 - dbg-tags/tests/test_hidden.py
@@ -526,6 +527,7 @@
 - tool-ci-cd-ml.md
 - tool-cloud-platforms.md
 - tool-data-versioning.md
+- test_cards.py
 - test_redesign.py
 - journey
 - 03-senior.md
@@ -701,7 +703,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (2866 total, 181 thin omitted)
+## Communities (2868 total, 181 thin omitted)
 
 ### Community 0 - "drift_alarm"
 Cohesion: 0.08
@@ -744,16 +746,16 @@ Cohesion: 0.15
 Nodes (20): Clock, test_negative_cost_cannot_overfill(), test_negative_cost_does_not_change_the_bucket(), test_negative_cost_raises(), test_zero_cost_still_fine(), TokenBucket, Clock, test_bad_arguments() (+12 more)
 
 ### Community 10 - "Live Coding Gym: working rules"
-Cohesion: 0.33
-Nodes (5): Keeping the graph current, Live Coding Gym: working rules, Mandatory workflow tools, Project rules, Token habits
+Cohesion: 0.29
+Nodes (6): Handover notes for the next agent (2026-11-19), Keeping the graph current, Live Coding Gym: working rules, Mandatory workflow tools, Project rules, Token habits
 
 ### Community 11 - "compare_shadow"
 Cohesion: 0.14
 Nodes (21): compare_shadow(), live(), shadow(), test_all_shadow_errors_gives_zero_rate(), test_any_shadow_exception_is_counted_not_raised(), test_diff_is_absolute_and_ranking_uses_it(), test_each_model_called_once_per_input(), test_empty_inputs() (+13 more)
 
 ### Community 12 - "Live Coding Gym"
-Cohesion: 0.17
-Nodes (11): Adding content, AI provider, Deploy on Vercel, Design, Dev mode, Knowledge base, Live Coding Gym, Optional tools (+3 more)
+Cohesion: 0.22
+Nodes (8): Adding or changing content, Commands, Deploy on Vercel, Known limits and ideas, Live Coding Gym, Project rules for contributors, Quick start, What is in it
 
 ### Community 13 - "count_words"
 Cohesion: 0.53
@@ -1491,6 +1493,10 @@ Nodes (6): Say it like this, The problem it solves, The smallest runnable exampl
 Cohesion: 0.57
 Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_inf_none_and_other_exceptions(), test_rate_all_good_all_bad_and_zero_fallback()
 
+### Community 227 - "pick_lines"
+Cohesion: 0.33
+Nodes (8): candidate_lines(), pick_lines(), The control check: pick two lines of the learner's own code to explain., Two lines, in file order, chosen at random but fixed for a given seed (the…, (line number, text) of lines worth asking about: real logic, not comments,…, test_candidates_skip_comments_imports_and_docstrings(), test_tiny_code_falls_back_to_any_lines(), test_two_lines_in_file_order_fixed_per_seed()
+
 ### Community 228 - "test_mocks"
 Cohesion: 0.38
 Nodes (7): create_mock(), finished_mocks(), get_mock(), update_mock(), readiness(), test_mocks(), test_readiness_needs_three_mocks_and_uses_last_three()
@@ -2012,8 +2018,8 @@ Cohesion: 0.17
 Nodes (19): BaseModel, CardBody, ControlChangeBody, ExerciseBody, FixBody, InterviewBody, InterviewPart, main() (+11 more)
 
 ### Community 984 - "reviewer.py"
-Cohesion: 0.08
-Nodes (32): due(), record(), candidate_lines(), pick_lines(), The control check: pick two lines of the learner's own code to explain., Two lines, in file order, chosen at random but fixed for a given seed (the…, (line number, text) of lines worth asking about: real logic, not comments,…, build_prompt() (+24 more)
+Cohesion: 0.16
+Nodes (17): build_prompt(), call_groq(), followups(), _material(), parse_review(), provider_info(), Groq's OpenAI-compatible chat endpoint, asked for a JSON object., What the settings menu shows: label, model in use, and whether a key is… (+9 more)
 
 ### Community 986 - "test_gates.py"
 Cohesion: 0.29
@@ -2034,6 +2040,10 @@ Nodes (4): Details, Likely interview questions, See also, What to say and what n
 ### Community 1268 - "tool-data-versioning.md"
 Cohesion: 0.40
 Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
+
+### Community 1320 - "test_cards.py"
+Cohesion: 0.42
+Nodes (7): due(), record(), test_box_is_capped_at_five(), test_card_returns_on_its_due_date(), test_correct_answers_climb_boxes(), test_unseen_cards_are_due(), test_wrong_answer_resets_and_stays_due()
 
 ### Community 1371 - "test_redesign.py"
 Cohesion: 0.16
@@ -2612,7 +2622,7 @@ Cohesion: 0.33
 Nodes (5): includeFiles, maxDuration, functions, api/index.py, rewrites
 
 ## Knowledge Gaps
-- **961 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+956 more)
+- **959 isolated node(s):** `Version`, `Version`, `Version`, `Version`, `Version` (+954 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **181 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -2624,7 +2634,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `_mk()` connect `prod-breaker/tests/test_hidden.py` to `test_gates.py`?**
   _High betweenness centrality (0.001) - this node is a cross-community bridge._
 - **What connects `Version`, `Version`, `Version` to the rest of the system?**
-  _961 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _959 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `drift_alarm` be split into smaller, more focused modules?**
   _Cohesion score 0.08235294117647059 - nodes in this community are weakly interconnected._
 - **Should `runner.py` be split into smaller, more focused modules?**

@@ -1,61 +1,51 @@
 # Live Coding Gym
 
-Local training app for live-coding interviews on production ML systems.
+A local app for preparing live-coding interviews on software engineering for production ML systems, where an AI assistant is allowed and the candidate must understand and explain every line. It trains control over the assistant, not typing from memory. Design and file formats: `docs/design.md`.
 
-## Run
-
-```bash
-uv run python -m gym.app
-```
-
-Open http://localhost:8000.
-
-## Setup
-
-`.env` in this folder holds `GEMINI_API_KEY` and `GEMINI_MODEL`. It is not committed.
-
-## Adding content
-
-Content lives in `content/<step>/`. See `docs/design.md` for the design and the file format. After adding or changing an exercise:
+## Quick start
 
 ```bash
-uv run python -m gym.check_content
+git clone git@github.com:sankha0012/live-coding-gym.git && cd live-coding-gym
+cp .env.example .env        # add GEMINI_API_KEY and/or GROQ_API_KEY
+uv sync                     # Python 3.12, installs everything including scikit-learn
+uv run python -m gym.app    # http://localhost:8000
 ```
 
-Restart the server to load new content.
+Progress is stored in `data/progress.db` (git-ignored). Delete it, or use "Reset all progress" on the track page, to start over. The AI provider (Gemini or Groq) is chosen in the top bar. The nav label shows the git commit that is running.
 
-## Tests
+## What is in it
+
+- Ten steps in `content/`: read Python, the control loop on Coderbyte, catching the assistant's mistakes, robust code, real data behaviour, model failures, ML systems in production, explain and defend, mock rounds, and an optional SQL step. 359 exercises, 139 reference articles, flashcards.
+- **What if**: the app changes one line of code and you say what happens; it runs the change to know. Levels 1 to 3 decide how much evaluation each reading or build carries.
+- **An AI interviewer** for written answers: one question at a time, one follow-up, hint and skip.
+- **Assistant policies** per exercise (train, explain, off, free), a **control check** after core builds, **mock rounds** with documentation and an assistant, **Dev mode** (Dev button: everything open and revealed, no progress shown).
+- Layout: code on the left, task, questions, help and assistant on the right.
+
+## Commands
 
 ```bash
-uv run pytest
+uv run pytest                              # app tests (about 30 s)
+uv run python -m gym.check_content         # runs every solution, wrong solution, What if change and rule (about 25 min)
+uv run python -m tools.check_ids <ids>     # the same for some exercises, or step:<folder>, or kb (seconds)
 ```
 
-Progress is stored in `data/progress.db`. Delete that file to start over.
+Run `check_content` after any content change. No exercise ships if its own solution fails its own tests. Restart the server to load new content.
 
-## Knowledge base
+## Adding or changing content
 
-Reference articles live in `content/_kb/<topic-id>.md` (front matter: title, summary, tags; the text before `<!-- more -->` is the brief shown in the Help sidebar). `docs/kb-topics.md` lists every topic. An exercise names its topics with `kb: [id, id]` in `exercise.yaml`. Check with:
+Everything the learner sees lives in `content/` as plain files; app code never contains lesson or exercise text. The folder layout and every `exercise.yaml` option are in `docs/design.md` ("Content format"). Reference articles: `content/_kb/<id>.md`, listed in `docs/kb-topics.md`.
 
-```bash
-uv run python -m tools.check_ids kb
-```
+## Project rules for contributors
 
-## Dev mode
-
-The Dev button in the top bar opens every step and shows all answers, reference solutions and the control-check change, and hides progress. `GYM_DEV=1` forces it on.
+`CLAUDE.md` holds the working rules (least code, tests first, keep the graph current with `graphify update .`, never commit keys). The code map is in `graphify-out/`.
 
 ## Deploy on Vercel
 
-The repo is ready for Vercel (`vercel.json`, `api/index.py`). Import the GitHub repository in the Vercel dashboard (or run `npx vercel` here), then set these environment variables: `GEMINI_API_KEY` and/or `GROQ_API_KEY`, `GYM_PASSWORD` (the site asks for it with the browser's login box; any user name; required because the site runs code), and optionally `GYM_DEV=1`. Limits: progress lives in `/tmp` and is lost whenever the function restarts, so use dev mode there; the scikit-learn exercises do not run (the build leaves scikit-learn out to stay under Vercel's 250 MB limit); each run has 60 seconds.
+Ready to import (`vercel.json`, `api/index.py`); not yet tried on a real Vercel build. Set `GEMINI_API_KEY` and/or `GROQ_API_KEY`, `GYM_PASSWORD` (HTTP Basic login, any user name; required because the site runs code), and optionally `GYM_DEV=1`. Limits: progress lives in `/tmp` and is lost on restarts (use dev mode); scikit-learn exercises do not run (the build leaves it out for Vercel's 250 MB limit); 60 s per run.
 
-## Optional tools
+## Known limits and ideas
 
-MLflow (slim package) and the Prometheus client are an optional dependency group, used only to check the examples in the ML tools lessons. Install them with `uv sync --group tools`. The app does not need them.
-
-## AI provider
-
-Reviews, prompt grading and mock-round questions can use Gemini or Groq. Put the keys in `.env` (`GEMINI_API_KEY`, `GROQ_API_KEY`, and optionally `GEMINI_MODEL`, `GROQ_MODEL`) and pick the provider in the top bar. The choice is remembered.
-
-## Design
-
-See `docs/design.md`: ten steps, the four moves (read, build, catch, defend), the assistant policies, the control check and the mock round.
+- The SQL graph and some doc files are not in the graphify graph (`uv pip install "graphifyy[sql]"` to add SQL).
+- The step-through idea (pause a run and ask for a value) was not built.
+- Flashcards still use the type-then-flip screen; quizzes are unchanged.
+- Optional `uv sync --group tools` installs MLflow and the Prometheus client, used only to check the tools-lesson examples.

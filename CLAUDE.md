@@ -40,3 +40,19 @@ The graph exists at `graphify-out/graph.json` (built 2026-11-14) and must never 
 - The Gemini key lives only in `.env` (gitignored). Never print it, log it, commit it or copy it into any other file.
 - Run `uv run pytest` before every commit. A failing test blocks the commit.
 - This is a single-user local tool: rough finish is fine, comprehensive content is not negotiable.
+
+## Handover notes for the next agent (2026-11-19)
+
+State: everything described in `README.md` and `docs/design.md` is built and pushed to `origin main`. `uv run pytest` passes (145 tests). The full `uv run python -m gym.check_content` last passed on 2026-11-17 for the content; it was NOT re-run after the final code changes (interviewer exchange, mock redesign, removal of the code-review route). Run it once before relying on the content, and use `tools.check_ids` for single exercises.
+
+Where things are:
+- Backend: `gym/app.py` (routes), `gym/gates.py` (what counts as done), `gym/interview.py` (written answers), `gym/whatif.py` (What if changes), `gym/mock.py` (mock scoring), `gym/content.py` (loader and levels), `gym/check_content.py` (content rules).
+- Frontend: `web/app.js` (plain JS, no build step), `web/style.css`. Exercise pages use the split layout (`splitLayout`, `workTabs`, `interviewPanel`, `whatIfPanel`, `controlPanel`).
+- Content: `content/s01..s10-*` plus `_kb` (reference articles) and `_shared` (dataset).
+
+Open items, none blocking:
+1. Vercel setup (`vercel.json`, `api/index.py`) has never been run on a real Vercel build. If the build fails, read the log; likely causes are the 250 MB size limit or the Python version.
+2. Not browser-checked after the last changes: the accept/reject page, the naming-the-bug exchange and the level 3 lines exchange (all covered by tests).
+3. The step-through idea (pause a run and ask for a value) was not built. Flashcards still use the type-then-flip screen.
+4. Keep `.env` out of git; keys only in `.env` (see `.env.example`). Never delete the user's `data/progress.db` or stop their server; test on a scratch port with a scratch database.
+5. The user runs the app from their own copy: after changes, tell them to `git pull`, restart and hard-refresh, and ask what the nav label shows.

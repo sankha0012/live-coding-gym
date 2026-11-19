@@ -9963,6 +9963,90 @@
       "norm_label": "_timeout()"
     },
     {
+      "label": "due()",
+      "file_type": "code",
+      "source_file": "gym/cards.py",
+      "source_location": "L6",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_cards_due",
+      "community": 1320,
+      "community_name": "test_cards.py",
+      "norm_label": "due()"
+    },
+    {
+      "label": "record()",
+      "file_type": "code",
+      "source_file": "gym/cards.py",
+      "source_location": "L11",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_cards_record",
+      "community": 1320,
+      "community_name": "test_cards.py",
+      "norm_label": "record()"
+    },
+    {
+      "label": "test_box_is_capped_at_five()",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L19",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_cards_test_box_is_capped_at_five",
+      "community": 1320,
+      "community_name": "test_cards.py",
+      "norm_label": "test_box_is_capped_at_five()"
+    },
+    {
+      "label": "test_card_returns_on_its_due_date()",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L32",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_cards_test_card_returns_on_its_due_date",
+      "community": 1320,
+      "community_name": "test_cards.py",
+      "norm_label": "test_card_returns_on_its_due_date()"
+    },
+    {
+      "label": "test_correct_answers_climb_boxes()",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L13",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_cards_test_correct_answers_climb_boxes",
+      "community": 1320,
+      "community_name": "test_cards.py",
+      "norm_label": "test_correct_answers_climb_boxes()"
+    },
+    {
+      "label": "test_unseen_cards_are_due()",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L9",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_cards_test_unseen_cards_are_due",
+      "community": 1320,
+      "community_name": "test_cards.py",
+      "norm_label": "test_unseen_cards_are_due()"
+    },
+    {
+      "label": "test_wrong_answer_resets_and_stays_due()",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L25",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_cards_test_wrong_answer_resets_and_stays_due",
+      "community": 1320,
+      "community_name": "test_cards.py",
+      "norm_label": "test_wrong_answer_resets_and_stays_due()"
+    },
+    {
       "label": "drift_alarm()",
       "file_type": "code",
       "source_file": "content/s06-model-failures/exercises/mf-silent-drift-alarm/starter.py",
@@ -18865,6 +18949,66 @@
       "community": 226,
       "community_name": "tw-parse-duration/solution.py",
       "norm_label": "test_single_units()"
+    },
+    {
+      "label": "candidate_lines()",
+      "file_type": "code",
+      "source_file": "gym/control.py",
+      "source_location": "L8",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_control_candidate_lines",
+      "community": 227,
+      "community_name": "pick_lines",
+      "norm_label": "candidate_lines()"
+    },
+    {
+      "label": "pick_lines()",
+      "file_type": "code",
+      "source_file": "gym/control.py",
+      "source_location": "L18",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "gym_control_pick_lines",
+      "community": 227,
+      "community_name": "pick_lines",
+      "norm_label": "pick_lines()"
+    },
+    {
+      "label": "test_candidates_skip_comments_imports_and_docstrings()",
+      "file_type": "code",
+      "source_file": "tests/test_control.py",
+      "source_location": "L15",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_control_test_candidates_skip_comments_imports_and_docstrings",
+      "community": 227,
+      "community_name": "pick_lines",
+      "norm_label": "test_candidates_skip_comments_imports_and_docstrings()"
+    },
+    {
+      "label": "test_tiny_code_falls_back_to_any_lines()",
+      "file_type": "code",
+      "source_file": "tests/test_control.py",
+      "source_location": "L28",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_control_test_tiny_code_falls_back_to_any_lines",
+      "community": 227,
+      "community_name": "pick_lines",
+      "norm_label": "test_tiny_code_falls_back_to_any_lines()"
+    },
+    {
+      "label": "test_two_lines_in_file_order_fixed_per_seed()",
+      "file_type": "code",
+      "source_file": "tests/test_control.py",
+      "source_location": "L21",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "tests_test_control_test_two_lines_in_file_order_fixed_per_seed",
+      "community": 227,
+      "community_name": "pick_lines",
+      "norm_label": "test_two_lines_in_file_order_fixed_per_seed()"
     },
     {
       "label": "create_mock()",
@@ -42075,54 +42219,6 @@
       "norm_label": "validate()"
     },
     {
-      "label": "due()",
-      "file_type": "code",
-      "source_file": "gym/cards.py",
-      "source_location": "L6",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_cards_due",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "due()"
-    },
-    {
-      "label": "record()",
-      "file_type": "code",
-      "source_file": "gym/cards.py",
-      "source_location": "L11",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_cards_record",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "record()"
-    },
-    {
-      "label": "candidate_lines()",
-      "file_type": "code",
-      "source_file": "gym/control.py",
-      "source_location": "L8",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_control_candidate_lines",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "candidate_lines()"
-    },
-    {
-      "label": "pick_lines()",
-      "file_type": "code",
-      "source_file": "gym/control.py",
-      "source_location": "L18",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "gym_control_pick_lines",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "pick_lines()"
-    },
-    {
       "label": "build_prompt()",
       "file_type": "code",
       "source_file": "gym/reviewer.py",
@@ -42217,102 +42313,6 @@
       "community": 984,
       "community_name": "reviewer.py",
       "norm_label": "review()"
-    },
-    {
-      "label": "test_box_is_capped_at_five()",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
-      "source_location": "L19",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_cards_test_box_is_capped_at_five",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "test_box_is_capped_at_five()"
-    },
-    {
-      "label": "test_card_returns_on_its_due_date()",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
-      "source_location": "L32",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_cards_test_card_returns_on_its_due_date",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "test_card_returns_on_its_due_date()"
-    },
-    {
-      "label": "test_correct_answers_climb_boxes()",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
-      "source_location": "L13",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_cards_test_correct_answers_climb_boxes",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "test_correct_answers_climb_boxes()"
-    },
-    {
-      "label": "test_unseen_cards_are_due()",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
-      "source_location": "L9",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_cards_test_unseen_cards_are_due",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "test_unseen_cards_are_due()"
-    },
-    {
-      "label": "test_wrong_answer_resets_and_stays_due()",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
-      "source_location": "L25",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_cards_test_wrong_answer_resets_and_stays_due",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "test_wrong_answer_resets_and_stays_due()"
-    },
-    {
-      "label": "test_candidates_skip_comments_imports_and_docstrings()",
-      "file_type": "code",
-      "source_file": "tests/test_control.py",
-      "source_location": "L15",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_control_test_candidates_skip_comments_imports_and_docstrings",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "test_candidates_skip_comments_imports_and_docstrings()"
-    },
-    {
-      "label": "test_tiny_code_falls_back_to_any_lines()",
-      "file_type": "code",
-      "source_file": "tests/test_control.py",
-      "source_location": "L28",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_control_test_tiny_code_falls_back_to_any_lines",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "test_tiny_code_falls_back_to_any_lines()"
-    },
-    {
-      "label": "test_two_lines_in_file_order_fixed_per_seed()",
-      "file_type": "code",
-      "source_file": "tests/test_control.py",
-      "source_location": "L21",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "tests_test_control_test_two_lines_in_file_order_fixed_per_seed",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "test_two_lines_in_file_order_fixed_per_seed()"
     },
     {
       "label": "test_default_rubric_used_when_none_given()",
@@ -43063,6 +43063,17 @@
       "community": 10,
       "community_name": "Live Coding Gym: working rules",
       "norm_label": "claude.md"
+    },
+    {
+      "label": "Handover notes for the next agent (2026-11-19)",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L44",
+      "_origin": "ast",
+      "id": "claude_handover_notes_for_the_next_agent_2026_11_19",
+      "community": 10,
+      "community_name": "Live Coding Gym: working rules",
+      "norm_label": "handover notes for the next agent (2026-11-19)"
     },
     {
       "label": "Keeping the graph current",
@@ -45958,32 +45969,32 @@
       "norm_label": "readme.md"
     },
     {
-      "label": "Adding content",
+      "label": "Adding or changing content",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L17",
+      "source_location": "L34",
       "_origin": "ast",
-      "id": "readme_adding_content",
+      "id": "readme_adding_or_changing_content",
       "community": 12,
       "community_name": "Live Coding Gym",
-      "norm_label": "adding content"
+      "norm_label": "adding or changing content"
     },
     {
-      "label": "AI provider",
+      "label": "Commands",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L55",
+      "source_location": "L24",
       "_origin": "ast",
-      "id": "readme_ai_provider",
+      "id": "readme_commands",
       "community": 12,
       "community_name": "Live Coding Gym",
-      "norm_label": "ai provider"
+      "norm_label": "commands"
     },
     {
       "label": "Deploy on Vercel",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L47",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "readme_deploy_on_vercel",
       "community": 12,
@@ -45991,37 +46002,15 @@
       "norm_label": "deploy on vercel"
     },
     {
-      "label": "Design",
+      "label": "Known limits and ideas",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L59",
+      "source_location": "L46",
       "_origin": "ast",
-      "id": "readme_design",
+      "id": "readme_known_limits_and_ideas",
       "community": 12,
       "community_name": "Live Coding Gym",
-      "norm_label": "design"
-    },
-    {
-      "label": "Dev mode",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L43",
-      "_origin": "ast",
-      "id": "readme_dev_mode",
-      "community": 12,
-      "community_name": "Live Coding Gym",
-      "norm_label": "dev mode"
-    },
-    {
-      "label": "Knowledge base",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L35",
-      "_origin": "ast",
-      "id": "readme_knowledge_base",
-      "community": 12,
-      "community_name": "Live Coding Gym",
-      "norm_label": "knowledge base"
+      "norm_label": "known limits and ideas"
     },
     {
       "label": "Live Coding Gym",
@@ -46035,48 +46024,37 @@
       "norm_label": "live coding gym"
     },
     {
-      "label": "Optional tools",
+      "label": "Project rules for contributors",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L51",
+      "source_location": "L38",
       "_origin": "ast",
-      "id": "readme_optional_tools",
+      "id": "readme_project_rules_for_contributors",
       "community": 12,
       "community_name": "Live Coding Gym",
-      "norm_label": "optional tools"
+      "norm_label": "project rules for contributors"
     },
     {
-      "label": "Run",
+      "label": "Quick start",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L5",
       "_origin": "ast",
-      "id": "readme_run",
+      "id": "readme_quick_start",
       "community": 12,
       "community_name": "Live Coding Gym",
-      "norm_label": "run"
+      "norm_label": "quick start"
     },
     {
-      "label": "Setup",
+      "label": "What is in it",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L13",
+      "source_location": "L16",
       "_origin": "ast",
-      "id": "readme_setup",
+      "id": "readme_what_is_in_it",
       "community": 12,
       "community_name": "Live Coding Gym",
-      "norm_label": "setup"
-    },
-    {
-      "label": "Tests",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L27",
-      "_origin": "ast",
-      "id": "readme_tests",
-      "community": 12,
-      "community_name": "Live Coding Gym",
-      "norm_label": "tests"
+      "norm_label": "what is in it"
     },
     {
       "label": "py1-running-sum/solution.py",
@@ -47947,6 +47925,28 @@
       "community": 132,
       "community_name": "port_float.py",
       "norm_label": "exception"
+    },
+    {
+      "label": "cards.py",
+      "file_type": "code",
+      "source_file": "gym/cards.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "gym_cards",
+      "community": 1320,
+      "community_name": "test_cards.py",
+      "norm_label": "cards.py"
+    },
+    {
+      "label": "test_cards.py",
+      "file_type": "code",
+      "source_file": "tests/test_cards.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_cards",
+      "community": 1320,
+      "community_name": "test_cards.py",
+      "norm_label": "test_cards.py"
     },
     {
       "label": "mf-silent-drift-alarm/starter.py",
@@ -67098,6 +67098,61 @@
       "community": 2269,
       "community_name": "r5-04-merge-fanout/prompt.md",
       "norm_label": "r5-04-merge-fanout/prompt.md"
+    },
+    {
+      "label": "control.py",
+      "file_type": "code",
+      "source_file": "gym/control.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "gym_control",
+      "community": 227,
+      "community_name": "pick_lines",
+      "norm_label": "control.py"
+    },
+    {
+      "label": "test_control.py",
+      "file_type": "code",
+      "source_file": "tests/test_control.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_control",
+      "community": 227,
+      "community_name": "pick_lines",
+      "norm_label": "test_control.py"
+    },
+    {
+      "label": "The control check: pick two lines of the learner's own code to explain.",
+      "file_type": "rationale",
+      "source_file": "gym/control.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "gym_control_rationale_1",
+      "community": 227,
+      "community_name": "pick_lines",
+      "norm_label": "the control check: pick two lines of the learner's own code to explain."
+    },
+    {
+      "label": "Two lines, in file order, chosen at random but fixed for a given seed (the\u2026",
+      "file_type": "rationale",
+      "source_file": "gym/control.py",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "gym_control_rationale_19",
+      "community": 227,
+      "community_name": "pick_lines",
+      "norm_label": "two lines, in file order, chosen at random but fixed for a given seed (the..."
+    },
+    {
+      "label": "(line number, text) of lines worth asking about: real logic, not comments,\u2026",
+      "file_type": "rationale",
+      "source_file": "gym/control.py",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "gym_control_rationale_9",
+      "community": 227,
+      "community_name": "pick_lines",
+      "norm_label": "(line number, text) of lines worth asking about: real logic, not comments,..."
     },
     {
       "label": "r5-04-merge-fanout/say.md",
@@ -90324,28 +90379,6 @@
       "norm_label": "le_boundary.py"
     },
     {
-      "label": "cards.py",
-      "file_type": "code",
-      "source_file": "gym/cards.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "gym_cards",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "cards.py"
-    },
-    {
-      "label": "control.py",
-      "file_type": "code",
-      "source_file": "gym/control.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "gym_control",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "control.py"
-    },
-    {
       "label": "reviewer.py",
       "file_type": "code",
       "source_file": "gym/reviewer.py",
@@ -90357,28 +90390,6 @@
       "norm_label": "reviewer.py"
     },
     {
-      "label": "test_cards.py",
-      "file_type": "code",
-      "source_file": "tests/test_cards.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_test_cards",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "test_cards.py"
-    },
-    {
-      "label": "test_control.py",
-      "file_type": "code",
-      "source_file": "tests/test_control.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "tests_test_control",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "test_control.py"
-    },
-    {
       "label": "test_reviewer.py",
       "file_type": "code",
       "source_file": "tests/test_reviewer.py",
@@ -90388,39 +90399,6 @@
       "community": 984,
       "community_name": "reviewer.py",
       "norm_label": "test_reviewer.py"
-    },
-    {
-      "label": "The control check: pick two lines of the learner's own code to explain.",
-      "file_type": "rationale",
-      "source_file": "gym/control.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "gym_control_rationale_1",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "the control check: pick two lines of the learner's own code to explain."
-    },
-    {
-      "label": "Two lines, in file order, chosen at random but fixed for a given seed (the\u2026",
-      "file_type": "rationale",
-      "source_file": "gym/control.py",
-      "source_location": "L19",
-      "_origin": "ast",
-      "id": "gym_control_rationale_19",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "two lines, in file order, chosen at random but fixed for a given seed (the..."
-    },
-    {
-      "label": "(line number, text) of lines worth asking about: real logic, not comments,\u2026",
-      "file_type": "rationale",
-      "source_file": "gym/control.py",
-      "source_location": "L9",
-      "_origin": "ast",
-      "id": "gym_control_rationale_9",
-      "community": 984,
-      "community_name": "reviewer.py",
-      "norm_label": "(line number, text) of lines worth asking about: real logic, not comments,..."
     },
     {
       "label": "Groq's OpenAI-compatible chat endpoint, asked for a JSON object.",
@@ -121814,6 +121792,17 @@
       "_origin": "ast",
       "source": "claude_live_coding_gym_working_rules",
       "target": "claude_project_rules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "claude_live_coding_gym_working_rules",
+      "target": "claude_handover_notes_for_the_next_agent_2026_11_19",
       "confidence_score": 1.0
     },
     {
@@ -165842,62 +165831,51 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L13",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "readme_live_coding_gym",
-      "target": "readme_setup",
+      "target": "readme_what_is_in_it",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L17",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "readme_live_coding_gym",
-      "target": "readme_adding_content",
+      "target": "readme_commands",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L27",
+      "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
       "source": "readme_live_coding_gym",
-      "target": "readme_tests",
+      "target": "readme_adding_or_changing_content",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L35",
+      "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
       "source": "readme_live_coding_gym",
-      "target": "readme_knowledge_base",
+      "target": "readme_project_rules_for_contributors",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L43",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_live_coding_gym",
-      "target": "readme_dev_mode",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L47",
+      "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
       "source": "readme_live_coding_gym",
@@ -165908,44 +165886,22 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_live_coding_gym",
+      "target": "readme_known_limits_and_ideas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "readme_live_coding_gym",
-      "target": "readme_run",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L51",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_live_coding_gym",
-      "target": "readme_optional_tools",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L55",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_live_coding_gym",
-      "target": "readme_ai_provider",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L59",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_live_coding_gym",
-      "target": "readme_design",
+      "target": "readme_quick_start",
       "confidence_score": 1.0
     },
     {
@@ -174746,5 +174702,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "e2a84a3989e83dca76183e64ab640e5e52531534"
+  "built_at_commit": "bb905b558f0b8a58cbea36cc9c59a34e8ae59cbb"
 }
