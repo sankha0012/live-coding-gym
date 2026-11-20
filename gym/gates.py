@@ -54,7 +54,7 @@ def exercise_status(conn, ex, step):
         status["explain"] = defended(conn, ex, step)
     if ex.name_bug:
         status["bug"] = _review_ok(conn, ex.id, "bug", step.min_score)
-    if ex.grade_prompts and db.user_messages(conn, ex.id):  # no prompts typed (solved without the assistant): nothing to grade
+    if ex.grade_prompts and db.build_prompts(conn, ex.id):  # never asked for code (solved alone, or only asked questions): nothing to grade
         status["prompts"] = _review_ok(conn, f"chat:{ex.id}", "prompt", step.min_score)
     status["done"] = all(v for v in status.values() if v is not None)
     status["assisted"] = assisted

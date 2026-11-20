@@ -90,7 +90,8 @@ def test_journey_counts_started_exercises(conn, steps):
     """Tests passed but the prompts are not graded yet: not done, but the landing page must show it as started."""
     step, ex = steps[0], steps[0].exercises[0]
     ex.grade_prompts = True
-    db.add_chat(conn, ex.id, "user", "write it", "train")  # prompts typed, so they must be graded
+    db.add_chat(conn, ex.id, "user", "write it", "train")  # the learner asked for code, so the prompts must be graded
+    db.add_chat(conn, ex.id, "assistant", "```python\nx = 1\n```", "train")
     assert gates.journey(conn, steps)[0]["started"] == 0
     db.record_attempt(conn, ex.id, "blank", "c", True, 10, "")
     row = gates.journey(conn, steps)[0]

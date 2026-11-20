@@ -40,6 +40,8 @@ def test_reviews_use_the_selected_provider(tmp_path, keys, monkeypatch):
     def fake(name):
         def call(prompt, json_mode=True):
             seen.append(name)
+            if not json_mode:  # the assistant's chat reply: it wrote code, so the message counts as a prompt to grade
+                return "SIZE: small\n\n```python\nx = 1\n```"
             return json.dumps({"scores": [4, 4, 4, 4], "verdict": "v", "feedback": "f"})
         return call
 

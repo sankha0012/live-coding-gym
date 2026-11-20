@@ -335,9 +335,9 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def chat_grade(body: ScopeBody):
         """Score the prompts the learner typed, the way the interviewer judges them."""
         ctx = chat_context(body.scope)
-        typed = db.user_messages(conn, body.scope)
+        typed = db.build_prompts(conn, body.scope)
         if not typed:
-            raise HTTPException(400, "You have not sent the assistant any prompts yet.")
+            raise HTTPException(400, "None of your messages asked the assistant for code yet. Questions are not graded. Ask it for one small piece of code first.")
         answer = "\n\n".join(f"Prompt {i}: {m}" for i, m in enumerate(typed, 1))
         # stored under a separate id so it never counts as the exercise's own prompt review
         return do_review(f"chat:{body.scope}", "prompt", None, {"task": ctx["task"], "answer": answer})

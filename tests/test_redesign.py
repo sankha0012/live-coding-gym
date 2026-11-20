@@ -94,6 +94,7 @@ def files():
         # accept or reject
         "t1/exercises/tr1/exercise.yaml": "title: Triage\nkind: triage\npass_ratio: 0.5\n",
         "t1/exercises/tr1/prompt.md": "The assistant proposed these changes.",
+        "t1/exercises/tr1/script.py": "x = 0\n",
         "t1/exercises/tr1/proposals.yaml": ("- title: Rename a variable\n  code: x = 1\n  correct: accept\n  why: harmless\n"
                                               "- title: Add a new dependency\n  code: import requests\n  correct: reject\n  why: nobody asked\n"),
     }
@@ -111,7 +112,7 @@ def env(tmp_path):
             sets = sum("Write exactly" in p for p, _ in seen)
             qs = [{"q": f"Set {sets} question {i}?", "strong": f"Notes {i}."} for i in range(1, n + 1)]
             return json.dumps({"questions": qs})
-        if "## Conversation so far" in prompt:  # the interviewer, steered by words in the candidate's answer
+        if "## What a strong answer covers" in prompt:  # the interviewer, steered by words in the candidate's answer
             talk = prompt.split("## Conversation so far")[1]
             if "asks for a hint" in prompt and "(asked for a hint)" not in talk:
                 return json.dumps({"reply": "Look at the loop."})
@@ -213,6 +214,7 @@ def test_triage_scores_decisions_and_shows_the_reasons(env):
     client, _, _ = env
     ex = client.get("/api/exercise/tr1").json()
     assert [p["title"] for p in ex["proposals"]] == ["Rename a variable", "Add a new dependency"]
+    assert ex["snippet"] == "x = 0\n"  # the main script, shown in the left pane
     assert "correct" not in ex["proposals"][0] and "why" not in ex["proposals"][0]
     assert post(client, "/api/triage", {"exercise_id": "tr1", "decisions": [{"choice": "accept"}]}, status=400)
     bad = post(client, "/api/triage", {"exercise_id": "tr1", "decisions": [{"choice": "reject"}, {"choice": "accept"}]})
@@ -249,10 +251,23 @@ def test_prompt_grading_is_a_gate_when_the_exercise_asks_for_it(env):
     code = "# a\n# b\ndef total(xs):\n    return sum(xs)\n"
     st = post(client, "/api/submit", {"exercise_id": "p1", "code": code, "mode": "blank"})["status"]
     assert st["tests"] is True and st["prompts"] is None  # no prompts typed: nothing to grade, so not required
-    post(client, "/api/chat", {"scope": "p1", "message": "Write total(xs) that sums a list, 0 for empty."})
-    assert client.get("/api/exercise/p1").json()["status"]["prompts"] is False  # asked the assistant: now they must pass
+    post(client, "/api/chat", {"scope": "p1", "message": "WRITE-CODE total(xs) that sums a list, 0 for empty."})
+    assert client.get("/api/exercise/p1").json()["status"]["prompts"] is False  # asked for code: now they must pass
     post(client, "/api/chat/grade", {"scope": "p1"})
     assert client.get("/api/exercise/p1").json()["status"]["prompts"] is True
+
+
+def test_questions_and_asks_about_an_answer_are_not_graded_as_prompts(env):
+    client, seen, _ = env
+    post(client, "/api/submit", {"exercise_id": "p1", "code": "# a\n# b\ndef total(xs):\n    return sum(xs)\n", "mode": "blank"})
+    post(client, "/api/chat", {"scope": "p1", "message": "Explain this line in plain words: return sum(xs)"})  # a question, reply has no code
+    post(client, "/api/chat", {"scope": "p1", "message": "The interviewer asked: why? I missed it.", "explain_only": True})
+    assert client.get("/api/exercise/p1").json()["status"]["prompts"] is None  # nothing that asked for code
+    assert post(client, "/api/chat/grade", {"scope": "p1"}, status=400)
+    post(client, "/api/chat", {"scope": "p1", "message": "WRITE-CODE the total function"})
+    post(client, "/api/chat/grade", {"scope": "p1"})
+    graded = seen[-1][0]
+    assert "WRITE-CODE the total function" in graded and "Explain this line" not in graded and "The interviewer asked" not in graded
 
 
 def asked(seen):

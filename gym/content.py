@@ -182,6 +182,7 @@ def load_exercise(d, step_id):
         ex.fix, ex.fix_expected, ex.fix_solution = (_read(d / "fix.md"), _read(d / "fix_expected.txt"), _read(d / "fix_solution.py"))
     if kind == "triage":
         ex.proposals = yaml.safe_load((d / "proposals.yaml").read_text())
+        ex.snippet = _read(d / "script.py")  # optional: the script the proposals change, shown in the left pane
         for i, p in enumerate(ex.proposals, 1):
             if p.get("correct") not in ("accept", "reject") or not p.get("title") or not p.get("code"):
                 raise ValueError(f"proposal {i}: needs title, code and correct: accept|reject")

@@ -155,11 +155,12 @@ def test_explain_only_replies_with_code_do_not_count_as_assisted(env):
 def test_grade_my_prompts_reviews_only_what_the_learner_typed(env):
     client, seen = env
     assert client.post("/api/chat/grade", json={"scope": "e1"}).status_code == 400
-    chat(client, "e1", "Write f(xs) returning the sorted list; handle empty input.")
+    chat(client, "e1", "Tell me about sorting")  # a question: its reply holds no code, so it is not a prompt to grade
+    chat(client, "e1", "WRITE-CODE f(xs) returning the sorted list; handle empty input.")
     rev = client.post("/api/chat/grade", json={"scope": "e1"}).json()
     assert rev["status"] == "done" and len(rev["scores"]) == 4
     graded_prompt = seen[-1][0]
-    assert "Prompt 1: Write f(xs) returning the sorted list" in graded_prompt and "Think about ordering" not in graded_prompt
+    assert "Prompt 1: WRITE-CODE f(xs) returning the sorted list" in graded_prompt and "Tell me about sorting" not in graded_prompt and "Think about ordering" not in graded_prompt
     assert client.get("/api/exercise/x4").json()["review"] is None  # does not touch the exercise's own reviews
 
 

@@ -206,6 +206,14 @@ def user_messages(conn, scope):
         "SELECT content FROM chat WHERE scope = ? AND role = 'user' ORDER BY id", (scope,))]
 
 
+def build_prompts(conn, scope):
+    """The messages that asked the assistant for code: those are the prompts that get graded. Questions, and asks about an
+    interview answer (mode explain), are not prompts to steer a build, so the review never judges them."""
+    rows = chat_history(conn, scope)
+    return [r["content"] for r, nxt in zip(rows, rows[1:])
+            if r["role"] == "user" and r["mode"] != "explain" and nxt["role"] == "assistant" and nxt["content"].count("```") >= 2]
+
+
 def clear_chat(conn, scope):
     conn.execute("DELETE FROM chat WHERE scope = ?", (scope,))
     conn.commit()

@@ -93,7 +93,7 @@ const CHIP_INFO = {
   fix: "Change the code so that it prints the target output.",
   control: "Control check: answer the interviewer's questions about your own code, then (on longer exercises) make one small change by hand with the assistant locked.",
   bug: "Name the bug in one sentence after you fixed it. An AI interviewer compares it with the real cause.",
-  prompts: "If you asked the assistant, the prompts you typed must pass the AI prompt review (small, clear, with constraints). Press Grade my prompts in the Assistant tab. No prompts, no review.",
+  prompts: "If you asked the assistant for code, those prompts must pass the AI prompt review (small, clear, with constraints). Press Grade my prompts in the Assistant tab. Questions and no prompts are not graded.",
   assisted: "You asked the assistant to write code for this exercise.",
 };
 
@@ -806,7 +806,7 @@ async function exView(id, mode = "blank") {
   const ex = await api(`/exercise/${id}?mode=${mode}`);
   const coded = ex.modes.length > 0;
   const back = h("p", {}, h("a", { href: `#/step/${ex.step_id}` }, "← Back to the step"));
-  const split = ex.kind === "read" || coded;
+  const split = ex.kind === "read" || coded || (ex.kind === "triage" && !!ex.snippet);
   let work = null;
   if (split) { work = splitLayout(); main = h("div", { class: "task-tab" }); }
   main.append(back, h("h1", {}, ex.title, " ", kindBadge(ex.kind)));
@@ -853,6 +853,7 @@ async function exView(id, mode = "blank") {
     return;
   }
   if (ex.kind === "triage") {
+    if (split) { const c = paneEditor("python", ex.snippet, true); CODE.cm = c.cm; CODE.mainTab = "Script"; CODE.tab("Script", [c.holder]); }
     main.append(progress);
     triageView(ex, id, finished);
     main.append(nextSlot, extras);

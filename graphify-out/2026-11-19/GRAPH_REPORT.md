@@ -1,11 +1,11 @@
 # Graph Report - live-coding-gym  (2026-11-19)
 
 ## Corpus Check
-- 3613 files · ~465,925 words
+- 3613 files · ~465,939 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 7910 nodes · 7426 edges · 2867 communities (2686 shown, 181 thin omitted)
+- 7910 nodes · 7427 edges · 2866 communities (2685 shown, 181 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 107 edges (avg confidence: 0.57)
 - Token cost: 0 input · 0 output
 
@@ -228,7 +228,7 @@
 - prod-batch/tests/test_hidden.py
 - tw-parse-duration/solution.py
 - pick_lines
-- _insert
+- test_mocks
 - dbg-late/tests/test_hidden.py
 - dbg-tags/tests/test_hidden.py
 - st-auc/tests/test_hidden.py
@@ -529,7 +529,6 @@
 - tool-data-versioning.md
 - test_cards.py
 - test_redesign.py
-- test_content_extras.py
 - 03-senior.md
 - 04-phrases.md
 - 01-sql.md
@@ -702,7 +701,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (2867 total, 181 thin omitted)
+## Communities (2866 total, 181 thin omitted)
 
 ### Community 0 - "drift_alarm"
 Cohesion: 0.08
@@ -713,8 +712,8 @@ Cohesion: 0.11
 Nodes (33): check_sql(), _pytest(), _query(), Run pytest on test_candidate.py in a temp dir holding `files` (name -> text)., Grade a learner's test file: it must pass on `good` and fail on every `bads`…, Run hidden pytest tests against a submission saved as solution.py., Run code as a script with no tests, like the Run button on Coderbyte., run_python_free() (+25 more)
 
 ### Community 2 - "load_content"
-Cohesion: 0.13
-Nodes (16): Exercise, _existing(), load_content(), load_exercise(), Evaluation after a core build passes. 0: none. 1: What if. 2: What if, then a…, Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric() (+8 more)
+Cohesion: 0.11
+Nodes (26): Exercise, _existing(), load_content(), load_exercise(), Evaluation after a core build passes. 0: none. 1: What if. 2: What if, then a…, Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric() (+18 more)
 
 ### Community 3 - "backoff_delay"
 Cohesion: 0.15
@@ -1496,9 +1495,9 @@ Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_inf_none_and_ot
 Cohesion: 0.33
 Nodes (8): candidate_lines(), pick_lines(), The control check: pick two lines of the learner's own code to explain., Two lines, in file order, chosen at random but fixed for a given seed (the…, (line number, text) of lines worth asking about: real logic, not comments,…, test_candidates_skip_comments_imports_and_docstrings(), test_tiny_code_falls_back_to_any_lines(), test_two_lines_in_file_order_fixed_per_seed()
 
-### Community 228 - "_insert"
-Cohesion: 0.22
-Nodes (11): add_chat(), add_event(), create_mock(), finished_mocks(), get_mock(), _insert(), Record that the learner did something (for example ran code) and where in the…, update_mock() (+3 more)
+### Community 228 - "test_mocks"
+Cohesion: 0.38
+Nodes (7): create_mock(), finished_mocks(), get_mock(), update_mock(), readiness(), test_mocks(), test_readiness_needs_three_mocks_and_uses_last_three()
 
 ### Community 229 - "dbg-late/tests/test_hidden.py"
 Cohesion: 0.67
@@ -2021,12 +2020,12 @@ Cohesion: 0.07
 Nodes (38): apply(), ask(), build_prompt(), _conversation(), current(), get_scores(), make_questions(), new_state() (+30 more)
 
 ### Community 986 - "test_gates.py"
-Cohesion: 0.24
-Nodes (17): record_attempt(), save_review(), journey(), One row per step. Steps unlock in order; an optional step is always open and…, step_status(), good(), Tests passed but the prompts are not graded yet: not done, but the landing page…, test_fresh_journey_only_first_step_unlocked() (+9 more)
+Cohesion: 0.18
+Nodes (21): record_attempt(), save_review(), unlock(), unlocked(), journey(), One row per step. Steps unlock in order; an optional step is always open and…, step_status(), test_unlocks() (+13 more)
 
 ### Community 1212 - "db.py"
 Cohesion: 0.09
-Nodes (16): connect(), get_attempt(), get_review(), passed_attempts(), Delete everything the learner has done (attempts, reviews, card schedule,…, reset_progress(), save_whatif(), set_whatif_ok() (+8 more)
+Nodes (16): add_chat(), add_event(), connect(), get_attempt(), get_review(), _insert(), passed_attempts(), Record that the learner did something (for example ran code) and where in the… (+8 more)
 
 ### Community 1215 - "tool-ci-cd-ml.md"
 Cohesion: 0.40
@@ -2047,10 +2046,6 @@ Nodes (7): due(), record(), test_box_is_capped_at_five(), test_card_returns_on_i
 ### Community 1371 - "test_redesign.py"
 Cohesion: 0.14
 Nodes (26): answer_all(), asked(), env(), files(), post(), fixture, The prompts the app sent to have interview questions written., test_a_hint_caps_a_question_at_partial() (+18 more)
-
-### Community 1411 - "test_content_extras.py"
-Cohesion: 0.44
-Nodes (10): build(), load_one(), One step with one exercise 'e1'. files maps path-under-exercise -> text., test_extras_and_wrong_solutions(), test_files_are_resolved_and_must_exist(), test_quiz_loads_and_rejects_bad_answer_index(), test_rubric_items_with_a_colon_stay_strings(), test_sql_extra_seed_wrong_and_alt_queries() (+2 more)
 
 ### Community 1543 - "exercise_status"
 Cohesion: 0.23
@@ -2635,6 +2630,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `runner.py` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `load_content` be split into smaller, more focused modules?**
-  _Cohesion score 0.12681159420289856 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.10588235294117647 - nodes in this community are weakly interconnected._
 - **Should `app.js` be split into smaller, more focused modules?**
   _Cohesion score 0.11554748941318814 - nodes in this community are weakly interconnected._
