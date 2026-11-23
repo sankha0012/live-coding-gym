@@ -97,7 +97,11 @@ const CHIP_INFO = {
   assisted: "You asked the assistant to write code for this exercise.",
 };
 
+let LAST_ST = null; // the open exercise's latest status, so the Next button can say what is missing
+const MISSING = { tests: "the tests (or the What if round)", review: "the AI review", explain: "the interviewer's questions about your code",
+  fix: "the fix", control: "the control check", bug: "naming the bug", prompts: "the prompt review, needed because you asked the assistant for code (press Grade my prompts in the Assistant tab)" };
 function statusLine(st, kind) {
+  LAST_ST = { st, kind };
   if (DEV) return h("span");
   const chip = (key, label) => (st[key] === null ? null
     : tip(h("span", { class: "chip " + (st[key] ? "done" : "todo") }, label, " ", mark(st[key])), CHIP_INFO[key]));
@@ -141,7 +145,12 @@ function nextBar(ex, passed) {
   const bar = h("div", { class: "bar" });
   if (passed) bar.append(h("strong", { class: "ok" }, "✓ Passed."));
   bar.append(ex.next
-    ? h("a", { class: passed ? "button" : "", href: `#/ex/${ex.next.id}` }, "Next: " + ex.next.title + " →")
+    ? h("a", { class: passed ? "button" : "", href: `#/ex/${ex.next.id}`, onclick: (e) => {
+      if (passed || (LAST_ST && LAST_ST.st.done)) return;
+      const miss = LAST_ST ? Object.keys(MISSING).filter((k) => LAST_ST.st[k] === false).map((k) => (k === "tests" && LAST_ST.kind !== "read" ? "the tests" : MISSING[k])) : [];
+      const what = miss.length ? "\n\nStill missing:\n- " + miss.join("\n- ") : "";
+      if (!confirm("This lesson is not finished. Your progress is recorded only when you complete all of it." + what + "\n\nMove on anyway?")) e.preventDefault();
+    } }, "Next: " + ex.next.title + " →")
     : h("a", { href: `#/step/${ex.step_id}` }, "Back to the step"));
   return bar;
 }
@@ -803,6 +812,7 @@ function assistDefend(ex, id, afterChange) {
 }
 
 async function exView(id, mode = "blank") {
+  LAST_ST = null;
   const ex = await api(`/exercise/${id}?mode=${mode}`);
   const coded = ex.modes.length > 0;
   const back = h("p", {}, h("a", { href: `#/step/${ex.step_id}` }, "← Back to the step"));
