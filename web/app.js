@@ -686,12 +686,12 @@ function readView(ex, id, afterChange) {
   const written = ex.level >= 2 ? h("div", {}, h("h2", {}, ex.level === 2 ? "2. Name the trap" : "3. Explain it"),
     interviewPanel(ex, id, "main", { placeholder: ex.level === 2 ? "One or two sentences: what is the trap, and what does it cause?" : undefined }, (r) => afterChange(r.status))) : null;
   const fixMsg = h("div"), fixOut = h("pre", { class: "out" });
-  let fixEd = null;
+  let fixEd = null, fixDone = !!ex.status.fix;
   const fix = ex.level >= 3 ? h("div", {}, h("h2", {}, "2. Fix it"), md(ex.fix),
     h("p", { class: "muted" }, "Edit the code in the Fix it tab on the left, then press Run and check there."),
     h("button", { onclick: () => CODE.show("Fix it") }, "Open the Fix it tab"), fixMsg) : null;
   function openLater() {
-    later.replaceChildren(...[fix, written].filter(Boolean));
+    later.replaceChildren(...(fix && !fixDone ? [fix, h("p", { class: "muted" }, "3. Explain it unlocks once your fix prints the target.")] : [fix, written].filter(Boolean)));  // level 3: the explanation comes after the fix
     if (fix && !fixEd) {
       fixEd = paneEditor("python", ex.snippet);
       CODE.tab("Fix it", [fixEd.holder, h("div", { class: "bar" }, h("button", { class: "primary", onclick: async () => {
@@ -701,6 +701,7 @@ function readView(ex, id, afterChange) {
         fixMsg.replaceChildren(verdict.cloneNode(true));
         fixOut.prepend((r.passed ? "✓ It prints the target.\n\n" : "✗ Not the target output yet.\n\n"));
         afterChange(r.status);
+        if (r.passed && !fixDone) { fixDone = true; openLater(); }
       } }, "Run and check")), fixOut], false);
     }
   }

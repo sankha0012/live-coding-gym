@@ -504,6 +504,14 @@ def test_level_three_reading_needs_a_fix_that_prints_the_target(env):
     assert good["passed"] and good["status"]["fix"] is True and good["status"]["done"] is False  # what if and the explanation remain
 
 
+def test_level_three_written_answer_unlocks_only_after_the_fix(env):
+    client, _, _ = env
+    assert client.get("/api/interview", params={"exercise_id": "r3"}).status_code == 400  # fix it first
+    assert post(client, "/api/interview/answer", {"exercise_id": "r3", "text": "x"}, status=400)
+    post(client, "/api/fix", {"exercise_id": "r3", "code": "print(sum([1, 2, 3]))\n"})
+    assert client.get("/api/interview", params={"exercise_id": "r3"}).status_code == 200
+
+
 def test_asking_about_an_answer_works_while_the_check_is_locked_and_never_writes_code(env):
     client, _, _ = env
     post(client, "/api/submit", {"exercise_id": "p3", "code": SOLUTION, "mode": "blank"})

@@ -521,6 +521,8 @@ def create_app(content_dir=config.CONTENT_DIR, db_path=config.DB_PATH, call=None
     def interview_def(ex, part):
         """(questions, reference answer, rubric, context) of one written exchange."""
         if part == "main" and ex.kind == "read" and ex.level >= 2:
+            if ex.level >= 3 and not status_of(ex)["fix"]:
+                raise HTTPException(400, "Fix the code first. The explanation comes after.")
             return ([TRAP_QUESTION] if ex.level == 2 else ex.questions), ex.say, [], ex.snippet
         if part == "main" and ex.kind in ("open", "explain"):
             return [ex.prompt], ex.say, ex.rubric, ""

@@ -1,16 +1,16 @@
 # Graph Report - live-coding-gym  (2026-11-23)
 
 ## Corpus Check
-- 3615 files · ~466,577 words
+- 3615 files · ~466,676 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 7925 nodes · 7445 edges · 2871 communities (2689 shown, 182 thin omitted)
+- 7926 nodes · 7447 edges · 2870 communities (2688 shown, 182 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 107 edges (avg confidence: 0.57)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `caf9196f`
+- Built from commit: `bc16a07c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -527,7 +527,6 @@
 - tool-ci-cd-ml.md
 - tool-cloud-platforms.md
 - tool-data-versioning.md
-- test_cards.py
 - test_redesign.py
 - reviewer.py
 - 03-senior.md
@@ -685,10 +684,10 @@
 3. `exView()` - 25 edges
 4. `BoundedQueue` - 23 edges
 5. `load_content()` - 23 edges
-6. `parse_config()` - 22 edges
-7. `TokenBucket` - 22 edges
-8. `sample_ids()` - 22 edges
-9. `post()` - 22 edges
+6. `post()` - 23 edges
+7. `parse_config()` - 22 edges
+8. `TokenBucket` - 22 edges
+9. `sample_ids()` - 22 edges
 10. `final_state()` - 20 edges
 
 ## Surprising Connections (you probably didn't know these)
@@ -706,7 +705,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (2871 total, 182 thin omitted)
+## Communities (2870 total, 182 thin omitted)
 
 ### Community 0 - "drift_alarm"
 Cohesion: 0.08
@@ -718,7 +717,7 @@ Nodes (33): check_sql(), _pytest(), _query(), Run pytest on test_candidate.py in
 
 ### Community 2 - "load_content"
 Cohesion: 0.13
-Nodes (16): Exercise, _existing(), load_content(), load_exercise(), Evaluation after a core build passes. 0: none. 1: What if. 2: What if, then a…, Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric() (+8 more)
+Nodes (15): Exercise, _existing(), load_content(), load_exercise(), Evaluation after a core build passes. 0: none. 1: What if. 2: What if, then a…, Rubric criteria as plain strings. YAML reads an unquoted `Names a risk: text`…, _read(), _rubric() (+7 more)
 
 ### Community 3 - "backoff_delay"
 Cohesion: 0.15
@@ -1497,8 +1496,8 @@ Cohesion: 0.57
 Nodes (6): _close(), _ns(), test_check_1(), test_check_2(), test_inf_none_and_other_exceptions(), test_rate_all_good_all_bad_and_zero_fallback()
 
 ### Community 227 - "pick_lines"
-Cohesion: 0.33
-Nodes (8): candidate_lines(), pick_lines(), The control check: pick two lines of the learner's own code to explain., Two lines, in file order, chosen at random but fixed for a given seed (the…, (line number, text) of lines worth asking about: real logic, not comments,…, test_candidates_skip_comments_imports_and_docstrings(), test_tiny_code_falls_back_to_any_lines(), test_two_lines_in_file_order_fixed_per_seed()
+Cohesion: 0.18
+Nodes (15): due(), record(), candidate_lines(), pick_lines(), The control check: pick two lines of the learner's own code to explain., Two lines, in file order, chosen at random but fixed for a given seed (the…, (line number, text) of lines worth asking about: real logic, not comments,…, test_box_is_capped_at_five() (+7 more)
 
 ### Community 228 - "test_mocks"
 Cohesion: 0.38
@@ -2013,24 +2012,24 @@ Cohesion: 0.17
 Nodes (11): AI assistants and LLM engineering, AI/ML engineering tools, Algorithm patterns, Interview technique, Knowledge-base topics, Machine learning and statistics, pandas, Python core (+3 more)
 
 ### Community 798 - "create_app"
-Cohesion: 0.11
-Nodes (15): Vercel entry point: the same FastAPI app, with progress kept in /tmp (it is…, create_app(), main(), load_env(), Read KEY=VALUE lines into os.environ without overriding existing values., client(), fake_gemini(), fixture (+7 more)
+Cohesion: 0.13
+Nodes (12): Vercel entry point: the same FastAPI app, with progress kept in /tmp (it is…, create_app(), client(), fake_gemini(), fixture, test_sql_schema_hides_insert_lines(), keys(), fixture (+4 more)
 
 ### Community 799 - "app.py"
-Cohesion: 0.22
-Nodes (16): BaseModel, CardBody, ControlChangeBody, ExerciseBody, FixBody, InterviewBody, InterviewPart, MockInterviewBody (+8 more)
+Cohesion: 0.17
+Nodes (19): BaseModel, CardBody, ControlChangeBody, ExerciseBody, FixBody, InterviewBody, InterviewPart, main() (+11 more)
 
 ### Community 984 - "interview.py"
 Cohesion: 0.11
 Nodes (24): apply(), ask(), build_prompt(), _conversation(), current(), get_scores(), make_questions(), new_state() (+16 more)
 
 ### Community 986 - "test_gates.py"
-Cohesion: 0.33
-Nodes (12): add_chat(), _insert(), record_attempt(), save_review(), good(), Tests passed but the prompts are not graded yet: not done, but the landing page…, test_journey_counts_started_exercises(), test_passes_in_other_modes_do_not_count() (+4 more)
+Cohesion: 0.27
+Nodes (14): add_chat(), add_event(), _insert(), Record that the learner did something (for example ran code) and where in the…, record_attempt(), save_review(), good(), Tests passed but the prompts are not graded yet: not done, but the landing page… (+6 more)
 
 ### Community 1212 - "db.py"
-Cohesion: 0.08
-Nodes (16): add_event(), build_prompts(), chat_history(), get_attempt(), get_review(), is_assisted(), latest_review(), passed_attempts() (+8 more)
+Cohesion: 0.09
+Nodes (14): build_prompts(), chat_history(), get_attempt(), get_review(), is_assisted(), latest_review(), passed_attempts(), The messages that asked the assistant for code: those are the prompts that get… (+6 more)
 
 ### Community 1215 - "tool-ci-cd-ml.md"
 Cohesion: 0.40
@@ -2044,13 +2043,9 @@ Nodes (4): Details, Likely interview questions, See also, What to say and what n
 Cohesion: 0.40
 Nodes (4): Details, Likely interview questions, See also, What to say and what not to claim
 
-### Community 1320 - "test_cards.py"
-Cohesion: 0.42
-Nodes (7): due(), record(), test_box_is_capped_at_five(), test_card_returns_on_its_due_date(), test_correct_answers_climb_boxes(), test_unseen_cards_are_due(), test_wrong_answer_resets_and_stays_due()
-
 ### Community 1371 - "test_redesign.py"
-Cohesion: 0.12
-Nodes (30): save_whatif(), set_whatif_ok(), answer_all(), asked(), env(), files(), post(), fixture (+22 more)
+Cohesion: 0.11
+Nodes (32): connect(), save_whatif(), set_whatif_ok(), answer_all(), asked(), env(), files(), post() (+24 more)
 
 ### Community 1411 - "reviewer.py"
 Cohesion: 0.18
@@ -2651,6 +2646,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `runner.py` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `load_content` be split into smaller, more focused modules?**
-  _Cohesion score 0.12681159420289856 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.13438735177865613 - nodes in this community are weakly interconnected._
 - **Should `app.js` be split into smaller, more focused modules?**
   _Cohesion score 0.11221507890122735 - nodes in this community are weakly interconnected._
